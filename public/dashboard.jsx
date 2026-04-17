@@ -1,0 +1,556 @@
+const { useState, useEffect, useMemo } = React;
+
+// Simple SVG icon components (replacing lucide-react)
+const Icon = ({ children, size = 24, color = 'currentColor', strokeWidth = 2, fill = 'none', ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    {children}
+  </svg>
+);
+
+const TrendingUp = (props) => <Icon {...props}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></Icon>;
+const TrendingDown = (props) => <Icon {...props}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></Icon>;
+const Minus = (props) => <Icon {...props}><line x1="5" y1="12" x2="19" y2="12"/></Icon>;
+const CheckCircle2 = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></Icon>;
+const Clock = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
+const Eye = (props) => <Icon {...props}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></Icon>;
+const ArrowUpCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></Icon>;
+const Zap = (props) => <Icon {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Icon>;
+const AlertCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
+const Loader2 = (props) => <Icon {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></Icon>;
+
+// Tiered weights by asset type
+const WEIGHTS_BY_TYPE = {
+  'store-of-value': { institutional: 0.40, supply: 0.25, regulatory: 0.15, wyckoff: 0.15, revenue: 0.05 },
+  'smart-contract': { institutional: 0.30, revenue: 0.25, supply: 0.20, regulatory: 0.15, wyckoff: 0.10 },
+  'defi': { revenue: 0.35, institutional: 0.25, regulatory: 0.20, supply: 0.15, wyckoff: 0.05 },
+  'infrastructure': { institutional: 0.35, regulatory: 0.25, supply: 0.20, revenue: 0.10, wyckoff: 0.10 },
+};
+const DEFAULT_WEIGHTS = { institutional: 0.30, revenue: 0.20, regulatory: 0.20, supply: 0.20, wyckoff: 0.10 };
+
+function getWeights(assetType) {
+  return WEIGHTS_BY_TYPE[assetType] || DEFAULT_WEIGHTS;
+}
+
+const PALETTE = {
+  bg: '#121110',
+  cardBg: '#1a1816',
+  cardInset: '#211e1b',
+  border: '#3a342d',
+  borderStrong: '#55493c',
+  textPrimary: '#ede7d9',
+  textSecondary: '#a39a8a',
+  textMuted: '#6e665a',
+  trackBg: '#2a2620',
+};
+
+const DIMENSION_LABELS = {
+  institutional: 'Institutional',
+  revenue: 'Revenue/Fees',
+  regulatory: 'Regulatory',
+  supply: 'Supply/On-Chain',
+  wyckoff: 'Wyckoff',
+};
+
+const ASSET_TYPE_LABELS = {
+  'store-of-value': 'Store of Value',
+  'smart-contract': 'Smart Contract',
+  'defi': 'DeFi',
+  'infrastructure': 'Infrastructure',
+};
+
+const TIER_CONFIG = {
+  'leader': { label: 'Leaders', icon: CheckCircle2, accent: '#d4a574', order: 0 },
+  'runner-up': { label: 'Runner-ups', icon: Clock, accent: '#9cb088', order: 1 },
+  'observation': { label: 'Observation', icon: Eye, accent: '#8a8a9a', order: 2 },
+};
+
+const ACTION_CONFIG = {
+  'strong-accumulate': { label: 'Strong Accumulate', desc: 'Dislocation in accumulation zone', bg: '#e8b86a', fg: '#121110', dot: '#121110', icon: Zap, emphatic: true },
+  'accumulate': { label: 'Accumulate', desc: 'Tranche-eligible zone', bg: '#d4a574', fg: '#121110', dot: '#121110' },
+  'promote': { label: 'Promote Candidate', desc: 'Runner-up earning activation', bg: '#3d3425', fg: '#f0d4a0', dot: '#d4a574', icon: ArrowUpCircle },
+  'hold': { label: 'Hold & Monitor', desc: 'Position active, no action', bg: 'transparent', fg: '#9cb088', dot: '#9cb088', border: true },
+  'await': { label: 'Await Confirmation', desc: 'Signal building, not yet', bg: 'transparent', fg: '#b8a878', dot: '#b8a878', border: true },
+  'observe': { label: 'Observe', desc: 'Scanning only', bg: 'transparent', fg: '#8a8a9a', dot: '#8a8a9a', border: true },
+  'stand-aside': { label: 'Stand Aside', desc: 'Do not engage', bg: 'transparent', fg: '#c27878', dot: '#c27878', border: true },
+};
+
+function computeComposite(scores, assetType) {
+  const weights = getWeights(assetType);
+  let total = 0;
+  for (const [dim, weight] of Object.entries(weights)) {
+    total += (scores[dim] || 50) * weight;
+  }
+  return Math.round(total);
+}
+
+function weeklyDelta(trend) {
+  if (!trend || trend.length < 2) return 0;
+  return trend[trend.length - 1] - trend[0];
+}
+
+function monthlyDelta(trend30d) {
+  if (!trend30d || trend30d.length < 2) return 0;
+  return trend30d[trend30d.length - 1] - trend30d[0];
+}
+
+function Sparkline({ data, accent }) {
+  if (!data || data.length < 2) return null;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const width = 80;
+  const height = 24;
+  const points = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * width;
+    const y = height - ((v - min) / range) * height;
+    return `${x},${y}`;
+  }).join(' ');
+  return (
+    <svg width={width} height={height} style={{ display: 'block' }}>
+      <polyline points={points} fill="none" stroke={accent} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DimensionBar({ label, value, accent, weight }) {
+  return (
+    <div style={{ marginBottom: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
+        <span>{label}{weight ? <span style={{ opacity: 0.6, marginLeft: '4px' }}>({Math.round(weight * 100)}%)</span> : ''}</span>
+        <span style={{ color: PALETTE.textPrimary }}>{value}</span>
+      </div>
+      <div style={{ height: '3px', background: PALETTE.trackBg }}>
+        <div style={{ height: '100%', width: `${value}%`, background: accent, transition: 'width 0.6s ease' }} />
+      </div>
+    </div>
+  );
+}
+
+function rsiColor(rsi) {
+  if (rsi === null || rsi === undefined) return PALETTE.textMuted;
+  if (rsi >= 75) return '#d47878';
+  if (rsi >= 70) return '#d49a6a';
+  if (rsi <= 25) return '#7aa0c4';
+  if (rsi <= 32) return '#8ab0d4';
+  return PALETTE.textPrimary;
+}
+
+function rsiLabel(rsi) {
+  if (rsi === null || rsi === undefined) return 'n/a';
+  if (rsi >= 75) return 'Overbought';
+  if (rsi >= 70) return 'Elevated';
+  if (rsi <= 25) return 'Deep oversold';
+  if (rsi <= 32) return 'Oversold';
+  return 'Neutral';
+}
+
+function RsiRow({ asset }) {
+  const { rsi_daily, rsi_weekly } = asset;
+
+  const Cell = ({ label, value }) => (
+    <div style={{ flex: 1, textAlign: 'center', padding: '6px 4px', background: PALETTE.cardInset }}>
+      <div style={{ fontSize: '8px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', marginBottom: '3px' }}>
+        {label}
+      </div>
+      <div style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 400, color: rsiColor(value), lineHeight: 1 }}>
+        {value === null || value === undefined ? '—' : value}
+      </div>
+      <div style={{ fontSize: '8px', color: rsiColor(value), fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', marginTop: '3px', fontStyle: 'italic', opacity: 0.85 }}>
+        {rsiLabel(value)}
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ marginBottom: '16px' }}>
+      <div style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '6px', fontFamily: 'ui-monospace, monospace' }}>
+        RSI · 14
+      </div>
+      <div style={{ display: 'flex', gap: '6px' }}>
+        <Cell label="Daily" value={rsi_daily} />
+        <Cell label="Weekly" value={rsi_weekly} />
+      </div>
+    </div>
+  );
+}
+
+function ActionBanner({ action, daysAgo, strongDays }) {
+  const cfg = ACTION_CONFIG[action];
+  if (!cfg) return null;
+  const recentChange = daysAgo <= 14;
+  const Icon = cfg.icon;
+  const isStrong = action === 'strong-accumulate';
+
+  return (
+    <div style={{
+      background: cfg.bg,
+      color: cfg.fg,
+      border: cfg.border ? `1px solid ${cfg.dot}` : 'none',
+      padding: '10px 12px',
+      marginBottom: '16px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '8px',
+      boxShadow: isStrong ? `0 0 0 2px ${PALETTE.bg}, 0 0 0 3px #e8b86a` : 'none',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {Icon ? (
+          <Icon size={isStrong ? 16 : 14} color={cfg.dot} strokeWidth={1.75} fill={isStrong ? cfg.dot : 'none'} />
+        ) : (
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: cfg.dot, flexShrink: 0 }} />
+        )}
+        <div>
+          <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', fontWeight: isStrong ? 700 : 500 }}>
+            {cfg.label}
+          </div>
+          <div style={{ fontSize: '9px', letterSpacing: '0.05em', opacity: 0.75, fontFamily: 'ui-monospace, monospace', marginTop: '2px' }}>
+            {cfg.desc}
+          </div>
+        </div>
+      </div>
+      <div style={{ fontSize: '9px', letterSpacing: '0.08em', fontFamily: 'ui-monospace, monospace', textAlign: 'right', lineHeight: 1.3, opacity: recentChange ? 1 : 0.6 }}>
+        {isStrong && strongDays > 1 ? (
+          <>
+            <div style={{ fontWeight: 600, marginBottom: '1px' }}>DAY {strongDays}</div>
+            <div style={{ opacity: 0.7 }}>continuation</div>
+          </>
+        ) : isStrong && strongDays === 1 ? (
+          <>
+            <div style={{ fontWeight: 700, marginBottom: '1px' }}>NEW</div>
+            <div>today</div>
+          </>
+        ) : (
+          <>
+            {recentChange && <div style={{ fontWeight: 600, marginBottom: '1px' }}>NEW</div>}
+            <div>{daysAgo || 0}d</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ScoreCard({ asset }) {
+  const assetType = asset.asset_type || 'smart-contract';
+  const weights = asset.weights || getWeights(assetType);
+  const composite = asset.composite || computeComposite(asset.scores, assetType);
+  const delta = weeklyDelta(asset.trend);
+  const config = TIER_CONFIG[asset.tier];
+  if (!config) return null;
+  const Icon = config.icon;
+  const action = asset.action || 'observe';
+  const isStrong = action === 'strong-accumulate';
+
+  const deltaColor = delta > 0 ? '#7aa872' : delta < 0 ? '#c27878' : PALETTE.textMuted;
+  const DeltaIcon = delta > 0 ? TrendingUp : delta < 0 ? TrendingDown : Minus;
+
+  return (
+    <div style={{
+      background: PALETTE.cardBg,
+      border: isStrong ? `1px solid #e8b86a` : `1px solid ${PALETTE.borderStrong}`,
+      padding: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+        <div>
+          <div style={{ fontFamily: 'Georgia, serif', fontSize: '24px', fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
+            {asset.symbol}
+          </div>
+          <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: '4px', fontFamily: 'ui-monospace, monospace' }}>
+            {asset.name}
+          </div>
+          <div style={{ fontSize: '8px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: '3px', fontFamily: 'ui-monospace, monospace' }}>
+            {ASSET_TYPE_LABELS[assetType] || assetType}
+          </div>
+        </div>
+        <Icon size={14} color={config.accent} strokeWidth={1.5} />
+      </div>
+
+      <ActionBanner action={action} daysAgo={asset.label_changed_days_ago} strongDays={asset.strong_accumulate_days_active} />
+
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '4px' }}>
+        <div style={{ fontFamily: 'Georgia, serif', fontSize: '48px', fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
+          {composite}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: '11px', fontFamily: 'ui-monospace, monospace' }}>
+          <DeltaIcon size={11} strokeWidth={2} />
+          <span>{delta > 0 ? '+' : ''}{delta}</span>
+        </div>
+        <div style={{ marginLeft: 'auto' }}>
+          <Sparkline data={asset.trend} accent={config.accent} />
+        </div>
+      </div>
+      <div style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
+        Composite · 7d
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <DimensionBar label={DIMENSION_LABELS.institutional} value={asset.scores.institutional} accent={config.accent} weight={weights.institutional} />
+        <DimensionBar label={DIMENSION_LABELS.revenue} value={asset.scores.revenue} accent={config.accent} weight={weights.revenue} />
+        <DimensionBar label={DIMENSION_LABELS.regulatory} value={asset.scores.regulatory} accent={config.accent} weight={weights.regulatory} />
+        <DimensionBar label={DIMENSION_LABELS.supply} value={asset.scores.supply} accent={config.accent} weight={weights.supply} />
+        <DimensionBar label={DIMENSION_LABELS.wyckoff} value={asset.scores.wyckoff} accent={config.accent} weight={weights.wyckoff} />
+      </div>
+
+      <RsiRow asset={asset} />
+
+      <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '12px', marginTop: 'auto' }}>
+        <div style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
+          {asset.wyckoff_phase}
+        </div>
+        <div style={{ fontSize: '11px', color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: 1.4 }}>
+          {asset.note}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ActionLegend() {
+  const items = [
+    { key: 'strong-accumulate', text: 'Dislocation inside accumulation zone. Daily RSI ≤32, weekly ≥42, composite stable WoW. Shows day-counter when firing consecutively.' },
+    { key: 'accumulate', text: 'Tranche-eligible. Leader, composite ≥75, Wyckoff Phase C+, non-negative trend, weekly RSI <75.' },
+    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8. Manual promotion decision required.' },
+    { key: 'hold', text: 'Active position. No add/trim signal. The default state — patience by design.' },
+    { key: 'await', text: 'Runner-up building signal. Analytical hold only, no activation yet.' },
+    { key: 'observe', text: 'Observation tier. Scanning, not deciding. No position.' },
+    { key: 'stand-aside', text: 'Distribution risk or sharp negative trend. Do not engage regardless of price.' },
+  ];
+  return (
+    <details style={{ maxWidth: '1400px', margin: '0 auto 24px', fontSize: '11px', color: PALETTE.textSecondary }}>
+      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted }}>
+        Action rules
+      </summary>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginTop: '16px' }}>
+        {items.map(item => {
+          const cfg = ACTION_CONFIG[item.key];
+          return (
+            <div key={item.key} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '5px', flexShrink: 0 }} />
+              <div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textPrimary, marginBottom: '4px', fontWeight: 500 }}>
+                  {cfg.label}
+                </div>
+                <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', lineHeight: 1.5 }}>
+                  {item.text}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </details>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: '16px' }}>
+      <Loader2 size={32} color={PALETTE.textMuted} style={{ animation: 'spin 1s linear infinite' }} />
+      <div style={{ fontSize: '12px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>Loading scores...</div>
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+}
+
+function ErrorState({ error, onRetry }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: '16px', padding: '24px' }}>
+      <AlertCircle size={32} color="#c27878" />
+      <div style={{ fontSize: '14px', color: PALETTE.textPrimary, fontFamily: 'Georgia, serif', textAlign: 'center' }}>
+        Failed to load scoring data
+      </div>
+      <div style={{ fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', textAlign: 'center', maxWidth: '400px' }}>
+        {error}
+      </div>
+      <button
+        onClick={onRetry}
+        style={{
+          background: 'transparent',
+          color: PALETTE.textPrimary,
+          border: `1px solid ${PALETTE.borderStrong}`,
+          padding: '8px 16px',
+          fontSize: '11px',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          cursor: 'pointer',
+          marginTop: '8px',
+        }}
+      >
+        Retry
+      </button>
+    </div>
+  );
+}
+
+function Dashboard() {
+  const [assets, setAssets] = useState([]);
+  const [generatedAt, setGeneratedAt] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeTier, setActiveTier] = useState('all');
+
+  const fetchData = () => {
+    setLoading(true);
+    setError(null);
+    fetch('./latest.json')
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(data => {
+        setAssets(data.assets || []);
+        setGeneratedAt(data.generated_at);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const filteredAssets = useMemo(() => {
+    const sorted = [...assets].sort((a, b) => {
+      const aStrong = a.action === 'strong-accumulate' ? 0 : 1;
+      const bStrong = b.action === 'strong-accumulate' ? 0 : 1;
+      const tierDiff = (TIER_CONFIG[a.tier]?.order || 0) - (TIER_CONFIG[b.tier]?.order || 0);
+      if (tierDiff !== 0) return tierDiff;
+      if (aStrong !== bStrong) return aStrong - bStrong;
+      return (b.composite || 0) - (a.composite || 0);
+    });
+    if (activeTier === 'all') return sorted;
+    return sorted.filter(a => a.tier === activeTier);
+  }, [activeTier, assets]);
+
+  const groupedAssets = useMemo(() => {
+    const groups = { leader: [], 'runner-up': [], observation: [] };
+    filteredAssets.forEach(a => {
+      if (groups[a.tier]) groups[a.tier].push(a);
+    });
+    return groups;
+  }, [filteredAssets]);
+
+  const strongCount = assets.filter(a => a.action === 'strong-accumulate').length;
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: PALETTE.bg, fontFamily: 'Georgia, serif', color: PALETTE.textPrimary }}>
+        <LoadingState />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ minHeight: '100vh', background: PALETTE.bg, fontFamily: 'Georgia, serif', color: PALETTE.textPrimary }}>
+        <ErrorState error={error} onRetry={fetchData} />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: PALETTE.bg,
+      fontFamily: 'Georgia, serif',
+      color: PALETTE.textPrimary,
+      padding: '24px 16px',
+    }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto 24px', borderBottom: `1px solid ${PALETTE.borderStrong}`, paddingBottom: '20px' }}>
+        <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '6px', fontFamily: 'ui-monospace, monospace' }}>
+          Framework · Daily scan
+        </div>
+        <h1 style={{ fontSize: '32px', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
+          Conviction Scores
+        </h1>
+        <div style={{ fontSize: '12px', color: PALETTE.textSecondary, marginTop: '8px', fontStyle: 'italic' }}>
+          5 dimensions · Tiered weights by asset type · RSI confirmation layer
+        </div>
+        {generatedAt && (
+          <div style={{ fontSize: '10px', color: PALETTE.textMuted, marginTop: '8px', fontFamily: 'ui-monospace, monospace' }}>
+            Last updated: {new Date(generatedAt).toLocaleString()}
+          </div>
+        )}
+        {strongCount > 0 && (
+          <div style={{ marginTop: '14px', padding: '8px 12px', background: '#2a2115', border: '1px solid #e8b86a', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <Zap size={12} color="#e8b86a" fill="#e8b86a" strokeWidth={1.75} />
+            <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#e8b86a', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
+              {strongCount} Strong Accumulate signal{strongCount > 1 ? 's' : ''} active
+            </span>
+          </div>
+        )}
+      </div>
+
+      <ActionLegend />
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto 24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {[
+          { id: 'all', label: 'All' },
+          { id: 'leader', label: 'Leaders' },
+          { id: 'runner-up', label: 'Runner-ups' },
+          { id: 'observation', label: 'Observation' },
+        ].map(t => (
+          <button
+            key={t.id}
+            onClick={() => setActiveTier(t.id)}
+            style={{
+              background: activeTier === t.id ? PALETTE.textPrimary : 'transparent',
+              color: activeTier === t.id ? PALETTE.bg : PALETTE.textPrimary,
+              border: `1px solid ${PALETTE.borderStrong}`,
+              padding: '6px 14px',
+              fontSize: '11px',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              fontFamily: 'ui-monospace, monospace',
+              cursor: 'pointer',
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {['leader', 'runner-up', 'observation'].map(tier => {
+          if (groupedAssets[tier].length === 0) return null;
+          const config = TIER_CONFIG[tier];
+          return (
+            <div key={tier} style={{ marginBottom: '40px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ width: '24px', height: '1px', background: config.accent }} />
+                <h2 style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: config.accent, fontFamily: 'ui-monospace, monospace', fontWeight: 500, margin: 0 }}>
+                  {config.label} — {groupedAssets[tier].length}
+                </h2>
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '16px',
+              }}>
+                {groupedAssets[tier].map(asset => (
+                  <ScoreCard key={asset.symbol} asset={asset} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ maxWidth: '1400px', margin: '40px auto 0', borderTop: `1px solid ${PALETTE.border}`, paddingTop: '16px', fontSize: '10px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', lineHeight: 1.6 }}>
+        <div>Daily conviction scoring framework. Data refreshed at 12:00 UTC. Watchlist reviewed monthly.</div>
+        <div style={{ marginTop: '4px' }}>Dimensions: Institutional · Revenue · Regulatory · Supply · Wyckoff. Weights vary by asset type.</div>
+        <div style={{ marginTop: '4px' }}>Strong Accumulate fires when an already-Accumulate leader sees daily RSI flush with weekly + composite intact.</div>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Dashboard />);

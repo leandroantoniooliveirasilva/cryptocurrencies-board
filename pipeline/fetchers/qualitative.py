@@ -1,0 +1,222 @@
+"""Qualitative scoring via Claude CLI for regulatory and institutional metrics."""
+
+import json
+import logging
+import os
+import subprocess
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+# Cache for qualitative scores (refresh weekly)
+_score_cache: dict = {}
+
+# Use Claude CLI (subscription) or API
+USE_CLI = os.environ.get("USE_CLAUDE_CLI", "true").lower() == "true"
+
+
+REGULATORY_PROMPT = """Score the regulatory trajectory for {symbol} ({name}) on a 0-100 scale.
+
+Consider:
+- Jurisdictional clarity (is the asset's legal status settled in major markets like US, EU, UK?)
+- Recent enforcement actions or favorable rulings
+- Protocol-level compliance features
+- Institutional adoption as a regulatory signal
+- ETF approvals or applications
+
+Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences>"}}
+No other text."""
+
+INSTITUTIONAL_PROMPT = """Score the institutional adoption for {symbol} ({name}) on a 0-100 scale.
+
+Consider:
+- Major fund/company holdings or investments
+- ETF products available
+- Custody solutions from major providers
+- Integration with traditional finance infrastructure
+- Corporate treasury adoption
+- Presence on institutional trading platforms
+
+Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences>"}}
+No other text."""
+
+
+def score_regulatory(symbol: str, name: str, use_cache: bool = True) -> dict:
+    """
+    Score regulatory trajectory using Claude.
+
+    Args:
+        symbol: Asset symbol (e.g., 'BTC')
+        name: Asset name (e.g., 'Bitcoin')
+        use_cache: Whether to use cached scores
+
+    Returns:
+        Dict with 'score' (int) and 'rationale' (str)
+    """
+    cache_key = f"regulatory_{symbol}"
+
+    if use_cache and cache_key in _score_cache:
+        return _score_cache[cache_key]
+
+    result = _query_claude(
+        REGULATORY_PROMPT.format(symbol=symbol, name=name), cache_key
+    )
+
+    if result:
+        _score_cache[cache_key] = result
+        return result
+
+    # Fallback scores based on known assets
+    return _get_fallback_regulatory(symbol)
+
+
+def score_institutional(symbol: str, name: str, use_cache: bool = True) -> dict:
+    """
+    Score institutional adoption using Claude.
+
+    Args:
+        symbol: Asset symbol (e.g., 'BTC')
+        name: Asset name (e.g., 'Bitcoin')
+        use_cache: Whether to use cached scores
+
+    Returns:
+        Dict with 'score' (int) and 'rationale' (str)
+    """
+    cache_key = f"institutional_{symbol}"
+
+    if use_cache and cache_key in _score_cache:
+        return _score_cache[cache_key]
+
+    result = _query_claude(
+        INSTITUTIONAL_PROMPT.format(symbol=symbol, name=name), cache_key
+    )
+
+    if result:
+        _score_cache[cache_key] = result
+        return result
+
+    # Fallback scores based on known assets
+    return _get_fallback_institutional(symbol)
+
+
+def _query_claude(prompt: str, cache_key: str) -> Optional[dict]:
+    """Query Claude via CLI or API and parse JSON response."""
+    if USE_CLI:
+        return _query_claude_cli(prompt, cache_key)
+    else:
+        return _query_claude_api(prompt, cache_key)
+
+
+def _query_claude_cli(prompt: str, cache_key: str) -> Optional[dict]:
+    """Query Claude using the CLI (subscription-based)."""
+    try:
+        # Use claude CLI with --print flag for non-interactive output
+        result = subprocess.run(
+            ["claude", "--print", "--model", "sonnet", prompt],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+
+        if result.returncode != 0:
+            logger.warning(f"Claude CLI error for {cache_key}: {result.stderr}")
+            return None
+
+        text = result.stdout.strip()
+        return _parse_json_response(text, cache_key)
+
+    except subprocess.TimeoutExpired:
+        logger.warning(f"Claude CLI timeout for {cache_key}")
+        return None
+    except FileNotFoundError:
+        logger.warning("Claude CLI not found. Install with: npm install -g @anthropic-ai/claude-code")
+        return None
+    except Exception as e:
+        logger.warning(f"Claude CLI error for {cache_key}: {e}")
+        return None
+
+
+def _query_claude_api(prompt: str, cache_key: str) -> Optional[dict]:
+    """Query Claude using the API (requires ANTHROPIC_API_KEY)."""
+    try:
+        import anthropic
+        client = anthropic.Anthropic()
+
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=200,
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        text = response.content[0].text.strip()
+        return _parse_json_response(text, cache_key)
+
+    except ImportError:
+        logger.warning("anthropic package not installed")
+        return None
+    except Exception as e:
+        logger.warning(f"Claude API error for {cache_key}: {e}")
+        return None
+
+
+def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
+    """Parse JSON from Claude response."""
+    try:
+        # Handle potential markdown code blocks
+        if "```" in text:
+            # Extract content between code blocks
+            parts = text.split("```")
+            for part in parts[1:]:
+                if part.startswith("json"):
+                    text = part[4:].strip()
+                    break
+                elif part.strip().startswith("{"):
+                    text = part.strip()
+                    break
+
+        # Find JSON object in text
+        start = text.find("{")
+        end = text.rfind("}") + 1
+        if start >= 0 and end > start:
+            text = text[start:end]
+
+        return json.loads(text)
+
+    except json.JSONDecodeError as e:
+        logger.warning(f"Failed to parse Claude response for {cache_key}: {e}")
+        logger.debug(f"Response was: {text[:500]}")
+        return None
+
+
+def _get_fallback_regulatory(symbol: str) -> dict:
+    """Fallback regulatory scores for known assets."""
+    fallbacks = {
+        "BTC": {"score": 88, "rationale": "ETF approved, commodity classification in most jurisdictions"},
+        "ETH": {"score": 82, "rationale": "ETF approved, regulatory clarity improving"},
+        "SOL": {"score": 78, "rationale": "Growing institutional interest, no adverse rulings"},
+        "LINK": {"score": 82, "rationale": "Enterprise partnerships signal regulatory comfort"},
+        "XRP": {"score": 82, "rationale": "SEC lawsuit partially resolved favorably"},
+        "AVAX": {"score": 72, "rationale": "No major regulatory issues, moderate clarity"},
+        "HBAR": {"score": 78, "rationale": "Enterprise governance structure helps compliance"},
+    }
+    return fallbacks.get(symbol, {"score": 65, "rationale": "Limited regulatory clarity"})
+
+
+def _get_fallback_institutional(symbol: str) -> dict:
+    """Fallback institutional scores for known assets."""
+    fallbacks = {
+        "BTC": {"score": 92, "rationale": "ETF flows, corporate treasuries, major custody support"},
+        "ETH": {"score": 85, "rationale": "ETF products, DeFi infrastructure for institutions"},
+        "SOL": {"score": 84, "rationale": "Growing fund holdings, major VC backing"},
+        "LINK": {"score": 88, "rationale": "Enterprise integrations, oracle standard"},
+        "XRP": {"score": 78, "rationale": "Banking partnerships, payment rails focus"},
+        "AVAX": {"score": 62, "rationale": "Some institutional interest, not tier-1"},
+        "HBAR": {"score": 68, "rationale": "Enterprise council, limited retail-focused"},
+    }
+    return fallbacks.get(symbol, {"score": 55, "rationale": "Limited institutional presence"})
+
+
+def clear_cache():
+    """Clear the score cache (call before weekly refresh)."""
+    global _score_cache
+    _score_cache = {}

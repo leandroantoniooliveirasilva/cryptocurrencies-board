@@ -1,0 +1,40 @@
+"""RSI (Relative Strength Index) calculation using Wilder's smoothing."""
+
+import numpy as np
+from typing import Optional
+
+
+def compute_rsi(prices: list[float], period: int = 14) -> Optional[float]:
+    """
+    Calculate RSI using Wilder's smoothing method.
+
+    Args:
+        prices: List of closing prices (oldest to newest)
+        period: RSI period (default 14)
+
+    Returns:
+        RSI value (0-100) or None if insufficient data
+    """
+    if len(prices) < period + 1:
+        return None
+
+    deltas = np.diff(prices)
+    gains = np.where(deltas > 0, deltas, 0)
+    losses = np.where(deltas < 0, -deltas, 0)
+
+    # Initial averages
+    avg_gain = float(np.mean(gains[:period]))
+    avg_loss = float(np.mean(losses[:period]))
+
+    # Wilder's smoothing for remaining periods
+    for i in range(period, len(deltas)):
+        avg_gain = (avg_gain * (period - 1) + gains[i]) / period
+        avg_loss = (avg_loss * (period - 1) + losses[i]) / period
+
+    if avg_loss == 0:
+        return 100.0
+
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+
+    return round(rsi, 1)

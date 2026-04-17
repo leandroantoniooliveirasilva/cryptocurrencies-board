@@ -1,0 +1,115 @@
+# Watchlist configuration
+# Tiers: leaders (core positions), runner_ups (promotion candidates), observation (watch only)
+#
+# Asset Types (for tiered weight calculation):
+#   - store-of-value: BTC and similar (institutional/supply focused)
+#   - smart-contract: L1 platforms like SOL, ETH, AVAX (balanced)
+#   - defi: DeFi protocols like LINK, AAVE, MORPHO (revenue focused)
+#   - infrastructure: Enterprise/infra like QNT, HBAR (institutional focused)
+#
+# Weight profiles by asset type:
+#   store-of-value:    Institutional 40%, Supply 25%, Regulatory 15%, Wyckoff 15%, Revenue 5%
+#   smart-contract:    Institutional 30%, Revenue 25%, Supply 20%, Regulatory 15%, Wyckoff 10%
+#   defi:              Revenue 35%, Institutional 25%, Regulatory 20%, Supply 15%, Wyckoff 5%
+#   infrastructure:    Institutional 35%, Regulatory 25%, Supply 20%, Revenue 10%, Wyckoff 10%
+
+leaders:
+  - symbol: BTC
+    name: Bitcoin
+    asset_type: store-of-value
+    coingecko_id: bitcoin
+    defillama_slug: null
+    wyckoff_override: "Phase B→C"
+
+  - symbol: SOL
+    name: Solana
+    asset_type: smart-contract
+    coingecko_id: solana
+    defillama_slug: solana
+    wyckoff_override: null
+
+  - symbol: LINK
+    name: Chainlink
+    asset_type: defi
+    coingecko_id: chainlink
+    defillama_slug: chainlink
+    wyckoff_override: null
+
+  - symbol: HYPE
+    name: Hyperliquid
+    asset_type: defi
+    coingecko_id: hyperliquid
+    defillama_slug: hyperliquid
+    wyckoff_override: null
+
+runner_ups:
+  - symbol: MORPHO
+    name: Morpho
+    asset_type: defi
+    coingecko_id: morpho
+    defillama_slug: morpho
+    wyckoff_override: null
+
+  - symbol: QNT
+    name: Quant
+    asset_type: infrastructure
+    coingecko_id: quant-network
+    defillama_slug: null
+    wyckoff_override: null
+
+  - symbol: XLM
+    name: Stellar
+    asset_type: infrastructure
+    coingecko_id: stellar
+    defillama_slug: null
+    wyckoff_override: null
+
+  - symbol: KAS
+    name: Kaspa
+    asset_type: store-of-value
+    coingecko_id: kaspa
+    defillama_slug: null
+    wyckoff_override: null
+
+observation:
+  - symbol: XRP
+    name: Ripple
+    asset_type: infrastructure
+    coingecko_id: ripple
+    defillama_slug: null
+    wyckoff_override: null
+
+  - symbol: AVAX
+    name: Avalanche
+    asset_type: smart-contract
+    coingecko_id: avalanche-2
+    defillama_slug: avalanche
+    wyckoff_override: null
+
+  - symbol: HBAR
+    name: Hedera
+    asset_type: infrastructure
+    coingecko_id: hedera-hashgraph
+    defillama_slug: null
+    wyckoff_override: null
+
+  - symbol: CANTON
+    name: Canton Network
+    asset_type: infrastructure
+    coingecko_id: null
+    defillama_slug: null
+    wyckoff_override: "Pre-market"
+
+  - symbol: ONDO
+    name: Ondo
+    asset_type: defi
+    coingecko_id: ondo-finance
+    defillama_slug: ondo-finance
+    wyckoff_override: null
+
+  - symbol: AAVE
+    name: Aave
+    asset_type: defi
+    coingecko_id: aave
+    defillama_slug: aave
+    wyckoff_override: null

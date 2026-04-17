@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.crypto.scoring</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board/scripts/run-local.sh</string>
+    </array>
+
+    <!-- Run daily at 12:00 UTC (adjust Hour if your local timezone differs from UTC) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>12</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Also run on load (for testing) -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- Working directory -->
+    <key>WorkingDirectory</key>
+    <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board</string>
+
+    <!-- Environment variables -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+        <key>USE_CLAUDE_CLI</key>
+        <string>true</string>
+    </dict>
+
+    <!-- Logging -->
+    <key>StandardOutPath</key>
+    <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board/logs/launchd.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board/logs/launchd.err.log</string>
+
+    <!-- Keep alive settings -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- Nice level (lower priority) -->
+    <key>Nice</key>
+    <integer>10</integer>
+</dict>
+</plist>
