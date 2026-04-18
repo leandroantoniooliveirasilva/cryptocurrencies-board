@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T01:07:36.318561+00:00",
+  "generated_at": "2026-04-18T01:28:48.865067+00:00",
   "snapshot_date": "2026-04-18",
   "framework_version": "2.0",
   "weight_profiles": {
@@ -43,7 +43,7 @@
         "revenue": 50,
         "regulatory": 88,
         "supply": 95,
-        "wyckoff": 65
+        "wyckoff": 70
       },
       "weights": {
         "institutional": 0.4,
@@ -52,21 +52,21 @@
         "wyckoff": 0.15,
         "revenue": 0.05
       },
-      "composite": 86,
-      "composite_last_week": 86,
+      "composite": 87,
+      "composite_last_week": 87,
       "wyckoff_phase": "Phase B\u2192C",
       "trend": [
         74,
-        86,
-        86
+        87,
+        87
       ],
       "trend_30d": [
         74,
-        86,
-        86
+        87,
+        87
       ],
-      "rsi_daily": 63.8,
-      "rsi_weekly": 40.0,
+      "rsi_daily": 63.4,
+      "rsi_weekly": 40.1,
       "action": "accumulate",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -82,7 +82,7 @@
         "revenue": 50,
         "regulatory": 78,
         "supply": 70,
-        "wyckoff": 55
+        "wyckoff": 58
       },
       "weights": {
         "institutional": 0.3,
@@ -93,7 +93,7 @@
       },
       "composite": 69,
       "composite_last_week": 69,
-      "wyckoff_phase": "Phase A",
+      "wyckoff_phase": "Accumulation Phase B",
       "trend": [
         68,
         69,
@@ -104,12 +104,12 @@
         69,
         69
       ],
-      "rsi_daily": 57.6,
-      "rsi_weekly": 35.3,
+      "rsi_daily": 57.2,
+      "rsi_weekly": 35.4,
       "action": "hold",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "High-throughput L1, DeFi ecosystem"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "LINK",
@@ -121,7 +121,7 @@
         "revenue": 50,
         "regulatory": 82,
         "supply": 70,
-        "wyckoff": 55
+        "wyckoff": 70
       },
       "weights": {
         "revenue": 0.35,
@@ -130,25 +130,25 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 69,
-      "composite_last_week": 69,
-      "wyckoff_phase": "Phase A",
+      "composite": 70,
+      "composite_last_week": 70,
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         70,
-        69,
-        69
+        70,
+        70
       ],
       "trend_30d": [
         70,
-        69,
-        69
+        70,
+        70
       ],
       "rsi_daily": 59.1,
-      "rsi_weekly": 35.9,
+      "rsi_weekly": 35.8,
       "action": "hold",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "Strong institutional adoption"
+      "note": "Strong institutional adoption. Wyckoff spring zone"
     },
     {
       "symbol": "HYPE",
@@ -160,7 +160,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 60,
-        "wyckoff": 55
+        "wyckoff": 35
       },
       "weights": {
         "revenue": 0.35,
@@ -169,25 +169,25 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 56,
-      "composite_last_week": 56,
-      "wyckoff_phase": "Phase A",
+      "composite": 55,
+      "composite_last_week": 55,
+      "wyckoff_phase": "Distribution Phase B",
       "trend": [
         56,
-        56,
-        56
+        55,
+        55
       ],
       "trend_30d": [
         56,
-        56,
-        56
+        55,
+        55
       ],
-      "rsi_daily": 66.0,
-      "rsi_weekly": 68.7,
-      "action": "hold",
+      "rsi_daily": 65.8,
+      "rsi_weekly": 68.9,
+      "action": "stand-aside",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "Revenue-per-user sector leader"
+      "note": "Distribution risk"
     },
     {
       "symbol": "MORPHO",
@@ -199,7 +199,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 55,
-        "wyckoff": 55
+        "wyckoff": 35
       },
       "weights": {
         "revenue": 0.35,
@@ -208,25 +208,25 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 55,
-      "composite_last_week": 55,
-      "wyckoff_phase": "Phase A",
+      "composite": 54,
+      "composite_last_week": 54,
+      "wyckoff_phase": "Distribution Phase B",
       "trend": [
         56,
-        55,
-        55
+        54,
+        54
       ],
       "trend_30d": [
         56,
-        55,
-        55
+        54,
+        54
       ],
-      "rsi_daily": 56.1,
-      "rsi_weekly": 65.6,
-      "action": "hold",
+      "rsi_daily": 55.3,
+      "rsi_weekly": 65.5,
+      "action": "stand-aside",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "DeFi protocol, revenue-focused"
+      "note": "Distribution risk"
     },
     {
       "symbol": "QNT",
@@ -238,7 +238,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 75,
-        "wyckoff": 55
+        "wyckoff": 65
       },
       "weights": {
         "institutional": 0.35,
@@ -247,25 +247,25 @@
         "revenue": 0.1,
         "wyckoff": 0.1
       },
-      "composite": 61,
-      "composite_last_week": 61,
-      "wyckoff_phase": "Phase A",
+      "composite": 62,
+      "composite_last_week": 62,
+      "wyckoff_phase": "Re-accumulation",
       "trend": [
         56,
-        61,
-        61
+        62,
+        62
       ],
       "trend_30d": [
         56,
-        61,
-        61
+        62,
+        62
       ],
-      "rsi_daily": 55.6,
-      "rsi_weekly": 50.3,
+      "rsi_daily": 56.9,
+      "rsi_weekly": 50.0,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "Enterprise interoperability"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "XLM",
@@ -277,7 +277,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 65,
-        "wyckoff": 55
+        "wyckoff": 70
       },
       "weights": {
         "institutional": 0.35,
@@ -286,25 +286,25 @@
         "revenue": 0.1,
         "wyckoff": 0.1
       },
-      "composite": 59,
-      "composite_last_week": 59,
-      "wyckoff_phase": "Phase A",
+      "composite": 60,
+      "composite_last_week": 60,
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         56,
-        59,
-        59
+        60,
+        60
       ],
       "trend_30d": [
         56,
-        59,
-        59
+        60,
+        60
       ],
-      "rsi_daily": 57.7,
+      "rsi_daily": 57.4,
       "rsi_weekly": 34.3,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "Infrastructure/enterprise"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "KAS",
@@ -316,7 +316,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 60,
-        "wyckoff": 55
+        "wyckoff": 42
       },
       "weights": {
         "institutional": 0.4,
@@ -325,21 +325,21 @@
         "wyckoff": 0.15,
         "revenue": 0.05
       },
-      "composite": 58,
-      "composite_last_week": 58,
-      "wyckoff_phase": "Phase A",
+      "composite": 56,
+      "composite_last_week": 56,
+      "wyckoff_phase": "Downtrend",
       "trend": [
         56,
-        58,
-        58
+        56,
+        56
       ],
       "trend_30d": [
         56,
-        58,
-        58
+        56,
+        56
       ],
-      "rsi_daily": 54.6,
-      "rsi_weekly": 38.0,
+      "rsi_daily": 54.7,
+      "rsi_weekly": 38.4,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -355,7 +355,7 @@
         "revenue": 50,
         "regulatory": 82,
         "supply": 60,
-        "wyckoff": 55
+        "wyckoff": 70
       },
       "weights": {
         "institutional": 0.35,
@@ -364,25 +364,25 @@
         "revenue": 0.1,
         "wyckoff": 0.1
       },
-      "composite": 70,
-      "composite_last_week": 70,
-      "wyckoff_phase": "Phase A",
+      "composite": 72,
+      "composite_last_week": 72,
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         67,
-        70,
-        70
+        72,
+        72
       ],
       "trend_30d": [
         67,
-        70,
-        70
+        72,
+        72
       ],
-      "rsi_daily": 62.2,
-      "rsi_weekly": 35.0,
+      "rsi_daily": 61.6,
+      "rsi_weekly": 35.5,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "Cross-border payments"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "AVAX",
@@ -394,7 +394,7 @@
         "revenue": 50,
         "regulatory": 72,
         "supply": 65,
-        "wyckoff": 55
+        "wyckoff": 75
       },
       "weights": {
         "institutional": 0.3,
@@ -403,25 +403,25 @@
         "regulatory": 0.15,
         "wyckoff": 0.1
       },
-      "composite": 60,
-      "composite_last_week": 60,
-      "wyckoff_phase": "Phase A",
+      "composite": 62,
+      "composite_last_week": 62,
+      "wyckoff_phase": "Accumulation Phase C",
       "trend": [
         60,
-        60,
-        60
+        62,
+        62
       ],
       "trend_30d": [
         60,
-        60,
-        60
+        62,
+        62
       ],
-      "rsi_daily": 56.5,
-      "rsi_weekly": 37.5,
+      "rsi_daily": 56.2,
+      "rsi_weekly": 37.3,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "Subnet architecture"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "AAVE",
@@ -433,7 +433,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 65,
-        "wyckoff": 55
+        "wyckoff": 70
       },
       "weights": {
         "revenue": 0.35,
@@ -442,25 +442,25 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 57,
-      "composite_last_week": 57,
-      "wyckoff_phase": "Phase A",
+      "composite": 58,
+      "composite_last_week": 58,
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         56,
-        57,
-        57
+        58,
+        58
       ],
       "trend_30d": [
         56,
-        57,
-        57
+        58,
+        58
       ],
-      "rsi_daily": 66.9,
+      "rsi_daily": 66.2,
       "rsi_weekly": 38.4,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "DeFi protocol, revenue-focused"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "SUI",
@@ -471,8 +471,8 @@
         "institutional": 72,
         "revenue": 50,
         "regulatory": 72,
-        "supply": 50,
-        "wyckoff": 55
+        "supply": 60,
+        "wyckoff": 75
       },
       "weights": {
         "institutional": 0.3,
@@ -481,21 +481,23 @@
         "regulatory": 0.15,
         "wyckoff": 0.1
       },
-      "composite": 60,
-      "composite_last_week": 60,
-      "wyckoff_phase": "Phase A",
+      "composite": 64,
+      "composite_last_week": 64,
+      "wyckoff_phase": "Accumulation Phase C",
       "trend": [
-        60
+        60,
+        64
       ],
       "trend_30d": [
-        60
+        60,
+        64
       ],
-      "rsi_daily": 61.2,
+      "rsi_daily": 60.6,
       "rsi_weekly": 36.8,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
-      "note": "Smart contract platform"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "HBAR",
@@ -507,7 +509,7 @@
         "revenue": 50,
         "regulatory": 78,
         "supply": 55,
-        "wyckoff": 55
+        "wyckoff": 70
       },
       "weights": {
         "institutional": 0.35,
@@ -516,25 +518,25 @@
         "revenue": 0.1,
         "wyckoff": 0.1
       },
-      "composite": 65,
-      "composite_last_week": 65,
-      "wyckoff_phase": "Phase A",
+      "composite": 66,
+      "composite_last_week": 66,
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         63,
-        65,
-        65
+        66,
+        66
       ],
       "trend_30d": [
         63,
-        65,
-        65
+        66,
+        66
       ],
-      "rsi_daily": 51.5,
-      "rsi_weekly": 36.2,
+      "rsi_daily": 51.4,
+      "rsi_weekly": 36.5,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "Infrastructure/enterprise"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "CANTON",
@@ -546,7 +548,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 50,
-        "wyckoff": 45
+        "wyckoff": 50
       },
       "weights": {
         "institutional": 0.35,
@@ -555,18 +557,18 @@
         "revenue": 0.1,
         "wyckoff": 0.1
       },
-      "composite": 55,
-      "composite_last_week": 55,
+      "composite": 56,
+      "composite_last_week": 56,
       "wyckoff_phase": "Pre-market",
       "trend": [
         54,
-        55,
-        55
+        56,
+        56
       ],
       "trend_30d": [
         54,
-        55,
-        55
+        56,
+        56
       ],
       "rsi_daily": null,
       "rsi_weekly": null,
@@ -585,7 +587,7 @@
         "revenue": 50,
         "regulatory": 65,
         "supply": 55,
-        "wyckoff": 55
+        "wyckoff": 70
       },
       "weights": {
         "revenue": 0.35,
@@ -594,25 +596,25 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 55,
-      "composite_last_week": 55,
-      "wyckoff_phase": "Phase A",
+      "composite": 56,
+      "composite_last_week": 56,
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         56,
-        55,
-        55
+        56,
+        56
       ],
       "trend_30d": [
         56,
-        55,
-        55
+        56,
+        56
       ],
-      "rsi_daily": 55.3,
-      "rsi_weekly": 33.0,
+      "rsi_daily": 54.7,
+      "rsi_weekly": 33.1,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
-      "note": "DeFi protocol, revenue-focused"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "TAO",
@@ -623,8 +625,8 @@
         "institutional": 45,
         "revenue": 50,
         "regulatory": 68,
-        "supply": 50,
-        "wyckoff": 55
+        "supply": 55,
+        "wyckoff": 52
       },
       "weights": {
         "institutional": 0.35,
@@ -633,21 +635,23 @@
         "revenue": 0.1,
         "wyckoff": 0.1
       },
-      "composite": 53,
-      "composite_last_week": 53,
-      "wyckoff_phase": "Phase A",
+      "composite": 54,
+      "composite_last_week": 54,
+      "wyckoff_phase": "Accumulation Phase A",
       "trend": [
-        53
+        53,
+        54
       ],
       "trend_30d": [
-        53
+        53,
+        54
       ],
-      "rsi_daily": 43.6,
-      "rsi_weekly": 50.9,
+      "rsi_daily": 43.7,
+      "rsi_weekly": 50.8,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
-      "note": "Infrastructure/enterprise"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "PENDLE",
@@ -658,8 +662,8 @@
         "institutional": 25,
         "revenue": 50,
         "regulatory": 42,
-        "supply": 50,
-        "wyckoff": 55
+        "supply": 55,
+        "wyckoff": 75
       },
       "weights": {
         "revenue": 0.35,
@@ -668,21 +672,23 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 42,
-      "composite_last_week": 42,
-      "wyckoff_phase": "Phase A",
+      "composite": 44,
+      "composite_last_week": 44,
+      "wyckoff_phase": "Accumulation Phase C",
       "trend": [
-        42
+        43,
+        44
       ],
       "trend_30d": [
-        42
+        43,
+        44
       ],
-      "rsi_daily": 62.3,
-      "rsi_weekly": 35.8,
+      "rsi_daily": 62.4,
+      "rsi_weekly": 35.6,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
-      "note": "DeFi protocol, revenue-focused"
+      "note": "Wyckoff spring zone"
     },
     {
       "symbol": "ENA",
@@ -694,7 +700,7 @@
         "revenue": 50,
         "regulatory": 42,
         "supply": 50,
-        "wyckoff": 55
+        "wyckoff": 70
       },
       "weights": {
         "revenue": 0.35,
@@ -703,21 +709,23 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 54,
-      "composite_last_week": 54,
-      "wyckoff_phase": "Phase A",
+      "composite": 55,
+      "composite_last_week": 55,
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
-        54
+        55,
+        55
       ],
       "trend_30d": [
-        54
+        55,
+        55
       ],
-      "rsi_daily": 64.6,
-      "rsi_weekly": 27.9,
+      "rsi_daily": 64.2,
+      "rsi_weekly": 28.1,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
-      "note": "DeFi protocol, revenue-focused"
+      "note": "Wyckoff spring zone"
     }
   ]
 }
