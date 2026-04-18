@@ -8,7 +8,7 @@ const BREAKPOINTS = {
 };
 
 // Minimum composite score threshold - assets below this are not displayed
-const MIN_SCORE_THRESHOLD = 60;
+const MIN_SCORE_THRESHOLD = 50;
 
 // Hook to detect mobile viewport
 function useIsMobile() {
