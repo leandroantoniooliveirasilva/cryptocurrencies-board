@@ -760,7 +760,7 @@ function ActionSummary({ assets, isMobile }) {
         marginBottom: `${SPACE.md}px`,
         fontFamily: 'ui-monospace, monospace',
       }}>
-        Actions Required
+        Recommended Actions
       </div>
       <div style={{
         display: 'flex',
@@ -814,15 +814,21 @@ function ActionSummary({ assets, isMobile }) {
                 gap: SPACE.sm,
                 flex: 1,
               }}>
-                {items.map(asset => (
+                {items.map(asset => {
+                  // Ensure readable text: use light text on dark bg, dark text on light bg
+                  const isLightBg = action === 'strong-accumulate' || action === 'accumulate';
+                  const badgeBg = isLightBg ? 'rgba(0,0,0,0.15)' : PALETTE.cardInset;
+                  const badgeColor = isLightBg ? '#0a1a20' : PALETTE.textPrimary;
+
+                  return (
                   <span
                     key={asset.symbol}
                     style={{
                       fontSize: TYPE.small,
                       fontFamily: 'Georgia, serif',
-                      color: cfg.fg || PALETTE.textPrimary,
+                      color: badgeColor,
                       padding: `2px ${SPACE.sm}px`,
-                      background: action === 'strong-accumulate' ? 'rgba(0,0,0,0.2)' : PALETTE.cardInset,
+                      background: badgeBg,
                       borderRadius: '2px',
                     }}
                   >
@@ -831,7 +837,8 @@ function ActionSummary({ assets, isMobile }) {
                       {asset.composite}
                     </span>
                   </span>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );
