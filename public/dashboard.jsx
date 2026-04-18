@@ -956,6 +956,7 @@ function Dashboard() {
   const [assets, setAssets] = useState([]);
   const [generatedAt, setGeneratedAt] = useState(null);
   const [thresholds, setThresholds] = useState(DEFAULT_THRESHOLDS);
+  const [gli, setGli] = useState(null); // Global Liquidity Index status
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTier, setActiveTier] = useState('all');
@@ -976,6 +977,10 @@ function Dashboard() {
         // Load thresholds from backend, fallback to defaults
         if (data.thresholds) {
           setThresholds({ ...DEFAULT_THRESHOLDS, ...data.thresholds });
+        }
+        // Load GLI (Global Liquidity Index) status
+        if (data.gli) {
+          setGli(data.gli);
         }
         setLoading(false);
       })
@@ -1060,9 +1065,19 @@ function Dashboard() {
               Multi-dimensional scoring for long-term crypto accumulation. Identifies <em>what</em> to buy based on fundamentals, <em>when</em> to buy based on technicals.
             </div>
             {generatedAt && (
-              <div style={{ fontSize: TYPE.small, color: isStale(generatedAt, thresholds.stale_hours) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
+              <div style={{ fontSize: TYPE.small, color: isStale(generatedAt, thresholds.stale_hours) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexWrap: 'wrap' }}>
                 {isStale(generatedAt, thresholds.stale_hours) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
                 <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt, thresholds.stale_hours) ? ' · Data may be stale' : ''}</span>
+                {gli && gli.enabled && gli.source !== 'fallback' && (
+                  <span style={{
+                    color: gli.downtrend ? '#d49a6a' : '#6a9a90',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: `${SPACE.xs}px`,
+                  }}>
+                    · GLI {gli.downtrend ? '▼ contracting' : '▲ expanding'}
+                  </span>
+                )}
               </div>
             )}
           </div>

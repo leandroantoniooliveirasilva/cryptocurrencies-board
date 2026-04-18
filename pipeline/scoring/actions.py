@@ -14,6 +14,7 @@ def derive_action(
     trend_30d: list[int],
     rsi_daily: Optional[float],
     rsi_weekly: Optional[float],
+    gli_downtrend: bool = False,
 ) -> str:
     """
     Derive action state based on scores and indicators.
@@ -31,6 +32,10 @@ def derive_action(
     1. Wyckoff-based: Phase C/B→C + composite ≥threshold + stable trend + weekly RSI <overbought
     2. Capitulation: Weekly RSI <threshold (quality assets recover from panic selling)
 
+    Macro filter:
+    - GLI (Global Liquidity Index): When GLI is in downtrend (today < 75d ago),
+      strong-accumulate signals are downgraded to regular accumulate.
+
     All thresholds are configured in config.yaml.
 
     Args:
@@ -42,6 +47,7 @@ def derive_action(
         trend_30d: Last 30 days of composite scores
         rsi_daily: Daily RSI(14) or None
         rsi_weekly: Weekly RSI(14) or None
+        gli_downtrend: True if Global Liquidity Index is contracting
 
     Returns:
         Action state string
@@ -73,6 +79,9 @@ def derive_action(
         if weekly_capitulation:
             # Both daily AND weekly deeply oversold = strong capitulation
             if daily_capitulation:
+                # GLI filter: downgrade strong-accumulate when liquidity contracting
+                if gli_downtrend:
+                    return "accumulate"
                 return "strong-accumulate"
             # Weekly deeply oversold alone = accumulate signal
             return "accumulate"
@@ -100,6 +109,9 @@ def derive_action(
             weekly_intact = rsi_weekly is not None and rsi_weekly >= rsi_cfg.intact_weekly
 
             if daily_oversold and weekly_intact and composite_stable:
+                # GLI filter: downgrade strong-accumulate when liquidity contracting
+                if gli_downtrend:
+                    return "accumulate"
                 return "strong-accumulate"
             return "accumulate"
 

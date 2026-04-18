@@ -17,7 +17,7 @@ from pathlib import Path
 import yaml
 
 from pipeline.config import config
-from pipeline.fetchers import defillama, qualitative, supply
+from pipeline.fetchers import defillama, gli, qualitative, supply
 from pipeline.scoring import actions, composite, rsi, wyckoff
 from pipeline.storage import migrations
 
@@ -90,7 +90,7 @@ def load_config() -> dict:
         return {"leaders": [], "runner_ups": [], "observation": []}
 
 
-def build_asset(entry: dict, tier: str, conn) -> dict:
+def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> dict:
     """
     Build complete asset data from config entry.
 
@@ -98,6 +98,7 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
         entry: Asset config from YAML
         tier: Asset tier (leader, runner-up, observation)
         conn: Database connection
+        gli_downtrend: True if Global Liquidity Index is contracting
 
     Returns:
         Complete asset dict for dashboard
@@ -207,7 +208,7 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     else:
         trend_30d = [composite_score]
 
-    # Derive action
+    # Derive action (with GLI macro filter)
     action = actions.derive_action(
         composite=composite_score,
         composite_last_week=composite_last_week or composite_score,
@@ -217,6 +218,7 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
         trend_30d=trend_30d,
         rsi_daily=rsi_daily,
         rsi_weekly=rsi_weekly,
+        gli_downtrend=gli_downtrend,
     )
 
     # Get action metadata
@@ -505,14 +507,25 @@ def main():
     logger.info("Starting daily scoring pipeline (v2 - tiered weights)")
     logger.info("=" * 60)
 
-    # Load config
-    config = load_config()
-    total_assets = sum(len(v) for k, v in config.items() if isinstance(v, list))
+    # Load asset definitions
+    assets_config = load_config()
+    total_assets = sum(len(v) for k, v in assets_config.items() if isinstance(v, list))
     logger.info(f"Loaded {total_assets} assets from config")
+
+    # Fetch Global Liquidity Index status (macro filter)
+    gli_data = gli.fetch_gli_data()
+    gli_downtrend = gli_data["downtrend"]
+    if gli_data["source"] != "fallback":
+        logger.info(f"GLI status: {'contracting' if gli_downtrend else 'expanding'} (source: {gli_data['source']})")
+    else:
+        logger.info("GLI data unavailable - macro filter disabled")
 
     # Initialize database
     conn = migrations.init_db(DB_PATH)
     today = date.today().isoformat()
+
+    # Import config singleton for thresholds (distinct from assets_config YAML)
+    from pipeline.config import config as cfg
 
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -520,29 +533,37 @@ def main():
         "framework_version": "2.0",
         "weight_profiles": composite.WEIGHTS_BY_TYPE,
         "thresholds": {
-            "min_display_score": config.composite.min_display_score,
-            "stale_hours": config.display.stale_hours,
+            "min_display_score": cfg.composite.min_display_score,
+            "stale_hours": cfg.display.stale_hours,
             "rsi": {
-                "overbought": config.rsi.overbought_weekly,
-                "oversold": config.rsi.oversold_daily,
-                "capitulation": config.rsi.capitulation_weekly,
+                "overbought": cfg.rsi.overbought_weekly,
+                "oversold": cfg.rsi.oversold_daily,
+                "capitulation": cfg.rsi.capitulation_weekly,
             },
+        },
+        "gli": {
+            "enabled": cfg.gli.enabled,
+            "downtrend": gli_downtrend,
+            "current": gli_data["current"],
+            "offset_value": gli_data["offset_value"],
+            "offset_days": gli_data["offset_days"],
+            "source": gli_data["source"],
         },
         "assets": [],
     }
 
     # Process all tiers
     tier_map = [
-        ("leader", config.get("leaders", [])),
-        ("runner-up", config.get("runner_ups", [])),
-        ("observation", config.get("observation", [])),
+        ("leader", assets_config.get("leaders", [])),
+        ("runner-up", assets_config.get("runner_ups", [])),
+        ("observation", assets_config.get("observation", [])),
     ]
 
     for tier, entries in tier_map:
         logger.info(f"\nProcessing {tier} tier ({len(entries)} assets)...")
         for entry in entries:
             try:
-                asset = build_asset(entry, tier, conn)
+                asset = build_asset(entry, tier, conn, gli_downtrend=gli_downtrend)
 
                 # Save to database
                 migrations.save_snapshot(conn, asset, today)

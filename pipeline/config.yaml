@@ -2,6 +2,23 @@
 # All signal-critical thresholds and scoring parameters
 
 # =============================================================================
+# GLOBAL LIQUIDITY INDEX (GLI) FILTER
+# =============================================================================
+# Macro filter: suppress strong-accumulate when global liquidity is contracting
+gli:
+  enabled: true
+  offset_days: 75                # Compare current GLI vs N days ago
+  # When GLI today < GLI N days ago, strong-accumulate downgrades to accumulate
+
+  # Data source options (in priority order):
+  # 1. Manual override in assets.yaml (gli_override: 1.05)
+  # 2. TradingView chart data (when available)
+  # 3. Fallback: assume neutral (no filter applied)
+
+  # TradingView symbol for Global Liquidity Index
+  tradingview_symbol: "ECONOMICS:GLI"
+
+# =============================================================================
 # RSI THRESHOLDS
 # =============================================================================
 rsi:
