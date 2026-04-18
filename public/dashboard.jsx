@@ -7,8 +7,16 @@ const BREAKPOINTS = {
   desktop: 1024,
 };
 
-// Minimum composite score threshold - assets below this are not displayed
-const MIN_SCORE_THRESHOLD = 50;
+// Default thresholds (overridden by backend config in latest.json)
+const DEFAULT_THRESHOLDS = {
+  min_display_score: 50,
+  stale_hours: 25,
+  rsi: {
+    overbought: 70,
+    oversold: 32,
+    capitulation: 30,
+  },
+};
 
 // Hook to detect mobile viewport
 function useIsMobile() {
@@ -186,12 +194,12 @@ function relativeTime(dateStr) {
   return date.toLocaleDateString();
 }
 
-function isStale(dateStr) {
+function isStale(dateStr, staleHours = 25) {
   if (!dateStr) return false;
   const date = new Date(dateStr);
   const now = new Date();
   const diffHours = (now - date) / 3600000;
-  return diffHours > 25; // Stale if >25 hours old
+  return diffHours > staleHours;
 }
 
 function Sparkline({ data, accent }) {
@@ -735,11 +743,11 @@ function ScoreCard({ asset, isMobile }) {
   );
 }
 
-function ActionSummary({ assets, isMobile }) {
+function ActionSummary({ assets, isMobile, minScore = 50 }) {
   // Get actionable items (not hold, await, observe) with score above threshold
   const actionableStates = ['strong-accumulate', 'accumulate', 'stand-aside', 'promote'];
   const actionableAssets = assets.filter(a =>
-    actionableStates.includes(a.action) && (a.composite || 0) >= MIN_SCORE_THRESHOLD
+    actionableStates.includes(a.action) && (a.composite || 0) >= minScore
   );
 
   if (actionableAssets.length === 0) return null;
@@ -947,6 +955,7 @@ function ErrorState({ error, onRetry }) {
 function Dashboard() {
   const [assets, setAssets] = useState([]);
   const [generatedAt, setGeneratedAt] = useState(null);
+  const [thresholds, setThresholds] = useState(DEFAULT_THRESHOLDS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTier, setActiveTier] = useState('all');
@@ -964,6 +973,10 @@ function Dashboard() {
       .then(data => {
         setAssets(data.assets || []);
         setGeneratedAt(data.generated_at);
+        // Load thresholds from backend, fallback to defaults
+        if (data.thresholds) {
+          setThresholds({ ...DEFAULT_THRESHOLDS, ...data.thresholds });
+        }
         setLoading(false);
       })
       .catch(err => {
@@ -977,10 +990,11 @@ function Dashboard() {
   }, []);
 
   const filteredAssets = useMemo(() => {
-    // Filter out assets below minimum score threshold
+    // Filter out assets below minimum score threshold (from config)
     // Leaders are ALWAYS shown regardless of score to ensure visibility of deteriorating positions
+    const minScore = thresholds.min_display_score;
     const qualified = assets.filter(a =>
-      (a.composite || 0) >= MIN_SCORE_THRESHOLD || a.tier === 'leader'
+      (a.composite || 0) >= minScore || a.tier === 'leader'
     );
 
     const sorted = [...qualified].sort((a, b) => {
@@ -993,7 +1007,7 @@ function Dashboard() {
     });
     if (activeTier === 'all') return sorted;
     return sorted.filter(a => a.tier === activeTier);
-  }, [activeTier, assets]);
+  }, [activeTier, assets, thresholds.min_display_score]);
 
   const groupedAssets = useMemo(() => {
     const groups = { leader: [], 'runner-up': [], observation: [] };
@@ -1007,7 +1021,7 @@ function Dashboard() {
     return groups;
   }, [filteredAssets]);
 
-  const strongCount = assets.filter(a => a.action === 'strong-accumulate' && (a.composite || 0) >= MIN_SCORE_THRESHOLD).length;
+  const strongCount = assets.filter(a => a.action === 'strong-accumulate' && (a.composite || 0) >= thresholds.min_display_score).length;
 
   if (loading) {
     return (
@@ -1046,9 +1060,9 @@ function Dashboard() {
               Multi-dimensional scoring for long-term crypto accumulation. Identifies <em>what</em> to buy based on fundamentals, <em>when</em> to buy based on technicals.
             </div>
             {generatedAt && (
-              <div style={{ fontSize: TYPE.small, color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
-                {isStale(generatedAt) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
-                <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt) ? ' · Data may be stale' : ''}</span>
+              <div style={{ fontSize: TYPE.small, color: isStale(generatedAt, thresholds.stale_hours) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
+                {isStale(generatedAt, thresholds.stale_hours) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
+                <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt, thresholds.stale_hours) ? ' · Data may be stale' : ''}</span>
               </div>
             )}
           </div>
@@ -1063,7 +1077,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <ActionSummary assets={assets} isMobile={isMobile} />
+      <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} />
 
       <ActionLegend isMobile={isMobile} />
 

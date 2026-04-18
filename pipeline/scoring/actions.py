@@ -2,6 +2,8 @@
 
 from typing import Optional
 
+from pipeline.config import config
+
 
 def derive_action(
     composite: int,
@@ -26,8 +28,10 @@ def derive_action(
     - stand-aside: Distribution risk or negative structural trend
 
     Accumulation triggers (leaders only):
-    1. Wyckoff-based: Phase C/B→C + composite ≥75 + stable trend + weekly RSI <70
-    2. Capitulation: Weekly RSI <30 (quality assets recover from panic selling)
+    1. Wyckoff-based: Phase C/B→C + composite ≥threshold + stable trend + weekly RSI <overbought
+    2. Capitulation: Weekly RSI <threshold (quality assets recover from panic selling)
+
+    All thresholds are configured in config.yaml.
 
     Args:
         composite: Current composite score
@@ -42,6 +46,11 @@ def derive_action(
     Returns:
         Action state string
     """
+    # Load thresholds from config
+    rsi_cfg = config.rsi
+    comp_cfg = config.composite
+    promo_cfg = config.promotion
+
     # Calculate deltas
     delta = _weekly_delta(trend_7d)
     delta_30 = _monthly_delta(trend_30d)
@@ -50,7 +59,7 @@ def derive_action(
     # Stand Aside overrides everything - structural break
     if "distribution" in phase_lower and delta < 0:
         return "stand-aside"
-    if delta <= -5:
+    if delta <= comp_cfg.stand_aside_delta:
         return "stand-aside"
 
     if tier == "leader":
@@ -58,8 +67,8 @@ def derive_action(
         # Extreme oversold on quality assets = buying opportunity
         # Leaders have proven fundamentals, so deep RSI readings represent
         # panic/capitulation that quality assets typically recover from.
-        weekly_capitulation = rsi_weekly is not None and rsi_weekly < 30
-        daily_capitulation = rsi_daily is not None and rsi_daily < 30
+        weekly_capitulation = rsi_weekly is not None and rsi_weekly < rsi_cfg.capitulation_weekly
+        daily_capitulation = rsi_daily is not None and rsi_daily < rsi_cfg.capitulation_daily
 
         if weekly_capitulation:
             # Both daily AND weekly deeply oversold = strong capitulation
@@ -76,16 +85,19 @@ def derive_action(
             "→c" in phase_lower or
             "->c" in phase_lower
         )
-        overbought = rsi_weekly is not None and rsi_weekly >= 70  # Conservative ceiling
+        overbought = rsi_weekly is not None and rsi_weekly >= rsi_cfg.overbought_weekly
         accumulate_regime = (
-            composite >= 75 and wyckoff_ready and delta >= 0 and not overbought
+            composite >= comp_cfg.accumulate_threshold and
+            wyckoff_ready and
+            delta >= 0 and
+            not overbought
         )
 
         if accumulate_regime:
             # Check Strong Accumulate conditions
-            composite_stable = (composite - composite_last_week) >= -3
-            daily_oversold = rsi_daily is not None and rsi_daily <= 32
-            weekly_intact = rsi_weekly is not None and rsi_weekly >= 42
+            composite_stable = (composite - composite_last_week) >= comp_cfg.stability_tolerance
+            daily_oversold = rsi_daily is not None and rsi_daily <= rsi_cfg.oversold_daily
+            weekly_intact = rsi_weekly is not None and rsi_weekly >= rsi_cfg.intact_weekly
 
             if daily_oversold and weekly_intact and composite_stable:
                 return "strong-accumulate"
@@ -94,7 +106,9 @@ def derive_action(
         return "hold"
 
     if tier == "runner-up":
-        if composite >= 75 and delta_30 >= 8 and delta >= 2:
+        if (composite >= promo_cfg.composite_threshold and
+            delta_30 >= promo_cfg.delta_30d and
+            delta >= promo_cfg.delta_7d):
             return "promote"
         return "await"
 

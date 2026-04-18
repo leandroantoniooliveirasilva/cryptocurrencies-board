@@ -16,6 +16,7 @@ from pathlib import Path
 
 import yaml
 
+from pipeline.config import config
 from pipeline.fetchers import defillama, qualitative, supply
 from pipeline.scoring import actions, composite, rsi, wyckoff
 from pipeline.storage import migrations
@@ -114,22 +115,24 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     defi_data = defillama.fetch_defillama_data(defillama_slug)
 
     # Fetch daily prices for RSI from DefiLlama (free, no rate limits)
-    # Use 120 days to ensure enough weekly data points (need 15+ weeks)
-    daily_prices = defillama.fetch_daily_prices(coingecko_id, days=120) if coingecko_id else None
+    # Days configured in config.yaml to ensure enough weekly data points
+    data_cfg = config.data
+    daily_prices = defillama.fetch_daily_prices(coingecko_id, days=data_cfg.price_history_days) if coingecko_id else None
     daily_prices = daily_prices or []  # Handle None from API failures
 
     # For weekly RSI, group by ISO week and take last price of each week
     # This handles missing days and data gaps correctly
     weekly_prices = _aggregate_weekly_prices(daily_prices)
 
-    rsi_daily = rsi.compute_rsi(daily_prices, 14) if len(daily_prices) >= 15 else None
-    rsi_weekly = rsi.compute_rsi(weekly_prices, 14) if len(weekly_prices) >= 15 else None
+    rsi_period = config.rsi.period
+    rsi_daily = rsi.compute_rsi(daily_prices, rsi_period) if len(daily_prices) >= data_cfg.min_daily_points else None
+    rsi_weekly = rsi.compute_rsi(weekly_prices, rsi_period) if len(weekly_prices) >= data_cfg.min_weekly_points else None
 
     # Detect Wyckoff phase from price structure (or use manual override)
     if wyckoff_override:
         wyckoff_phase = wyckoff_override
         wyckoff_score = wyckoff.get_wyckoff_score(wyckoff_phase)
-    elif len(daily_prices) >= 30:
+    elif len(daily_prices) >= data_cfg.min_wyckoff_days:
         wyckoff_phase, wyckoff_score = wyckoff.detect_wyckoff_phase(daily_prices)
     else:
         wyckoff_phase = "Unknown"
@@ -516,6 +519,15 @@ def main():
         "snapshot_date": today,
         "framework_version": "2.0",
         "weight_profiles": composite.WEIGHTS_BY_TYPE,
+        "thresholds": {
+            "min_display_score": config.composite.min_display_score,
+            "stale_hours": config.display.stale_hours,
+            "rsi": {
+                "overbought": config.rsi.overbought_weekly,
+                "oversold": config.rsi.oversold_daily,
+                "capitulation": config.rsi.capitulation_weekly,
+            },
+        },
         "assets": [],
     }
 

@@ -1,0 +1,211 @@
+# Conviction Board Configuration
+# All signal-critical thresholds and scoring parameters
+
+# =============================================================================
+# RSI THRESHOLDS
+# =============================================================================
+rsi:
+  period: 14                    # RSI calculation period
+
+  # Capitulation detection (panic selling in quality assets)
+  capitulation_weekly: 30       # Weekly RSI below this = capitulation
+  capitulation_daily: 30        # Daily RSI below this = deep capitulation
+
+  # Accumulation zone detection
+  oversold_daily: 32            # Daily RSI for Wyckoff dislocation
+  intact_weekly: 42             # Weekly RSI must be above this for healthy structure
+
+  # Overbought detection (pause accumulation)
+  overbought_weekly: 70         # Weekly RSI above this = overbought
+
+# =============================================================================
+# COMPOSITE SCORE THRESHOLDS
+# =============================================================================
+composite:
+  # Accumulation triggers
+  accumulate_threshold: 75      # Composite must be >= this for accumulate signal
+
+  # Stability check (week-over-week)
+  stability_tolerance: -3       # Max acceptable weekly decline for "stable"
+
+  # Stand-aside triggers
+  stand_aside_delta: -5         # Weekly delta <= this = stand aside
+
+  # Display threshold (frontend)
+  min_display_score: 50         # Assets below this hidden (except leaders)
+
+# =============================================================================
+# PROMOTION THRESHOLDS (runner-up → leader)
+# =============================================================================
+promotion:
+  composite_threshold: 75       # Composite must be >= this
+  delta_30d: 8                  # 30-day trend must be >= this
+  delta_7d: 2                   # 7-day trend must be >= this
+
+# =============================================================================
+# WEIGHT PROFILES BY ASSET TYPE
+# =============================================================================
+weights:
+  store-of-value:
+    institutional: 0.40
+    supply: 0.25
+    regulatory: 0.15
+    wyckoff: 0.15
+    revenue: 0.05
+
+  smart-contract:
+    institutional: 0.30
+    revenue: 0.25
+    supply: 0.20
+    regulatory: 0.15
+    wyckoff: 0.10
+
+  defi:
+    revenue: 0.35
+    institutional: 0.25
+    regulatory: 0.20
+    supply: 0.15
+    wyckoff: 0.05
+
+  infrastructure:
+    institutional: 0.35
+    regulatory: 0.25
+    supply: 0.20
+    revenue: 0.10
+    wyckoff: 0.10
+
+  # Fallback for unknown asset types
+  default:
+    institutional: 0.30
+    revenue: 0.20
+    regulatory: 0.20
+    supply: 0.20
+    wyckoff: 0.10
+
+# =============================================================================
+# WYCKOFF PHASE DETECTION THRESHOLDS
+# =============================================================================
+wyckoff:
+  lookback_days: 90             # Days of price history to analyze
+
+  # Distribution phase thresholds
+  distribution:
+    phase_e:
+      pct_from_high: 30
+      trend_30d: -15
+    phase_d:
+      pct_from_high: 20
+      trend_7d: -5
+      trend_30d: -10
+    phase_c:
+      position_in_range: 0.8
+      trend_7d: -3
+      vol_ratio: 1.3
+    phase_b:
+      position_in_range: 0.75
+      trend_30d_abs: 8
+      pct_from_high: 15
+    phase_a:
+      position_in_range: 0.85
+      trend_30d: 15
+
+  # Accumulation phase thresholds
+  accumulation:
+    phase_e:
+      trend_30d: 20
+      trend_7d: 5
+      position_in_range: 0.7
+    phase_d:
+      trend_30d: 10
+      trend_7d: 0
+      position_in_range: 0.5
+    phase_c:
+      position_in_range: 0.35
+      trend_7d: 3
+      vol_ratio: 1.2
+    phase_b_to_c:
+      position_min: 0.2
+      position_max: 0.4
+      trend_30d_abs: 10
+    phase_b:
+      trend_30d_abs: 12
+      vol_ratio: 1.1
+      position_in_range: 0.5
+    phase_a:
+      pct_from_high: 25
+      trend_7d: -2
+      trend_30d: -5
+
+  # Trend thresholds
+  markup_trend_30d: 15
+  markdown_trend_30d: -15
+  range_trend_30d: 8
+
+  # Wyckoff phase scores (0-100, higher = more bullish)
+  scores:
+    distribution_phase_e: 20
+    distribution_phase_d: 25
+    distribution_phase_c: 30
+    distribution_phase_b: 35
+    distribution_phase_a: 40
+    distribution_default: 30
+    accumulation_phase_e: 90
+    accumulation_phase_d: 82
+    accumulation_phase_b_to_c: 70
+    accumulation_phase_c: 75
+    accumulation_phase_b: 60
+    accumulation_phase_a: 52
+    accumulation_default: 55
+    re_accumulation: 65
+    markup: 78
+    markdown: 28
+    range_upper: 55
+    range_lower: 48
+    range_default: 50
+    uptrend: 62
+    downtrend: 42
+    default: 50
+
+# =============================================================================
+# DATA FETCHING
+# =============================================================================
+data:
+  # Price history
+  price_history_days: 120       # Days of daily prices to fetch
+  min_daily_points: 15          # Minimum points for daily RSI
+  min_weekly_points: 15         # Minimum points for weekly RSI
+  min_wyckoff_days: 30          # Minimum days for Wyckoff detection
+
+  # Trend windows
+  trend_7d_window: 7
+  trend_30d_window: 30
+
+# =============================================================================
+# API CONFIGURATION
+# =============================================================================
+api:
+  coingecko:
+    timeout: 30
+    rate_limit_delay: 3.0
+    max_retries: 3
+
+  defillama:
+    timeout: 30
+    request_delay: 1.0
+
+  claude:
+    timeout: 60
+    max_tokens: 200
+
+# =============================================================================
+# CACHE SETTINGS
+# =============================================================================
+cache:
+  qualitative_score_days: 7     # Days to cache Claude-generated scores
+  supply_score_days: 7          # Days to cache supply analysis
+
+# =============================================================================
+# DISPLAY SETTINGS
+# =============================================================================
+display:
+  stale_hours: 25               # Hours after which data is considered stale

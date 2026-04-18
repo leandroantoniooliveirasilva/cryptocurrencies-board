@@ -12,58 +12,18 @@ Dimensions:
 - regulatory: Jurisdictional clarity, ETF approval status
 - supply: Exchange reserves, holder distribution, inflation
 - wyckoff: Technical phase (accumulation/distribution)
+
+All weight profiles are configured in config.yaml.
 """
 
 from typing import Optional
 
-# Tiered weights by asset type
-WEIGHTS_BY_TYPE = {
-    "store-of-value": {
-        "institutional": 0.40,
-        "supply": 0.25,
-        "regulatory": 0.15,
-        "wyckoff": 0.15,
-        "revenue": 0.05,
-    },
-    "smart-contract": {
-        "institutional": 0.30,
-        "revenue": 0.25,
-        "supply": 0.20,
-        "regulatory": 0.15,
-        "wyckoff": 0.10,
-    },
-    "defi": {
-        "revenue": 0.35,
-        "institutional": 0.25,
-        "regulatory": 0.20,
-        "supply": 0.15,
-        "wyckoff": 0.05,
-    },
-    "infrastructure": {
-        "institutional": 0.35,
-        "regulatory": 0.25,
-        "supply": 0.20,
-        "revenue": 0.10,
-        "wyckoff": 0.10,
-    },
-}
-
-# Default weights (balanced) for unknown asset types
-DEFAULT_WEIGHTS = {
-    "institutional": 0.30,
-    "revenue": 0.20,
-    "regulatory": 0.20,
-    "supply": 0.20,
-    "wyckoff": 0.10,
-}
-
-# Legacy weights for backward compatibility
-WEIGHTS = DEFAULT_WEIGHTS
+from pipeline.config import config
 
 
 def get_weights(asset_type: Optional[str] = None) -> dict:
     """
-    Get weight profile for an asset type.
+    Get weight profile for an asset type from config.
 
     Args:
         asset_type: One of 'store-of-value', 'smart-contract', 'defi', 'infrastructure'
@@ -71,9 +31,11 @@ def get_weights(asset_type: Optional[str] = None) -> dict:
     Returns:
         Dict of dimension weights summing to 1.0
     """
-    if asset_type and asset_type in WEIGHTS_BY_TYPE:
-        return WEIGHTS_BY_TYPE[asset_type]
-    return DEFAULT_WEIGHTS
+    return config.get_weights(asset_type or 'default')
+
+
+# Export for backward compatibility (used in run.py output)
+WEIGHTS_BY_TYPE = config.get_all_weights()
 
 
 def compute_composite(
