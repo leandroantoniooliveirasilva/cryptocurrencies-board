@@ -176,6 +176,12 @@ Personal project. Commit and push directly to main. No PR process needed.
 
 Commit format: conventional commits, under 100 chars, no footer signatures.
 
+**Author**: Commits must use `leandroantoniooliveirasilva@gmail.com` (personal account), NOT the work account. If using a separate git config, ensure the correct identity is set for this repo:
+```bash
+git config user.email "leandroantoniooliveirasilva@gmail.com"
+git config user.name "Leandro Silva"
+```
+
 ## Calibration Guidelines
 
 Track changes in `docs/decisions.md`. Watch for:
