@@ -726,6 +726,121 @@ function ScoreCard({ asset, isMobile }) {
   );
 }
 
+function ActionSummary({ assets, isMobile }) {
+  // Get actionable items (not hold, await, observe)
+  const actionableStates = ['strong-accumulate', 'accumulate', 'stand-aside', 'promote'];
+  const actionableAssets = assets.filter(a => actionableStates.includes(a.action));
+
+  if (actionableAssets.length === 0) return null;
+
+  // Group by action type
+  const grouped = actionableAssets.reduce((acc, asset) => {
+    const action = asset.action;
+    if (!acc[action]) acc[action] = [];
+    acc[action].push(asset);
+    return acc;
+  }, {});
+
+  // Order: strong-accumulate first, then accumulate, then promote, then stand-aside
+  const orderedActions = ['strong-accumulate', 'accumulate', 'promote', 'stand-aside'];
+
+  return (
+    <div style={{
+      maxWidth: '1400px',
+      margin: `0 auto ${SPACE.lg}px`,
+      padding: `${SPACE.base}px`,
+      background: PALETTE.cardBg,
+      border: `1px solid ${PALETTE.border}`,
+    }}>
+      <div style={{
+        fontSize: TYPE.caption,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: PALETTE.textMuted,
+        marginBottom: `${SPACE.md}px`,
+        fontFamily: 'ui-monospace, monospace',
+      }}>
+        Actions Required
+      </div>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: `${SPACE.sm}px`,
+      }}>
+        {orderedActions.map(action => {
+          const items = grouped[action];
+          if (!items || items.length === 0) return null;
+          const cfg = ACTION_CONFIG[action];
+          const ActionIcon = cfg.icon;
+
+          return (
+            <div
+              key={action}
+              style={{
+                display: 'flex',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? SPACE.xs : SPACE.md,
+                padding: `${SPACE.sm}px ${SPACE.md}px`,
+                background: cfg.bg || 'transparent',
+                border: cfg.border ? `1px solid ${cfg.dot}` : `1px solid transparent`,
+              }}
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: SPACE.sm,
+                minWidth: isMobile ? 'auto' : '160px',
+              }}>
+                {ActionIcon ? (
+                  <ActionIcon size={14} color={cfg.dot} strokeWidth={1.75} fill={action === 'strong-accumulate' ? cfg.dot : 'none'} />
+                ) : (
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.dot }} />
+                )}
+                <span style={{
+                  fontSize: TYPE.caption,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  fontFamily: 'ui-monospace, monospace',
+                  fontWeight: 600,
+                  color: cfg.fg,
+                }}>
+                  {cfg.label}
+                </span>
+              </div>
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: SPACE.sm,
+                flex: 1,
+              }}>
+                {items.map(asset => (
+                  <span
+                    key={asset.symbol}
+                    style={{
+                      fontSize: TYPE.small,
+                      fontFamily: 'Georgia, serif',
+                      color: cfg.fg || PALETTE.textPrimary,
+                      padding: `2px ${SPACE.sm}px`,
+                      background: action === 'strong-accumulate' ? 'rgba(0,0,0,0.2)' : PALETTE.cardInset,
+                      borderRadius: '2px',
+                    }}
+                  >
+                    {asset.symbol}
+                    <span style={{ opacity: 0.7, marginLeft: 4, fontSize: TYPE.caption }}>
+                      {asset.composite}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function ActionLegend({ isMobile }) {
   const items = [
     { key: 'strong-accumulate', text: 'Dislocation inside accumulation zone. Daily RSI ≤32, weekly ≥42, composite stable WoW. Shows day-counter when firing consecutively.' },
@@ -893,13 +1008,13 @@ function Dashboard() {
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', gap: `${SPACE.lg}px` }}>
           <div style={{ flex: '1 1 auto' }}>
             <div style={{ fontSize: TYPE.caption, letterSpacing: '0.15em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
-              Framework · Daily scan
+              Cryptocurrency Investment Framework
             </div>
             <h1 style={{ fontSize: isMobile ? '1.75rem' : TYPE.title, fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
-              Conviction Scores
+              Daily Conviction Signals
             </h1>
-            <div style={{ fontSize: TYPE.body, color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontStyle: 'italic' }}>
-              5 dimensions · Tiered weights by asset type · RSI confirmation layer
+            <div style={{ fontSize: TYPE.body, color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontFamily: 'Georgia, serif', lineHeight: TYPE.snug }}>
+              Multi-dimensional scoring for long-term crypto accumulation. Identifies <em>who</em> to buy based on fundamentals, <em>when</em> to buy based on technicals.
             </div>
             {generatedAt && (
               <div style={{ fontSize: TYPE.small, color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
@@ -919,14 +1034,16 @@ function Dashboard() {
         </div>
       </div>
 
+      <ActionSummary assets={assets} isMobile={isMobile} />
+
       <ActionLegend isMobile={isMobile} />
 
-      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, display: 'flex', gap: `${SPACE.sm}px`, flexWrap: 'wrap' }}>
+      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, display: 'flex', gap: isMobile ? `${SPACE.xs}px` : `${SPACE.sm}px`, flexWrap: 'nowrap' }}>
         {[
-          { id: 'all', label: 'All' },
-          { id: 'leader', label: 'Leaders' },
-          { id: 'runner-up', label: 'Runner-ups' },
-          { id: 'observation', label: 'Observation' },
+          { id: 'all', label: 'All', mobileLabel: 'All' },
+          { id: 'leader', label: 'Leaders', mobileLabel: 'Lead' },
+          { id: 'runner-up', label: 'Runner-ups', mobileLabel: 'Run' },
+          { id: 'observation', label: 'Observation', mobileLabel: 'Obs' },
         ].map(t => (
           <button
             key={t.id}
@@ -935,16 +1052,17 @@ function Dashboard() {
               background: activeTier === t.id ? PALETTE.textPrimary : 'transparent',
               color: activeTier === t.id ? PALETTE.bg : PALETTE.textPrimary,
               border: `1px solid ${PALETTE.borderStrong}`,
-              padding: isMobile ? `${SPACE.md}px ${SPACE.base}px` : `${SPACE.sm}px ${SPACE.base}px`,
-              minHeight: isMobile ? '44px' : 'auto',
-              fontSize: TYPE.small,
-              letterSpacing: '0.06em',
+              padding: isMobile ? `${SPACE.sm}px ${SPACE.md}px` : `${SPACE.sm}px ${SPACE.base}px`,
+              minHeight: isMobile ? '40px' : 'auto',
+              fontSize: isMobile ? TYPE.caption : TYPE.small,
+              letterSpacing: isMobile ? '0.04em' : '0.06em',
               textTransform: 'uppercase',
               fontFamily: 'ui-monospace, monospace',
               cursor: 'pointer',
+              flex: isMobile ? 1 : 'none',
             }}
           >
-            {t.label}
+            {isMobile ? t.mobileLabel : t.label}
           </button>
         ))}
       </div>
