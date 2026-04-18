@@ -35,6 +35,8 @@ const ArrowUpCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"
 const Zap = (props) => <Icon {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Icon>;
 const AlertCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
 const Loader2 = (props) => <Icon {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></Icon>;
+const X = (props) => <Icon {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
+const Info = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></Icon>;
 
 // Tiered weights by asset type
 const WEIGHTS_BY_TYPE = {
@@ -72,6 +74,26 @@ const SPACE = {
   '2xl': 48,
   '3xl': 64,
   '4xl': 96,
+};
+
+// Type scale: 1.25 ratio, rem-based for accessibility
+// Minimum readable size: 12px (0.75rem)
+const TYPE = {
+  // Sizes
+  caption: '0.75rem',    // 12px - minimum for labels
+  small: '0.8125rem',    // 13px - secondary text
+  body: '0.875rem',      // 14px - body copy
+  base: '1rem',          // 16px - emphasized body
+  subhead: '1.125rem',   // 18px - subheadings
+  heading: '1.5rem',     // 24px - card headings
+  title: '2rem',         // 32px - page title
+  display: '2.5rem',     // 40px - large numbers (mobile)
+  displayLg: '3rem',     // 48px - large numbers (desktop)
+  // Line heights
+  tight: 1.1,
+  snug: 1.25,
+  normal: 1.5,
+  relaxed: 1.65,
 };
 
 const DIMENSION_LABELS = {
@@ -198,7 +220,7 @@ function DimensionBar({ label, value, accent, weight }) {
 
   return (
     <div style={{ marginBottom: `${SPACE.md}px`, opacity: isMissing ? 0.6 : 1 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: TYPE.caption, letterSpacing: '0.05em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           {label}
           {weight && !isMissing && <span style={{ opacity: 0.6, marginLeft: `${SPACE.xs}px` }}>({Math.round(weight * 100)}%)</span>}
@@ -259,13 +281,13 @@ function RsiRow({ asset }) {
 
   const Cell = ({ label, value }) => (
     <div style={{ flex: 1, textAlign: 'center', padding: `${SPACE.sm}px ${SPACE.sm}px`, background: PALETTE.cardInset }}>
-      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', marginBottom: `${SPACE.xs}px` }}>
+      <div style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', marginBottom: `${SPACE.xs}px` }}>
         {label}
       </div>
-      <div style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 400, color: rsiColor(value), lineHeight: 1 }}>
+      <div style={{ fontFamily: 'Georgia, serif', fontSize: TYPE.subhead, fontWeight: 400, color: rsiColor(value), lineHeight: 1 }}>
         {value === null || value === undefined ? '—' : value}
       </div>
-      <div style={{ fontSize: '10px', color: rsiColor(value), fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', marginTop: `${SPACE.xs}px`, fontStyle: 'italic', opacity: 0.85 }}>
+      <div style={{ fontSize: TYPE.caption, color: rsiColor(value), fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', marginTop: `${SPACE.xs}px`, fontStyle: 'italic', opacity: 0.85 }}>
         {rsiLabel(value)}
       </div>
     </div>
@@ -273,7 +295,7 @@ function RsiRow({ asset }) {
 
   return (
     <div style={{ marginBottom: `${SPACE.base}px` }}>
-      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
         RSI · 14
       </div>
       <div style={{ display: 'flex', gap: `${SPACE.sm}px` }}>
@@ -312,6 +334,140 @@ function getActionReasoning(asset) {
   }
 }
 
+function DetailModal({ asset, onClose, isMobile }) {
+  // Handle ESC key to close
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  const config = TIER_CONFIG[asset.tier];
+  const TierIcon = config?.icon || Eye;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.85)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        padding: isMobile ? SPACE.base : SPACE.xl,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: PALETTE.cardBg,
+          border: `1px solid ${PALETTE.borderStrong}`,
+          maxWidth: '640px',
+          width: '100%',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          position: 'relative',
+        }}
+      >
+        {/* Header */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          padding: isMobile ? SPACE.base : SPACE.lg,
+          borderBottom: `1px solid ${PALETTE.border}`,
+          position: 'sticky',
+          top: 0,
+          background: PALETTE.cardBg,
+          zIndex: 1,
+        }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: SPACE.sm }}>
+              <span style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.heading : '1.625rem', fontWeight: 400, color: PALETTE.textPrimary }}>
+                {asset.symbol}
+              </span>
+              <TierIcon size={16} color={config?.accent || PALETTE.textMuted} strokeWidth={1.5} />
+            </div>
+            <div style={{ fontSize: TYPE.small, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
+              {asset.name} · {ASSET_TYPE_LABELS[asset.asset_type] || asset.asset_type}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: PALETTE.textMuted,
+              cursor: 'pointer',
+              padding: SPACE.sm,
+              marginRight: -SPACE.sm,
+              marginTop: -SPACE.xs,
+            }}
+            aria-label="Close"
+          >
+            <X size={20} strokeWidth={1.5} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: isMobile ? SPACE.base : SPACE.lg }}>
+          {/* Composite score badge */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: SPACE.sm,
+            padding: `${SPACE.sm}px ${SPACE.base}px`,
+            background: PALETTE.cardInset,
+            marginBottom: SPACE.lg,
+          }}>
+            <span style={{ fontFamily: 'Georgia, serif', fontSize: TYPE.heading, fontWeight: 300, color: PALETTE.textPrimary }}>
+              {asset.composite}
+            </span>
+            <span style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
+              Composite
+            </span>
+          </div>
+
+          {/* Detailed reasoning - preserve line breaks */}
+          <div style={{
+            fontFamily: 'Georgia, serif',
+            fontSize: TYPE.body,
+            lineHeight: TYPE.relaxed,
+            color: PALETTE.textSecondary,
+            whiteSpace: 'pre-wrap',
+          }}>
+            {asset.note_detailed || asset.note || 'No detailed analysis available.'}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          padding: isMobile ? SPACE.base : SPACE.lg,
+          borderTop: `1px solid ${PALETTE.border}`,
+          background: PALETTE.cardInset,
+        }}>
+          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
+            {asset.wyckoff_phase} · Last updated: {new Date().toLocaleDateString()}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ActionBanner({ action, daysAgo, strongDays }) {
   const cfg = ACTION_CONFIG[action];
   if (!cfg) return null;
@@ -339,15 +495,15 @@ function ActionBanner({ action, daysAgo, strongDays }) {
           <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: cfg.dot, flexShrink: 0 }} />
         )}
         <div>
-          <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', fontWeight: isStrong ? 700 : 500 }}>
+          <div style={{ fontSize: TYPE.small, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', fontWeight: isStrong ? 700 : 500 }}>
             {cfg.label}
           </div>
-          <div style={{ fontSize: '10px', letterSpacing: '0.05em', opacity: 0.8, fontFamily: 'ui-monospace, monospace', marginTop: '2px' }}>
+          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.04em', opacity: 0.8, fontFamily: 'ui-monospace, monospace', marginTop: '2px' }}>
             {cfg.desc}
           </div>
         </div>
       </div>
-      <div style={{ fontSize: '10px', letterSpacing: '0.08em', fontFamily: 'ui-monospace, monospace', textAlign: 'right', lineHeight: 1.3, opacity: recentChange ? 1 : 0.7 }}>
+      <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', fontFamily: 'ui-monospace, monospace', textAlign: 'right', lineHeight: 1.3, opacity: recentChange ? 1 : 0.7 }}>
         {isStrong && strongDays > 1 ? (
           <>
             <div style={{ fontWeight: 600, marginBottom: '1px' }}>DAY {strongDays}</div>
@@ -371,6 +527,7 @@ function ActionBanner({ action, daysAgo, strongDays }) {
 
 function ScoreCard({ asset, isMobile }) {
   const [showAllDimensions, setShowAllDimensions] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const assetType = asset.asset_type || 'smart-contract';
   const weights = asset.weights || getWeights(assetType);
 
@@ -413,13 +570,13 @@ function ScoreCard({ asset, isMobile }) {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: `${SPACE.base}px` }}>
         <div>
-          <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? '22px' : '24px', fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
+          <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.heading : '1.625rem', fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
             {asset.symbol}
           </div>
-          <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
+          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
             {asset.name}
           </div>
-          <div style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
+          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
             {ASSET_TYPE_LABELS[assetType] || assetType}
           </div>
         </div>
@@ -430,11 +587,11 @@ function ScoreCard({ asset, isMobile }) {
 
       {/* Action reasoning */}
       <div style={{
-        fontSize: '11px',
+        fontSize: TYPE.small,
         color: PALETTE.textSecondary,
         fontFamily: 'Georgia, serif',
         fontStyle: 'italic',
-        lineHeight: 1.5,
+        lineHeight: TYPE.normal,
         marginBottom: `${SPACE.lg}px`,
         paddingLeft: `${SPACE.sm}px`,
         borderLeft: `2px solid ${PALETTE.border}`,
@@ -443,18 +600,18 @@ function ScoreCard({ asset, isMobile }) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: `${SPACE.md}px`, marginBottom: `${SPACE.xs}px`, flexWrap: 'wrap' }}>
-        <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? '40px' : '48px', fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
+        <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.display : TYPE.displayLg, fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
           {composite}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: '11px', fontFamily: 'ui-monospace, monospace' }}>
-          <DeltaIcon size={11} strokeWidth={2} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: TYPE.small, fontFamily: 'ui-monospace, monospace' }}>
+          <DeltaIcon size={12} strokeWidth={2} />
           <span>{delta > 0 ? '+' : ''}{delta}</span>
         </div>
         <div style={{ marginLeft: 'auto' }}>
           <Sparkline data={asset.trend} accent={config.accent} />
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.lg}px`, fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.lg}px`, fontFamily: 'ui-monospace, monospace' }}>
         <span>Composite · 7d</span>
         {hasIncompleteData && (
           <span style={{
@@ -465,8 +622,8 @@ function ScoreCard({ asset, isMobile }) {
             background: '#3d2a1a',
             border: '1px solid #d49a6a',
             color: '#d49a6a',
-            fontSize: '9px',
-            letterSpacing: '0.08em',
+            fontSize: TYPE.caption,
+            letterSpacing: '0.06em',
           }}>
             <AlertCircle size={10} color="#d49a6a" strokeWidth={2} />
             {missingDimensions} dim. missing
@@ -491,9 +648,9 @@ function ScoreCard({ asset, isMobile }) {
               background: 'transparent',
               border: 'none',
               color: PALETTE.textSecondary,
-              fontSize: '10px',
+              fontSize: TYPE.caption,
               fontFamily: 'ui-monospace, monospace',
-              letterSpacing: '0.08em',
+              letterSpacing: '0.06em',
               cursor: 'pointer',
               padding: isMobile ? '12px 0' : '4px 0',
               minHeight: isMobile ? '44px' : 'auto',
@@ -510,9 +667,9 @@ function ScoreCard({ asset, isMobile }) {
               background: 'transparent',
               border: 'none',
               color: PALETTE.textSecondary,
-              fontSize: '10px',
+              fontSize: TYPE.caption,
               fontFamily: 'ui-monospace, monospace',
-              letterSpacing: '0.08em',
+              letterSpacing: '0.06em',
               cursor: 'pointer',
               padding: isMobile ? '12px 0' : '4px 0',
               minHeight: isMobile ? '44px' : 'auto',
@@ -527,13 +684,44 @@ function ScoreCard({ asset, isMobile }) {
       <RsiRow asset={asset} />
 
       <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.md}px`, marginTop: 'auto' }}>
-        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
+        <div style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
           {asset.wyckoff_phase}
         </div>
-        <div style={{ fontSize: '11px', color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: 1.5 }}>
+        <div style={{ fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.normal }}>
           {asset.note}
         </div>
+        {asset.note_detailed && (
+          <button
+            onClick={() => setShowDetail(true)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: config.accent,
+              fontSize: TYPE.caption,
+              fontFamily: 'ui-monospace, monospace',
+              letterSpacing: '0.06em',
+              cursor: 'pointer',
+              padding: isMobile ? `${SPACE.md}px 0` : `${SPACE.sm}px 0`,
+              minHeight: isMobile ? '44px' : 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: `${SPACE.xs}px`,
+              marginTop: `${SPACE.sm}px`,
+            }}
+          >
+            <Info size={12} strokeWidth={1.5} />
+            View details
+          </button>
+        )}
       </div>
+
+      {showDetail && (
+        <DetailModal
+          asset={asset}
+          onClose={() => setShowDetail(false)}
+          isMobile={isMobile}
+        />
+      )}
     </div>
   );
 }
@@ -549,8 +737,8 @@ function ActionLegend({ isMobile }) {
     { key: 'stand-aside', text: 'Distribution risk or sharp negative trend. Do not engage regardless of price.' },
   ];
   return (
-    <details style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, fontSize: '11px', color: PALETTE.textSecondary }}>
-      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, listStyle: 'none', minHeight: isMobile ? '44px' : 'auto', padding: isMobile ? `${SPACE.sm}px 0` : 0 }}>
+    <details style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: TYPE.small, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, listStyle: 'none', minHeight: isMobile ? '44px' : 'auto', padding: isMobile ? `${SPACE.sm}px 0` : 0 }}>
         <span style={{ transition: 'transform 0.2s', display: 'inline-block' }}>▸</span>
         Action rules
       </summary>
@@ -562,10 +750,10 @@ function ActionLegend({ isMobile }) {
             <div key={item.key} style={{ display: 'flex', gap: `${SPACE.md}px`, alignItems: 'flex-start' }}>
               <div style={{ width: `${SPACE.sm}px`, height: `${SPACE.sm}px`, borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '5px', flexShrink: 0 }} />
               <div>
-                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textPrimary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textPrimary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>
                   {cfg.label}
                 </div>
-                <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', lineHeight: 1.5 }}>
+                <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', lineHeight: TYPE.normal }}>
                   {item.text}
                 </div>
               </div>
@@ -581,7 +769,7 @@ function LoadingState() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: '16px' }}>
       <Loader2 size={32} color={PALETTE.textMuted} style={{ animation: 'spin 1s linear infinite' }} />
-      <div style={{ fontSize: '12px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>Loading scores...</div>
+      <div style={{ fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>Loading scores...</div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
   );
@@ -591,10 +779,10 @@ function ErrorState({ error, onRetry }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: '16px', padding: '24px' }}>
       <AlertCircle size={32} color="#c27878" />
-      <div style={{ fontSize: '14px', color: PALETTE.textPrimary, fontFamily: 'Georgia, serif', textAlign: 'center' }}>
+      <div style={{ fontSize: TYPE.body, color: PALETTE.textPrimary, fontFamily: 'Georgia, serif', textAlign: 'center' }}>
         Failed to load scoring data
       </div>
-      <div style={{ fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', textAlign: 'center', maxWidth: '400px' }}>
+      <div style={{ fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', textAlign: 'center', maxWidth: '400px' }}>
         {error}
       </div>
       <button
@@ -604,8 +792,8 @@ function ErrorState({ error, onRetry }) {
           color: PALETTE.textPrimary,
           border: `1px solid ${PALETTE.borderStrong}`,
           padding: '8px 16px',
-          fontSize: '11px',
-          letterSpacing: '0.08em',
+          fontSize: TYPE.small,
+          letterSpacing: '0.06em',
           textTransform: 'uppercase',
           fontFamily: 'ui-monospace, monospace',
           cursor: 'pointer',
@@ -700,17 +888,17 @@ function Dashboard() {
       <div style={{ maxWidth: '1400px', margin: `0 auto ${isMobile ? SPACE.lg : SPACE['2xl']}px`, borderBottom: `1px solid ${PALETTE.borderStrong}`, paddingBottom: `${SPACE.lg}px` }}>
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', gap: `${SPACE.lg}px` }}>
           <div style={{ flex: '1 1 auto' }}>
-            <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
+            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.15em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
               Framework · Daily scan
             </div>
-            <h1 style={{ fontSize: isMobile ? '26px' : '32px', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
+            <h1 style={{ fontSize: isMobile ? '1.75rem' : TYPE.title, fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
               Conviction Scores
             </h1>
-            <div style={{ fontSize: '12px', color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontStyle: 'italic' }}>
+            <div style={{ fontSize: TYPE.body, color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontStyle: 'italic' }}>
               5 dimensions · Tiered weights by asset type · RSI confirmation layer
             </div>
             {generatedAt && (
-              <div style={{ fontSize: '11px', color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
+              <div style={{ fontSize: TYPE.small, color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
                 {isStale(generatedAt) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
                 <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt) ? ' · Data may be stale' : ''}</span>
               </div>
@@ -719,7 +907,7 @@ function Dashboard() {
           {strongCount > 0 && (
             <div style={{ padding: `${SPACE.md}px ${SPACE.base}px`, background: '#0f2028', border: '1px solid #4ac0e0', display: 'inline-flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexShrink: 0 }}>
               <Zap size={14} color="#4ac0e0" fill="#4ac0e0" strokeWidth={1.75} />
-              <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4ac0e0', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
+              <span style={{ fontSize: TYPE.caption, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4ac0e0', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
                 {strongCount} Strong Accumulate signal{strongCount > 1 ? 's' : ''} active
               </span>
             </div>
@@ -745,8 +933,8 @@ function Dashboard() {
               border: `1px solid ${PALETTE.borderStrong}`,
               padding: isMobile ? `${SPACE.md}px ${SPACE.base}px` : `${SPACE.sm}px ${SPACE.base}px`,
               minHeight: isMobile ? '44px' : 'auto',
-              fontSize: '11px',
-              letterSpacing: '0.08em',
+              fontSize: TYPE.small,
+              letterSpacing: '0.06em',
               textTransform: 'uppercase',
               fontFamily: 'ui-monospace, monospace',
               cursor: 'pointer',
@@ -768,7 +956,7 @@ function Dashboard() {
             <div key={tier} style={{ marginBottom: `${SPACE['3xl']}px` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.md}px`, marginBottom: `${SPACE.lg}px` }}>
                 <div style={{ width: `${SPACE.xl}px`, height: '1px', background: config.accent }} />
-                <h2 style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: config.accent, fontFamily: 'ui-monospace, monospace', fontWeight: 500, margin: 0 }}>
+                <h2 style={{ fontSize: TYPE.small, letterSpacing: '0.15em', textTransform: 'uppercase', color: config.accent, fontFamily: 'ui-monospace, monospace', fontWeight: 500, margin: 0 }}>
                   {config.label} — {tierAssets.length}
                 </h2>
               </div>
@@ -779,7 +967,7 @@ function Dashboard() {
                   color: PALETTE.textMuted,
                   fontFamily: 'Georgia, serif',
                   fontStyle: 'italic',
-                  fontSize: '13px',
+                  fontSize: TYPE.body,
                   background: PALETTE.cardBg,
                   border: `1px dashed ${PALETTE.border}`,
                 }}>
@@ -802,7 +990,7 @@ function Dashboard() {
       </div>
 
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', lineHeight: 1.6 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.03em', lineHeight: TYPE.relaxed }}>
           <div>
             <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Scoring</div>
             Daily conviction framework. Data refreshed at 12:00 UTC.
