@@ -362,6 +362,25 @@ function DetailModal({ asset, onClose, isMobile }) {
 
   const config = TIER_CONFIG[asset.tier];
   const TierIcon = config?.icon || Eye;
+  const assetType = asset.asset_type || 'smart-contract';
+  const weights = asset.weights || getWeights(assetType);
+  const action = asset.action || 'observe';
+  const cfg = ACTION_CONFIG[action];
+  const delta = weeklyDelta(asset.trend);
+  const deltaColor = delta > 0 ? '#7aa872' : delta < 0 ? '#c27878' : PALETTE.textMuted;
+  const DeltaIcon = delta > 0 ? TrendingUp : delta < 0 ? TrendingDown : Minus;
+
+  // Compute missing dimensions
+  let missingDimensions = asset.missing_dimensions || 0;
+  if (missingDimensions === 0 && asset.scores) {
+    missingDimensions = Object.values(asset.scores).filter(v => v === null || v === undefined).length;
+  }
+  const hasIncompleteData = missingDimensions > 0;
+
+  // Sort dimensions by weight
+  const sortedDimensions = Object.entries(weights)
+    .sort(([, a], [, b]) => b - a)
+    .map(([key]) => key);
 
   return (
     <div
@@ -385,7 +404,7 @@ function DetailModal({ asset, onClose, isMobile }) {
         style={{
           background: PALETTE.cardBg,
           border: `1px solid ${PALETTE.borderStrong}`,
-          maxWidth: '640px',
+          maxWidth: '560px',
           width: '100%',
           maxHeight: '90vh',
           overflow: 'auto',
@@ -406,13 +425,13 @@ function DetailModal({ asset, onClose, isMobile }) {
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: SPACE.sm }}>
-              <span style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.heading : '1.625rem', fontWeight: 400, color: PALETTE.textPrimary }}>
+              <span style={{ fontFamily: 'Georgia, serif', fontSize: TYPE.heading, fontWeight: 400, color: PALETTE.textPrimary }}>
                 {asset.symbol}
               </span>
-              <TierIcon size={16} color={config?.accent || PALETTE.textMuted} strokeWidth={1.5} />
+              <TierIcon size={14} color={config?.accent || PALETTE.textMuted} strokeWidth={1.5} />
             </div>
-            <div style={{ fontSize: TYPE.small, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
-              {asset.name} · {ASSET_TYPE_LABELS[asset.asset_type] || asset.asset_type}
+            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
+              {asset.name} · {ASSET_TYPE_LABELS[assetType] || assetType}
             </div>
           </div>
           <button
@@ -425,6 +444,11 @@ function DetailModal({ asset, onClose, isMobile }) {
               padding: SPACE.sm,
               marginRight: -SPACE.sm,
               marginTop: -SPACE.xs,
+              minWidth: 44,
+              minHeight: 44,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
             aria-label="Close"
           >
@@ -434,44 +458,120 @@ function DetailModal({ asset, onClose, isMobile }) {
 
         {/* Content */}
         <div style={{ padding: isMobile ? SPACE.base : SPACE.lg }}>
-          {/* Composite score badge */}
+          {/* Action banner */}
           <div style={{
-            display: 'inline-flex',
+            background: cfg?.bg || 'transparent',
+            border: cfg?.border ? `1px solid ${cfg.dot}` : 'none',
+            padding: `${SPACE.md}px ${SPACE.base}px`,
+            marginBottom: SPACE.lg,
+            display: 'flex',
             alignItems: 'center',
             gap: SPACE.sm,
-            padding: `${SPACE.sm}px ${SPACE.base}px`,
-            background: PALETTE.cardInset,
-            marginBottom: SPACE.lg,
           }}>
-            <span style={{ fontFamily: 'Georgia, serif', fontSize: TYPE.heading, fontWeight: 300, color: PALETTE.textPrimary }}>
-              {asset.composite}
-            </span>
-            <span style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
-              Composite
-            </span>
+            {cfg?.icon ? (
+              <cfg.icon size={16} color={cfg.dot} strokeWidth={1.75} fill={action === 'strong-accumulate' ? cfg.dot : 'none'} />
+            ) : (
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: cfg?.dot || PALETTE.textMuted }} />
+            )}
+            <div>
+              <div style={{ fontSize: TYPE.small, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: cfg?.fg || PALETTE.textPrimary }}>
+                {cfg?.label}
+              </div>
+              <div style={{ fontSize: TYPE.caption, color: cfg?.fg || PALETTE.textSecondary, opacity: 0.8, fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>
+                {cfg?.desc}
+              </div>
+            </div>
           </div>
 
-          {/* Detailed reasoning - preserve line breaks */}
+          {/* Action reasoning */}
           <div style={{
-            fontFamily: 'Georgia, serif',
-            fontSize: TYPE.body,
-            lineHeight: TYPE.relaxed,
+            fontSize: TYPE.small,
             color: PALETTE.textSecondary,
-            whiteSpace: 'pre-wrap',
+            fontFamily: 'Georgia, serif',
+            fontStyle: 'italic',
+            lineHeight: TYPE.normal,
+            marginBottom: SPACE.xl,
           }}>
-            {asset.note_detailed || asset.note || 'No detailed analysis available.'}
+            {getActionReasoning(asset)}
           </div>
-        </div>
 
-        {/* Footer */}
-        <div style={{
-          padding: isMobile ? SPACE.base : SPACE.lg,
-          borderTop: `1px solid ${PALETTE.border}`,
-          background: PALETTE.cardInset,
-        }}>
-          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
-            {asset.wyckoff_phase} · Last updated: {new Date().toLocaleDateString()}
+          {/* Score section */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: SPACE.md, marginBottom: SPACE.xs }}>
+            <div style={{ fontFamily: 'Georgia, serif', fontSize: TYPE.display, fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
+              {asset.composite}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: TYPE.small, fontFamily: 'ui-monospace, monospace' }}>
+              <DeltaIcon size={12} strokeWidth={2} />
+              <span>{delta > 0 ? '+' : ''}{delta}</span>
+            </div>
+            <div style={{ marginLeft: 'auto' }}>
+              <Sparkline data={asset.trend} accent={config?.accent} />
+            </div>
           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: SPACE.sm, fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.lg, fontFamily: 'ui-monospace, monospace' }}>
+            <span>Composite · 7d trend</span>
+            {hasIncompleteData && (
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '3px',
+                padding: '2px 6px',
+                background: '#3d2a1a',
+                border: '1px solid #d49a6a',
+                color: '#d49a6a',
+                fontSize: TYPE.caption,
+              }}>
+                <AlertCircle size={10} color="#d49a6a" strokeWidth={2} />
+                {missingDimensions} missing
+              </span>
+            )}
+          </div>
+
+          {/* Dimension bars */}
+          <div style={{ marginBottom: SPACE.lg }}>
+            {sortedDimensions.map(dim => (
+              <DimensionBar
+                key={dim}
+                label={DIMENSION_LABELS[dim]}
+                value={asset.scores[dim]}
+                accent={config?.accent}
+                weight={weights[dim]}
+              />
+            ))}
+          </div>
+
+          {/* RSI */}
+          <RsiRow asset={asset} />
+
+          {/* Wyckoff phase */}
+          <div style={{ marginTop: SPACE.lg, paddingTop: SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
+              {asset.wyckoff_phase}
+            </div>
+            {asset.note && (
+              <div style={{ fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.normal }}>
+                {asset.note}
+              </div>
+            )}
+          </div>
+
+          {/* Detailed analysis if available */}
+          {asset.note_detailed && (
+            <div style={{ marginTop: SPACE.lg, paddingTop: SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.sm, fontFamily: 'ui-monospace, monospace' }}>
+                Analysis
+              </div>
+              <div style={{
+                fontFamily: 'Georgia, serif',
+                fontSize: TYPE.small,
+                lineHeight: TYPE.relaxed,
+                color: PALETTE.textSecondary,
+                whiteSpace: 'pre-wrap',
+              }}>
+                {asset.note_detailed}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -536,199 +636,89 @@ function ActionBanner({ action, daysAgo, strongDays }) {
 }
 
 function ScoreCard({ asset, isMobile }) {
-  const [showAllDimensions, setShowAllDimensions] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const assetType = asset.asset_type || 'smart-contract';
-  const weights = asset.weights || getWeights(assetType);
 
   // Use pre-computed values if available, otherwise compute
-  let composite, missingDimensions;
+  let composite;
   if (asset.composite !== undefined) {
     composite = asset.composite;
-    missingDimensions = asset.missing_dimensions || 0;
   } else {
     const computed = computeComposite(asset.scores, assetType);
     composite = computed.composite;
-    missingDimensions = computed.missingCount;
   }
 
   const delta = weeklyDelta(asset.trend);
   const config = TIER_CONFIG[asset.tier];
   if (!config) return null;
-  const hasIncompleteData = missingDimensions > 0;
-  const Icon = config.icon;
   const action = asset.action || 'observe';
   const isStrong = action === 'strong-accumulate';
+  const cfg = ACTION_CONFIG[action];
 
   const deltaColor = delta > 0 ? '#7aa872' : delta < 0 ? '#c27878' : PALETTE.textMuted;
   const DeltaIcon = delta > 0 ? TrendingUp : delta < 0 ? TrendingDown : Minus;
 
-  // Sort dimensions by weight to show top 3 by default
-  const sortedDimensions = Object.entries(weights)
-    .sort(([, a], [, b]) => b - a)
-    .map(([key]) => key);
-  const visibleDimensions = showAllDimensions ? sortedDimensions : sortedDimensions.slice(0, 3);
-  const hiddenCount = sortedDimensions.length - 3;
-
   return (
-    <div style={{
-      background: PALETTE.cardBg,
-      border: isStrong ? `1px solid #4ac0e0` : `1px solid ${PALETTE.borderStrong}`,
-      padding: isMobile ? `${SPACE.base}px` : `${SPACE.lg}px`,
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: `${SPACE.base}px` }}>
+    <div
+      onClick={() => setShowDetail(true)}
+      style={{
+        background: PALETTE.cardBg,
+        border: isStrong ? `1px solid #4ac0e0` : `1px solid ${PALETTE.border}`,
+        padding: isMobile ? `${SPACE.base}px` : `${SPACE.lg}px`,
+        display: 'flex',
+        flexDirection: 'column',
+        cursor: 'pointer',
+        transition: 'border-color 0.15s ease',
+      }}
+      onMouseEnter={(e) => { if (!isStrong) e.currentTarget.style.borderColor = PALETTE.borderStrong; }}
+      onMouseLeave={(e) => { if (!isStrong) e.currentTarget.style.borderColor = PALETTE.border; }}
+    >
+      {/* Header: Symbol + Action badge */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: SPACE.md }}>
         <div>
-          <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.heading : '1.625rem', fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
+          <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.subhead : TYPE.heading, fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
             {asset.symbol}
           </div>
-          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
+          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
             {asset.name}
           </div>
-          <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
-            {ASSET_TYPE_LABELS[assetType] || assetType}
-          </div>
         </div>
-        <Icon size={16} color={config.accent} strokeWidth={1.5} />
+        {/* Compact action badge */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: SPACE.xs,
+          padding: `${SPACE.xs}px ${SPACE.sm}px`,
+          background: cfg?.bg || 'transparent',
+          border: cfg?.border ? `1px solid ${cfg.dot}` : 'none',
+          color: cfg?.fg || PALETTE.textMuted,
+        }}>
+          {cfg?.icon ? (
+            <cfg.icon size={12} color={cfg.dot} strokeWidth={2} fill={isStrong ? cfg.dot : 'none'} />
+          ) : (
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg?.dot || PALETTE.textMuted }} />
+          )}
+          <span style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', fontWeight: isStrong ? 700 : 500 }}>
+            {isStrong && asset.strong_accumulate_days_active > 1 ? `Day ${asset.strong_accumulate_days_active}` : cfg?.label?.split(' ')[0] || action}
+          </span>
+        </div>
       </div>
 
-      <ActionBanner action={action} daysAgo={asset.label_changed_days_ago} strongDays={asset.strong_accumulate_days_active} />
-
-      {/* Action reasoning */}
-      <div style={{
-        fontSize: TYPE.small,
-        color: PALETTE.textSecondary,
-        fontFamily: 'Georgia, serif',
-        fontStyle: 'italic',
-        lineHeight: TYPE.normal,
-        marginBottom: `${SPACE.lg}px`,
-        paddingLeft: `${SPACE.sm}px`,
-        borderLeft: `2px solid ${PALETTE.border}`,
-      }}>
-        {getActionReasoning(asset)}
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: `${SPACE.md}px`, marginBottom: `${SPACE.xs}px`, flexWrap: 'wrap' }}>
-        <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.display : TYPE.displayLg, fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
+      {/* Score + Delta */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: SPACE.md, marginTop: 'auto' }}>
+        <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.title : TYPE.display, fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
           {composite}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: TYPE.small, fontFamily: 'ui-monospace, monospace' }}>
           <DeltaIcon size={12} strokeWidth={2} />
           <span>{delta > 0 ? '+' : ''}{delta}</span>
         </div>
-        <div style={{ marginLeft: 'auto' }}>
-          <Sparkline data={asset.trend} accent={config.accent} />
-        </div>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.lg}px`, fontFamily: 'ui-monospace, monospace' }}>
-        <span>Composite · 7d</span>
-        {hasIncompleteData && (
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '3px',
-            padding: '2px 6px',
-            background: '#3d2a1a',
-            border: '1px solid #d49a6a',
-            color: '#d49a6a',
-            fontSize: TYPE.caption,
-            letterSpacing: '0.06em',
-          }}>
-            <AlertCircle size={10} color="#d49a6a" strokeWidth={2} />
-            {missingDimensions} dim. missing
-          </span>
-        )}
-      </div>
-
-      <div style={{ marginBottom: `${SPACE.base}px` }}>
-        {visibleDimensions.map(dim => (
-          <DimensionBar
-            key={dim}
-            label={DIMENSION_LABELS[dim]}
-            value={asset.scores[dim]}
-            accent={config.accent}
-            weight={weights[dim]}
-          />
-        ))}
-        {hiddenCount > 0 && !showAllDimensions && (
-          <button
-            onClick={() => setShowAllDimensions(true)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: PALETTE.textSecondary,
-              fontSize: TYPE.caption,
-              fontFamily: 'ui-monospace, monospace',
-              letterSpacing: '0.06em',
-              cursor: 'pointer',
-              padding: isMobile ? '12px 0' : '4px 0',
-              minHeight: isMobile ? '44px' : 'auto',
-              opacity: 0.8,
-            }}
-          >
-            +{hiddenCount} more
-          </button>
-        )}
-        {showAllDimensions && (
-          <button
-            onClick={() => setShowAllDimensions(false)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: PALETTE.textSecondary,
-              fontSize: TYPE.caption,
-              fontFamily: 'ui-monospace, monospace',
-              letterSpacing: '0.06em',
-              cursor: 'pointer',
-              padding: isMobile ? '12px 0' : '4px 0',
-              minHeight: isMobile ? '44px' : 'auto',
-              opacity: 0.8,
-            }}
-          >
-            Show less
-          </button>
-        )}
-      </div>
-
-      <RsiRow asset={asset} />
-
-      <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.md}px`, marginTop: 'auto' }}>
-        <div style={{ fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
-          {asset.wyckoff_phase}
-        </div>
-        <div style={{ fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.normal }}>
-          {asset.note}
-        </div>
-        {asset.note_detailed && (
-          <button
-            onClick={() => setShowDetail(true)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: config.accent,
-              fontSize: TYPE.caption,
-              fontFamily: 'ui-monospace, monospace',
-              letterSpacing: '0.06em',
-              cursor: 'pointer',
-              padding: isMobile ? `${SPACE.md}px 0` : `${SPACE.sm}px 0`,
-              minHeight: isMobile ? '44px' : 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: `${SPACE.xs}px`,
-              marginTop: `${SPACE.sm}px`,
-            }}
-          >
-            <Info size={12} strokeWidth={1.5} />
-            View details
-          </button>
-        )}
       </div>
 
       {showDetail && (
         <DetailModal
           asset={asset}
-          onClose={() => setShowDetail(false)}
+          onClose={(e) => { e?.stopPropagation(); setShowDetail(false); }}
           isMobile={isMobile}
         />
       )}
