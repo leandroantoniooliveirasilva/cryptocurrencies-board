@@ -65,10 +65,12 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     defi_data = defillama.fetch_defillama_data(defillama_slug)
 
     # Fetch daily prices for RSI (market_chart endpoint gives true daily data)
-    daily_prices = coingecko.fetch_daily_prices(coingecko_id, days=90) if coingecko_id else []
+    # Use 120 days to ensure enough weekly data points (need 15+ weeks)
+    daily_prices = coingecko.fetch_daily_prices(coingecko_id, days=120) if coingecko_id else None
+    daily_prices = daily_prices or []  # Handle None from API failures
 
-    # For weekly RSI, sample every 7th day from daily prices
-    weekly_prices = daily_prices[::7] if len(daily_prices) >= 7 else []
+    # For weekly RSI, sample every 7th day (last close of each week)
+    weekly_prices = daily_prices[6::7] if len(daily_prices) >= 7 else []
 
     rsi_daily = rsi.compute_rsi(daily_prices, 14) if len(daily_prices) >= 15 else None
     rsi_weekly = rsi.compute_rsi(weekly_prices, 14) if len(weekly_prices) >= 15 else None
