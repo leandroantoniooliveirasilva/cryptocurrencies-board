@@ -262,7 +262,7 @@ function rsiColor(rsi) {
   if (rsi === null || rsi === undefined) return PALETTE.textMuted;
   if (rsi >= 75) return '#d47878';
   if (rsi >= 70) return '#d49a6a';
-  if (rsi <= 25) return '#7aa0c4';
+  if (rsi < 25) return '#7aa0c4';
   if (rsi <= 32) return '#8ab0d4';
   return PALETTE.textPrimary;
 }
@@ -271,7 +271,7 @@ function rsiLabel(rsi) {
   if (rsi === null || rsi === undefined) return 'n/a';
   if (rsi >= 75) return 'Overbought';
   if (rsi >= 70) return 'Elevated';
-  if (rsi <= 25) return 'Deep oversold';
+  if (rsi < 25) return 'Deep oversold';
   if (rsi <= 32) return 'Oversold';
   return 'Neutral';
 }
@@ -310,9 +310,9 @@ function getActionReasoning(asset) {
   const action = asset.action || 'observe';
   const composite = asset.composite || 50;
   const delta = weeklyDelta(asset.trend);
+  const delta30 = monthlyDelta(asset.trend_30d);
   const rsiDaily = asset.rsi_daily;
   const rsiWeekly = asset.rsi_weekly;
-  const tier = asset.tier;
 
   switch (action) {
     case 'strong-accumulate':
@@ -320,7 +320,7 @@ function getActionReasoning(asset) {
     case 'accumulate':
       return `Composite score of ${composite} with ${delta >= 0 ? 'stable' : 'minor pullback'} trend. RSI levels support accumulation. Leader-tier asset in favorable Wyckoff phase for tranche building.`;
     case 'promote':
-      return `Runner-up crossing leader threshold with composite at ${composite}${delta > 0 ? ` and positive ${delta}-point weekly momentum` : ''}. Evaluate for potential tier promotion.`;
+      return `Runner-up crossing leader threshold with composite at ${composite}${delta30 > 0 ? ` and +${delta30}-point 30-day momentum` : ''}. Evaluate for potential tier promotion.`;
     case 'hold':
       return `Position active with composite at ${composite}. No accumulate or trim signals present. Current allocation appropriate — patience is the strategy.`;
     case 'await':
@@ -854,7 +854,11 @@ function Dashboard() {
   const groupedAssets = useMemo(() => {
     const groups = { leader: [], 'runner-up': [], observation: [] };
     filteredAssets.forEach(a => {
-      if (groups[a.tier]) groups[a.tier].push(a);
+      if (groups[a.tier]) {
+        groups[a.tier].push(a);
+      } else {
+        console.warn(`Unknown tier "${a.tier}" for asset ${a.symbol}, skipping`);
+      }
     });
     return groups;
   }, [filteredAssets]);

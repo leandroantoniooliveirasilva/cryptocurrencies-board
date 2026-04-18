@@ -1,7 +1,10 @@
 """RSI (Relative Strength Index) calculation using Wilder's smoothing."""
 
+import logging
 import numpy as np
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 def compute_rsi(prices: list[float], period: int = 14) -> Optional[float]:
@@ -20,7 +23,13 @@ def compute_rsi(prices: list[float], period: int = 14) -> Optional[float]:
 
     # Validate prices contain no None/NaN values
     prices_array = np.array(prices, dtype=float)
-    if np.any(np.isnan(prices_array)) or np.any(prices_array <= 0):
+    if np.any(np.isnan(prices_array)):
+        logger.warning(f"RSI rejected: {np.sum(np.isnan(prices_array))} NaN values in price data")
+        return None
+    if np.any(prices_array <= 0):
+        min_price = np.min(prices_array)
+        zero_count = np.sum(prices_array <= 0)
+        logger.warning(f"RSI rejected: {zero_count} prices <= 0 (min: {min_price:.6f})")
         return None
 
     deltas = np.diff(prices_array)

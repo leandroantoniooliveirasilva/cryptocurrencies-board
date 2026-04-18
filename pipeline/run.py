@@ -81,7 +81,8 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     daily_prices = daily_prices or []  # Handle None from API failures
 
     # For weekly RSI, sample every 7th day (last close of each week)
-    weekly_prices = daily_prices[6::7] if len(daily_prices) >= 7 else []
+    # Require at least 14 days to get 2+ weekly samples for meaningful analysis
+    weekly_prices = daily_prices[6::7] if len(daily_prices) >= 14 else []
 
     rsi_daily = rsi.compute_rsi(daily_prices, 14) if len(daily_prices) >= 15 else None
     rsi_weekly = rsi.compute_rsi(weekly_prices, 14) if len(weekly_prices) >= 15 else None
