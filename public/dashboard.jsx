@@ -43,6 +43,19 @@ const PALETTE = {
   trackBg: '#2a2620',
 };
 
+// Spacing scale: 4, 8, 12, 16, 24, 32, 48, 64, 96
+const SPACE = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  base: 16,
+  lg: 24,
+  xl: 32,
+  '2xl': 48,
+  '3xl': 64,
+  '4xl': 96,
+};
+
 const DIMENSION_LABELS = {
   institutional: 'Institutional',
   revenue: 'Revenue/Fees',
@@ -138,9 +151,9 @@ function Sparkline({ data, accent }) {
 
 function DimensionBar({ label, value, accent, weight }) {
   return (
-    <div style={{ marginBottom: '10px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
-        <span>{label}{weight ? <span style={{ opacity: 0.6, marginLeft: '4px' }}>({Math.round(weight * 100)}%)</span> : ''}</span>
+    <div style={{ marginBottom: `${SPACE.md}px` }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
+        <span>{label}{weight ? <span style={{ opacity: 0.6, marginLeft: `${SPACE.xs}px` }}>({Math.round(weight * 100)}%)</span> : ''}</span>
         <span style={{ color: PALETTE.textPrimary }}>{value}</span>
       </div>
       <div style={{ height: '3px', background: PALETTE.trackBg, overflow: 'hidden' }}>
@@ -179,25 +192,25 @@ function RsiRow({ asset }) {
   const { rsi_daily, rsi_weekly } = asset;
 
   const Cell = ({ label, value }) => (
-    <div style={{ flex: 1, textAlign: 'center', padding: '8px 6px', background: PALETTE.cardInset }}>
-      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', marginBottom: '4px' }}>
+    <div style={{ flex: 1, textAlign: 'center', padding: `${SPACE.sm}px ${SPACE.sm}px`, background: PALETTE.cardInset }}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', marginBottom: `${SPACE.xs}px` }}>
         {label}
       </div>
       <div style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 400, color: rsiColor(value), lineHeight: 1 }}>
         {value === null || value === undefined ? '—' : value}
       </div>
-      <div style={{ fontSize: '10px', color: rsiColor(value), fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', marginTop: '4px', fontStyle: 'italic', opacity: 0.85 }}>
+      <div style={{ fontSize: '10px', color: rsiColor(value), fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', marginTop: `${SPACE.xs}px`, fontStyle: 'italic', opacity: 0.85 }}>
         {rsiLabel(value)}
       </div>
     </div>
   );
 
   return (
-    <div style={{ marginBottom: '16px' }}>
-      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '6px', fontFamily: 'ui-monospace, monospace' }}>
+    <div style={{ marginBottom: `${SPACE.base}px` }}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
         RSI · 14
       </div>
-      <div style={{ display: 'flex', gap: '6px' }}>
+      <div style={{ display: 'flex', gap: `${SPACE.sm}px` }}>
         <Cell label="Daily" value={rsi_daily} />
         <Cell label="Weekly" value={rsi_weekly} />
       </div>
@@ -217,15 +230,15 @@ function ActionBanner({ action, daysAgo, strongDays }) {
       background: cfg.bg,
       color: cfg.fg,
       border: cfg.border ? `1px solid ${cfg.dot}` : 'none',
-      padding: '10px 12px',
-      marginBottom: '16px',
+      padding: `${SPACE.md}px ${SPACE.base}px`,
+      marginBottom: `${SPACE.base}px`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: '8px',
+      gap: `${SPACE.sm}px`,
       boxShadow: isStrong ? `0 0 0 2px ${PALETTE.bg}, 0 0 0 3px #e8b86a` : 'none',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
         {Icon ? (
           <Icon size={isStrong ? 16 : 14} color={cfg.dot} strokeWidth={1.75} fill={isStrong ? cfg.dot : 'none'} />
         ) : (
@@ -288,19 +301,19 @@ function ScoreCard({ asset }) {
     <div style={{
       background: PALETTE.cardBg,
       border: isStrong ? `1px solid #e8b86a` : `1px solid ${PALETTE.borderStrong}`,
-      padding: '20px',
+      padding: `${SPACE.lg}px`,
       display: 'flex',
       flexDirection: 'column',
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: `${SPACE.base}px` }}>
         <div>
           <div style={{ fontFamily: 'Georgia, serif', fontSize: '24px', fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
             {asset.symbol}
           </div>
-          <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: '4px', fontFamily: 'ui-monospace, monospace' }}>
+          <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
             {asset.name}
           </div>
-          <div style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: '4px', fontFamily: 'ui-monospace, monospace' }}>
+          <div style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
             {ASSET_TYPE_LABELS[assetType] || assetType}
           </div>
         </div>
@@ -309,7 +322,7 @@ function ScoreCard({ asset }) {
 
       <ActionBanner action={action} daysAgo={asset.label_changed_days_ago} strongDays={asset.strong_accumulate_days_active} />
 
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '4px' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: `${SPACE.md}px`, marginBottom: `${SPACE.xs}px` }}>
         <div style={{ fontFamily: 'Georgia, serif', fontSize: '48px', fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
           {composite}
         </div>
@@ -321,11 +334,11 @@ function ScoreCard({ asset }) {
           <Sparkline data={asset.trend} accent={config.accent} />
         </div>
       </div>
-      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.lg}px`, fontFamily: 'ui-monospace, monospace' }}>
         Composite · 7d
       </div>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={{ marginBottom: `${SPACE.base}px` }}>
         {visibleDimensions.map(dim => (
           <DimensionBar
             key={dim}
@@ -375,11 +388,11 @@ function ScoreCard({ asset }) {
 
       <RsiRow asset={asset} />
 
-      <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '12px', marginTop: 'auto' }}>
-        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.md}px`, marginTop: 'auto' }}>
+        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
           {asset.wyckoff_phase}
         </div>
-        <div style={{ fontSize: '11px', color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: 1.4 }}>
+        <div style={{ fontSize: '11px', color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: 1.5 }}>
           {asset.note}
         </div>
       </div>
@@ -398,20 +411,20 @@ function ActionLegend() {
     { key: 'stand-aside', text: 'Distribution risk or sharp negative trend. Do not engage regardless of price.' },
   ];
   return (
-    <details style={{ maxWidth: '1400px', margin: '0 auto 24px', fontSize: '11px', color: PALETTE.textSecondary }}>
-      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: '6px', listStyle: 'none' }}>
+    <details style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, fontSize: '11px', color: PALETTE.textSecondary }}>
+      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, listStyle: 'none' }}>
         <span style={{ transition: 'transform 0.2s', display: 'inline-block' }}>▸</span>
         Action rules
       </summary>
       <style>{`details[open] summary span:first-child { transform: rotate(90deg); }`}</style>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginTop: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: `${SPACE.base}px`, marginTop: `${SPACE.lg}px` }}>
         {items.map(item => {
           const cfg = ACTION_CONFIG[item.key];
           return (
-            <div key={item.key} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '5px', flexShrink: 0 }} />
+            <div key={item.key} style={{ display: 'flex', gap: `${SPACE.md}px`, alignItems: 'flex-start' }}>
+              <div style={{ width: `${SPACE.sm}px`, height: `${SPACE.sm}px`, borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '5px', flexShrink: 0 }} />
               <div>
-                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textPrimary, marginBottom: '4px', fontWeight: 500 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textPrimary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>
                   {cfg.label}
                 </div>
                 <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', lineHeight: 1.5 }}>
@@ -542,37 +555,41 @@ function Dashboard() {
       background: PALETTE.bg,
       fontFamily: 'Georgia, serif',
       color: PALETTE.textPrimary,
-      padding: '24px 16px',
+      padding: `${SPACE['2xl']}px ${SPACE.lg}px`,
     }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto 24px', borderBottom: `1px solid ${PALETTE.borderStrong}`, paddingBottom: '20px' }}>
-        <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '6px', fontFamily: 'ui-monospace, monospace' }}>
-          Framework · Daily scan
-        </div>
-        <h1 style={{ fontSize: '32px', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
-          Conviction Scores
-        </h1>
-        <div style={{ fontSize: '12px', color: PALETTE.textSecondary, marginTop: '8px', fontStyle: 'italic' }}>
-          5 dimensions · Tiered weights by asset type · RSI confirmation layer
-        </div>
-        {generatedAt && (
-          <div style={{ fontSize: '11px', color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: '8px', fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {isStale(generatedAt) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
-            <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt) ? ' · Data may be stale' : ''}</span>
+      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE['2xl']}px`, borderBottom: `1px solid ${PALETTE.borderStrong}`, paddingBottom: `${SPACE.lg}px` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: `${SPACE.lg}px` }}>
+          <div style={{ flex: '1 1 auto', minWidth: '280px' }}>
+            <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
+              Framework · Daily scan
+            </div>
+            <h1 style={{ fontSize: '32px', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
+              Conviction Scores
+            </h1>
+            <div style={{ fontSize: '12px', color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontStyle: 'italic' }}>
+              5 dimensions · Tiered weights by asset type · RSI confirmation layer
+            </div>
+            {generatedAt && (
+              <div style={{ fontSize: '11px', color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
+                {isStale(generatedAt) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
+                <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt) ? ' · Data may be stale' : ''}</span>
+              </div>
+            )}
           </div>
-        )}
-        {strongCount > 0 && (
-          <div style={{ marginTop: '14px', padding: '8px 12px', background: '#2a2115', border: '1px solid #e8b86a', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-            <Zap size={12} color="#e8b86a" fill="#e8b86a" strokeWidth={1.75} />
-            <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#e8b86a', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
-              {strongCount} Strong Accumulate signal{strongCount > 1 ? 's' : ''} active
-            </span>
-          </div>
-        )}
+          {strongCount > 0 && (
+            <div style={{ padding: `${SPACE.md}px ${SPACE.base}px`, background: '#2a2115', border: '1px solid #e8b86a', display: 'inline-flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexShrink: 0 }}>
+              <Zap size={14} color="#e8b86a" fill="#e8b86a" strokeWidth={1.75} />
+              <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#e8b86a', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
+                {strongCount} Strong Accumulate signal{strongCount > 1 ? 's' : ''} active
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       <ActionLegend />
 
-      <div style={{ maxWidth: '1400px', margin: '0 auto 24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, display: 'flex', gap: `${SPACE.sm}px`, flexWrap: 'wrap' }}>
         {[
           { id: 'all', label: 'All' },
           { id: 'leader', label: 'Leaders' },
@@ -586,7 +603,7 @@ function Dashboard() {
               background: activeTier === t.id ? PALETTE.textPrimary : 'transparent',
               color: activeTier === t.id ? PALETTE.bg : PALETTE.textPrimary,
               border: `1px solid ${PALETTE.borderStrong}`,
-              padding: '6px 14px',
+              padding: `${SPACE.sm}px ${SPACE.base}px`,
               fontSize: '11px',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
@@ -607,9 +624,9 @@ function Dashboard() {
           if (tierAssets.length === 0 && activeTier !== tier) return null;
 
           return (
-            <div key={tier} style={{ marginBottom: '40px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ width: '24px', height: '1px', background: config.accent }} />
+            <div key={tier} style={{ marginBottom: `${SPACE['3xl']}px` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.md}px`, marginBottom: `${SPACE.lg}px` }}>
+                <div style={{ width: `${SPACE.xl}px`, height: '1px', background: config.accent }} />
                 <h2 style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: config.accent, fontFamily: 'ui-monospace, monospace', fontWeight: 500, margin: 0 }}>
                   {config.label} — {tierAssets.length}
                 </h2>
@@ -617,7 +634,7 @@ function Dashboard() {
               {tierAssets.length === 0 ? (
                 <div style={{
                   textAlign: 'center',
-                  padding: '48px 24px',
+                  padding: `${SPACE['2xl']}px ${SPACE.lg}px`,
                   color: PALETTE.textMuted,
                   fontFamily: 'Georgia, serif',
                   fontStyle: 'italic',
@@ -630,8 +647,8 @@ function Dashboard() {
               ) : (
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                  gap: '16px',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: `${SPACE.lg}px`,
                 }}>
                   {tierAssets.map(asset => (
                     <ScoreCard key={asset.symbol} asset={asset} />
@@ -643,10 +660,21 @@ function Dashboard() {
         })}
       </div>
 
-      <div style={{ maxWidth: '1400px', margin: '40px auto 0', borderTop: `1px solid ${PALETTE.border}`, paddingTop: '16px', fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', lineHeight: 1.6 }}>
-        <div>Daily conviction scoring framework. Data refreshed at 12:00 UTC. Watchlist reviewed monthly.</div>
-        <div style={{ marginTop: '4px' }}>Dimensions: Institutional · Revenue · Regulatory · Supply · Wyckoff. Weights vary by asset type.</div>
-        <div style={{ marginTop: '4px' }}>Strong Accumulate fires when an already-Accumulate leader sees daily RSI flush with weekly + composite intact.</div>
+      <div style={{ maxWidth: '1400px', margin: `${SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', lineHeight: 1.6 }}>
+          <div>
+            <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Scoring</div>
+            Daily conviction framework. Data refreshed at 12:00 UTC.
+          </div>
+          <div>
+            <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Dimensions</div>
+            Institutional · Revenue · Regulatory · Supply · Wyckoff
+          </div>
+          <div>
+            <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Strong Accumulate</div>
+            Fires when leader sees daily RSI flush with weekly + composite intact.
+          </div>
+        </div>
       </div>
     </div>
   );
