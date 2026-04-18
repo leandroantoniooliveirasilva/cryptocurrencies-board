@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T00:22:09.283075+00:00",
+  "generated_at": "2026-04-18T00:35:57.452353+00:00",
   "snapshot_date": "2026-04-18",
   "framework_version": "2.0",
   "weight_profiles": {
@@ -65,7 +65,7 @@
         86,
         86
       ],
-      "rsi_daily": 67.6,
+      "rsi_daily": 67.5,
       "rsi_weekly": 41.0,
       "action": "accumulate",
       "strong_accumulate_days_active": 0,
@@ -110,6 +110,84 @@
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
       "note": "High-throughput L1, DeFi ecosystem"
+    },
+    {
+      "symbol": "LINK",
+      "name": "Chainlink",
+      "tier": "leader",
+      "asset_type": "defi",
+      "scores": {
+        "institutional": 88,
+        "revenue": 50,
+        "regulatory": 82,
+        "supply": 70,
+        "wyckoff": 55
+      },
+      "weights": {
+        "revenue": 0.35,
+        "institutional": 0.25,
+        "regulatory": 0.2,
+        "supply": 0.15,
+        "wyckoff": 0.05
+      },
+      "composite": 69,
+      "composite_last_week": 69,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        70,
+        69,
+        69
+      ],
+      "trend_30d": [
+        70,
+        69,
+        69
+      ],
+      "rsi_daily": 59.0,
+      "rsi_weekly": 38.8,
+      "action": "hold",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 1,
+      "note": "Strong institutional adoption"
+    },
+    {
+      "symbol": "HYPE",
+      "name": "Hyperliquid",
+      "tier": "leader",
+      "asset_type": "defi",
+      "scores": {
+        "institutional": 55,
+        "revenue": 50,
+        "regulatory": 65,
+        "supply": 60,
+        "wyckoff": 55
+      },
+      "weights": {
+        "revenue": 0.35,
+        "institutional": 0.25,
+        "regulatory": 0.2,
+        "supply": 0.15,
+        "wyckoff": 0.05
+      },
+      "composite": 56,
+      "composite_last_week": 56,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        56,
+        56,
+        56
+      ],
+      "trend_30d": [
+        56,
+        56,
+        56
+      ],
+      "rsi_daily": null,
+      "rsi_weekly": null,
+      "action": "hold",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 1,
+      "note": "Revenue-per-user sector leader"
     },
     {
       "symbol": "MORPHO",
@@ -182,12 +260,51 @@
         61,
         61
       ],
-      "rsi_daily": 56.5,
+      "rsi_daily": 56.2,
       "rsi_weekly": 52.4,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
       "note": "Enterprise interoperability"
+    },
+    {
+      "symbol": "XLM",
+      "name": "Stellar",
+      "tier": "runner-up",
+      "asset_type": "infrastructure",
+      "scores": {
+        "institutional": 55,
+        "revenue": 50,
+        "regulatory": 65,
+        "supply": 65,
+        "wyckoff": 55
+      },
+      "weights": {
+        "institutional": 0.35,
+        "regulatory": 0.25,
+        "supply": 0.2,
+        "revenue": 0.1,
+        "wyckoff": 0.1
+      },
+      "composite": 59,
+      "composite_last_week": 59,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        56,
+        59,
+        59
+      ],
+      "trend_30d": [
+        56,
+        59,
+        59
+      ],
+      "rsi_daily": null,
+      "rsi_weekly": null,
+      "action": "await",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 1,
+      "note": "Infrastructure/enterprise"
     },
     {
       "symbol": "KAS",
@@ -221,7 +338,7 @@
         58,
         58
       ],
-      "rsi_daily": 61.7,
+      "rsi_daily": 62.1,
       "rsi_weekly": 40.3,
       "action": "await",
       "strong_accumulate_days_active": 0,
@@ -260,7 +377,7 @@
         70,
         70
       ],
-      "rsi_daily": 65.0,
+      "rsi_daily": 64.5,
       "rsi_weekly": 39.8,
       "action": "observe",
       "strong_accumulate_days_active": 0,
@@ -299,8 +416,8 @@
         60,
         60
       ],
-      "rsi_daily": 56.8,
-      "rsi_weekly": 39.6,
+      "rsi_daily": null,
+      "rsi_weekly": null,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -338,7 +455,7 @@
         65,
         65
       ],
-      "rsi_daily": 52.0,
+      "rsi_daily": 51.9,
       "rsi_weekly": 40.6,
       "action": "observe",
       "strong_accumulate_days_active": 0,
@@ -385,6 +502,45 @@
       "note": "Infrastructure/enterprise"
     },
     {
+      "symbol": "ONDO",
+      "name": "Ondo",
+      "tier": "observation",
+      "asset_type": "defi",
+      "scores": {
+        "institutional": 55,
+        "revenue": 50,
+        "regulatory": 65,
+        "supply": 55,
+        "wyckoff": 55
+      },
+      "weights": {
+        "revenue": 0.35,
+        "institutional": 0.25,
+        "regulatory": 0.2,
+        "supply": 0.15,
+        "wyckoff": 0.05
+      },
+      "composite": 55,
+      "composite_last_week": 55,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        56,
+        55,
+        55
+      ],
+      "trend_30d": [
+        56,
+        55,
+        55
+      ],
+      "rsi_daily": 54.7,
+      "rsi_weekly": 34.7,
+      "action": "observe",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 1,
+      "note": "DeFi protocol, revenue-focused"
+    },
+    {
       "symbol": "AAVE",
       "name": "Aave",
       "tier": "observation",
@@ -416,8 +572,8 @@
         57,
         57
       ],
-      "rsi_daily": 63.5,
-      "rsi_weekly": 41.8,
+      "rsi_daily": null,
+      "rsi_weekly": null,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
