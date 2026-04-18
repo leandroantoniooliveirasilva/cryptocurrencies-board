@@ -222,7 +222,8 @@ def get_wyckoff_score(phase: str) -> int:
         return 30
 
     # Accumulation phases (bullish) - scores aligned with detect_wyckoff_phase
-    if "accumulation" in phase_lower or "phase" in phase_lower:
+    # Note: Only match "accumulation", not generic "phase" (which would match distribution phases)
+    if "accumulation" in phase_lower:
         if "phase e" in phase_lower or "markup" in phase_lower:
             return 90
         elif "phase d" in phase_lower:

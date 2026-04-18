@@ -105,11 +105,19 @@ def _weekly_delta(trend: list) -> int:
     """Calculate 7-day delta from trend array."""
     if not trend or len(trend) < 2:
         return 0
-    return trend[-1] - trend[0]
+    first, last = trend[0], trend[-1]
+    # Guard against None or non-numeric values
+    if not isinstance(first, (int, float)) or not isinstance(last, (int, float)):
+        return 0
+    return last - first
 
 
 def _monthly_delta(trend: list) -> int:
     """Calculate 30-day delta from trend array."""
     if not trend or len(trend) < 2:
         return 0
-    return trend[-1] - trend[0]
+    first, last = trend[0], trend[-1]
+    # Guard against None or non-numeric values
+    if not isinstance(first, (int, float)) or not isinstance(last, (int, float)):
+        return 0
+    return last - first

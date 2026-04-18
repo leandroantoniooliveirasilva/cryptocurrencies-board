@@ -11,7 +11,7 @@ import argparse
 import json
 import logging
 import sys
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
 import yaml
@@ -32,6 +32,44 @@ REPO_ROOT = Path(__file__).parent.parent
 ASSETS_FILE = REPO_ROOT / "pipeline" / "assets.yaml"
 DB_PATH = REPO_ROOT / "pipeline" / "storage" / "history.sqlite"
 PUBLIC_DIR = REPO_ROOT / "public"
+
+
+def _aggregate_weekly_prices(daily_prices: list) -> list:
+    """
+    Aggregate daily prices into weekly prices by taking the last price of each ISO week.
+
+    This handles missing days and data gaps correctly, unlike simple slicing.
+    Assumes daily_prices is ordered oldest to newest, representing the last N days.
+
+    Args:
+        daily_prices: List of daily closing prices (oldest to newest)
+
+    Returns:
+        List of weekly closing prices (last price of each ISO week)
+    """
+    if not daily_prices or len(daily_prices) < 7:
+        return []
+
+    # Calculate the date for each price (assuming prices end at today)
+    today = date.today()
+    prices_with_dates = []
+    for i, price in enumerate(daily_prices):
+        # Index 0 is the oldest, so days_ago = len - 1 - i
+        days_ago = len(daily_prices) - 1 - i
+        price_date = today - timedelta(days=days_ago)
+        prices_with_dates.append((price_date, price))
+
+    # Group by ISO week (year, week_number)
+    weeks = {}
+    for price_date, price in prices_with_dates:
+        iso_year, iso_week, _ = price_date.isocalendar()
+        week_key = (iso_year, iso_week)
+        # Keep only the last (most recent) price for each week
+        weeks[week_key] = price
+
+    # Sort by week and return prices
+    sorted_weeks = sorted(weeks.keys())
+    return [weeks[week] for week in sorted_weeks]
 
 
 def load_config() -> dict:
@@ -80,9 +118,9 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     daily_prices = defillama.fetch_daily_prices(coingecko_id, days=120) if coingecko_id else None
     daily_prices = daily_prices or []  # Handle None from API failures
 
-    # For weekly RSI, sample every 7th day (last close of each week)
-    # Require at least 14 days to get 2+ weekly samples for meaningful analysis
-    weekly_prices = daily_prices[6::7] if len(daily_prices) >= 14 else []
+    # For weekly RSI, group by ISO week and take last price of each week
+    # This handles missing days and data gaps correctly
+    weekly_prices = _aggregate_weekly_prices(daily_prices)
 
     rsi_daily = rsi.compute_rsi(daily_prices, 14) if len(daily_prices) >= 15 else None
     rsi_weekly = rsi.compute_rsi(weekly_prices, 14) if len(weekly_prices) >= 15 else None

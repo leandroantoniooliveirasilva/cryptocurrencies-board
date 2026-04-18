@@ -14,6 +14,9 @@ _score_cache: dict = {}
 # Use Claude CLI (subscription) or API
 USE_CLI = os.environ.get("USE_CLAUDE_CLI", "true").lower() == "true"
 
+# Model to use for API calls (configurable via env var)
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+
 
 REGULATORY_PROMPT = """Score the regulatory trajectory for {symbol} ({name}) on a 0-100 scale.
 
@@ -143,7 +146,7 @@ def _query_claude_api(prompt: str, cache_key: str) -> Optional[dict]:
         client = anthropic.Anthropic()
 
         response = client.messages.create(
-            model="claude-opus-4-20250514",
+            model=CLAUDE_MODEL,
             max_tokens=200,
             messages=[{"role": "user", "content": prompt}],
         )

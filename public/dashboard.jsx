@@ -1,4 +1,4 @@
-const { useState, useEffect, useMemo } = React;
+const { useState, useEffect, useMemo, useCallback } = React;
 
 // Responsive breakpoints
 const BREAKPOINTS = {
@@ -536,7 +536,7 @@ function DetailModal({ asset, onClose, isMobile }) {
               <DimensionBar
                 key={dim}
                 label={DIMENSION_LABELS[dim]}
-                value={asset.scores[dim]}
+                value={asset.scores?.[dim]}
                 accent={config?.accent}
                 weight={weights[dim]}
               />
@@ -642,6 +642,12 @@ function ScoreCard({ asset, isMobile }) {
   const [showDetail, setShowDetail] = useState(false);
   const assetType = asset.asset_type || 'smart-contract';
 
+  // Memoize onClose to prevent DetailModal useEffect from re-running on every render
+  const handleCloseModal = useCallback((e) => {
+    e?.stopPropagation();
+    setShowDetail(false);
+  }, []);
+
   // Use pre-computed values if available, otherwise compute
   let composite;
   if (asset.composite !== undefined) {
@@ -721,7 +727,7 @@ function ScoreCard({ asset, isMobile }) {
       {showDetail && (
         <DetailModal
           asset={asset}
-          onClose={(e) => { e?.stopPropagation(); setShowDetail(false); }}
+          onClose={handleCloseModal}
           isMobile={isMobile}
         />
       )}
@@ -972,7 +978,10 @@ function Dashboard() {
 
   const filteredAssets = useMemo(() => {
     // Filter out assets below minimum score threshold
-    const qualified = assets.filter(a => (a.composite || 0) >= MIN_SCORE_THRESHOLD);
+    // Leaders are ALWAYS shown regardless of score to ensure visibility of deteriorating positions
+    const qualified = assets.filter(a =>
+      (a.composite || 0) >= MIN_SCORE_THRESHOLD || a.tier === 'leader'
+    );
 
     const sorted = [...qualified].sort((a, b) => {
       const aStrong = a.action === 'strong-accumulate' ? 0 : 1;
