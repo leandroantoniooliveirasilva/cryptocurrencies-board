@@ -1,5 +1,23 @@
 const { useState, useEffect, useMemo } = React;
 
+// Responsive breakpoints
+const BREAKPOINTS = {
+  mobile: 480,
+  tablet: 768,
+  desktop: 1024,
+};
+
+// Hook to detect mobile viewport
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < BREAKPOINTS.tablet);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < BREAKPOINTS.tablet);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 // Simple SVG icon components (replacing lucide-react)
 const Icon = ({ children, size = 24, color = 'currentColor', strokeWidth = 2, fill = 'none', ...props }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -316,7 +334,7 @@ function ActionBanner({ action, daysAgo, strongDays }) {
   );
 }
 
-function ScoreCard({ asset }) {
+function ScoreCard({ asset, isMobile }) {
   const [showAllDimensions, setShowAllDimensions] = useState(false);
   const assetType = asset.asset_type || 'smart-contract';
   const weights = asset.weights || getWeights(assetType);
@@ -342,13 +360,13 @@ function ScoreCard({ asset }) {
     <div style={{
       background: PALETTE.cardBg,
       border: isStrong ? `1px solid #4ac0e0` : `1px solid ${PALETTE.borderStrong}`,
-      padding: `${SPACE.lg}px`,
+      padding: isMobile ? `${SPACE.base}px` : `${SPACE.lg}px`,
       display: 'flex',
       flexDirection: 'column',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: `${SPACE.base}px` }}>
         <div>
-          <div style={{ fontFamily: 'Georgia, serif', fontSize: '24px', fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
+          <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? '22px' : '24px', fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
             {asset.symbol}
           </div>
           <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
@@ -377,8 +395,8 @@ function ScoreCard({ asset }) {
         {getActionReasoning(asset)}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: `${SPACE.md}px`, marginBottom: `${SPACE.xs}px` }}>
-        <div style={{ fontFamily: 'Georgia, serif', fontSize: '48px', fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: `${SPACE.md}px`, marginBottom: `${SPACE.xs}px`, flexWrap: 'wrap' }}>
+        <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? '40px' : '48px', fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
           {composite}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: '11px', fontFamily: 'ui-monospace, monospace' }}>
@@ -414,7 +432,8 @@ function ScoreCard({ asset }) {
               fontFamily: 'ui-monospace, monospace',
               letterSpacing: '0.08em',
               cursor: 'pointer',
-              padding: '4px 0',
+              padding: isMobile ? '12px 0' : '4px 0',
+              minHeight: isMobile ? '44px' : 'auto',
               opacity: 0.8,
             }}
           >
@@ -432,7 +451,8 @@ function ScoreCard({ asset }) {
               fontFamily: 'ui-monospace, monospace',
               letterSpacing: '0.08em',
               cursor: 'pointer',
-              padding: '4px 0',
+              padding: isMobile ? '12px 0' : '4px 0',
+              minHeight: isMobile ? '44px' : 'auto',
               opacity: 0.8,
             }}
           >
@@ -455,7 +475,7 @@ function ScoreCard({ asset }) {
   );
 }
 
-function ActionLegend() {
+function ActionLegend({ isMobile }) {
   const items = [
     { key: 'strong-accumulate', text: 'Dislocation inside accumulation zone. Daily RSI ≤32, weekly ≥42, composite stable WoW. Shows day-counter when firing consecutively.' },
     { key: 'accumulate', text: 'Tranche-eligible. Leader, composite ≥75, Wyckoff Phase C+, non-negative trend, weekly RSI <75.' },
@@ -467,12 +487,12 @@ function ActionLegend() {
   ];
   return (
     <details style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, fontSize: '11px', color: PALETTE.textSecondary }}>
-      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, listStyle: 'none' }}>
+      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, listStyle: 'none', minHeight: isMobile ? '44px' : 'auto', padding: isMobile ? `${SPACE.sm}px 0` : 0 }}>
         <span style={{ transition: 'transform 0.2s', display: 'inline-block' }}>▸</span>
         Action rules
       </summary>
       <style>{`details[open] summary span:first-child { transform: rotate(90deg); }`}</style>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: `${SPACE.base}px`, marginTop: `${SPACE.lg}px` }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: `${SPACE.base}px`, marginTop: `${SPACE.lg}px` }}>
         {items.map(item => {
           const cfg = ACTION_CONFIG[item.key];
           return (
@@ -541,6 +561,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTier, setActiveTier] = useState('all');
+  const isMobile = useIsMobile();
 
   const fetchData = () => {
     setLoading(true);
@@ -610,15 +631,15 @@ function Dashboard() {
       background: PALETTE.bg,
       fontFamily: 'Georgia, serif',
       color: PALETTE.textPrimary,
-      padding: `${SPACE['2xl']}px ${SPACE.lg}px`,
+      padding: isMobile ? `${SPACE.lg}px ${SPACE.base}px` : `${SPACE['2xl']}px ${SPACE.lg}px`,
     }}>
-      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE['2xl']}px`, borderBottom: `1px solid ${PALETTE.borderStrong}`, paddingBottom: `${SPACE.lg}px` }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: `${SPACE.lg}px` }}>
-          <div style={{ flex: '1 1 auto', minWidth: '280px' }}>
+      <div style={{ maxWidth: '1400px', margin: `0 auto ${isMobile ? SPACE.lg : SPACE['2xl']}px`, borderBottom: `1px solid ${PALETTE.borderStrong}`, paddingBottom: `${SPACE.lg}px` }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', gap: `${SPACE.lg}px` }}>
+          <div style={{ flex: '1 1 auto' }}>
             <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
               Framework · Daily scan
             </div>
-            <h1 style={{ fontSize: '32px', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
+            <h1 style={{ fontSize: isMobile ? '26px' : '32px', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
               Conviction Scores
             </h1>
             <div style={{ fontSize: '12px', color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontStyle: 'italic' }}>
@@ -642,7 +663,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <ActionLegend />
+      <ActionLegend isMobile={isMobile} />
 
       <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, display: 'flex', gap: `${SPACE.sm}px`, flexWrap: 'wrap' }}>
         {[
@@ -658,7 +679,8 @@ function Dashboard() {
               background: activeTier === t.id ? PALETTE.textPrimary : 'transparent',
               color: activeTier === t.id ? PALETTE.bg : PALETTE.textPrimary,
               border: `1px solid ${PALETTE.borderStrong}`,
-              padding: `${SPACE.sm}px ${SPACE.base}px`,
+              padding: isMobile ? `${SPACE.md}px ${SPACE.base}px` : `${SPACE.sm}px ${SPACE.base}px`,
+              minHeight: isMobile ? '44px' : 'auto',
               fontSize: '11px',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
@@ -702,11 +724,11 @@ function Dashboard() {
               ) : (
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                  gap: `${SPACE.lg}px`,
+                  gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: `${isMobile ? SPACE.base : SPACE.lg}px`,
                 }}>
                   {tierAssets.map(asset => (
-                    <ScoreCard key={asset.symbol} asset={asset} />
+                    <ScoreCard key={asset.symbol} asset={asset} isMobile={isMobile} />
                   ))}
                 </div>
               )}
@@ -715,8 +737,8 @@ function Dashboard() {
         })}
       </div>
 
-      <div style={{ maxWidth: '1400px', margin: `${SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', lineHeight: 1.6 }}>
+      <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', lineHeight: 1.6 }}>
           <div>
             <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Scoring</div>
             Daily conviction framework. Data refreshed at 12:00 UTC.
