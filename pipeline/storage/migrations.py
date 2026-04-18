@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS snapshots (
     institutional INTEGER,
     revenue INTEGER,
     regulatory INTEGER,
+    supply INTEGER,
     wyckoff INTEGER,
     rsi_daily REAL,
     rsi_weekly REAL,
@@ -60,9 +61,24 @@ def init_db(db_path: Path) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA)
     conn.executescript(QUALITATIVE_CACHE_SCHEMA)
+
+    # Migration: add supply column if missing (for existing databases)
+    _migrate_add_supply_column(conn)
+
     conn.commit()
     logger.info(f"Database initialized at {db_path}")
     return conn
+
+
+def _migrate_add_supply_column(conn: sqlite3.Connection) -> None:
+    """Add supply column to snapshots table if it doesn't exist."""
+    cursor = conn.execute("PRAGMA table_info(snapshots)")
+    columns = [row[1] for row in cursor.fetchall()]
+
+    if "supply" not in columns:
+        logger.info("Migrating: adding 'supply' column to snapshots table")
+        conn.execute("ALTER TABLE snapshots ADD COLUMN supply INTEGER")
+        conn.commit()
 
 
 def save_snapshot(conn: sqlite3.Connection, asset: dict, snapshot_date: str) -> None:
@@ -79,8 +95,8 @@ def save_snapshot(conn: sqlite3.Connection, asset: dict, snapshot_date: str) -> 
         """
         INSERT OR REPLACE INTO snapshots
         (asset_symbol, snapshot_date, composite, institutional, revenue,
-         regulatory, wyckoff, rsi_daily, rsi_weekly, wyckoff_phase, action, note)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         regulatory, supply, wyckoff, rsi_daily, rsi_weekly, wyckoff_phase, action, note)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             asset["symbol"],
@@ -89,6 +105,7 @@ def save_snapshot(conn: sqlite3.Connection, asset: dict, snapshot_date: str) -> 
             scores.get("institutional"),
             scores.get("revenue"),
             scores.get("regulatory"),
+            scores.get("supply"),
             scores.get("wyckoff"),
             asset.get("rsi_daily"),
             asset.get("rsi_weekly"),
@@ -203,19 +220,36 @@ def get_label_changed_days_ago(conn: sqlite3.Connection, symbol: str) -> int:
 
 def get_strong_accumulate_days(conn: sqlite3.Connection, symbol: str) -> int:
     """
-    Calculate consecutive days of strong-accumulate action.
+    Calculate consecutive days of strong-accumulate action BEFORE today.
+
+    This excludes today's date to prevent double-counting when the pipeline
+    is re-run on the same day (since run.py adds 1 if today is strong-accumulate).
 
     Args:
         conn: Database connection
         symbol: Asset symbol
 
     Returns:
-        Number of consecutive days (0 if not currently strong-accumulate)
+        Number of consecutive days before today (0 if none)
     """
-    history = get_action_history(conn, symbol, 30)
-    if not history or history[0]["action"] != "strong-accumulate":
+    today = date.today().isoformat()
+
+    # Get history excluding today's entry
+    cursor = conn.execute(
+        """
+        SELECT snapshot_date, action FROM snapshots
+        WHERE asset_symbol = ? AND action IS NOT NULL AND snapshot_date < ?
+        ORDER BY snapshot_date DESC
+        LIMIT 30
+        """,
+        (symbol, today),
+    )
+    history = [{"date": row["snapshot_date"], "action": row["action"]} for row in cursor]
+
+    if not history:
         return 0
 
+    # Count consecutive strong-accumulate days before today
     count = 0
     for entry in history:
         if entry["action"] == "strong-accumulate":

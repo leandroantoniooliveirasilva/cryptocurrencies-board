@@ -65,12 +65,7 @@ runner_ups:
     defillama_slug: null
     wyckoff_override: null
 
-  - symbol: KAS
-    name: Kaspa
-    asset_type: store-of-value
-    coingecko_id: kaspa
-    defillama_slug: null
-    wyckoff_override: null
+  # DEMOTED: KAS moved to observation - lacking institutional traction
 
   # PROMOTED: SEC settlement complete, $1.4B ETF inflows, OCC charter
   - symbol: XRP
@@ -104,6 +99,38 @@ runner_ups:
     defillama_slug: sui
     wyckoff_override: null
 
+  # PROMOTED: $3B+ TVL, 200+ tokenized securities, State Street partnership
+  - symbol: ONDO
+    name: Ondo
+    asset_type: defi
+    coingecko_id: ondo-finance
+    defillama_slug: ondo-finance
+    wyckoff_override: null
+
+  # PROMOTED: Dominant yield trading, $40M revenue, institutional Citadels product
+  - symbol: PENDLE
+    name: Pendle
+    asset_type: defi
+    coingecko_id: pendle
+    defillama_slug: pendle
+    wyckoff_override: null
+
+  # NEW: $37M revenue, 93-95% Solana aggregator market share
+  - symbol: JUP
+    name: Jupiter
+    asset_type: defi
+    coingecko_id: jupiter-exchange-solana
+    defillama_slug: jupiter
+    wyckoff_override: null
+
+  # NEW: 93.9% restaking dominance, EigenDA launched
+  - symbol: EIGEN
+    name: EigenLayer
+    asset_type: infrastructure
+    coingecko_id: eigenlayer
+    defillama_slug: eigenlayer
+    wyckoff_override: null
+
 observation:
   - symbol: HBAR
     name: Hedera
@@ -112,19 +139,9 @@ observation:
     defillama_slug: null
     wyckoff_override: null
 
-  - symbol: CANTON
-    name: Canton Network
-    asset_type: infrastructure
-    coingecko_id: null
-    defillama_slug: null
-    wyckoff_override: "Pre-market"
+  # REMOVED: CANTON - No trading activity, 3/3 reports agreed
 
-  - symbol: ONDO
-    name: Ondo
-    asset_type: defi
-    coingecko_id: ondo-finance
-    defillama_slug: ondo-finance
-    wyckoff_override: null
+  # PROMOTED: ONDO moved to runner-ups
 
   # NEW: Grayscale ETF filing, DCG backing, AI-crypto leader
   - symbol: TAO
@@ -134,12 +151,20 @@ observation:
     defillama_slug: null
     wyckoff_override: null
 
-  # NEW: Dominant yield trading, $40M revenue, institutional Citadels product
-  - symbol: PENDLE
-    name: Pendle
-    asset_type: defi
-    coingecko_id: pendle
-    defillama_slug: pendle
+  # DEMOTED: Lacking institutional traction, PoW-only narrative
+  - symbol: KAS
+    name: Kaspa
+    asset_type: store-of-value
+    coingecko_id: kaspa
+    defillama_slug: null
+    wyckoff_override: null
+
+  # NEW: Modular DA leader, 100+ rollups using Celestia
+  - symbol: TIA
+    name: Celestia
+    asset_type: infrastructure
+    coingecko_id: celestia
+    defillama_slug: null
     wyckoff_override: null
 
   # NEW: $6B+ USDe, institutional iUSDe, but MiCA exit concerning

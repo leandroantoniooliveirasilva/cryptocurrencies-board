@@ -112,7 +112,7 @@ def _query_claude_cli(prompt: str, cache_key: str) -> Optional[dict]:
     try:
         # Use claude CLI with --print flag for non-interactive output
         result = subprocess.run(
-            ["claude", "--print", "--model", "sonnet", prompt],
+            ["claude", "--print", "--model", "opus", prompt],
             capture_output=True,
             text=True,
             timeout=60,
@@ -143,7 +143,7 @@ def _query_claude_api(prompt: str, cache_key: str) -> Optional[dict]:
         client = anthropic.Anthropic()
 
         response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-opus-4-20250514",
             max_tokens=200,
             messages=[{"role": "user", "content": prompt}],
         )

@@ -13,6 +13,7 @@ import json
 import logging
 import os
 import subprocess
+import time
 from typing import Optional
 
 import requests
@@ -21,7 +22,40 @@ logger = logging.getLogger(__name__)
 
 # CoinGecko provides some supply metrics for free
 COINGECKO_BASE = "https://api.coingecko.com/api/v3"
+COINGECKO_PRO_BASE = "https://pro-api.coingecko.com/api/v3"
 TIMEOUT = 30
+
+# Rate limiting for CoinGecko API (free tier = 10-30 calls/min)
+RATE_LIMIT_DELAY = 3.0  # seconds between requests
+MAX_RETRIES = 3
+_last_request_time = 0.0
+
+
+def _rate_limit():
+    """Enforce rate limiting between requests."""
+    global _last_request_time
+    now = time.time()
+    elapsed = now - _last_request_time
+    if elapsed < RATE_LIMIT_DELAY:
+        sleep_time = RATE_LIMIT_DELAY - elapsed
+        logger.debug(f"Rate limiting: sleeping {sleep_time:.1f}s")
+        time.sleep(sleep_time)
+    _last_request_time = time.time()
+
+
+def _get_headers() -> dict:
+    """Get headers with API key if available."""
+    api_key = os.environ.get("COINGECKO_API_KEY")
+    if api_key:
+        return {"x-cg-pro-api-key": api_key}
+    return {}
+
+
+def _get_base_url() -> str:
+    """Get base URL based on API key availability."""
+    if os.environ.get("COINGECKO_API_KEY"):
+        return COINGECKO_PRO_BASE
+    return COINGECKO_BASE
 
 # In-memory cache for AI scores (persisted to DB separately)
 _supply_cache: dict = {}
@@ -71,7 +105,7 @@ def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
         return None
 
     try:
-        url = f"{COINGECKO_BASE}/coins/{coingecko_id}"
+        url = f"{_get_base_url()}/coins/{coingecko_id}"
         params = {
             "localization": "false",
             "tickers": "false",
@@ -79,12 +113,23 @@ def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
             "developer_data": "false",
         }
 
-        resp = requests.get(url, params=params, timeout=TIMEOUT)
-        if resp.status_code == 429:
-            logger.debug(f"Rate limited fetching supply for {coingecko_id}")
+        # Rate limiting and retry logic
+        for attempt in range(MAX_RETRIES):
+            _rate_limit()
+            resp = requests.get(url, params=params, headers=_get_headers(), timeout=TIMEOUT)
+
+            if resp.status_code == 429:
+                wait_time = 5 * (2 ** attempt)
+                logger.info(f"Rate limited, waiting {wait_time}s before retry {attempt + 1}/{MAX_RETRIES}")
+                time.sleep(wait_time)
+                continue
+
+            resp.raise_for_status()
+            break
+        else:
+            logger.warning(f"Max retries exceeded fetching supply for {coingecko_id}")
             return None
 
-        resp.raise_for_status()
         data = resp.json()
 
         market_data = data.get("market_data", {})
@@ -96,7 +141,7 @@ def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
             "circulating_supply": circulating,
             "total_supply": total,
             "max_supply": max_supply,
-            "circulating_ratio": circulating / total if circulating and total else None,
+            "circulating_ratio": circulating / total if circulating and total and total > 0 else None,
             "inflation_ratio": (total - circulating) / circulating if circulating and total and circulating > 0 else None,
             "has_max_supply": max_supply is not None,
         }
@@ -159,7 +204,7 @@ def _query_claude(prompt: str, cache_key: str) -> Optional[dict]:
 
     try:
         result = subprocess.run(
-            ["claude", "--print", prompt],
+            ["claude", "--print", "--model", "opus", prompt],
             capture_output=True,
             text=True,
             timeout=60,
