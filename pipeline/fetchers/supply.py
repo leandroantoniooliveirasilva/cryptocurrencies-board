@@ -100,17 +100,21 @@ def compute_supply_score(
         "ETH": 75,
         "SOL": 70,
         "AVAX": 65,
+        "SUI": 60,  # Newer L1, token emissions ongoing
         # DeFi with token emissions
         "LINK": 70,
         "AAVE": 65,
         "HYPE": 60,
         "MORPHO": 55,
+        "PENDLE": 55,  # Yield trading, moderate emissions
+        "ENA": 50,  # USDe synthetic, centralized supply
         # Infrastructure
         "QNT": 75,  # Fixed supply
         "XRP": 60,  # Large escrow
         "XLM": 65,
         "HBAR": 55,
         "KAS": 60,
+        "TAO": 55,  # AI-crypto, mining emissions
         # Others
         "ONDO": 55,
         "CANTON": 50,  # Pre-market, unknown

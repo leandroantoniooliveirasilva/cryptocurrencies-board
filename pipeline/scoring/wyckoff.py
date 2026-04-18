@@ -203,6 +203,10 @@ def get_wyckoff_score(phase: str) -> int:
     """
     phase_lower = phase.lower()
 
+    # Re-accumulation (must check before "accumulation")
+    if "re-accumulation" in phase_lower:
+        return 65
+
     # Distribution phases (bearish)
     if "distribution" in phase_lower:
         if "phase e" in phase_lower or "markdown" in phase_lower:
@@ -238,8 +242,6 @@ def get_wyckoff_score(phase: str) -> int:
         return 78
     if "markdown" in phase_lower:
         return 28
-    if "re-accumulation" in phase_lower:
-        return 68
     if "range" in phase_lower:
         if "upper" in phase_lower:
             return 55
