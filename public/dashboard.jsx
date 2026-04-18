@@ -100,12 +100,18 @@ function computeComposite(scores, assetType) {
 
 function weeklyDelta(trend) {
   if (!trend || trend.length < 2) return 0;
-  return trend[trend.length - 1] - trend[0];
+  const first = trend[0];
+  const last = trend[trend.length - 1];
+  if (typeof first !== 'number' || typeof last !== 'number' || isNaN(first) || isNaN(last)) return 0;
+  return last - first;
 }
 
 function monthlyDelta(trend30d) {
   if (!trend30d || trend30d.length < 2) return 0;
-  return trend30d[trend30d.length - 1] - trend30d[0];
+  const first = trend30d[0];
+  const last = trend30d[trend30d.length - 1];
+  if (typeof first !== 'number' || typeof last !== 'number' || isNaN(first) || isNaN(last)) return 0;
+  return last - first;
 }
 
 function relativeTime(dateStr) {
@@ -152,11 +158,13 @@ function Sparkline({ data, accent }) {
 }
 
 function DimensionBar({ label, value, accent, weight }) {
+  const safeValue = typeof value === 'number' && !isNaN(value) ? value : 50;
+  const displayValue = typeof value === 'number' && !isNaN(value) ? value : '—';
   return (
     <div style={{ marginBottom: `${SPACE.md}px` }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
         <span>{label}{weight ? <span style={{ opacity: 0.6, marginLeft: `${SPACE.xs}px` }}>({Math.round(weight * 100)}%)</span> : ''}</span>
-        <span style={{ color: PALETTE.textPrimary }}>{value}</span>
+        <span style={{ color: PALETTE.textPrimary }}>{displayValue}</span>
       </div>
       <div style={{ height: '3px', background: PALETTE.trackBg, overflow: 'hidden' }}>
         <div style={{
@@ -164,7 +172,7 @@ function DimensionBar({ label, value, accent, weight }) {
           width: '100%',
           background: accent,
           transformOrigin: 'left',
-          transform: `scaleX(${value / 100})`,
+          transform: `scaleX(${safeValue / 100})`,
           transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
         }} />
       </div>
