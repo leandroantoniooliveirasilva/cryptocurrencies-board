@@ -1031,7 +1031,7 @@ function Dashboard() {
               Cryptocurrency Investment Framework
             </div>
             <h1 style={{ fontSize: isMobile ? '1.75rem' : TYPE.title, fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
-              Daily Conviction Signals
+              Conviction Board
             </h1>
             <div style={{ fontSize: TYPE.body, color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontFamily: 'Georgia, serif', lineHeight: TYPE.snug }}>
               Multi-dimensional scoring for long-term crypto accumulation. Identifies <em>what</em> to buy based on fundamentals, <em>when</em> to buy based on technicals.
