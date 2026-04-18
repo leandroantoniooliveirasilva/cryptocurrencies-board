@@ -2,6 +2,8 @@
 
 Monthly watchlist discovery and vetting for the conviction scoring framework.
 
+> **Note**: The scoring pipeline runs locally (not via GitHub Actions). Discovery informs manual updates to `assets.yaml`, which are then processed by the local pipeline.
+
 ## When to Use
 
 Invoke this skill when:

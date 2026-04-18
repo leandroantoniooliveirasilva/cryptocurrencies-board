@@ -2,6 +2,8 @@
 
 Interpret daily scan results and provide actionable insights.
 
+> **Note**: The scoring pipeline runs locally via `python -m pipeline.run`. This skill interprets the results in `public/latest.json`.
+
 ## When to Use
 
 Invoke this skill when:

@@ -83,21 +83,26 @@ stand-aside          Distribution risk — do not engage
 ```
 
 ### Display Threshold
-Assets with composite score below 60 are not displayed on the dashboard.
+Assets with composite score below 50 are not displayed on the dashboard.
 
 ## Data Pipeline
 
+The pipeline runs **locally** on demand (not via GitHub Actions). Only deployment is automated.
+
 ```
-GitHub Actions (12:00 UTC)
+Local Pipeline (on-demand)
     │
     ├─→ Fetch: DefiLlama (TVL, revenue), CoinGecko (prices)
+    ├─→ Score: Claude API for regulatory + institutional + supply
     ├─→ Compute: RSI(14) daily + weekly from 120 days OHLC
     ├─→ Detect: Wyckoff phase from price structure (or use override)
-    ├─→ Score: Claude API for regulatory + institutional + supply
     ├─→ Composite: Weighted score by asset type
     ├─→ Action: Derive signal from composite + RSI + Wyckoff + trend
     ├─→ Store: Append snapshot to history.sqlite
-    └─→ Output: Write latest.json + commit to repo
+    └─→ Output: Write latest.json, commit and push
+         │
+         ▼
+GitHub Actions → Deploy /public to GitHub Pages
 ```
 
 ## Commands
@@ -146,6 +151,10 @@ public/
 ├── latest.json              # Today's snapshot (auto-generated)
 └── index.html               # Entry point
 
+.agents/skills/
+├── discovery/               # Monthly watchlist discovery skill
+└── daily-summary/           # Daily scan interpretation skill
+
 discovery/
 ├── report_YYYY-MM.md        # Monthly consolidated reports
 └── YYYY-MM/                 # Individual discovery runs
@@ -180,3 +189,12 @@ Track changes in `docs/decisions.md`. Watch for:
 See `.agents/skills/` for:
 - `discovery` — Monthly watchlist discovery and vetting
 - `daily-summary` — Interpret daily scan results
+
+## Documentation Maintenance
+
+When structural changes are made to the framework (new dimensions, changed thresholds, new action states, etc.), update:
+
+1. **README.md** — User-facing overview
+2. **CLAUDE.md** — This file (Claude Code guidance)
+3. **`.agents/skills/`** — Skill instructions to match implementation
+4. **`pipeline/discovery/prompt.md`** — Discovery prompt if scoring logic changes
