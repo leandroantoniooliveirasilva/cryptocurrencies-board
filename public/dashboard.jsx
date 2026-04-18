@@ -314,10 +314,20 @@ function getActionReasoning(asset) {
   const rsiDaily = asset.rsi_daily;
   const rsiWeekly = asset.rsi_weekly;
 
+  // Detect if this is a capitulation signal (RSI-driven) vs Wyckoff-driven
+  const isCapitulation = rsiWeekly !== null && rsiWeekly < 30;
+  const isDeepCapitulation = isCapitulation && rsiDaily !== null && rsiDaily < 30;
+
   switch (action) {
     case 'strong-accumulate':
+      if (isDeepCapitulation) {
+        return `Capitulation detected: both daily RSI (${rsiDaily}) and weekly RSI (${rsiWeekly}) below 30. This panic selling in a quality leader is historically a strong entry point. Fundamentals intact at ${composite}.`;
+      }
       return `Daily RSI at ${rsiDaily} signals short-term oversold while weekly RSI (${rsiWeekly}) and composite (${composite}) remain healthy. This dislocation within an accumulation zone is a high-conviction entry point.`;
     case 'accumulate':
+      if (isCapitulation) {
+        return `Weekly RSI at ${rsiWeekly} signals capitulation-level oversold. Quality leaders typically recover from panic selling. Consider measured accumulation while fundamentals remain intact (composite ${composite}).`;
+      }
       return `Composite score of ${composite} with ${delta >= 0 ? 'stable' : 'minor pullback'} trend. RSI levels support accumulation. Leader-tier asset in favorable Wyckoff phase for tranche building.`;
     case 'promote':
       return `Runner-up crossing leader threshold with composite at ${composite}${delta30 > 0 ? ` and +${delta30}-point 30-day momentum` : ''}. Evaluate for potential tier promotion.`;
@@ -850,8 +860,8 @@ function ActionSummary({ assets, isMobile }) {
 
 function ActionLegend({ isMobile }) {
   const items = [
-    { key: 'strong-accumulate', text: 'Dislocation inside accumulation zone. Daily RSI ≤32, weekly ≥42, composite stable WoW. Shows day-counter when firing consecutively.' },
-    { key: 'accumulate', text: 'Tranche-eligible. Leader, composite ≥75, Wyckoff Phase C+, non-negative trend, weekly RSI <75.' },
+    { key: 'strong-accumulate', text: 'Triggers: (1) Capitulation — weekly RSI <30 AND daily RSI <30 on leaders; (2) Wyckoff dislocation — Phase C+, daily RSI ≤32, weekly ≥42, composite ≥75 stable WoW. Shows day-counter when firing consecutively.' },
+    { key: 'accumulate', text: 'Triggers: (1) Capitulation — weekly RSI <30 on leaders (panic selling recovery); (2) Wyckoff — composite ≥75, Phase C+, non-negative trend, weekly RSI <70.' },
     { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8. Manual promotion decision required.' },
     { key: 'hold', text: 'Active position. No add/trim signal. The default state — patience by design.' },
     { key: 'await', text: 'Runner-up building signal. Analytical hold only, no activation yet.' },
