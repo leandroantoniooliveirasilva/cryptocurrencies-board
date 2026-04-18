@@ -71,20 +71,22 @@ const ASSET_TYPE_LABELS = {
   'infrastructure': 'Infrastructure',
 };
 
+// Tier accents: blue for leaders (positive), teal for runner-ups, gray for observation
 const TIER_CONFIG = {
-  'leader': { label: 'Leaders', icon: CheckCircle2, accent: '#d4a574', order: 0 },
-  'runner-up': { label: 'Runner-ups', icon: Clock, accent: '#9cb088', order: 1 },
+  'leader': { label: 'Leaders', icon: CheckCircle2, accent: '#5aafcf', order: 0 },
+  'runner-up': { label: 'Runner-ups', icon: Clock, accent: '#6a9a90', order: 1 },
   'observation': { label: 'Observation', icon: Eye, accent: '#8a8a9a', order: 2 },
 };
 
+// Action colors: semantic scale from blue (positive) → neutral → red (negative)
 const ACTION_CONFIG = {
-  'strong-accumulate': { label: 'Strong Accumulate', desc: 'Dislocation in accumulation zone', bg: '#e8b86a', fg: '#121110', dot: '#121110', icon: Zap, emphatic: true },
-  'accumulate': { label: 'Accumulate', desc: 'Tranche-eligible zone', bg: '#d4a574', fg: '#121110', dot: '#121110' },
-  'promote': { label: 'Promote Candidate', desc: 'Runner-up earning activation', bg: '#3d3425', fg: '#f0d4a0', dot: '#d4a574', icon: ArrowUpCircle },
-  'hold': { label: 'Hold & Monitor', desc: 'Position active, no action', bg: 'transparent', fg: '#9cb088', dot: '#9cb088', border: true },
-  'await': { label: 'Await Confirmation', desc: 'Signal building, not yet', bg: 'transparent', fg: '#b8a878', dot: '#b8a878', border: true },
+  'strong-accumulate': { label: 'Strong Accumulate', desc: 'Dislocation in accumulation zone', bg: '#4ac0e0', fg: '#0a1a20', dot: '#0a1a20', icon: Zap, emphatic: true },
+  'accumulate': { label: 'Accumulate', desc: 'Tranche-eligible zone', bg: '#5aafcf', fg: '#0a1820', dot: '#0a1820' },
+  'promote': { label: 'Promote Candidate', desc: 'Runner-up earning activation', bg: '#1a3038', fg: '#8ad0e8', dot: '#5aafcf', icon: ArrowUpCircle },
+  'hold': { label: 'Hold & Monitor', desc: 'Position active, no action', bg: 'transparent', fg: '#6a9a90', dot: '#6a9a90', border: true },
+  'await': { label: 'Await Confirmation', desc: 'Signal building, not yet', bg: 'transparent', fg: '#9a9085', dot: '#9a9085', border: true },
   'observe': { label: 'Observe', desc: 'Scanning only', bg: 'transparent', fg: '#8a8a9a', dot: '#8a8a9a', border: true },
-  'stand-aside': { label: 'Stand Aside', desc: 'Do not engage', bg: 'transparent', fg: '#c27878', dot: '#c27878', border: true },
+  'stand-aside': { label: 'Stand Aside', desc: 'Do not engage', bg: 'transparent', fg: '#d06868', dot: '#d06868', border: true },
 };
 
 function computeComposite(scores, assetType) {
@@ -236,7 +238,7 @@ function ActionBanner({ action, daysAgo, strongDays }) {
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: `${SPACE.sm}px`,
-      boxShadow: isStrong ? `0 0 0 2px ${PALETTE.bg}, 0 0 0 3px #e8b86a` : 'none',
+      boxShadow: isStrong ? `0 0 0 2px ${PALETTE.bg}, 0 0 0 3px #4ac0e0` : 'none',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
         {Icon ? (
@@ -300,7 +302,7 @@ function ScoreCard({ asset }) {
   return (
     <div style={{
       background: PALETTE.cardBg,
-      border: isStrong ? `1px solid #e8b86a` : `1px solid ${PALETTE.borderStrong}`,
+      border: isStrong ? `1px solid #4ac0e0` : `1px solid ${PALETTE.borderStrong}`,
       padding: `${SPACE.lg}px`,
       display: 'flex',
       flexDirection: 'column',
@@ -577,9 +579,9 @@ function Dashboard() {
             )}
           </div>
           {strongCount > 0 && (
-            <div style={{ padding: `${SPACE.md}px ${SPACE.base}px`, background: '#2a2115', border: '1px solid #e8b86a', display: 'inline-flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexShrink: 0 }}>
-              <Zap size={14} color="#e8b86a" fill="#e8b86a" strokeWidth={1.75} />
-              <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#e8b86a', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
+            <div style={{ padding: `${SPACE.md}px ${SPACE.base}px`, background: '#0f2028', border: '1px solid #4ac0e0', display: 'inline-flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexShrink: 0 }}>
+              <Zap size={14} color="#4ac0e0" fill="#4ac0e0" strokeWidth={1.75} />
+              <span style={{ fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#4ac0e0', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
                 {strongCount} Strong Accumulate signal{strongCount > 1 ? 's' : ''} active
               </span>
             </div>
