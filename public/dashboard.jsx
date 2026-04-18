@@ -629,7 +629,8 @@ function Dashboard() {
   const fetchData = () => {
     setLoading(true);
     setError(null);
-    fetch('./latest.json')
+    // Cache bust with timestamp to avoid stale data
+    fetch(`./latest.json?t=${Date.now()}`, { cache: 'no-store' })
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
