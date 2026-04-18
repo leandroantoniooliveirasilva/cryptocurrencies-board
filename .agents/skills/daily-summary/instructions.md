@@ -55,6 +55,7 @@ Provide a concise summary in this format:
 - Leaders firing accumulate: X/Y
 - Strong signals active: N days
 - Assets below threshold: N (filtered from view)
+- GLI status: [expanding/contracting] (filter [active/inactive])
 
 ### Interpretation
 [1-2 sentences on overall market posture and what it means for the framework]
@@ -75,6 +76,8 @@ This is rare (~5-15 times per year across all assets). When it fires:
 - Composite stable week-over-week
 - Phase C spring zone
 - Short-term dip within healthy structure
+
+**GLI Filter**: When Global Liquidity Index is contracting (GLI today < GLI 75 days ago), strong-accumulate is automatically downgraded to regular accumulate. This prevents aggressive accumulation during liquidity contractions which historically precede local tops.
 
 If strong-accumulate has been firing for multiple consecutive days, note the day count. Continuation signals are valid but early entries are better.
 
@@ -150,9 +153,10 @@ None — all leaders structurally healthy
 - Leaders firing accumulate: 2/5
 - Strong signals active: LINK (day 2)
 - Assets below threshold: 3
+- GLI status: expanding (+2.1% vs 75d ago) — macro filter inactive
 
 ### Interpretation
-Market showing localized weakness with LINK and SOL in accumulation zones while BTC approaches. Framework posture: selective accumulation in leaders, patience elsewhere.
+Market showing localized weakness with LINK and SOL in accumulation zones while BTC approaches. GLI expanding supports accumulation signals. Framework posture: selective accumulation in leaders, patience elsewhere.
 ```
 
 ## Historical Context
@@ -163,6 +167,9 @@ When interpreting signals, consider:
 2. **Days since label change** (`label_changed_days_ago`): Recent changes are more actionable
 3. **Strong accumulate streak** (`strong_accumulate_days_active`): Continuation or new signal?
 4. **Missing dimensions** (`missing_dimensions`): Incomplete data lowers confidence
+5. **GLI status** (`gli` object in JSON): Check `downtrend` boolean and `source` field
+   - If `downtrend: true` → strong signals were suppressed
+   - If `source: "fallback"` → GLI data unavailable, filter inactive
 
 ## What NOT to Do
 

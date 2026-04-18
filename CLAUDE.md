@@ -68,6 +68,7 @@ infrastructure (QNT):     Inst 35%, Reg 25%, Supply 20%, Rev 10%, Wyck 10%
 strong-accumulate    Dislocation in accumulation zone OR capitulation (leaders only)
                      Triggers: (1) Weekly RSI <30 AND daily RSI <30
                                (2) Wyckoff Phase C + RSI dip + composite stable
+                     Note: Downgraded to accumulate when GLI is contracting
 
 accumulate           Tranche-eligible zone (leaders only)
                      Triggers: (1) Weekly RSI <30 alone
@@ -81,6 +82,14 @@ await                Default for runner-ups — signal building
 observe              Default for observation — scanning only
 stand-aside          Distribution risk — do not engage
 ```
+
+### Macro Filters
+
+**GLI (Global Liquidity Index)**: Suppresses strong signals when global liquidity is contracting.
+- Compares current GLI vs 75 days ago
+- If GLI today < GLI 75 days ago → liquidity contracting → strong-accumulate downgrades to accumulate
+- Based on research showing 56-90 day lag between liquidity inflection points and BTC local tops/bottoms
+- Data sources (priority order): Manual override, TradingView, FRED M2, Fallback (neutral)
 
 ### Display Threshold
 Assets with composite score below 50 are not displayed on the dashboard.
@@ -126,14 +135,34 @@ cd public && python -m http.server 8000
 python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 ```
 
+## Environment Variables
+
+Store in `.env` file (auto-loaded by pipeline):
+
+```bash
+# Required
+ANTHROPIC_API_KEY=xxx          # Claude API for qualitative scoring
+
+# Optional
+FRED_API_KEY=xxx               # Free key from https://fred.stlouisfed.org/
+                               # Enables GLI macro filter via US M2 data
+
+# Manual GLI override (if FRED unavailable)
+GLI_CURRENT=105.2              # Current GLI value
+GLI_OFFSET=104.8               # GLI value 75 days ago
+```
+
 ## Key Files
 
 ```
 pipeline/
 ├── assets.yaml              # Watchlist configuration (THE source of truth)
+├── config.yaml              # All thresholds and parameters (centralized)
+├── config.py                # Config loader (singleton)
 ├── run.py                   # Pipeline orchestrator
 ├── fetchers/
 │   ├── defillama.py         # TVL, revenue data
+│   ├── gli.py               # Global Liquidity Index (FRED M2 fallback)
 │   ├── qualitative.py       # Claude API for regulatory/institutional
 │   └── supply.py            # Claude API for supply/on-chain
 ├── scoring/

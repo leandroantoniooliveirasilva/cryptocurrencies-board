@@ -59,6 +59,10 @@ Weighted by asset type (store-of-value, smart-contract, defi, infrastructure):
 - **Observe**: Watching only, no position
 - **Stand Aside**: Distribution risk, do not engage
 
+### Macro Filters
+
+- **GLI (Global Liquidity Index)**: When global liquidity is contracting (GLI today < GLI 75 days ago), strong-accumulate signals are downgraded to regular accumulate. Based on research showing 56-90 day lag between liquidity inflection points and crypto local tops/bottoms.
+
 ### Asset Tiers
 
 - **Leaders** (4-6): Core conviction positions for accumulation
@@ -83,9 +87,13 @@ pip install -r requirements.txt
 
 ### 2. Set environment variables
 
-Export your API keys:
+Create a `.env` file or export API keys:
 ```bash
-export ANTHROPIC_API_KEY=your_key_here
+# Required
+ANTHROPIC_API_KEY=your_key_here
+
+# Optional (for GLI macro filter)
+FRED_API_KEY=your_fred_key_here  # Free from https://fred.stlouisfed.org/
 ```
 
 ### 3. Enable GitHub Pages
@@ -118,7 +126,8 @@ cryptocurrencies-board/
 │   └── daily-summary/         # Daily scan interpretation
 ├── pipeline/
 │   ├── assets.yaml            # Watchlist configuration
-│   ├── fetchers/              # Data fetching (DefiLlama, CoinGecko, Claude)
+│   ├── config.yaml            # All thresholds and scoring parameters
+│   ├── fetchers/              # Data fetching (DefiLlama, CoinGecko, Claude, GLI)
 │   ├── scoring/               # Score computation (composite, RSI, actions)
 │   ├── storage/               # SQLite persistence
 │   └── run.py                 # Orchestrator entry point
