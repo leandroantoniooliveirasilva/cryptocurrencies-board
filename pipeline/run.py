@@ -36,8 +36,19 @@ PUBLIC_DIR = REPO_ROOT / "public"
 
 def load_config() -> dict:
     """Load asset configuration from YAML."""
-    with open(ASSETS_FILE) as f:
-        return yaml.safe_load(f)
+    try:
+        with open(ASSETS_FILE) as f:
+            config = yaml.safe_load(f)
+            if not config or not isinstance(config, dict):
+                logger.error(f"Invalid config in {ASSETS_FILE}: expected dict")
+                return {"leaders": [], "runner_ups": [], "observation": []}
+            return config
+    except FileNotFoundError:
+        logger.error(f"Assets file not found: {ASSETS_FILE}")
+        return {"leaders": [], "runner_ups": [], "observation": []}
+    except yaml.YAMLError as e:
+        logger.error(f"Failed to parse {ASSETS_FILE}: {e}")
+        return {"leaders": [], "runner_ups": [], "observation": []}
 
 
 def build_asset(entry: dict, tier: str, conn) -> dict:
@@ -115,12 +126,12 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
             defi_data.get("tvl")
         )
 
-    # Compute supply/on-chain score
-    exchange_trend = supply.get_exchange_reserve_trend(symbol)
+    # Compute supply/on-chain score (AI-powered with data from CoinGecko)
     supply_score = supply.compute_supply_score(
         symbol=symbol,
-        supply_metrics=None,  # Would fetch if not rate-limited
-        exchange_reserve_trend=exchange_trend,
+        name=name,
+        coingecko_id=coingecko_id,
+        conn=conn,
     )
 
     # Wyckoff score already computed above from price data or manual override

@@ -109,7 +109,7 @@ def fetch_daily_prices(coingecko_id: str, days: int = 120) -> Optional[list[floa
         prices_data = coins_data.get("prices", [])
 
         if not prices_data:
-            logger.debug(f"No price data for {coingecko_id}")
+            logger.warning(f"No price data returned from DefiLlama for {coingecko_id}")
             return None
 
         # prices_data is [{"timestamp": ts, "price": price}, ...]

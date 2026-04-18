@@ -60,6 +60,7 @@ def _request_with_retry(url: str, params: dict, headers: dict) -> Optional[reque
                 continue
             raise
 
+    logger.warning(f"Max retries ({MAX_RETRIES}) exceeded for {url}")
     return None
 
 

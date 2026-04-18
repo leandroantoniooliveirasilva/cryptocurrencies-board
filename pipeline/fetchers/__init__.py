@@ -2,7 +2,7 @@
 from .defillama import fetch_defillama_data, fetch_daily_prices, compute_revenue_score
 from .coingecko import fetch_ohlc, fetch_price, extract_daily_closes, extract_weekly_closes
 from .qualitative import score_regulatory, score_institutional
-from .supply import fetch_supply_metrics, compute_supply_score, get_exchange_reserve_trend
+from .supply import fetch_supply_metrics, compute_supply_score, score_supply
 
 __all__ = [
     "fetch_defillama_data",
@@ -16,5 +16,5 @@ __all__ = [
     "score_institutional",
     "fetch_supply_metrics",
     "compute_supply_score",
-    "get_exchange_reserve_trend",
+    "score_supply",
 ]

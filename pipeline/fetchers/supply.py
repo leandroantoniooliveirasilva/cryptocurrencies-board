@@ -4,12 +4,15 @@ This module provides supply-side metrics that indicate accumulation/distribution
 - Exchange reserves (declining = bullish)
 - Long-term holder supply percentage
 - Supply concentration metrics
+- Tokenomics (max supply, inflation, circulating ratio)
 
-Note: Full implementation requires paid APIs (Glassnode, CryptoQuant, Santiment).
-This implementation uses free/public sources where available and fallback heuristics.
+Combines actual supply data from CoinGecko with AI-based qualitative assessment.
 """
 
+import json
 import logging
+import os
+import subprocess
 from typing import Optional
 
 import requests
@@ -20,10 +23,43 @@ logger = logging.getLogger(__name__)
 COINGECKO_BASE = "https://api.coingecko.com/api/v3"
 TIMEOUT = 30
 
+# In-memory cache for AI scores (persisted to DB separately)
+_supply_cache: dict = {}
+
+USE_CLI = os.environ.get("USE_CLAUDE_CLI", "true").lower() == "true"
+
+SUPPLY_PROMPT = """Analyze the supply dynamics and on-chain metrics for {symbol} ({name}).
+
+Consider these factors for a SUPPLY score (0-100 scale, higher = more bullish tokenomics):
+
+1. **Tokenomics** (weight: 30%)
+   - Is there a max/fixed supply cap? (bullish)
+   - What's the emission/inflation schedule? (low/declining = bullish)
+   - Circulating vs total supply ratio (high = bullish, tokens already distributed)
+
+2. **Exchange Reserves** (weight: 30%)
+   - Are exchange reserves declining? (bullish - accumulation)
+   - Are coins moving to cold storage/self-custody? (bullish)
+
+3. **Holder Distribution** (weight: 25%)
+   - What % is held by long-term holders? (high = bullish)
+   - Is there concerning concentration in few wallets?
+   - Whale behavior patterns
+
+4. **Staking/Lock-ups** (weight: 15%)
+   - What % of supply is staked or locked? (high = reduced sell pressure)
+   - Lock-up schedules for team/VC tokens
+
+Current supply data from CoinGecko:
+{supply_data}
+
+Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<2-3 sentences explaining key supply factors>"}}
+No other text."""
+
 
 def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
     """
-    Fetch supply metrics from available sources.
+    Fetch supply metrics from CoinGecko.
 
     Args:
         coingecko_id: CoinGecko coin ID
@@ -35,7 +71,6 @@ def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
         return None
 
     try:
-        # CoinGecko provides circulating/total supply ratio
         url = f"{COINGECKO_BASE}/coins/{coingecko_id}"
         params = {
             "localization": "false",
@@ -62,7 +97,8 @@ def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
             "total_supply": total,
             "max_supply": max_supply,
             "circulating_ratio": circulating / total if circulating and total else None,
-            "inflation_ratio": (total - circulating) / circulating if circulating and total else None,
+            "inflation_ratio": (total - circulating) / circulating if circulating and total and circulating > 0 else None,
+            "has_max_supply": max_supply is not None,
         }
 
     except Exception as e:
@@ -70,99 +106,198 @@ def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
         return None
 
 
+def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bool = True) -> dict:
+    """
+    Score supply dynamics using data + AI analysis.
+
+    Args:
+        symbol: Asset symbol (e.g., 'BTC')
+        name: Asset name (e.g., 'Bitcoin')
+        coingecko_id: CoinGecko ID for fetching supply data
+        use_cache: Whether to use cached scores
+
+    Returns:
+        Dict with 'score' (int) and 'rationale' (str)
+    """
+    cache_key = f"supply_{symbol}"
+
+    if use_cache and cache_key in _supply_cache:
+        return _supply_cache[cache_key]
+
+    # Fetch actual supply data
+    supply_data = fetch_supply_metrics(coingecko_id) if coingecko_id else None
+
+    # Format supply data for AI prompt
+    if supply_data:
+        supply_str = json.dumps({
+            "circulating_supply": f"{supply_data['circulating_supply']:,.0f}" if supply_data['circulating_supply'] else "Unknown",
+            "total_supply": f"{supply_data['total_supply']:,.0f}" if supply_data['total_supply'] else "Unknown",
+            "max_supply": f"{supply_data['max_supply']:,.0f}" if supply_data['max_supply'] else "No cap",
+            "circulating_ratio": f"{supply_data['circulating_ratio']:.1%}" if supply_data['circulating_ratio'] else "Unknown",
+            "has_fixed_supply": supply_data['has_max_supply'],
+        }, indent=2)
+    else:
+        supply_str = "No supply data available - assess based on known tokenomics"
+
+    result = _query_claude(
+        SUPPLY_PROMPT.format(symbol=symbol, name=name, supply_data=supply_str),
+        cache_key
+    )
+
+    if result:
+        _supply_cache[cache_key] = result
+        return result
+
+    # Fallback: compute from data if AI fails
+    return _compute_fallback_score(symbol, supply_data)
+
+
+def _query_claude(prompt: str, cache_key: str) -> Optional[dict]:
+    """Query Claude CLI for supply scoring."""
+    if not USE_CLI:
+        return None
+
+    try:
+        result = subprocess.run(
+            ["claude", "--print", prompt],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+
+        if result.returncode != 0:
+            logger.warning(f"Claude CLI failed for {cache_key}: {result.stderr}")
+            return None
+
+        return _parse_json_response(result.stdout, cache_key)
+
+    except subprocess.TimeoutExpired:
+        logger.warning(f"Claude CLI timeout for {cache_key}")
+        return None
+    except FileNotFoundError:
+        logger.warning("Claude CLI not found")
+        return None
+    except Exception as e:
+        logger.warning(f"Claude CLI error for {cache_key}: {e}")
+        return None
+
+
+def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
+    """Parse JSON from Claude response."""
+    try:
+        text = text.strip()
+
+        # Find JSON object
+        start = text.find("{")
+        end = text.rfind("}") + 1
+
+        if start >= 0 and end > start:
+            text = text[start:end]
+
+        return json.loads(text)
+
+    except json.JSONDecodeError as e:
+        logger.warning(f"Failed to parse Claude response for {cache_key}: {e}")
+        return None
+
+
+def _compute_fallback_score(symbol: str, supply_data: Optional[dict]) -> dict:
+    """
+    Compute supply score from data when AI is unavailable.
+
+    Starts at 50 (neutral) and adjusts based on available metrics.
+    """
+    score = 50
+    factors = []
+
+    if supply_data:
+        # Max supply cap is bullish (+10)
+        if supply_data.get("has_max_supply"):
+            score += 10
+            factors.append("fixed supply cap")
+
+        # High circulating ratio is bullish (tokens already distributed)
+        circ_ratio = supply_data.get("circulating_ratio")
+        if circ_ratio is not None:
+            if circ_ratio >= 0.9:
+                score += 15
+                factors.append("90%+ circulating")
+            elif circ_ratio >= 0.7:
+                score += 8
+                factors.append("70%+ circulating")
+            elif circ_ratio < 0.5:
+                score -= 10
+                factors.append("low circulating ratio")
+
+        # Low inflation is bullish
+        inflation = supply_data.get("inflation_ratio")
+        if inflation is not None:
+            if inflation < 0.02:
+                score += 10
+                factors.append("minimal inflation")
+            elif inflation < 0.05:
+                score += 5
+                factors.append("low inflation")
+            elif inflation > 0.15:
+                score -= 10
+                factors.append("high inflation")
+
+    # Clamp score
+    score = max(0, min(100, score))
+
+    rationale = f"Data-driven score. {', '.join(factors).capitalize()}." if factors else "Limited supply data available."
+
+    return {"score": score, "rationale": rationale}
+
+
 def compute_supply_score(
     symbol: str,
-    supply_metrics: Optional[dict] = None,
-    exchange_reserve_trend: Optional[str] = None,
+    name: str = None,
+    coingecko_id: str = None,
+    conn = None,
 ) -> int:
     """
     Compute supply/on-chain score (0-100).
 
-    Scoring factors:
-    - Exchange reserve trend (declining = bullish)
-    - Supply concentration (high LTH % = bullish)
-    - Inflation rate (low = bullish)
-    - Max supply cap (capped = bullish)
+    This is the main entry point - uses cached DB scores or computes fresh.
 
     Args:
         symbol: Asset symbol
-        supply_metrics: Dict from fetch_supply_metrics
-        exchange_reserve_trend: 'declining', 'stable', 'increasing', or None
+        name: Asset name (for AI prompt)
+        coingecko_id: CoinGecko ID for supply data
+        conn: Database connection for caching
 
     Returns:
         Supply score 0-100
     """
-    # Start with base scores by known asset characteristics
-    base_scores = {
-        # Store of value with fixed supply, declining exchange reserves
-        "BTC": 85,
-        # Smart contract platforms
-        "ETH": 75,
-        "SOL": 70,
-        "AVAX": 65,
-        "SUI": 60,  # Newer L1, token emissions ongoing
-        # DeFi with token emissions
-        "LINK": 70,
-        "AAVE": 65,
-        "HYPE": 60,
-        "MORPHO": 55,
-        "PENDLE": 55,  # Yield trading, moderate emissions
-        "ENA": 50,  # USDe synthetic, centralized supply
-        # Infrastructure
-        "QNT": 75,  # Fixed supply
-        "XRP": 60,  # Large escrow
-        "XLM": 65,
-        "HBAR": 55,
-        "KAS": 60,
-        "TAO": 55,  # AI-crypto, mining emissions
-        # Others
-        "ONDO": 55,
-        "CANTON": 50,  # Pre-market, unknown
-    }
+    # Try to get cached score from database
+    if conn:
+        from pipeline.storage import migrations
+        cached = migrations.get_cached_qualitative_score(conn, symbol, "supply")
+        if cached:
+            return cached["score"]
 
-    score = base_scores.get(symbol, 50)
+    # Compute fresh score
+    name = name or symbol
+    result = score_supply(symbol, name, coingecko_id)
 
-    # Adjust based on supply metrics if available
-    if supply_metrics:
-        # Max supply cap is bullish
-        if supply_metrics.get("max_supply"):
-            score += 5
+    # Handle case where result is None (shouldn't happen but defensive)
+    if not result:
+        logger.warning(f"Failed to compute supply score for {symbol}, using fallback")
+        result = _compute_fallback_score(symbol, None)
 
-        # Low inflation is bullish
-        inflation = supply_metrics.get("inflation_ratio")
-        if inflation is not None:
-            if inflation < 0.02:
-                score += 5
-            elif inflation > 0.10:
-                score -= 5
+    # Cache to database
+    if conn:
+        from pipeline.storage import migrations
+        migrations.save_qualitative_score(
+            conn, symbol, "supply",
+            result["score"], result["rationale"]
+        )
 
-    # Adjust based on exchange reserve trend
-    # Note: This would come from Glassnode/CryptoQuant in production
-    if exchange_reserve_trend == "declining":
-        score += 10
-    elif exchange_reserve_trend == "increasing":
-        score -= 10
-
-    return max(0, min(100, score))
+    return result["score"]
 
 
-# Known exchange reserve trends (manually maintained or from API)
-# In production, this would be fetched from Glassnode/CryptoQuant
-EXCHANGE_RESERVE_TRENDS = {
-    "BTC": "declining",  # At 6-year lows as of 2026
-    "ETH": "declining",
-    "SOL": "stable",
-    "LINK": "stable",
-    "AVAX": "stable",
-    "XRP": "stable",
-}
-
-
-def get_exchange_reserve_trend(symbol: str) -> Optional[str]:
-    """
-    Get exchange reserve trend for an asset.
-
-    Returns:
-        'declining', 'stable', 'increasing', or None
-    """
-    return EXCHANGE_RESERVE_TRENDS.get(symbol)
+def clear_cache():
+    """Clear the in-memory score cache."""
+    global _supply_cache
+    _supply_cache = {}
