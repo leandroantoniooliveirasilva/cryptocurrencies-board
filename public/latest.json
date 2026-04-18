@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T00:43:13.546898+00:00",
+  "generated_at": "2026-04-18T01:07:36.318561+00:00",
   "snapshot_date": "2026-04-18",
   "framework_version": "2.0",
   "weight_profiles": {
@@ -65,7 +65,7 @@
         86,
         86
       ],
-      "rsi_daily": 63.0,
+      "rsi_daily": 63.8,
       "rsi_weekly": 40.0,
       "action": "accumulate",
       "strong_accumulate_days_active": 0,
@@ -104,8 +104,8 @@
         69,
         69
       ],
-      "rsi_daily": 56.9,
-      "rsi_weekly": 35.2,
+      "rsi_daily": 57.6,
+      "rsi_weekly": 35.3,
       "action": "hold",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -143,7 +143,7 @@
         69,
         69
       ],
-      "rsi_daily": 58.3,
+      "rsi_daily": 59.1,
       "rsi_weekly": 35.9,
       "action": "hold",
       "strong_accumulate_days_active": 0,
@@ -182,8 +182,8 @@
         56,
         56
       ],
-      "rsi_daily": 65.0,
-      "rsi_weekly": 68.5,
+      "rsi_daily": 66.0,
+      "rsi_weekly": 68.7,
       "action": "hold",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -192,7 +192,7 @@
     {
       "symbol": "MORPHO",
       "name": "Morpho",
-      "tier": "runner-up",
+      "tier": "leader",
       "asset_type": "defi",
       "scores": {
         "institutional": 55,
@@ -222,8 +222,8 @@
         55
       ],
       "rsi_daily": 56.1,
-      "rsi_weekly": 65.4,
-      "action": "await",
+      "rsi_weekly": 65.6,
+      "action": "hold",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
       "note": "DeFi protocol, revenue-focused"
@@ -261,7 +261,7 @@
         61
       ],
       "rsi_daily": 55.6,
-      "rsi_weekly": 50.2,
+      "rsi_weekly": 50.3,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -299,8 +299,8 @@
         59,
         59
       ],
-      "rsi_daily": 57.2,
-      "rsi_weekly": 34.1,
+      "rsi_daily": 57.7,
+      "rsi_weekly": 34.3,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -338,8 +338,8 @@
         58,
         58
       ],
-      "rsi_daily": 54.4,
-      "rsi_weekly": 38.2,
+      "rsi_daily": 54.6,
+      "rsi_weekly": 38.0,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -348,7 +348,7 @@
     {
       "symbol": "XRP",
       "name": "Ripple",
-      "tier": "observation",
+      "tier": "runner-up",
       "asset_type": "infrastructure",
       "scores": {
         "institutional": 78,
@@ -377,9 +377,9 @@
         70,
         70
       ],
-      "rsi_daily": 62.5,
-      "rsi_weekly": 34.6,
-      "action": "observe",
+      "rsi_daily": 62.2,
+      "rsi_weekly": 35.0,
+      "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
       "note": "Cross-border payments"
@@ -387,7 +387,7 @@
     {
       "symbol": "AVAX",
       "name": "Avalanche",
-      "tier": "observation",
+      "tier": "runner-up",
       "asset_type": "smart-contract",
       "scores": {
         "institutional": 62,
@@ -416,12 +416,86 @@
         60,
         60
       ],
-      "rsi_daily": 56.2,
-      "rsi_weekly": 37.7,
-      "action": "observe",
+      "rsi_daily": 56.5,
+      "rsi_weekly": 37.5,
+      "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
       "note": "Subnet architecture"
+    },
+    {
+      "symbol": "AAVE",
+      "name": "Aave",
+      "tier": "runner-up",
+      "asset_type": "defi",
+      "scores": {
+        "institutional": 55,
+        "revenue": 50,
+        "regulatory": 65,
+        "supply": 65,
+        "wyckoff": 55
+      },
+      "weights": {
+        "revenue": 0.35,
+        "institutional": 0.25,
+        "regulatory": 0.2,
+        "supply": 0.15,
+        "wyckoff": 0.05
+      },
+      "composite": 57,
+      "composite_last_week": 57,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        56,
+        57,
+        57
+      ],
+      "trend_30d": [
+        56,
+        57,
+        57
+      ],
+      "rsi_daily": 66.9,
+      "rsi_weekly": 38.4,
+      "action": "await",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 1,
+      "note": "DeFi protocol, revenue-focused"
+    },
+    {
+      "symbol": "SUI",
+      "name": "Sui",
+      "tier": "runner-up",
+      "asset_type": "smart-contract",
+      "scores": {
+        "institutional": 72,
+        "revenue": 50,
+        "regulatory": 72,
+        "supply": 50,
+        "wyckoff": 55
+      },
+      "weights": {
+        "institutional": 0.3,
+        "revenue": 0.25,
+        "supply": 0.2,
+        "regulatory": 0.15,
+        "wyckoff": 0.1
+      },
+      "composite": 60,
+      "composite_last_week": 60,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        60
+      ],
+      "trend_30d": [
+        60
+      ],
+      "rsi_daily": 61.2,
+      "rsi_weekly": 36.8,
+      "action": "await",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 0,
+      "note": "Smart contract platform"
     },
     {
       "symbol": "HBAR",
@@ -455,8 +529,8 @@
         65,
         65
       ],
-      "rsi_daily": 51.2,
-      "rsi_weekly": 35.7,
+      "rsi_daily": 51.5,
+      "rsi_weekly": 36.2,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
@@ -533,23 +607,58 @@
         55,
         55
       ],
-      "rsi_daily": 55.0,
-      "rsi_weekly": 32.9,
+      "rsi_daily": 55.3,
+      "rsi_weekly": 33.0,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 1,
       "note": "DeFi protocol, revenue-focused"
     },
     {
-      "symbol": "AAVE",
-      "name": "Aave",
+      "symbol": "TAO",
+      "name": "Bittensor",
+      "tier": "observation",
+      "asset_type": "infrastructure",
+      "scores": {
+        "institutional": 45,
+        "revenue": 50,
+        "regulatory": 68,
+        "supply": 50,
+        "wyckoff": 55
+      },
+      "weights": {
+        "institutional": 0.35,
+        "regulatory": 0.25,
+        "supply": 0.2,
+        "revenue": 0.1,
+        "wyckoff": 0.1
+      },
+      "composite": 53,
+      "composite_last_week": 53,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        53
+      ],
+      "trend_30d": [
+        53
+      ],
+      "rsi_daily": 43.6,
+      "rsi_weekly": 50.9,
+      "action": "observe",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 0,
+      "note": "Infrastructure/enterprise"
+    },
+    {
+      "symbol": "PENDLE",
+      "name": "Pendle",
       "tier": "observation",
       "asset_type": "defi",
       "scores": {
-        "institutional": 55,
+        "institutional": 25,
         "revenue": 50,
-        "regulatory": 65,
-        "supply": 65,
+        "regulatory": 42,
+        "supply": 50,
         "wyckoff": 55
       },
       "weights": {
@@ -559,24 +668,55 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 57,
-      "composite_last_week": 57,
+      "composite": 42,
+      "composite_last_week": 42,
       "wyckoff_phase": "Phase A",
       "trend": [
-        56,
-        57,
-        57
+        42
       ],
       "trend_30d": [
-        56,
-        57,
-        57
+        42
       ],
-      "rsi_daily": 66.0,
-      "rsi_weekly": 38.4,
+      "rsi_daily": 62.3,
+      "rsi_weekly": 35.8,
       "action": "observe",
       "strong_accumulate_days_active": 0,
-      "label_changed_days_ago": 1,
+      "label_changed_days_ago": 0,
+      "note": "DeFi protocol, revenue-focused"
+    },
+    {
+      "symbol": "ENA",
+      "name": "Ethena",
+      "tier": "observation",
+      "asset_type": "defi",
+      "scores": {
+        "institutional": 72,
+        "revenue": 50,
+        "regulatory": 42,
+        "supply": 50,
+        "wyckoff": 55
+      },
+      "weights": {
+        "revenue": 0.35,
+        "institutional": 0.25,
+        "regulatory": 0.2,
+        "supply": 0.15,
+        "wyckoff": 0.05
+      },
+      "composite": 54,
+      "composite_last_week": 54,
+      "wyckoff_phase": "Phase A",
+      "trend": [
+        54
+      ],
+      "trend_30d": [
+        54
+      ],
+      "rsi_daily": 64.6,
+      "rsi_weekly": 27.9,
+      "action": "observe",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 0,
       "note": "DeFi protocol, revenue-focused"
     }
   ]

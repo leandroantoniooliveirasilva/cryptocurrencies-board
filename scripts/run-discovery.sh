@@ -73,7 +73,7 @@ cd "$PROJECT_DIR"
 
 # Run Claude with the discovery prompt
 # Using --model opus for deep research capability
-if claude --model claude-opus-4-5-20250514 --print "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
+if claude --model claude-opus-4-5-20251101 --print "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
     mv "$REPORT_FILE.tmp" "$REPORT_FILE"
     log "Discovery report generated: $REPORT_FILE"
 

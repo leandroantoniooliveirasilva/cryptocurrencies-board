@@ -42,7 +42,7 @@ leaders:
     defillama_slug: hyperliquid
     wyckoff_override: null
 
-runner_ups:
+  # PROMOTED: Apollo $112.5M investment, 5x TVL growth, institutional curator standard
   - symbol: MORPHO
     name: Morpho
     asset_type: defi
@@ -50,6 +50,7 @@ runner_ups:
     defillama_slug: morpho
     wyckoff_override: null
 
+runner_ups:
   - symbol: QNT
     name: Quant
     asset_type: infrastructure
@@ -71,7 +72,7 @@ runner_ups:
     defillama_slug: null
     wyckoff_override: null
 
-observation:
+  # PROMOTED: SEC settlement complete, $1.4B ETF inflows, OCC charter
   - symbol: XRP
     name: Ripple
     asset_type: infrastructure
@@ -79,6 +80,7 @@ observation:
     defillama_slug: null
     wyckoff_override: null
 
+  # PROMOTED: $2.1B RWA TVL, VanEck ETF, BlackRock $500M fund
   - symbol: AVAX
     name: Avalanche
     asset_type: smart-contract
@@ -86,6 +88,23 @@ observation:
     defillama_slug: avalanche
     wyckoff_override: null
 
+  # PROMOTED: SEC investigation closed, SOC 2 compliance, Horizon RWA platform
+  - symbol: AAVE
+    name: Aave
+    asset_type: defi
+    coingecko_id: aave
+    defillama_slug: aave
+    wyckoff_override: null
+
+  # NEW: CME futures, multiple ETF filings, Grayscale 2x ETF live
+  - symbol: SUI
+    name: Sui
+    asset_type: smart-contract
+    coingecko_id: sui
+    defillama_slug: sui
+    wyckoff_override: null
+
+observation:
   - symbol: HBAR
     name: Hedera
     asset_type: infrastructure
@@ -107,9 +126,26 @@ observation:
     defillama_slug: ondo-finance
     wyckoff_override: null
 
-  - symbol: AAVE
-    name: Aave
+  # NEW: Grayscale ETF filing, DCG backing, AI-crypto leader
+  - symbol: TAO
+    name: Bittensor
+    asset_type: infrastructure
+    coingecko_id: bittensor
+    defillama_slug: null
+    wyckoff_override: null
+
+  # NEW: Dominant yield trading, $40M revenue, institutional Citadels product
+  - symbol: PENDLE
+    name: Pendle
     asset_type: defi
-    coingecko_id: aave
-    defillama_slug: aave
+    coingecko_id: pendle
+    defillama_slug: pendle
+    wyckoff_override: null
+
+  # NEW: $6B+ USDe, institutional iUSDe, but MiCA exit concerning
+  - symbol: ENA
+    name: Ethena
+    asset_type: defi
+    coingecko_id: ethena
+    defillama_slug: ethena
     wyckoff_override: null
