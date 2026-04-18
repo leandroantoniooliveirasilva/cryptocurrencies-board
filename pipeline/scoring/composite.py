@@ -79,29 +79,48 @@ def get_weights(asset_type: Optional[str] = None) -> dict:
 def compute_composite(
     scores: dict,
     asset_type: Optional[str] = None,
-) -> int:
+) -> tuple[int, int]:
     """
     Compute weighted composite score from dimension scores.
 
+    Missing/None values are excluded and weights are renormalized.
+    This ensures scores are resilient to incomplete data rather than
+    assuming neutral (50) for unavailable dimensions.
+
     Args:
         scores: Dict with keys 'institutional', 'revenue', 'regulatory', 'supply', 'wyckoff'
-                Each value should be 0-100.
+                Each value should be 0-100 or None for missing data.
         asset_type: Asset type for weight selection
 
     Returns:
-        Rounded composite score (0-100)
+        Tuple of (rounded composite score 0-100, count of missing dimensions)
     """
     weights = get_weights(asset_type)
 
     total = 0.0
+    total_weight = 0.0
+    missing_count = 0
+
     for dimension, weight in weights.items():
-        score = scores.get(dimension, 50)  # Default to neutral 50 if missing
-        total += score * weight
+        score = scores.get(dimension)
+        # Only include dimensions with valid scores (not None, not NaN)
+        if score is not None and (not isinstance(score, float) or not (score != score)):
+            total += score * weight
+            total_weight += weight
+        else:
+            missing_count += 1
 
-    return round(total)
+    # Renormalize if we have any valid scores
+    if total_weight > 0:
+        composite = round(total / total_weight)
+    else:
+        # All dimensions missing - return neutral
+        composite = 50
+
+    return composite, missing_count
 
 
-def compute_composite_legacy(scores: dict) -> int:
+def compute_composite_legacy(scores: dict) -> tuple[int, int]:
     """
     Compute composite with legacy 4-dimension weights.
     For backward compatibility only.
@@ -110,7 +129,7 @@ def compute_composite_legacy(scores: dict) -> int:
         scores: Dict with 'institutional', 'revenue', 'regulatory', 'wyckoff'
 
     Returns:
-        Rounded composite score (0-100)
+        Tuple of (rounded composite score 0-100, count of missing dimensions)
     """
     legacy_weights = {
         "institutional": 0.30,
@@ -120,11 +139,23 @@ def compute_composite_legacy(scores: dict) -> int:
     }
 
     total = 0.0
-    for dimension, weight in legacy_weights.items():
-        score = scores.get(dimension, 50)
-        total += score * weight
+    total_weight = 0.0
+    missing_count = 0
 
-    return round(total)
+    for dimension, weight in legacy_weights.items():
+        score = scores.get(dimension)
+        if score is not None and (not isinstance(score, float) or not (score != score)):
+            total += score * weight
+            total_weight += weight
+        else:
+            missing_count += 1
+
+    if total_weight > 0:
+        composite = round(total / total_weight)
+    else:
+        composite = 50
+
+    return composite, missing_count
 
 
 def explain_weights(asset_type: Optional[str] = None) -> str:

@@ -146,7 +146,8 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     }
 
     # Compute composite with asset-type-specific weights
-    composite_score = composite.compute_composite(scores, asset_type=asset_type)
+    # Returns (score, missing_count) - missing dimensions are excluded from calculation
+    composite_score, missing_dimensions = composite.compute_composite(scores, asset_type=asset_type)
 
     # Get historical data for trends
     trend_7d = migrations.get_trend_data(conn, symbol, 7)
@@ -203,6 +204,7 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
         "action": action,
         "strong_accumulate_days_active": strong_accumulate_days + (1 if action == "strong-accumulate" else 0),
         "label_changed_days_ago": label_changed_days_ago,
+        "missing_dimensions": missing_dimensions,
         "note": note,
     }
 

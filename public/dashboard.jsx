@@ -110,10 +110,23 @@ const ACTION_CONFIG = {
 function computeComposite(scores, assetType) {
   const weights = getWeights(assetType);
   let total = 0;
+  let totalWeight = 0;
+  let missingCount = 0;
+
   for (const [dim, weight] of Object.entries(weights)) {
-    total += (scores[dim] || 50) * weight;
+    const score = scores[dim];
+    // Only include dimensions with valid scores
+    if (score !== null && score !== undefined && !isNaN(score)) {
+      total += score * weight;
+      totalWeight += weight;
+    } else {
+      missingCount += 1;
+    }
   }
-  return Math.round(total);
+
+  // Renormalize if we have any valid scores
+  const composite = totalWeight > 0 ? Math.round(total / totalWeight) : 50;
+  return { composite, missingCount };
 }
 
 function weeklyDelta(trend) {
@@ -179,23 +192,45 @@ function Sparkline({ data, accent }) {
 }
 
 function DimensionBar({ label, value, accent, weight }) {
-  const safeValue = typeof value === 'number' && !isNaN(value) ? value : 50;
-  const displayValue = typeof value === 'number' && !isNaN(value) ? value : '—';
+  const isMissing = value === null || value === undefined || (typeof value === 'number' && isNaN(value));
+  const displayValue = isMissing ? 'N/A' : value;
+  const barColor = isMissing ? '#4a4035' : accent;
+
   return (
-    <div style={{ marginBottom: `${SPACE.md}px` }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
-        <span>{label}{weight ? <span style={{ opacity: 0.6, marginLeft: `${SPACE.xs}px` }}>({Math.round(weight * 100)}%)</span> : ''}</span>
-        <span style={{ color: PALETTE.textPrimary }}>{displayValue}</span>
+    <div style={{ marginBottom: `${SPACE.md}px`, opacity: isMissing ? 0.6 : 1 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.xs}px`, fontFamily: 'ui-monospace, monospace' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          {label}
+          {weight && !isMissing && <span style={{ opacity: 0.6, marginLeft: `${SPACE.xs}px` }}>({Math.round(weight * 100)}%)</span>}
+          {isMissing && <span style={{ opacity: 0.6, marginLeft: `${SPACE.xs}px` }}>(excluded)</span>}
+        </span>
+        <span style={{
+          color: isMissing ? '#d49a6a' : PALETTE.textPrimary,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+        }}>
+          {isMissing && <AlertCircle size={10} color="#d49a6a" strokeWidth={2} />}
+          {displayValue}
+        </span>
       </div>
       <div style={{ height: '3px', background: PALETTE.trackBg, overflow: 'hidden' }}>
-        <div style={{
-          height: '100%',
-          width: '100%',
-          background: accent,
-          transformOrigin: 'left',
-          transform: `scaleX(${safeValue / 100})`,
-          transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-        }} />
+        {isMissing ? (
+          <div style={{
+            height: '100%',
+            width: '100%',
+            background: `repeating-linear-gradient(90deg, ${barColor} 0px, ${barColor} 4px, transparent 4px, transparent 8px)`,
+          }} />
+        ) : (
+          <div style={{
+            height: '100%',
+            width: '100%',
+            background: accent,
+            transformOrigin: 'left',
+            transform: `scaleX(${value / 100})`,
+            transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+          }} />
+        )}
       </div>
     </div>
   );
@@ -338,10 +373,22 @@ function ScoreCard({ asset, isMobile }) {
   const [showAllDimensions, setShowAllDimensions] = useState(false);
   const assetType = asset.asset_type || 'smart-contract';
   const weights = asset.weights || getWeights(assetType);
-  const composite = asset.composite || computeComposite(asset.scores, assetType);
+
+  // Use pre-computed values if available, otherwise compute
+  let composite, missingDimensions;
+  if (asset.composite !== undefined) {
+    composite = asset.composite;
+    missingDimensions = asset.missing_dimensions || 0;
+  } else {
+    const computed = computeComposite(asset.scores, assetType);
+    composite = computed.composite;
+    missingDimensions = computed.missingCount;
+  }
+
   const delta = weeklyDelta(asset.trend);
   const config = TIER_CONFIG[asset.tier];
   if (!config) return null;
+  const hasIncompleteData = missingDimensions > 0;
   const Icon = config.icon;
   const action = asset.action || 'observe';
   const isStrong = action === 'strong-accumulate';
@@ -407,8 +454,24 @@ function ScoreCard({ asset, isMobile }) {
           <Sparkline data={asset.trend} accent={config.accent} />
         </div>
       </div>
-      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.lg}px`, fontFamily: 'ui-monospace, monospace' }}>
-        Composite · 7d
+      <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.lg}px`, fontFamily: 'ui-monospace, monospace' }}>
+        <span>Composite · 7d</span>
+        {hasIncompleteData && (
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '3px',
+            padding: '2px 6px',
+            background: '#3d2a1a',
+            border: '1px solid #d49a6a',
+            color: '#d49a6a',
+            fontSize: '9px',
+            letterSpacing: '0.08em',
+          }}>
+            <AlertCircle size={10} color="#d49a6a" strokeWidth={2} />
+            {missingDimensions} dim. missing
+          </span>
+        )}
       </div>
 
       <div style={{ marginBottom: `${SPACE.base}px` }}>
