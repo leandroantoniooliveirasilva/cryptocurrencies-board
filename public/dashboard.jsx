@@ -140,13 +140,16 @@ function isStale(dateStr) {
 
 function Sparkline({ data, accent }) {
   if (!data || data.length < 2) return null;
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  // Filter out non-numeric values
+  const validData = data.filter(v => typeof v === 'number' && !isNaN(v));
+  if (validData.length < 2) return null;
+  const min = Math.min(...validData);
+  const max = Math.max(...validData);
   const range = max - min || 1;
   const width = 80;
   const height = 24;
-  const points = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * width;
+  const points = validData.map((v, i) => {
+    const x = (i / (validData.length - 1)) * width;
     const y = height - ((v - min) / range) * height;
     return `${x},${y}`;
   }).join(' ');
