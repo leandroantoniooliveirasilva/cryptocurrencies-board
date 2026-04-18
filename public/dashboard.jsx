@@ -7,6 +7,9 @@ const BREAKPOINTS = {
   desktop: 1024,
 };
 
+// Minimum composite score threshold - assets below this are not displayed
+const MIN_SCORE_THRESHOLD = 60;
+
 // Hook to detect mobile viewport
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < BREAKPOINTS.tablet);
@@ -727,9 +730,11 @@ function ScoreCard({ asset, isMobile }) {
 }
 
 function ActionSummary({ assets, isMobile }) {
-  // Get actionable items (not hold, await, observe)
+  // Get actionable items (not hold, await, observe) with score above threshold
   const actionableStates = ['strong-accumulate', 'accumulate', 'stand-aside', 'promote'];
-  const actionableAssets = assets.filter(a => actionableStates.includes(a.action));
+  const actionableAssets = assets.filter(a =>
+    actionableStates.includes(a.action) && (a.composite || 0) >= MIN_SCORE_THRESHOLD
+  );
 
   if (actionableAssets.length === 0) return null;
 
@@ -961,7 +966,10 @@ function Dashboard() {
   }, []);
 
   const filteredAssets = useMemo(() => {
-    const sorted = [...assets].sort((a, b) => {
+    // Filter out assets below minimum score threshold
+    const qualified = assets.filter(a => (a.composite || 0) >= MIN_SCORE_THRESHOLD);
+
+    const sorted = [...qualified].sort((a, b) => {
       const aStrong = a.action === 'strong-accumulate' ? 0 : 1;
       const bStrong = b.action === 'strong-accumulate' ? 0 : 1;
       const tierDiff = (TIER_CONFIG[a.tier]?.order || 0) - (TIER_CONFIG[b.tier]?.order || 0);
@@ -985,7 +993,7 @@ function Dashboard() {
     return groups;
   }, [filteredAssets]);
 
-  const strongCount = assets.filter(a => a.action === 'strong-accumulate').length;
+  const strongCount = assets.filter(a => a.action === 'strong-accumulate' && (a.composite || 0) >= MIN_SCORE_THRESHOLD).length;
 
   if (loading) {
     return (
