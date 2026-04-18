@@ -3,7 +3,7 @@
 import json
 import logging
 import sqlite3
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -274,7 +274,7 @@ def save_qualitative_score(
         (asset_symbol, score_type, score, rationale, fetched_at)
         VALUES (?, ?, ?, ?, ?)
         """,
-        (symbol, score_type, score, rationale, datetime.utcnow().isoformat()),
+        (symbol, score_type, score, rationale, datetime.now(timezone.utc).isoformat()),
     )
 
 
@@ -296,7 +296,7 @@ def get_cached_qualitative_score(
     Returns:
         Dict with score and rationale, or None if stale/missing
     """
-    cutoff = (datetime.utcnow() - timedelta(days=max_age_days)).isoformat()
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=max_age_days)).isoformat()
     cursor = conn.execute(
         """
         SELECT score, rationale FROM qualitative_cache

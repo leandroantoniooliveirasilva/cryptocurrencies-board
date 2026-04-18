@@ -13,12 +13,17 @@ def compute_rsi(prices: list[float], period: int = 14) -> Optional[float]:
         period: RSI period (default 14)
 
     Returns:
-        RSI value (0-100) or None if insufficient data
+        RSI value (0-100) or None if insufficient or invalid data
     """
     if len(prices) < period + 1:
         return None
 
-    deltas = np.diff(prices)
+    # Validate prices contain no None/NaN values
+    prices_array = np.array(prices, dtype=float)
+    if np.any(np.isnan(prices_array)) or np.any(prices_array <= 0):
+        return None
+
+    deltas = np.diff(prices_array)
     gains = np.where(deltas > 0, deltas, 0)
     losses = np.where(deltas < 0, -deltas, 0)
 
