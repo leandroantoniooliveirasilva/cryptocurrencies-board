@@ -112,7 +112,7 @@ def fetch_daily_prices(coingecko_id: str, days: int = 120) -> Optional[list[floa
             logger.debug(f"No price data for {coingecko_id}")
             return None
 
-        # prices_data is [[timestamp, price], ...]
+        # prices_data is [{"timestamp": ts, "price": price}, ...]
         prices = [p["price"] for p in prices_data if "price" in p]
         return prices if prices else None
 
