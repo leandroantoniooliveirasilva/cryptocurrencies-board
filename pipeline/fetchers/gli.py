@@ -17,7 +17,6 @@ Usage:
         # Suppress strong signals
 """
 
-import json
 import logging
 import os
 import time

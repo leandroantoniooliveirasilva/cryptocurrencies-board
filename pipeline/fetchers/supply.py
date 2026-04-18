@@ -30,6 +30,9 @@ RATE_LIMIT_DELAY = 3.0  # seconds between requests
 MAX_RETRIES = 3
 _last_request_time = 0.0
 
+# Claude model for qualitative scoring (configurable via env)
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
+
 
 def _rate_limit():
     """Enforce rate limiting between requests."""
@@ -204,7 +207,7 @@ def _query_claude(prompt: str, cache_key: str) -> Optional[dict]:
 
     try:
         result = subprocess.run(
-            ["claude", "--print", "--model", "opus", prompt],
+            ["claude", "--print", "--model", CLAUDE_MODEL, prompt],
             capture_output=True,
             text=True,
             timeout=60,

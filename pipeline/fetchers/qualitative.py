@@ -115,7 +115,7 @@ def _query_claude_cli(prompt: str, cache_key: str) -> Optional[dict]:
     try:
         # Use claude CLI with --print flag for non-interactive output
         result = subprocess.run(
-            ["claude", "--print", "--model", "opus", prompt],
+            ["claude", "--print", "--model", CLAUDE_MODEL, prompt],
             capture_output=True,
             text=True,
             timeout=60,
