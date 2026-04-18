@@ -2,10 +2,14 @@ name: Daily Scoring Scan
 
 on:
   schedule:
-    # Run at 09:00 UTC daily
-    - cron: "0 9 * * *"
+    # Run at 12:00 UTC daily
+    - cron: "0 12 * * *"
   workflow_dispatch:
     # Manual trigger button in GitHub UI
+
+# Use Node.js 24 for actions
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   scan:
