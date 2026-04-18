@@ -220,6 +220,34 @@ function RsiRow({ asset }) {
   );
 }
 
+function getActionReasoning(asset) {
+  const action = asset.action || 'observe';
+  const composite = asset.composite || 50;
+  const delta = weeklyDelta(asset.trend);
+  const rsiDaily = asset.rsi_daily;
+  const rsiWeekly = asset.rsi_weekly;
+  const tier = asset.tier;
+
+  switch (action) {
+    case 'strong-accumulate':
+      return `Daily RSI at ${rsiDaily} signals short-term oversold while weekly RSI (${rsiWeekly}) and composite (${composite}) remain healthy. This dislocation within an accumulation zone is a high-conviction entry point.`;
+    case 'accumulate':
+      return `Composite score of ${composite} with ${delta >= 0 ? 'stable' : 'minor pullback'} trend. RSI levels support accumulation. Leader-tier asset in favorable Wyckoff phase for tranche building.`;
+    case 'promote':
+      return `Runner-up crossing leader threshold with composite at ${composite}${delta > 0 ? ` and positive ${delta}-point weekly momentum` : ''}. Evaluate for potential tier promotion.`;
+    case 'hold':
+      return `Position active with composite at ${composite}. No accumulate or trim signals present. Current allocation appropriate — patience is the strategy.`;
+    case 'await':
+      return `Signal building but not yet confirmed. Composite at ${composite}${delta > 0 ? ` with ${delta}-point uptick` : ''}. Monitor for entry criteria before activation.`;
+    case 'observe':
+      return `Observation tier — scanning only. ${composite >= 70 ? 'Composite healthy but' : 'Composite at ' + composite + ','} no position warranted at this time.`;
+    case 'stand-aside':
+      return `Distribution risk detected${delta < -3 ? ` with ${Math.abs(delta)}-point weekly decline` : ''}${rsiWeekly >= 70 ? ` and elevated weekly RSI (${rsiWeekly})` : ''}. Do not engage regardless of price action.`;
+    default:
+      return null;
+  }
+}
+
 function ActionBanner({ action, daysAgo, strongDays }) {
   const cfg = ACTION_CONFIG[action];
   if (!cfg) return null;
@@ -323,6 +351,20 @@ function ScoreCard({ asset }) {
       </div>
 
       <ActionBanner action={action} daysAgo={asset.label_changed_days_ago} strongDays={asset.strong_accumulate_days_active} />
+
+      {/* Action reasoning */}
+      <div style={{
+        fontSize: '11px',
+        color: PALETTE.textSecondary,
+        fontFamily: 'Georgia, serif',
+        fontStyle: 'italic',
+        lineHeight: 1.5,
+        marginBottom: `${SPACE.lg}px`,
+        paddingLeft: `${SPACE.sm}px`,
+        borderLeft: `2px solid ${PALETTE.border}`,
+      }}>
+        {getActionReasoning(asset)}
+      </div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: `${SPACE.md}px`, marginBottom: `${SPACE.xs}px` }}>
         <div style={{ fontFamily: 'Georgia, serif', fontSize: '48px', fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
