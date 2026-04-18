@@ -50,7 +50,13 @@ def derive_action(
         return "stand-aside"
 
     if tier == "leader":
-        wyckoff_ready = "c" in phase_lower or "→c" in phase_lower
+        # Check for Phase C or B→C (spring/transition zones)
+        # Must be specific to avoid matching 'c' in 'accumulation'
+        wyckoff_ready = (
+            "phase c" in phase_lower or
+            "→c" in phase_lower or
+            "->c" in phase_lower
+        )
         overbought = rsi_weekly is not None and rsi_weekly >= 75
         accumulate_regime = (
             composite >= 75 and wyckoff_ready and delta >= 0 and not overbought

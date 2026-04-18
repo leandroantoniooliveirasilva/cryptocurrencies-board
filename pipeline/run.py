@@ -17,7 +17,7 @@ from pathlib import Path
 import yaml
 
 from pipeline.fetchers import defillama, qualitative, supply
-from pipeline.scoring import actions, composite, rsi
+from pipeline.scoring import actions, composite, rsi, wyckoff
 from pipeline.storage import migrations
 
 # Setup logging
@@ -75,6 +75,16 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     rsi_daily = rsi.compute_rsi(daily_prices, 14) if len(daily_prices) >= 15 else None
     rsi_weekly = rsi.compute_rsi(weekly_prices, 14) if len(weekly_prices) >= 15 else None
 
+    # Detect Wyckoff phase from price structure (or use manual override)
+    if wyckoff_override:
+        wyckoff_phase = wyckoff_override
+        wyckoff_score = wyckoff.get_wyckoff_score(wyckoff_phase)
+    elif len(daily_prices) >= 30:
+        wyckoff_phase, wyckoff_score = wyckoff.detect_wyckoff_phase(daily_prices)
+    else:
+        wyckoff_phase = "Unknown"
+        wyckoff_score = 50
+
     # Get qualitative scores (cached or fresh)
     cached_regulatory = migrations.get_cached_qualitative_score(conn, symbol, "regulatory")
     cached_institutional = migrations.get_cached_qualitative_score(conn, symbol, "institutional")
@@ -113,9 +123,7 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
         exchange_reserve_trend=exchange_trend,
     )
 
-    # Wyckoff score (placeholder - manual override or estimate)
-    wyckoff_phase = wyckoff_override or "Phase A"
-    wyckoff_score = _estimate_wyckoff_score(wyckoff_phase)
+    # Wyckoff score already computed above from price data or manual override
 
     # Build scores dict with all 5 dimensions
     scores = {
@@ -188,26 +196,6 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     }
 
 
-def _estimate_wyckoff_score(phase: str) -> int:
-    """Estimate Wyckoff dimension score from phase string."""
-    phase_lower = phase.lower()
-
-    if "distribution" in phase_lower:
-        return 25
-    elif "pre-accumulation" in phase_lower or "pre-market" in phase_lower:
-        return 45
-    elif "phase a" in phase_lower:
-        return 55
-    elif "phase b" in phase_lower:
-        return 65
-    elif "→c" in phase_lower or "b→c" in phase_lower:
-        return 72
-    elif "phase c" in phase_lower:
-        return 78
-    elif "phase d" in phase_lower or "phase e" in phase_lower:
-        return 85
-    else:
-        return 50  # Unknown
 
 
 def _build_note(
