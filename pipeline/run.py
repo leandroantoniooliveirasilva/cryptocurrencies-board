@@ -187,6 +187,23 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     # Get weight profile for this asset type
     weights = composite.get_weights(asset_type)
 
+    # Build detailed reasoning for modal view
+    note_detailed = _build_detailed_reasoning(
+        symbol=symbol,
+        name=name,
+        tier=tier,
+        asset_type=asset_type,
+        scores=scores,
+        weights=weights,
+        composite=composite_score,
+        regulatory=regulatory_data,
+        institutional=institutional_data,
+        wyckoff_phase=wyckoff_phase,
+        action=action,
+        rsi_daily=rsi_daily,
+        rsi_weekly=rsi_weekly,
+    )
+
     return {
         "symbol": symbol,
         "name": name,
@@ -206,6 +223,7 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
         "label_changed_days_ago": label_changed_days_ago,
         "missing_dimensions": missing_dimensions,
         "note": note,
+        "note_detailed": note_detailed,
     }
 
 
@@ -255,6 +273,160 @@ def _build_note(
     }
 
     return symbol_notes.get(symbol, type_notes.get(asset_type, "Monitoring framework signals"))
+
+
+def _build_detailed_reasoning(
+    symbol: str,
+    name: str,
+    tier: str,
+    asset_type: str,
+    scores: dict,
+    weights: dict,
+    composite: int,
+    regulatory: dict,
+    institutional: dict,
+    wyckoff_phase: str,
+    action: str,
+    rsi_daily,  # float or None
+    rsi_weekly,  # float or None
+) -> str:
+    """
+    Build detailed reasoning explaining why this asset is on the list,
+    its tier placement, dimension scores, and investment thesis.
+    """
+    lines = []
+
+    # 1. Tier explanation
+    tier_explanations = {
+        "leader": f"{symbol} holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.",
+        "runner-up": f"{symbol} is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.",
+        "observation": f"{symbol} sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.",
+    }
+    lines.append(tier_explanations.get(tier, f"{symbol} is tracked in the {tier} tier."))
+
+    # 2. Asset type context
+    type_context = {
+        "store-of-value": "As a store-of-value asset, the scoring heavily weights institutional adoption (40%) and supply dynamics (25%), with less emphasis on protocol revenue.",
+        "smart-contract": "As a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.",
+        "defi": "As a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.",
+        "infrastructure": "As an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.",
+    }
+    lines.append(type_context.get(asset_type, ""))
+
+    # 3. Dimension breakdown
+    lines.append("")
+    lines.append("DIMENSION BREAKDOWN:")
+
+    # Institutional
+    inst_score = scores.get("institutional", 0)
+    inst_weight = weights.get("institutional", 0)
+    inst_rationale = institutional.get("rationale", "")
+    if inst_score >= 85:
+        inst_level = "Excellent"
+    elif inst_score >= 70:
+        inst_level = "Strong"
+    elif inst_score >= 50:
+        inst_level = "Moderate"
+    else:
+        inst_level = "Limited"
+    lines.append(f"• Institutional ({inst_score}/100, {int(inst_weight*100)}% weight): {inst_level} institutional presence. {inst_rationale}")
+
+    # Regulatory
+    reg_score = scores.get("regulatory", 0)
+    reg_weight = weights.get("regulatory", 0)
+    reg_rationale = regulatory.get("rationale", "")
+    if reg_score >= 85:
+        reg_level = "Clear"
+    elif reg_score >= 70:
+        reg_level = "Favorable"
+    elif reg_score >= 50:
+        reg_level = "Uncertain"
+    else:
+        reg_level = "Concerning"
+    lines.append(f"• Regulatory ({reg_score}/100, {int(reg_weight*100)}% weight): {reg_level} regulatory standing. {reg_rationale}")
+
+    # Supply
+    supply_score = scores.get("supply", 0)
+    supply_weight = weights.get("supply", 0)
+    if supply_score >= 80:
+        supply_desc = "Healthy on-chain metrics with favorable supply distribution and accumulation patterns."
+    elif supply_score >= 60:
+        supply_desc = "Acceptable supply dynamics with some concentration or distribution concerns."
+    else:
+        supply_desc = "Supply metrics warrant caution—potential concentration or unfavorable distribution."
+    lines.append(f"• Supply/On-Chain ({supply_score}/100, {int(supply_weight*100)}% weight): {supply_desc}")
+
+    # Revenue
+    rev_score = scores.get("revenue", 0)
+    rev_weight = weights.get("revenue", 0)
+    if rev_score >= 80:
+        rev_desc = "Strong fee generation indicating sustainable protocol economics."
+    elif rev_score >= 50:
+        rev_desc = "Moderate revenue, typical for growth-phase protocols."
+    else:
+        rev_desc = "Limited fee revenue—protocol may rely on token incentives or is early-stage."
+    lines.append(f"• Revenue/Fees ({rev_score}/100, {int(rev_weight*100)}% weight): {rev_desc}")
+
+    # Wyckoff
+    wyck_score = scores.get("wyckoff", 50)
+    wyck_weight = weights.get("wyckoff", 0)
+    phase_lower = wyckoff_phase.lower()
+    if "accumulation" in phase_lower or "phase c" in phase_lower:
+        wyck_desc = f"Currently in {wyckoff_phase}—historically favorable for position building as price structure suggests markup potential."
+    elif "distribution" in phase_lower:
+        wyck_desc = f"Currently in {wyckoff_phase}—caution warranted as price structure suggests potential markdown phase ahead."
+    elif "markup" in phase_lower:
+        wyck_desc = f"Currently in {wyckoff_phase}—trend is favorable but entries should be measured as some move has already occurred."
+    else:
+        wyck_desc = f"Currently in {wyckoff_phase}. Technical structure is being monitored for clearer phase identification."
+    lines.append(f"• Wyckoff ({wyck_score}/100, {int(wyck_weight*100)}% weight): {wyck_desc}")
+
+    # 4. RSI context
+    if rsi_daily is not None or rsi_weekly is not None:
+        lines.append("")
+        lines.append("RSI CONTEXT:")
+        if rsi_daily is not None:
+            if rsi_daily <= 30:
+                rsi_d_desc = f"Daily RSI at {rsi_daily:.1f} indicates oversold conditions—potential short-term bounce zone."
+            elif rsi_daily >= 70:
+                rsi_d_desc = f"Daily RSI at {rsi_daily:.1f} signals overbought territory—momentum extended."
+            else:
+                rsi_d_desc = f"Daily RSI at {rsi_daily:.1f} sits in neutral range."
+            lines.append(f"• {rsi_d_desc}")
+        if rsi_weekly is not None:
+            if rsi_weekly <= 35:
+                rsi_w_desc = f"Weekly RSI at {rsi_weekly:.1f} suggests longer-term oversold conditions—structural opportunity if fundamentals hold."
+            elif rsi_weekly >= 70:
+                rsi_w_desc = f"Weekly RSI at {rsi_weekly:.1f} indicates elevated momentum on higher timeframe."
+            else:
+                rsi_w_desc = f"Weekly RSI at {rsi_weekly:.1f} remains in healthy range."
+            lines.append(f"• {rsi_w_desc}")
+
+    # 5. Action reasoning
+    lines.append("")
+    lines.append("CURRENT ACTION:")
+    action_reasoning = {
+        "strong-accumulate": f"STRONG ACCUMULATE is firing because daily RSI shows a short-term oversold flush while weekly RSI and composite score remain healthy. This dislocation within an otherwise solid structure represents a high-conviction entry window.",
+        "accumulate": f"ACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.",
+        "promote": f"PROMOTE CANDIDATE status signals this Runner-up is demonstrating Leader-quality metrics. Manual review recommended for potential tier promotion.",
+        "hold": f"HOLD status indicates the position is active with no current add or trim signals. Current allocation is appropriate—patience is the strategy.",
+        "await": f"AWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.",
+        "observe": f"OBSERVE status reflects Observation-tier placement—tracked for research, not positioned. No action required.",
+        "stand-aside": f"STAND ASIDE is active due to distribution risk or sharp negative trend. Capital preservation takes priority regardless of price action.",
+    }
+    lines.append(action_reasoning.get(action, f"Current action: {action}"))
+
+    # 6. Composite summary
+    lines.append("")
+    lines.append(f"COMPOSITE SCORE: {composite}/100")
+    if composite >= 80:
+        lines.append("This places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.")
+    elif composite >= 65:
+        lines.append("This score reflects solid fundamentals with room for improvement in specific dimensions.")
+    else:
+        lines.append("This score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.")
+
+    return "\n".join(lines)
 
 
 def write_output(output: dict, dry_run: bool = False) -> None:
