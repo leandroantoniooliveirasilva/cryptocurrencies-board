@@ -80,6 +80,12 @@ def fetch_gli_data(offset_days: Optional[int] = None) -> GLIData:
         _gli_cache_time = time.time()
         return data
 
+    data = _try_fred_m2(offset_days)
+    if data:
+        _gli_cache = data
+        _gli_cache_time = time.time()
+        return data
+
     # Fallback: neutral (no filter applied)
     logger.warning("GLI data unavailable - filter disabled")
     data = GLIData(

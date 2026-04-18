@@ -6,3 +6,4 @@ python-dateutil>=2.8
 
 # Optional: only needed if USE_CLAUDE_CLI=false
 # anthropic>=0.40.0
+python-dotenv
