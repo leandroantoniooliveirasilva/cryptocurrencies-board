@@ -62,15 +62,16 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     logger.info(f"Processing {symbol}...")
 
     # Fetch market data
-    ohlc_data = coingecko.fetch_ohlc(coingecko_id, days=90) if coingecko_id else None
     defi_data = defillama.fetch_defillama_data(defillama_slug)
 
-    # Calculate RSI
-    daily_closes = coingecko.extract_daily_closes(ohlc_data) if ohlc_data else []
-    weekly_closes = coingecko.extract_weekly_closes(ohlc_data) if ohlc_data else []
+    # Fetch daily prices for RSI (market_chart endpoint gives true daily data)
+    daily_prices = coingecko.fetch_daily_prices(coingecko_id, days=90) if coingecko_id else []
 
-    rsi_daily = rsi.compute_rsi(daily_closes, 14) if len(daily_closes) >= 15 else None
-    rsi_weekly = rsi.compute_rsi(weekly_closes, 14) if len(weekly_closes) >= 15 else None
+    # For weekly RSI, sample every 7th day from daily prices
+    weekly_prices = daily_prices[::7] if len(daily_prices) >= 7 else []
+
+    rsi_daily = rsi.compute_rsi(daily_prices, 14) if len(daily_prices) >= 15 else None
+    rsi_weekly = rsi.compute_rsi(weekly_prices, 14) if len(weekly_prices) >= 15 else None
 
     # Get qualitative scores (cached or fresh)
     cached_regulatory = migrations.get_cached_qualitative_score(conn, symbol, "regulatory")

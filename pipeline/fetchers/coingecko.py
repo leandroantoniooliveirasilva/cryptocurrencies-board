@@ -138,6 +138,43 @@ def fetch_price(coin_id: str, vs_currency: str = "usd") -> Optional[float]:
         return None
 
 
+def fetch_daily_prices(
+    coin_id: str, vs_currency: str = "usd", days: int = 90
+) -> Optional[list[float]]:
+    """
+    Fetch daily closing prices from CoinGecko market_chart endpoint.
+
+    This endpoint returns daily data points for 90+ days, unlike OHLC
+    which returns 4-day candles on free tier.
+
+    Args:
+        coin_id: CoinGecko coin ID
+        vs_currency: Quote currency
+        days: Number of days
+
+    Returns:
+        List of daily closing prices (oldest to newest) or None
+    """
+    if not coin_id:
+        return None
+
+    try:
+        url = f"{_get_base_url()}/coins/{coin_id}/market_chart"
+        params = {"vs_currency": vs_currency, "days": days, "interval": "daily"}
+
+        resp = _request_with_retry(url, params, _get_headers())
+        if resp:
+            data = resp.json()
+            prices = data.get("prices", [])
+            # prices is [[timestamp, price], ...]
+            return [p[1] for p in prices]
+        return None
+
+    except Exception as e:
+        logger.warning(f"Failed to fetch daily prices for {coin_id}: {e}")
+        return None
+
+
 def fetch_market_data(coin_id: str, vs_currency: str = "usd") -> Optional[dict]:
     """
     Fetch comprehensive market data from CoinGecko.
@@ -184,24 +221,43 @@ def extract_daily_closes(ohlc_data: list[list]) -> list[float]:
     """
     Extract daily closing prices from OHLC data.
 
+    CoinGecko free tier returns 4-hour candles, so we aggregate to daily
+    by taking the last candle of each day.
+
     Args:
         ohlc_data: List of [timestamp, open, high, low, close]
 
     Returns:
-        List of closing prices (oldest to newest)
+        List of daily closing prices (oldest to newest)
     """
     if not ohlc_data:
         return []
 
-    # CoinGecko returns 4-hour candles for 30d, daily for 90d+
-    # Extract close prices (index 4)
-    closes = [candle[4] for candle in ohlc_data if len(candle) >= 5]
-    return closes
+    from datetime import datetime, timezone
+
+    # Group candles by date and take last close of each day
+    daily_closes = {}
+    for candle in ohlc_data:
+        if len(candle) < 5:
+            continue
+        timestamp_ms = candle[0]
+        close = candle[4]
+        # Convert to date string for grouping
+        dt = datetime.fromtimestamp(timestamp_ms / 1000, tz=timezone.utc)
+        date_key = dt.strftime("%Y-%m-%d")
+        # Keep the latest candle for each day
+        daily_closes[date_key] = close
+
+    # Return closes sorted by date (oldest to newest)
+    sorted_dates = sorted(daily_closes.keys())
+    return [daily_closes[d] for d in sorted_dates]
 
 
 def extract_weekly_closes(ohlc_data: list[list]) -> list[float]:
     """
-    Extract weekly closing prices from daily OHLC data.
+    Extract weekly closing prices from OHLC data.
+
+    Aggregates to weekly by taking the last candle of each ISO week.
 
     Args:
         ohlc_data: List of [timestamp, open, high, low, close]
@@ -212,10 +268,22 @@ def extract_weekly_closes(ohlc_data: list[list]) -> list[float]:
     if not ohlc_data:
         return []
 
-    # Sample every 7th candle (approximately weekly)
-    # For more accuracy, would need to aggregate by actual week
-    closes = [candle[4] for candle in ohlc_data if len(candle) >= 5]
+    from datetime import datetime, timezone
 
-    # Return every 7th value (or last 4 weeks worth)
-    weekly = closes[::7] if len(closes) >= 7 else closes
-    return weekly[-4:] if len(weekly) > 4 else weekly
+    # Group candles by ISO week and take last close of each week
+    weekly_closes = {}
+    for candle in ohlc_data:
+        if len(candle) < 5:
+            continue
+        timestamp_ms = candle[0]
+        close = candle[4]
+        # Convert to ISO week key (year-week)
+        dt = datetime.fromtimestamp(timestamp_ms / 1000, tz=timezone.utc)
+        year, week, _ = dt.isocalendar()
+        week_key = f"{year}-W{week:02d}"
+        # Keep the latest candle for each week
+        weekly_closes[week_key] = close
+
+    # Return closes sorted by week (oldest to newest)
+    sorted_weeks = sorted(weekly_closes.keys())
+    return [weekly_closes[w] for w in sorted_weeks]
