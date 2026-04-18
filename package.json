@@ -1,0 +1,27 @@
+{
+  "name": "cryptocurrencies-board",
+  "version": "1.0.0",
+  "description": "A self-hosted daily scoring system for cryptocurrency investment framework. Runs automatically via GitHub Actions, costs nothing, lives in one git repo.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "esbuild public/dashboard.jsx --bundle --minify --format=iife --global-name=Dashboard --external:react --external:react-dom --outfile=public/dashboard.js",
+    "watch": "esbuild public/dashboard.jsx --bundle --format=iife --global-name=Dashboard --external:react --external:react-dom --outfile=public/dashboard.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leandroantoniooliveirasilva/cryptocurrencies-board.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leandroantoniooliveirasilva/cryptocurrencies-board/issues"
+  },
+  "homepage": "https://github.com/leandroantoniooliveirasilva/cryptocurrencies-board#readme",
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}

@@ -207,8 +207,10 @@ marimo/_lsp/
 __marimo__/
 
 # MacOs
-
 .DS_Store
+
+# Node
+node_modules/
 
 # AI Plans
 
