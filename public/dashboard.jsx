@@ -1031,7 +1031,7 @@ function Dashboard() {
               Daily Conviction Signals
             </h1>
             <div style={{ fontSize: TYPE.body, color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontFamily: 'Georgia, serif', lineHeight: TYPE.snug }}>
-              Multi-dimensional scoring for long-term crypto accumulation. Identifies <em>who</em> to buy based on fundamentals, <em>when</em> to buy based on technicals.
+              Multi-dimensional scoring for long-term crypto accumulation. Identifies <em>what</em> to buy based on fundamentals, <em>when</em> to buy based on technicals.
             </div>
             {generatedAt && (
               <div style={{ fontSize: TYPE.small, color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px` }}>
