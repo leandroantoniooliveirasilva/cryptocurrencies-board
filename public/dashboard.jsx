@@ -820,25 +820,30 @@ function ActionSummary({ assets, isMobile }) {
                 flex: 1,
               }}>
                 {items.map(asset => {
-                  // Ensure readable text: use light text on dark bg, dark text on light bg
+                  // Different styling for light vs dark backgrounds
                   const isLightBg = action === 'strong-accumulate' || action === 'accumulate';
-                  const badgeBg = isLightBg ? 'rgba(0,0,0,0.15)' : PALETTE.cardInset;
-                  const badgeColor = isLightBg ? '#0a1a20' : PALETTE.textPrimary;
 
                   return (
                   <span
                     key={asset.symbol}
                     style={{
-                      fontSize: TYPE.small,
+                      fontSize: TYPE.body,
                       fontFamily: 'Georgia, serif',
-                      color: badgeColor,
-                      padding: `2px ${SPACE.sm}px`,
-                      background: badgeBg,
+                      fontWeight: 500,
+                      color: isLightBg ? '#fff' : PALETTE.textPrimary,
+                      padding: `3px ${SPACE.md}px`,
+                      background: isLightBg ? 'rgba(0,0,0,0.35)' : PALETTE.cardInset,
                       borderRadius: '2px',
+                      letterSpacing: '0.01em',
                     }}
                   >
                     {asset.symbol}
-                    <span style={{ opacity: 0.7, marginLeft: 4, fontSize: TYPE.caption }}>
+                    <span style={{
+                      opacity: 0.75,
+                      marginLeft: 6,
+                      fontSize: TYPE.small,
+                      fontWeight: 400,
+                    }}>
                       {asset.composite}
                     </span>
                   </span>
