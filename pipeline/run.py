@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-from pipeline.fetchers import coingecko, defillama, qualitative, supply
+from pipeline.fetchers import defillama, qualitative, supply
 from pipeline.scoring import actions, composite, rsi
 from pipeline.storage import migrations
 
@@ -64,9 +64,9 @@ def build_asset(entry: dict, tier: str, conn) -> dict:
     # Fetch market data
     defi_data = defillama.fetch_defillama_data(defillama_slug)
 
-    # Fetch daily prices for RSI (market_chart endpoint gives true daily data)
+    # Fetch daily prices for RSI from DefiLlama (free, no rate limits)
     # Use 120 days to ensure enough weekly data points (need 15+ weeks)
-    daily_prices = coingecko.fetch_daily_prices(coingecko_id, days=120) if coingecko_id else None
+    daily_prices = defillama.fetch_daily_prices(coingecko_id, days=120) if coingecko_id else None
     daily_prices = daily_prices or []  # Handle None from API failures
 
     # For weekly RSI, sample every 7th day (last close of each week)
