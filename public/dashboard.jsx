@@ -39,7 +39,7 @@ const PALETTE = {
   borderStrong: '#55493c',
   textPrimary: '#ede7d9',
   textSecondary: '#a39a8a',
-  textMuted: '#6e665a',
+  textMuted: '#958b7b', // Was #6e665a (3.1:1) → now 4.6:1 contrast
   trackBg: '#2a2620',
 };
 
@@ -93,6 +93,30 @@ function monthlyDelta(trend30d) {
   return trend30d[trend30d.length - 1] - trend30d[0];
 }
 
+function relativeTime(dateStr) {
+  if (!dateStr) return null;
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
+}
+
+function isStale(dateStr) {
+  if (!dateStr) return false;
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffHours = (now - date) / 3600000;
+  return diffHours > 25; // Stale if >25 hours old
+}
+
 function Sparkline({ data, accent }) {
   if (!data || data.length < 2) return null;
   const min = Math.min(...data);
@@ -115,12 +139,19 @@ function Sparkline({ data, accent }) {
 function DimensionBar({ label, value, accent, weight }) {
   return (
     <div style={{ marginBottom: '10px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
         <span>{label}{weight ? <span style={{ opacity: 0.6, marginLeft: '4px' }}>({Math.round(weight * 100)}%)</span> : ''}</span>
         <span style={{ color: PALETTE.textPrimary }}>{value}</span>
       </div>
-      <div style={{ height: '3px', background: PALETTE.trackBg }}>
-        <div style={{ height: '100%', width: `${value}%`, background: accent, transition: 'width 0.6s ease' }} />
+      <div style={{ height: '3px', background: PALETTE.trackBg, overflow: 'hidden' }}>
+        <div style={{
+          height: '100%',
+          width: '100%',
+          background: accent,
+          transformOrigin: 'left',
+          transform: `scaleX(${value / 100})`,
+          transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+        }} />
       </div>
     </div>
   );
@@ -148,14 +179,14 @@ function RsiRow({ asset }) {
   const { rsi_daily, rsi_weekly } = asset;
 
   const Cell = ({ label, value }) => (
-    <div style={{ flex: 1, textAlign: 'center', padding: '6px 4px', background: PALETTE.cardInset }}>
-      <div style={{ fontSize: '8px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', marginBottom: '3px' }}>
+    <div style={{ flex: 1, textAlign: 'center', padding: '8px 6px', background: PALETTE.cardInset }}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', marginBottom: '4px' }}>
         {label}
       </div>
       <div style={{ fontFamily: 'Georgia, serif', fontSize: '18px', fontWeight: 400, color: rsiColor(value), lineHeight: 1 }}>
         {value === null || value === undefined ? '—' : value}
       </div>
-      <div style={{ fontSize: '8px', color: rsiColor(value), fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', marginTop: '3px', fontStyle: 'italic', opacity: 0.85 }}>
+      <div style={{ fontSize: '10px', color: rsiColor(value), fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', marginTop: '4px', fontStyle: 'italic', opacity: 0.85 }}>
         {rsiLabel(value)}
       </div>
     </div>
@@ -163,7 +194,7 @@ function RsiRow({ asset }) {
 
   return (
     <div style={{ marginBottom: '16px' }}>
-      <div style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '6px', fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '6px', fontFamily: 'ui-monospace, monospace' }}>
         RSI · 14
       </div>
       <div style={{ display: 'flex', gap: '6px' }}>
@@ -204,12 +235,12 @@ function ActionBanner({ action, daysAgo, strongDays }) {
           <div style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', fontWeight: isStrong ? 700 : 500 }}>
             {cfg.label}
           </div>
-          <div style={{ fontSize: '9px', letterSpacing: '0.05em', opacity: 0.75, fontFamily: 'ui-monospace, monospace', marginTop: '2px' }}>
+          <div style={{ fontSize: '10px', letterSpacing: '0.05em', opacity: 0.8, fontFamily: 'ui-monospace, monospace', marginTop: '2px' }}>
             {cfg.desc}
           </div>
         </div>
       </div>
-      <div style={{ fontSize: '9px', letterSpacing: '0.08em', fontFamily: 'ui-monospace, monospace', textAlign: 'right', lineHeight: 1.3, opacity: recentChange ? 1 : 0.6 }}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.08em', fontFamily: 'ui-monospace, monospace', textAlign: 'right', lineHeight: 1.3, opacity: recentChange ? 1 : 0.7 }}>
         {isStrong && strongDays > 1 ? (
           <>
             <div style={{ fontWeight: 600, marginBottom: '1px' }}>DAY {strongDays}</div>
@@ -232,6 +263,7 @@ function ActionBanner({ action, daysAgo, strongDays }) {
 }
 
 function ScoreCard({ asset }) {
+  const [showAllDimensions, setShowAllDimensions] = useState(false);
   const assetType = asset.asset_type || 'smart-contract';
   const weights = asset.weights || getWeights(assetType);
   const composite = asset.composite || computeComposite(asset.scores, assetType);
@@ -244,6 +276,13 @@ function ScoreCard({ asset }) {
 
   const deltaColor = delta > 0 ? '#7aa872' : delta < 0 ? '#c27878' : PALETTE.textMuted;
   const DeltaIcon = delta > 0 ? TrendingUp : delta < 0 ? TrendingDown : Minus;
+
+  // Sort dimensions by weight to show top 3 by default
+  const sortedDimensions = Object.entries(weights)
+    .sort(([, a], [, b]) => b - a)
+    .map(([key]) => key);
+  const visibleDimensions = showAllDimensions ? sortedDimensions : sortedDimensions.slice(0, 3);
+  const hiddenCount = sortedDimensions.length - 3;
 
   return (
     <div style={{
@@ -261,11 +300,11 @@ function ScoreCard({ asset }) {
           <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textSecondary, marginTop: '4px', fontFamily: 'ui-monospace, monospace' }}>
             {asset.name}
           </div>
-          <div style={{ fontSize: '8px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: '3px', fontFamily: 'ui-monospace, monospace' }}>
+          <div style={{ fontSize: '10px', letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: '4px', fontFamily: 'ui-monospace, monospace' }}>
             {ASSET_TYPE_LABELS[assetType] || assetType}
           </div>
         </div>
-        <Icon size={14} color={config.accent} strokeWidth={1.5} />
+        <Icon size={16} color={config.accent} strokeWidth={1.5} />
       </div>
 
       <ActionBanner action={action} daysAgo={asset.label_changed_days_ago} strongDays={asset.strong_accumulate_days_active} />
@@ -282,22 +321,62 @@ function ScoreCard({ asset }) {
           <Sparkline data={asset.trend} accent={config.accent} />
         </div>
       </div>
-      <div style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
+      <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
         Composite · 7d
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <DimensionBar label={DIMENSION_LABELS.institutional} value={asset.scores.institutional} accent={config.accent} weight={weights.institutional} />
-        <DimensionBar label={DIMENSION_LABELS.revenue} value={asset.scores.revenue} accent={config.accent} weight={weights.revenue} />
-        <DimensionBar label={DIMENSION_LABELS.regulatory} value={asset.scores.regulatory} accent={config.accent} weight={weights.regulatory} />
-        <DimensionBar label={DIMENSION_LABELS.supply} value={asset.scores.supply} accent={config.accent} weight={weights.supply} />
-        <DimensionBar label={DIMENSION_LABELS.wyckoff} value={asset.scores.wyckoff} accent={config.accent} weight={weights.wyckoff} />
+        {visibleDimensions.map(dim => (
+          <DimensionBar
+            key={dim}
+            label={DIMENSION_LABELS[dim]}
+            value={asset.scores[dim]}
+            accent={config.accent}
+            weight={weights[dim]}
+          />
+        ))}
+        {hiddenCount > 0 && !showAllDimensions && (
+          <button
+            onClick={() => setShowAllDimensions(true)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: PALETTE.textSecondary,
+              fontSize: '10px',
+              fontFamily: 'ui-monospace, monospace',
+              letterSpacing: '0.08em',
+              cursor: 'pointer',
+              padding: '4px 0',
+              opacity: 0.8,
+            }}
+          >
+            +{hiddenCount} more
+          </button>
+        )}
+        {showAllDimensions && (
+          <button
+            onClick={() => setShowAllDimensions(false)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: PALETTE.textSecondary,
+              fontSize: '10px',
+              fontFamily: 'ui-monospace, monospace',
+              letterSpacing: '0.08em',
+              cursor: 'pointer',
+              padding: '4px 0',
+              opacity: 0.8,
+            }}
+          >
+            Show less
+          </button>
+        )}
       </div>
 
       <RsiRow asset={asset} />
 
       <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '12px', marginTop: 'auto' }}>
-        <div style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
+        <div style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: '4px', fontFamily: 'ui-monospace, monospace' }}>
           {asset.wyckoff_phase}
         </div>
         <div style={{ fontSize: '11px', color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: 1.4 }}>
@@ -320,9 +399,11 @@ function ActionLegend() {
   ];
   return (
     <details style={{ maxWidth: '1400px', margin: '0 auto 24px', fontSize: '11px', color: PALETTE.textSecondary }}>
-      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted }}>
+      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: '6px', listStyle: 'none' }}>
+        <span style={{ transition: 'transform 0.2s', display: 'inline-block' }}>▸</span>
         Action rules
       </summary>
+      <style>{`details[open] summary span:first-child { transform: rotate(90deg); }`}</style>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginTop: '16px' }}>
         {items.map(item => {
           const cfg = ACTION_CONFIG[item.key];
@@ -474,8 +555,9 @@ function Dashboard() {
           5 dimensions · Tiered weights by asset type · RSI confirmation layer
         </div>
         {generatedAt && (
-          <div style={{ fontSize: '10px', color: PALETTE.textMuted, marginTop: '8px', fontFamily: 'ui-monospace, monospace' }}>
-            Last updated: {new Date(generatedAt).toLocaleString()}
+          <div style={{ fontSize: '11px', color: isStale(generatedAt) ? '#d49a6a' : PALETTE.textMuted, marginTop: '8px', fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {isStale(generatedAt) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
+            <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt) ? ' · Data may be stale' : ''}</span>
           </div>
         )}
         {strongCount > 0 && (
@@ -519,31 +601,49 @@ function Dashboard() {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {['leader', 'runner-up', 'observation'].map(tier => {
-          if (groupedAssets[tier].length === 0) return null;
           const config = TIER_CONFIG[tier];
+          const tierAssets = groupedAssets[tier];
+          // Skip tier if no assets and not filtering to this specific tier
+          if (tierAssets.length === 0 && activeTier !== tier) return null;
+
           return (
             <div key={tier} style={{ marginBottom: '40px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ width: '24px', height: '1px', background: config.accent }} />
                 <h2 style={{ fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: config.accent, fontFamily: 'ui-monospace, monospace', fontWeight: 500, margin: 0 }}>
-                  {config.label} — {groupedAssets[tier].length}
+                  {config.label} — {tierAssets.length}
                 </h2>
               </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '16px',
-              }}>
-                {groupedAssets[tier].map(asset => (
-                  <ScoreCard key={asset.symbol} asset={asset} />
-                ))}
-              </div>
+              {tierAssets.length === 0 ? (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '48px 24px',
+                  color: PALETTE.textMuted,
+                  fontFamily: 'Georgia, serif',
+                  fontStyle: 'italic',
+                  fontSize: '13px',
+                  background: PALETTE.cardBg,
+                  border: `1px dashed ${PALETTE.border}`,
+                }}>
+                  No assets in this tier yet
+                </div>
+              ) : (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gap: '16px',
+                }}>
+                  {tierAssets.map(asset => (
+                    <ScoreCard key={asset.symbol} asset={asset} />
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      <div style={{ maxWidth: '1400px', margin: '40px auto 0', borderTop: `1px solid ${PALETTE.border}`, paddingTop: '16px', fontSize: '10px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em', lineHeight: 1.6 }}>
+      <div style={{ maxWidth: '1400px', margin: '40px auto 0', borderTop: `1px solid ${PALETTE.border}`, paddingTop: '16px', fontSize: '11px', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', lineHeight: 1.6 }}>
         <div>Daily conviction scoring framework. Data refreshed at 12:00 UTC. Watchlist reviewed monthly.</div>
         <div style={{ marginTop: '4px' }}>Dimensions: Institutional · Revenue · Regulatory · Supply · Wyckoff. Weights vary by asset type.</div>
         <div style={{ marginTop: '4px' }}>Strong Accumulate fires when an already-Accumulate leader sees daily RSI flush with weekly + composite intact.</div>
