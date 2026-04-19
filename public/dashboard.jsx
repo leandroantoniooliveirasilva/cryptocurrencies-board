@@ -919,18 +919,7 @@ function StrategySection({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div style={{ marginBottom: `${SPACE.lg}px` }}>
-      {/* Summary - always visible */}
-      <div style={{
-        fontSize: TYPE.small,
-        color: PALETTE.textSecondary,
-        fontFamily: 'Georgia, serif',
-        lineHeight: TYPE.relaxed,
-        marginBottom: `${SPACE.sm}px`,
-      }}>
-        Fundamentals identify <em>what</em> to buy, technicals determine <em>when</em>.
-      </div>
-
+    <div style={{ marginTop: `${SPACE.base}px` }}>
       {/* Expand/collapse button */}
       <button
         onClick={() => setExpanded(!expanded)}
@@ -1594,6 +1583,14 @@ function Dashboard() {
               </>
             )}
           </div>
+        </div>
+        <div style={{
+          fontSize: TYPE.small,
+          color: PALETTE.textSecondary,
+          fontFamily: 'Georgia, serif',
+          lineHeight: TYPE.relaxed,
+        }}>
+          Fundamentals identify <em>what</em> to buy, technicals determine <em>when</em>.
         </div>
       </div>
 
