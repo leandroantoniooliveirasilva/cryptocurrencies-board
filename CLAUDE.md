@@ -82,9 +82,9 @@ Tiers are computed automatically from composite scores:
 
 | Tier | Composite | Purpose |
 |------|-----------|---------|
-| Leaders | ≥75 | Core positions for accumulation |
-| Runner-ups | ≥55 | Promotion candidates |
-| Observation | <55 | Watch only, no position |
+| Leaders | ≥70 | Core positions for accumulation |
+| Runner-ups | 60-69 | Promotion candidates |
+| Observation | 50-59 | Watch only, no position |
 
 Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
 
@@ -97,7 +97,7 @@ Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tier
 - Sources: Manual override, TradingView, FRED M2, Fallback (neutral)
 
 **RS (Relative Strength vs BTC)**:
-- Compares each asset's price ratio to BTC over lookback period (default 30 days)
+- Compares each asset's price ratio to BTC over lookback period (default 90 days)
 - If underperforming BTC by ≥threshold (default 10%) → strong-accumulate downgrades to accumulate
 - Rationale: if an asset is underperforming BTC, you may be better off just holding BTC
 - Dashboard shows warning banner and indicator on affected asset cards

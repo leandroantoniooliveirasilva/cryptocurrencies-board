@@ -1038,7 +1038,7 @@ function StrategySection({ isMobile }) {
               lineHeight: TYPE.relaxed,
             }}>
               <div style={{ marginBottom: `${SPACE.sm}px` }}>
-                <span style={{ color: TIER_CONFIG['leader'].accent }}>Leaders</span> — Core positions for accumulation. Composite ≥75 consistently, clear institutional path, no existential regulatory risk.
+                <span style={{ color: TIER_CONFIG['leader'].accent }}>Leaders</span> — Core positions for accumulation. Composite ≥70, clear institutional path, no existential regulatory risk.
               </div>
               <div style={{ marginBottom: `${SPACE.sm}px` }}>
                 <span style={{ color: TIER_CONFIG['runner-up'].accent }}>Runner-ups</span> — Promotion candidates. Strong in 2-3 dimensions, improving trajectory toward leader status.
@@ -1077,7 +1077,7 @@ function StrategySection({ isMobile }) {
               </div>
               <div style={{ paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid ${ACTION_CONFIG['strong-accumulate'].bg}` }}>
                 <div style={{ color: PALETTE.textSecondary, marginBottom: '2px' }}>Wyckoff Dip</div>
-                Phase C + daily RSI ≤32 + weekly RSI ≥42 (stable) + composite ≥75. Short-term flush within healthy structure.
+                Phase C + daily RSI ≤32 + weekly RSI ≥42 (stable) + composite ≥70. Short-term flush within healthy structure.
               </div>
               <div style={{ marginTop: `${SPACE.md}px`, paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid #d49a6a` }}>
                 <div style={{ color: '#d49a6a', marginBottom: '2px' }}>Macro Filter: GLI 75-Day Offset</div>
@@ -1128,7 +1128,7 @@ function ActionLegend({ isMobile }) {
   const items = [
     { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32). Suppressed when GLI contracting (75d offset).' },
     { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by GLI/RSI slope. Also fallback when strong-accumulate is suppressed.' },
-    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8.' },
+    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥70 with 30-day trend ≥+8.' },
     { key: 'hold', text: 'Active position. No signal. Patience by design.' },
     { key: 'await', text: 'Runner-up building signal. Not yet activated.' },
     { key: 'observe', text: 'Observation tier. Scanning only.' },
