@@ -880,6 +880,217 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
   );
 }
 
+function StrategySection({ isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div style={{ marginBottom: `${SPACE.xl}px` }}>
+      {/* Summary - always visible */}
+      <div style={{
+        fontSize: TYPE.body,
+        color: PALETTE.textSecondary,
+        fontFamily: 'Georgia, serif',
+        lineHeight: TYPE.relaxed,
+        marginBottom: `${SPACE.md}px`,
+      }}>
+        A conviction scoring system for patient accumulation. Scores assets across five dimensions to identify <em>what</em> to buy based on fundamentals, uses RSI and Wyckoff analysis to determine <em>when</em> to buy based on technicals.
+      </div>
+
+      {/* Expand/collapse button */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        style={{
+          background: 'transparent',
+          border: `1px solid ${PALETTE.border}`,
+          color: PALETTE.textMuted,
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          fontSize: TYPE.caption,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+        }}>▸</span>
+        {expanded ? 'Hide details' : 'View strategy details'}
+      </button>
+
+      {/* Expanded content */}
+      {expanded && (
+        <div style={{
+          marginTop: `${SPACE.lg}px`,
+          padding: `${SPACE.lg}px`,
+          background: PALETTE.cardBg,
+          border: `1px solid ${PALETTE.border}`,
+        }}>
+          {/* Philosophy */}
+          <div style={{ marginBottom: `${SPACE.xl}px` }}>
+            <h3 style={{
+              fontSize: TYPE.small,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: PALETTE.textSecondary,
+              fontFamily: 'ui-monospace, monospace',
+              fontWeight: 500,
+              margin: `0 0 ${SPACE.md}px`,
+            }}>
+              Philosophy
+            </h3>
+            <div style={{
+              fontSize: TYPE.body,
+              color: PALETTE.textSecondary,
+              fontFamily: 'Georgia, serif',
+              lineHeight: TYPE.relaxed,
+            }}>
+              <p style={{ margin: `0 0 ${SPACE.sm}px` }}>
+                <strong style={{ color: PALETTE.textPrimary }}>Leaders go up over time</strong> due to strong fundamentals — institutional adoption, sustainable revenue, regulatory clarity, healthy supply dynamics.
+              </p>
+              <p style={{ margin: `0 0 ${SPACE.sm}px` }}>
+                <strong style={{ color: PALETTE.textPrimary }}>Buying weakness in leaders = mean reversion.</strong> Quality assets recover from panic selling and technical dislocations.
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong style={{ color: PALETTE.textPrimary }}>Buying weakness in non-leaders = momentum trap.</strong> Without fundamental strength, oversold assets often continue declining.
+              </p>
+            </div>
+          </div>
+
+          {/* Dimensions */}
+          <div style={{ marginBottom: `${SPACE.xl}px` }}>
+            <h3 style={{
+              fontSize: TYPE.small,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: PALETTE.textSecondary,
+              fontFamily: 'ui-monospace, monospace',
+              fontWeight: 500,
+              margin: `0 0 ${SPACE.md}px`,
+            }}>
+              Scoring Dimensions
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: `${SPACE.md}px`,
+              fontSize: TYPE.small,
+              color: PALETTE.textMuted,
+              fontFamily: 'ui-monospace, monospace',
+            }}>
+              <div><span style={{ color: PALETTE.textSecondary }}>Institutional</span> — ETF flows, fund holdings, custody</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Revenue</span> — Protocol fees, sustainability</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Regulatory</span> — Jurisdictional clarity</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Supply</span> — Exchange reserves, distribution</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Wyckoff</span> — Technical phase analysis</div>
+            </div>
+          </div>
+
+          {/* Tiers */}
+          <div style={{ marginBottom: `${SPACE.xl}px` }}>
+            <h3 style={{
+              fontSize: TYPE.small,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: PALETTE.textSecondary,
+              fontFamily: 'ui-monospace, monospace',
+              fontWeight: 500,
+              margin: `0 0 ${SPACE.md}px`,
+            }}>
+              Asset Tiers
+            </h3>
+            <div style={{
+              fontSize: TYPE.small,
+              color: PALETTE.textMuted,
+              fontFamily: 'ui-monospace, monospace',
+              lineHeight: TYPE.relaxed,
+            }}>
+              <div style={{ marginBottom: `${SPACE.sm}px` }}>
+                <span style={{ color: TIER_CONFIG['leader'].accent }}>Leaders</span> — Core positions for accumulation. Composite ≥75 consistently, clear institutional path, no existential regulatory risk.
+              </div>
+              <div style={{ marginBottom: `${SPACE.sm}px` }}>
+                <span style={{ color: TIER_CONFIG['runner-up'].accent }}>Runner-ups</span> — Promotion candidates. Strong in 2-3 dimensions, improving trajectory toward leader status.
+              </div>
+              <div>
+                <span style={{ color: TIER_CONFIG['observation'].accent }}>Observation</span> — Watch only. Interesting but gaps exist. No position warranted.
+              </div>
+            </div>
+          </div>
+
+          {/* Signal Logic */}
+          <div style={{ marginBottom: `${SPACE.xl}px` }}>
+            <h3 style={{
+              fontSize: TYPE.small,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: PALETTE.textSecondary,
+              fontFamily: 'ui-monospace, monospace',
+              fontWeight: 500,
+              margin: `0 0 ${SPACE.md}px`,
+            }}>
+              Strong Accumulate Logic
+            </h3>
+            <div style={{
+              fontSize: TYPE.small,
+              color: PALETTE.textMuted,
+              fontFamily: 'ui-monospace, monospace',
+              lineHeight: TYPE.relaxed,
+            }}>
+              <p style={{ margin: `0 0 ${SPACE.sm}px`, color: PALETTE.textSecondary }}>
+                Fires ~5-15 times per year across the watchlist. Two paths:
+              </p>
+              <div style={{ marginBottom: `${SPACE.sm}px`, paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid ${ACTION_CONFIG['strong-accumulate'].bg}` }}>
+                <div style={{ color: PALETTE.textSecondary, marginBottom: '2px' }}>Capitulation</div>
+                Weekly RSI &lt;30 AND daily RSI &lt;30. Panic selling in quality leaders. 82.9% hit rate at 30 days.
+              </div>
+              <div style={{ paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid ${ACTION_CONFIG['strong-accumulate'].bg}` }}>
+                <div style={{ color: PALETTE.textSecondary, marginBottom: '2px' }}>Wyckoff Dip</div>
+                Phase C + daily RSI ≤32 + weekly RSI ≥42 (stable) + composite ≥75. Short-term flush within healthy structure.
+              </div>
+              <p style={{ margin: `${SPACE.md}px 0 0`, fontStyle: 'italic' }}>
+                Filtered when: GLI contracting, or weekly RSI falling from elevated levels (&gt;55, dropped &gt;8 points).
+              </p>
+            </div>
+          </div>
+
+          {/* Principles */}
+          <div>
+            <h3 style={{
+              fontSize: TYPE.small,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: PALETTE.textSecondary,
+              fontFamily: 'ui-monospace, monospace',
+              fontWeight: 500,
+              margin: `0 0 ${SPACE.md}px`,
+            }}>
+              Design Principles
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: `${SPACE.sm}px`,
+              fontSize: TYPE.small,
+              color: PALETTE.textMuted,
+              fontFamily: 'ui-monospace, monospace',
+            }}>
+              <div><span style={{ color: PALETTE.textSecondary }}>Deliberate</span> — Daily rhythm, not real-time</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Patient</span> — Hold is the default state</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Rare signals</span> — Quality over frequency</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Framework-driven</span> — Prevents emotional drift</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ActionLegend({ isMobile }) {
   const items = [
     { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dislocation (Phase C+, daily RSI ≤32, composite ≥75).' },
@@ -1157,8 +1368,9 @@ function Dashboard() {
         })}
       </div>
 
-      {/* Footer with reference info */}
+      {/* Footer with strategy and reference info */}
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
+        <StrategySection isMobile={isMobile} />
         <ActionLegend isMobile={isMobile} />
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.03em', lineHeight: TYPE.relaxed, marginTop: `${SPACE.lg}px` }}>
           <div>
