@@ -1093,6 +1093,8 @@ function StrategySection({ isMobile }) {
 }
 
 function ActionLegend({ isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+
   const items = [
     { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dislocation (Phase C+, daily RSI ≤32, composite ≥75).' },
     { key: 'accumulate', text: 'Weekly RSI <30 capitulation, or composite ≥75 in Phase C+ with stable trend.' },
@@ -1102,30 +1104,62 @@ function ActionLegend({ isMobile }) {
     { key: 'observe', text: 'Observation tier. Scanning only.' },
     { key: 'stand-aside', text: 'Distribution risk. Do not engage.' },
   ];
+
   return (
-    <details style={{ fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-      <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: TYPE.small, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, listStyle: 'none', minHeight: isMobile ? '44px' : 'auto', padding: isMobile ? `${SPACE.sm}px 0` : 0 }}>
-        <span style={{ transition: 'transform 0.2s', display: 'inline-block' }}>▸</span>
-        Signal reference
-      </summary>
-      <style>{`details[open] summary span:first-child { transform: rotate(90deg); }`}</style>
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: `${SPACE.base}px`, marginTop: `${SPACE.md}px` }}>
-        {items.map(item => {
-          const cfg = ACTION_CONFIG[item.key];
-          return (
-            <div key={item.key} style={{ display: 'flex', gap: `${SPACE.sm}px`, alignItems: 'flex-start' }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '6px', flexShrink: 0 }} />
-              <div>
-                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textSecondary, fontWeight: 500 }}>
-                  {cfg.label}
-                </span>
-                <span style={{ color: PALETTE.textMuted }}> — {item.text}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </details>
+    <div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: `1px solid ${PALETTE.border}`,
+          color: PALETTE.textMuted,
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          fontSize: TYPE.caption,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+        }}>▸</span>
+        {expanded ? 'Hide signal reference' : 'Signal reference'}
+      </button>
+
+      {expanded && (
+        <div style={{
+          marginTop: `${SPACE.lg}px`,
+          padding: `${SPACE.lg}px`,
+          background: PALETTE.cardBg,
+          border: `1px solid ${PALETTE.border}`,
+        }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: `${SPACE.base}px` }}>
+            {items.map(item => {
+              const cfg = ACTION_CONFIG[item.key];
+              return (
+                <div key={item.key} style={{ display: 'flex', gap: `${SPACE.sm}px`, alignItems: 'flex-start' }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '6px', flexShrink: 0 }} />
+                  <div style={{ fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textSecondary, fontWeight: 500 }}>
+                      {cfg.label}
+                    </span>
+                    <span style={{ color: PALETTE.textMuted }}> — {item.text}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -1373,20 +1407,6 @@ function Dashboard() {
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
         <StrategySection isMobile={isMobile} />
         <ActionLegend isMobile={isMobile} />
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.03em', lineHeight: TYPE.relaxed, marginTop: `${SPACE.lg}px` }}>
-          <div>
-            <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Scoring</div>
-            Daily conviction framework. Data refreshed at 12:00 UTC.
-          </div>
-          <div>
-            <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Dimensions</div>
-            Institutional · Revenue · Regulatory · Supply · Wyckoff
-          </div>
-          <div>
-            <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Strong Accumulate</div>
-            Fires when leader sees daily RSI flush with weekly + composite intact.
-          </div>
-        </div>
       </div>
     </div>
   );
