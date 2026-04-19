@@ -1209,22 +1209,100 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   // Filter to assets with RS data (excluding BTC)
-  const assetsWithRs = assets.filter(a => a.rs_vs_btc && a.symbol !== 'BTC');
-  const underperforming = assetsWithRs.filter(a => a.rs_vs_btc.underperforming);
+  const assetsWithRs = assets.filter(a => a.rs_vs_btc && a.symbol !== 'BTC' && a.rs_vs_btc.change_pct !== null);
   const total = assetsWithRs.length;
-  const count = underperforming.length;
 
   // Don't render if RS is disabled or no data
   if (!rs || !rs.enabled || total === 0) return null;
 
   const lookbackDays = rs.lookback_days || 90;
+  const threshold = rs.underperformance_threshold || 0.10;
 
-  // Sort underperforming by severity (most negative first)
-  const sorted = [...underperforming].sort((a, b) => {
-    const aChange = a.rs_vs_btc.change_pct || 0;
-    const bChange = b.rs_vs_btc.change_pct || 0;
-    return aChange - bChange; // Most negative first
-  });
+  // Categorize assets
+  const outperforming = assetsWithRs.filter(a => a.rs_vs_btc.change_pct >= threshold);
+  const stable = assetsWithRs.filter(a => a.rs_vs_btc.change_pct > -threshold && a.rs_vs_btc.change_pct < threshold);
+  const underperforming = assetsWithRs.filter(a => a.rs_vs_btc.change_pct <= -threshold);
+
+  // Sort each category
+  const sortedOutperforming = [...outperforming].sort((a, b) => (b.rs_vs_btc.change_pct || 0) - (a.rs_vs_btc.change_pct || 0));
+  const sortedStable = [...stable].sort((a, b) => (b.rs_vs_btc.change_pct || 0) - (a.rs_vs_btc.change_pct || 0));
+  const sortedUnderperforming = [...underperforming].sort((a, b) => (a.rs_vs_btc.change_pct || 0) - (b.rs_vs_btc.change_pct || 0));
+
+  const RsAssetRow = ({ asset, type }) => {
+    const changePct = asset.rs_vs_btc.change_pct || 0;
+    const tierConfig = TIER_CONFIG[asset.tier];
+    const color = type === 'outperforming' ? '#7aa872' : type === 'underperforming' ? '#c89678' : PALETTE.textMuted;
+    const Icon = type === 'outperforming' ? TrendingUp : type === 'underperforming' ? TrendingDown : Minus;
+
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: `${SPACE.sm}px`,
+        padding: `${SPACE.sm}px ${SPACE.md}px`,
+        background: PALETTE.cardInset,
+      }}>
+        <span style={{
+          fontFamily: 'Georgia, serif',
+          fontSize: TYPE.body,
+          color: PALETTE.textPrimary,
+          minWidth: '60px',
+        }}>
+          {asset.symbol}
+        </span>
+        <span style={{
+          fontSize: TYPE.caption,
+          color: tierConfig?.accent || PALETTE.textMuted,
+          fontFamily: 'ui-monospace, monospace',
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+          opacity: 0.7,
+        }}>
+          {asset.tier}
+        </span>
+        <span style={{
+          marginLeft: 'auto',
+          fontSize: TYPE.small,
+          color: color,
+          fontFamily: 'ui-monospace, monospace',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '3px',
+        }}>
+          <Icon size={12} strokeWidth={2} />
+          {changePct >= 0 ? '+' : ''}{(changePct * 100).toFixed(0)}%
+        </span>
+      </div>
+    );
+  };
+
+  const CategorySection = ({ title, items, type, color }) => {
+    if (items.length === 0) return null;
+    return (
+      <div style={{ marginBottom: `${SPACE.lg}px` }}>
+        <div style={{
+          fontSize: TYPE.caption,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: color,
+          fontFamily: 'ui-monospace, monospace',
+          marginBottom: `${SPACE.sm}px`,
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+        }}>
+          {title} — {items.length}
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: `${SPACE.sm}px`,
+        }}>
+          {items.map(asset => <RsAssetRow key={asset.symbol} asset={asset} type={type} />)}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div style={{ marginTop: `${SPACE.base}px` }}>
@@ -1234,7 +1312,7 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
         style={{
           background: 'transparent',
           border: `1px solid ${PALETTE.border}`,
-          color: count > 0 ? '#c89678' : PALETTE.textMuted,
+          color: PALETTE.textMuted,
           padding: `${SPACE.sm}px ${SPACE.md}px`,
           fontSize: TYPE.caption,
           letterSpacing: '0.08em',
@@ -1252,7 +1330,10 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
           display: 'inline-block',
           transform: expanded ? 'rotate(90deg)' : 'none',
         }}>▸</span>
-        {count}/{total} underperforming BTC ({lookbackDays}d)
+        <span>RS vs BTC ({lookbackDays}d):</span>
+        <span style={{ color: '#7aa872' }}>{outperforming.length}↑</span>
+        <span style={{ color: PALETTE.textMuted }}>{stable.length}—</span>
+        <span style={{ color: '#c89678' }}>{underperforming.length}↓</span>
       </button>
 
       {expanded && (
@@ -1262,76 +1343,92 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
           background: PALETTE.cardBg,
           border: `1px solid ${PALETTE.border}`,
         }}>
-          {count === 0 ? (
-            <div style={{
-              fontSize: TYPE.small,
-              color: PALETTE.textMuted,
-              fontFamily: 'Georgia, serif',
-              fontStyle: 'italic',
-            }}>
-              All assets are performing at or above BTC over the {lookbackDays}-day lookback.
-            </div>
-          ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: `${SPACE.md}px`,
-            }}>
-              {sorted.map(asset => {
-                const changePct = asset.rs_vs_btc.change_pct || 0;
-                const tierConfig = TIER_CONFIG[asset.tier];
-                return (
-                  <div key={asset.symbol} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: `${SPACE.sm}px`,
-                    padding: `${SPACE.sm}px ${SPACE.md}px`,
-                    background: PALETTE.cardInset,
-                  }}>
-                    <span style={{
-                      fontFamily: 'Georgia, serif',
-                      fontSize: TYPE.body,
-                      color: PALETTE.textPrimary,
-                      minWidth: '60px',
-                    }}>
-                      {asset.symbol}
-                    </span>
-                    <span style={{
-                      fontSize: TYPE.caption,
-                      color: tierConfig?.accent || PALETTE.textMuted,
-                      fontFamily: 'ui-monospace, monospace',
-                      letterSpacing: '0.04em',
-                      textTransform: 'uppercase',
-                      opacity: 0.7,
-                    }}>
-                      {asset.tier}
-                    </span>
-                    <span style={{
-                      marginLeft: 'auto',
-                      fontSize: TYPE.small,
-                      color: '#c89678',
-                      fontFamily: 'ui-monospace, monospace',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '3px',
-                    }}>
-                      <TrendingDown size={12} strokeWidth={2} />
-                      {(changePct * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <CategorySection title="Outperforming" items={sortedOutperforming} type="outperforming" color="#7aa872" />
+          <CategorySection title="Stable" items={sortedStable} type="stable" color={PALETTE.textMuted} />
+          <CategorySection title="Underperforming" items={sortedUnderperforming} type="underperforming" color="#c89678" />
+
           <div style={{
-            marginTop: `${SPACE.md}px`,
+            marginTop: `${SPACE.sm}px`,
             fontSize: TYPE.caption,
             color: PALETTE.textMuted,
             fontFamily: 'ui-monospace, monospace',
             fontStyle: 'italic',
           }}>
-            Assets underperforming BTC by ≥{((rs.underperformance_threshold || 0.1) * 100).toFixed(0)}% have strong-accumulate signals suppressed.
+            Threshold: ±{(threshold * 100).toFixed(0)}%. Underperforming assets have strong-accumulate signals suppressed.
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TierSection({ tier, assets, isMobile, defaultExpanded = false }) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const config = TIER_CONFIG[tier];
+  if (!config) return null;
+
+  const count = assets.length;
+
+  return (
+    <div style={{ marginBottom: `${SPACE.xl}px` }}>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: config.accent,
+          padding: 0,
+          fontSize: TYPE.small,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          fontWeight: 500,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.md}px`,
+          width: '100%',
+          textAlign: 'left',
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <div style={{ width: `${SPACE.xl}px`, height: '1px', background: config.accent }} />
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+          fontSize: TYPE.caption,
+        }}>▸</span>
+        <span>{config.label} — {count}</span>
+      </button>
+
+      {expanded && (
+        <div style={{ marginTop: `${SPACE.lg}px` }}>
+          {count === 0 ? (
+            <div style={{
+              textAlign: 'center',
+              padding: `${SPACE['2xl']}px ${SPACE.lg}px`,
+              color: PALETTE.textMuted,
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: TYPE.body,
+              background: PALETTE.cardBg,
+              border: `1px dashed ${PALETTE.border}`,
+            }}>
+              No assets in this tier yet
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: `${isMobile ? SPACE.base : SPACE.lg}px`,
+            }}>
+              {assets.map(asset => (
+                <ScoreCard key={asset.symbol} asset={asset} isMobile={isMobile} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -1541,44 +1638,18 @@ function Dashboard() {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {['leader', 'runner-up', 'observation'].map(tier => {
-          const config = TIER_CONFIG[tier];
           const tierAssets = groupedAssets[tier];
           // Skip tier if no assets and not filtering to this specific tier
           if (tierAssets.length === 0 && activeTier !== tier) return null;
 
           return (
-            <div key={tier} style={{ marginBottom: `${SPACE['3xl']}px` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: `${SPACE.md}px`, marginBottom: `${SPACE.lg}px` }}>
-                <div style={{ width: `${SPACE.xl}px`, height: '1px', background: config.accent }} />
-                <h2 style={{ fontSize: TYPE.small, letterSpacing: '0.15em', textTransform: 'uppercase', color: config.accent, fontFamily: 'ui-monospace, monospace', fontWeight: 500, margin: 0 }}>
-                  {config.label} — {tierAssets.length}
-                </h2>
-              </div>
-              {tierAssets.length === 0 ? (
-                <div style={{
-                  textAlign: 'center',
-                  padding: `${SPACE['2xl']}px ${SPACE.lg}px`,
-                  color: PALETTE.textMuted,
-                  fontFamily: 'Georgia, serif',
-                  fontStyle: 'italic',
-                  fontSize: TYPE.body,
-                  background: PALETTE.cardBg,
-                  border: `1px dashed ${PALETTE.border}`,
-                }}>
-                  No assets in this tier yet
-                </div>
-              ) : (
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
-                  gap: `${isMobile ? SPACE.base : SPACE.lg}px`,
-                }}>
-                  {tierAssets.map(asset => (
-                    <ScoreCard key={asset.symbol} asset={asset} isMobile={isMobile} />
-                  ))}
-                </div>
-              )}
-            </div>
+            <TierSection
+              key={tier}
+              tier={tier}
+              assets={tierAssets}
+              isMobile={isMobile}
+              defaultExpanded={tier === 'leader'}
+            />
           );
         })}
       </div>
