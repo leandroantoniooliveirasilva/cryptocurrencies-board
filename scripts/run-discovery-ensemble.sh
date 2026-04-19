@@ -62,12 +62,13 @@ $CURRENT_ASSETS
 ## Output Instructions
 
 1. Search the web for promising crypto projects released or gaining traction in the past 30-60 days
-2. Evaluate each candidate against our 5-dimension framework:
+2. Evaluate each candidate against our framework:
    - Institutional (ETF potential, fund holdings, custody)
    - Revenue (protocol fees, sustainable revenue)
    - Regulatory (jurisdictional clarity, compliance)
    - Supply (tokenomics, exchange reserves, holder distribution)
    - Wyckoff (current accumulation/distribution phase)
+   - Value Accrual (CRITICAL: how does protocol success translate to token appreciation?)
 3. For current watchlist assets, flag any that should be removed (fundamental deterioration)
 4. Propose additions with tier placement (leader, runner-up, observation)
 5. Output a structured report in markdown format
@@ -100,7 +101,8 @@ $focus
 - Be thorough in your web research
 - Cite specific sources for claims
 - Include concrete metrics where available
-- This is run $run_id of 3 independent analyses - provide your independent assessment"
+- This is run $run_id of 3 independent analyses - provide your independent assessment
+- CRITICAL: Do NOT use any personal memory or prior opinions - evaluate ALL assets objectively based on the framework criteria only"
 
     log "  Starting discovery run #$run_id..."
 

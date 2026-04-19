@@ -26,7 +26,7 @@ This is a decision support system for patient accumulation:
 
 ## Signal Framework
 
-### Dimensions (5)
+### Dimensions (5 scored + 1 filter)
 
 Each scored 0-100, weighted by asset type:
 
@@ -37,6 +37,8 @@ Each scored 0-100, weighted by asset type:
 | Regulatory | Jurisdictional clarity, compliance |
 | Supply | Exchange reserves, holder distribution, inflation |
 | Wyckoff | Technical phase (accumulation/distribution) |
+
+**Value Accrual (Discovery Filter)**: How protocol success translates to token appreciation. A project may succeed but if success doesn't flow to token holders (fee burns, revenue sharing, staking requirements), it's not a strong candidate. Evaluated during discovery, not scored numerically.
 
 ### Weight Profiles
 
@@ -133,7 +135,6 @@ cd public && python -m http.server 8000
 Store in `.env` (auto-loaded):
 
 ```bash
-ANTHROPIC_API_KEY=xxx          # Required
 FRED_API_KEY=xxx               # Optional (GLI filter)
 ```
 

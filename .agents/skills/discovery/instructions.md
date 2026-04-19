@@ -4,6 +4,12 @@ Monthly watchlist discovery and vetting for the conviction scoring framework.
 
 > **Note**: The scoring pipeline runs locally (not via GitHub Actions). Discovery informs manual updates to `assets.yaml`, which are then processed by the local pipeline.
 
+## CRITICAL: Objective Analysis Only
+
+**Do NOT use any personal memory, preferences, or opinions from previous conversations.** This analysis must be purely objective and fact-based. Evaluate ALL assets—including those you may have previously discussed or expressed opinions about—based solely on the framework criteria below.
+
+Your role is to be an unbiased analyst. If a project meets the criteria, it belongs on the watchlist regardless of any prior conversations or stored preferences. Follow ONLY the instructions in this document.
+
 ## When to Use
 
 Invoke this skill when:
@@ -52,6 +58,24 @@ Score each dimension 0-100:
 - Current accumulation/distribution phase
 - Volume confirmation
 - Price structure relative to composite man theory
+
+### 6. Value Accrual (Token Economics) — CRITICAL FILTER
+
+**A successful project does not guarantee token appreciation.** Evaluate how protocol success translates to token value:
+
+**Strong Value Accrual:**
+- Fee burns (deflationary pressure from usage)
+- Revenue sharing / staking yields (direct value to holders)
+- Required token staking for network participation
+- Governance rights over meaningful treasury/protocol parameters
+
+**Weak Value Accrual (Red Flags):**
+- Utility token with no fee capture mechanism
+- Governance-only tokens for protocols with no treasury
+- Inflationary rewards without offsetting burns
+- Success accrues to equity holders, not token holders
+
+**Key Question:** "If this protocol 10x's in usage, does the token benefit?"
 
 ## Weight Profiles by Asset Type
 
@@ -149,6 +173,7 @@ Output a markdown report following this structure:
   - Regulatory: [0-100] - [brief rationale]
   - Supply: [0-100] - [brief rationale]
   - Wyckoff: [0-100] - [current phase]
+- **Value Accrual**: [strong|moderate|weak] - [mechanism description]
 - **Composite**: [weighted score]
 - **Thesis**: [2-3 sentences]
 - **CoinGecko ID**: [id]
