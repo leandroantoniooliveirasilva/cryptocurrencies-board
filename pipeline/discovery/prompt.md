@@ -103,7 +103,19 @@ Different asset types have different weight profiles reflecting their value driv
 
 ## Discovery Tasks
 
-### 1. New Project Discovery
+### 1. Omission Audit (MANDATORY FIRST STEP)
+
+Before searching for new projects, explicitly evaluate whether any **major established assets** are missing from the watchlist. Ask:
+
+- Are there top-20 market cap assets not on the watchlist that should be?
+- Are there assets with significant ETF infrastructure not being tracked?
+- Are there category leaders (L1s, DeFi, infrastructure) absent without clear rationale?
+
+**Evaluate each omission candidate** using the full 5-dimension framework. If an asset scores well, recommend adding it — regardless of whether it's "new" or "exciting."
+
+Common omissions to check: ETH, BNB, ADA, DOT, MATIC, ATOM, UNI, LTC, etc.
+
+### 2. New Project Discovery
 Search for projects that:
 - Launched or gained significant traction in the past 60 days
 - Have institutional interest signals (fund raises, partnerships)
@@ -135,6 +147,15 @@ Generate a markdown report with:
 
 ## Executive Summary
 [2-3 sentences on overall market state and key findings]
+
+## Omission Audit
+[List major assets checked and evaluation result]
+
+| Asset | In Watchlist? | Recommendation | Rationale |
+|-------|---------------|----------------|-----------|
+| ETH   | No            | Add as Leader  | Staking ETFs, DeFi settlement |
+| BNB   | No            | Do not add     | Centralized, regulatory risk |
+| ...   | ...           | ...            | ... |
 
 ## New Discoveries
 

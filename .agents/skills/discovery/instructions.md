@@ -112,7 +112,19 @@ cat pipeline/assets.yaml
 
 Understand the current state before making changes.
 
-### Step 2: Search for New Projects
+### Step 2: Omission Audit (MANDATORY)
+
+Before searching for new projects, explicitly evaluate whether any **major established assets** are missing from the watchlist:
+
+- Check top-20 market cap assets not on the watchlist
+- Check assets with significant ETF infrastructure
+- Check category leaders (L1s, DeFi, infrastructure) that are absent
+
+**Common omissions to evaluate**: ETH, BNB, ADA, DOT, MATIC, ATOM, UNI, LTC, etc.
+
+For each candidate, apply the full framework and recommend adding if it scores well — regardless of whether it's "new" or "exciting."
+
+### Step 3: Search for New Projects
 
 Use web search to find projects that:
 - Launched or gained traction in the past 60 days
