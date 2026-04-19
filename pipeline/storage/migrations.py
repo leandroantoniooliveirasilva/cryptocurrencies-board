@@ -120,24 +120,32 @@ def get_trend_data(
     conn: sqlite3.Connection, symbol: str, days: int = 7
 ) -> list[int]:
     """
-    Get composite score trend for an asset.
+    Get composite score trend for an asset, excluding today's snapshot.
+
+    Today is excluded because run.py always appends the freshly computed
+    composite score to the returned list. If today's snapshot were included,
+    re-running the pipeline on the same day would double-count today's value
+    and shift the effective trend window.
 
     Args:
         conn: Database connection
         symbol: Asset symbol
-        days: Number of days to fetch
+        days: Number of days to fetch (excluding today)
 
     Returns:
         List of composite scores (oldest to newest)
     """
+    today = date.today().isoformat()
     cursor = conn.execute(
         """
         SELECT composite FROM snapshots
-        WHERE asset_symbol = ? AND composite IS NOT NULL
+        WHERE asset_symbol = ?
+          AND composite IS NOT NULL
+          AND snapshot_date < ?
         ORDER BY snapshot_date DESC
         LIMIT ?
         """,
-        (symbol, days),
+        (symbol, today, days),
     )
     rows = cursor.fetchall()
     # Reverse to get oldest first
@@ -249,13 +257,19 @@ def get_strong_accumulate_days(conn: sqlite3.Connection, symbol: str) -> int:
     if not history:
         return 0
 
-    # Count consecutive strong-accumulate days before today
+    # Count consecutive strong-accumulate days before today, requiring the
+    # snapshot dates to be calendar-adjacent. A gap (e.g. pipeline skipped a
+    # day) should reset the streak rather than silently extend it.
     count = 0
+    expected_date = date.today() - timedelta(days=1)
     for entry in history:
-        if entry["action"] == "strong-accumulate":
-            count += 1
-        else:
+        entry_date = date.fromisoformat(entry["date"])
+        if entry["action"] != "strong-accumulate":
             break
+        if entry_date != expected_date:
+            break
+        count += 1
+        expected_date = entry_date - timedelta(days=1)
 
     return count
 

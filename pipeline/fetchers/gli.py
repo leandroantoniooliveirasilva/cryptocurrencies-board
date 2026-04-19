@@ -20,7 +20,7 @@ Usage:
 import logging
 import os
 import time
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional, TypedDict
 
 import requests
@@ -93,7 +93,7 @@ def fetch_gli_data(offset_days: Optional[int] = None) -> GLIData:
         offset_days=offset_days,
         downtrend=False,  # Neutral = don't suppress signals
         source="fallback",
-        fetched_at=datetime.utcnow().isoformat(),
+        fetched_at=datetime.now(timezone.utc).isoformat(),
     )
     _gli_cache = data
     _gli_cache_time = time.time()
@@ -120,7 +120,7 @@ def _try_manual_override(offset_days: int) -> Optional[GLIData]:
                 offset_days=offset_days,
                 downtrend=current < offset_val,
                 source="manual_override",
-                fetched_at=datetime.utcnow().isoformat(),
+                fetched_at=datetime.now(timezone.utc).isoformat(),
             )
         except ValueError:
             logger.warning("Invalid GLI manual override values")
@@ -132,45 +132,40 @@ def _try_tradingview(offset_days: int) -> Optional[GLIData]:
     """
     Fetch GLI data from TradingView's charting endpoints.
 
-    TradingView doesn't have an official API, but their chart data
-    is accessible via their internal endpoints.
+    NOTE: Not implemented. TradingView has no public API for historical
+    economic series — the previous implementation only ever fetched the
+    current close and always returned None. It is now gated behind the
+    GLI_TRY_TRADINGVIEW environment variable so it stays off by default and
+    does not add request latency / misleading log lines to every run.
+
+    Set GLI_TRY_TRADINGVIEW=1 if you wire up a working TradingView session
+    and want this path to run.
     """
+    if os.environ.get("GLI_TRY_TRADINGVIEW", "").lower() not in ("1", "true", "yes"):
+        return None
+
     try:
-        # TradingView uses a symbol format like "ECONOMICS:GLI" or similar
-        # Their chart data API is at tradingview.com/chart-data/
-        # This is an informal endpoint that may change
-
         symbol = config.gli.tradingview_symbol
-
-        # Try TradingView's scanner endpoint for economic data
-        # Note: This is not an official API and may require updates
         url = "https://scanner.tradingview.com/global/scan"
-
         payload = {
             "symbols": {"tickers": [symbol]},
-            "columns": ["close", "change"]
+            "columns": ["close", "change"],
         }
-
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0"
+            "User-Agent": "Mozilla/5.0",
         }
 
         resp = requests.post(url, json=payload, headers=headers, timeout=10)
-
         if resp.status_code == 200:
             data = resp.json()
-            if data.get("data") and len(data["data"]) > 0:
+            if data.get("data"):
                 row = data["data"][0]
                 if row.get("d"):
-                    current = row["d"][0]  # close price
-                    # For historical data, we'd need a different approach
-                    # TradingView requires authentication for historical data
+                    current = row["d"][0]
                     logger.info(f"GLI from TradingView: current={current}")
-                    # Can't get historical without auth, so fallback
+                    # Historical data still requires auth; no offset value available.
 
-        # Alternative: Try to get from TradingView's public chart API
-        # This requires more complex session handling
         logger.debug("TradingView GLI fetch attempted but historical data requires auth")
         return None
 
@@ -237,7 +232,7 @@ def _try_fred_m2(offset_days: int) -> Optional[GLIData]:
                 offset_days=offset_days,
                 downtrend=current_val < offset_val,
                 source="fred_m2",
-                fetched_at=datetime.utcnow().isoformat(),
+                fetched_at=datetime.now(timezone.utc).isoformat(),
             )
 
     except Exception as e:

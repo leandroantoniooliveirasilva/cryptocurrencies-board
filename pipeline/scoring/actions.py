@@ -92,8 +92,10 @@ def derive_action(
 
         # === WYCKOFF-BASED ACCUMULATION (structural) ===
         # Check for Phase C or B→C (spring/transition zones)
-        # Must be specific to avoid matching 'c' in 'accumulation'
-        wyckoff_ready = (
+        # Must exclude distribution phases (UTAD) which share the "phase c"
+        # substring but are bearish, not bullish.
+        is_distribution = "distribution" in phase_lower
+        wyckoff_ready = (not is_distribution) and (
             "phase c" in phase_lower or
             "→c" in phase_lower or
             "->c" in phase_lower

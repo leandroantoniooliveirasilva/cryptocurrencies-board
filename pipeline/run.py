@@ -15,7 +15,7 @@ import argparse
 import json
 import logging
 import sys
-from datetime import date, datetime, timezone, timedelta
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import yaml
@@ -39,53 +39,55 @@ DB_PATH = REPO_ROOT / "pipeline" / "storage" / "history.sqlite"
 PUBLIC_DIR = REPO_ROOT / "public"
 
 
-def _aggregate_weekly_prices(daily_prices: list) -> list:
+def _aggregate_weekly_prices(
+    dated_prices: list[tuple[date, float]]
+) -> list[float]:
     """
-    Aggregate daily prices into weekly prices by taking the last price of each ISO week.
+    Aggregate dated daily prices into weekly closes by taking the last price
+    of each ISO week.
 
-    This handles missing days and data gaps correctly, unlike simple slicing.
-    Assumes daily_prices is ordered oldest to newest, representing the last N days.
+    Uses the real date of each price (derived from the API timestamp) rather
+    than assuming the last price is today's close, so gaps/lag in the upstream
+    feed do not shift ISO-week boundaries.
 
     Args:
-        daily_prices: List of daily closing prices (oldest to newest)
+        dated_prices: List of (date, price) tuples (any order).
 
     Returns:
-        List of weekly closing prices (last price of each ISO week)
+        List of weekly closing prices (oldest week to newest week).
     """
-    if not daily_prices or len(daily_prices) < 7:
+    if not dated_prices or len(dated_prices) < 7:
         return []
 
-    # Calculate the date for each price (assuming prices end at today)
-    today = date.today()
-    prices_with_dates = []
-    for i, price in enumerate(daily_prices):
-        # Index 0 is the oldest, so days_ago = len - 1 - i
-        days_ago = len(daily_prices) - 1 - i
-        price_date = today - timedelta(days=days_ago)
-        prices_with_dates.append((price_date, price))
-
-    # Group by ISO week (year, week_number)
-    weeks = {}
-    for price_date, price in prices_with_dates:
+    # Group by ISO week (year, week_number) using the real date of each price.
+    weeks: dict[tuple[int, int], tuple[date, float]] = {}
+    for price_date, price in dated_prices:
         iso_year, iso_week, _ = price_date.isocalendar()
         week_key = (iso_year, iso_week)
-        # Keep only the last (most recent) price for each week
-        weeks[week_key] = price
+        # Keep only the latest price within each ISO week.
+        existing = weeks.get(week_key)
+        if existing is None or price_date >= existing[0]:
+            weeks[week_key] = (price_date, price)
 
-    # Sort by week and return prices
+    # Sort by ISO week key and return the closes.
     sorted_weeks = sorted(weeks.keys())
-    return [weeks[week] for week in sorted_weeks]
+    return [weeks[week][1] for week in sorted_weeks]
 
 
 def load_config() -> dict:
-    """Load asset configuration from YAML."""
+    """Load asset configuration from YAML.
+
+    Returns the watchlist dict. This is deliberately distinct from the
+    thresholds singleton imported at module level as ``config`` — do not
+    reuse that name here to avoid shadowing bugs.
+    """
     try:
         with open(ASSETS_FILE) as f:
-            config = yaml.safe_load(f)
-            if not config or not isinstance(config, dict):
+            assets = yaml.safe_load(f)
+            if not assets or not isinstance(assets, dict):
                 logger.error(f"Invalid config in {ASSETS_FILE}: expected dict")
                 return {"leaders": [], "runner_ups": [], "observation": []}
-            return config
+            return assets
     except FileNotFoundError:
         logger.error(f"Assets file not found: {ASSETS_FILE}")
         return {"leaders": [], "runner_ups": [], "observation": []}
@@ -122,12 +124,25 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
     # Fetch daily prices for RSI from DefiLlama (free, no rate limits)
     # Days configured in config.yaml to ensure enough weekly data points
     data_cfg = config.data
-    daily_prices = defillama.fetch_daily_prices(coingecko_id, days=data_cfg.price_history_days) if coingecko_id else None
-    daily_prices = daily_prices or []  # Handle None from API failures
+    dated_prices = (
+        defillama.fetch_daily_prices_with_timestamps(
+            coingecko_id, days=data_cfg.price_history_days
+        )
+        if coingecko_id
+        else None
+    )
+    # Convert to [(date, price)] using the real UTC timestamp from the API
+    # so that ISO-week bucketing stays accurate even if the feed lags a day.
+    dated_daily: list[tuple[date, float]] = []
+    if dated_prices:
+        for ts, price in dated_prices:
+            price_date = datetime.fromtimestamp(ts, tz=timezone.utc).date()
+            dated_daily.append((price_date, price))
+    daily_prices = [price for _d, price in dated_daily]
 
     # For weekly RSI, group by ISO week and take last price of each week
     # This handles missing days and data gaps correctly
-    weekly_prices = _aggregate_weekly_prices(daily_prices)
+    weekly_prices = _aggregate_weekly_prices(dated_daily)
 
     rsi_period = config.rsi.period
     rsi_daily = rsi.compute_rsi(daily_prices, rsi_period) if len(daily_prices) >= data_cfg.min_daily_points else None
@@ -303,9 +318,17 @@ def _build_note(
         notes.append("Regulatory clarity")
 
     # Add Wyckoff context
-    if "c" in wyckoff_phase.lower():
+    # Use precise phase tokens to avoid matching stray 'c' in "accumulation"
+    phase_lower = wyckoff_phase.lower() if wyckoff_phase else ""
+    is_distribution = "distribution" in phase_lower
+    is_spring_zone = (not is_distribution) and (
+        "phase c" in phase_lower
+        or "→c" in phase_lower
+        or "->c" in phase_lower
+    )
+    if is_spring_zone:
         notes.append("Wyckoff spring zone")
-    elif "distribution" in wyckoff_phase.lower():
+    elif is_distribution:
         notes.append("Distribution risk")
 
     if notes:
@@ -497,24 +520,16 @@ def write_output(output: dict, dry_run: bool = False) -> None:
     PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
 
     latest_path = PUBLIC_DIR / "latest.json"
-    history_path = PUBLIC_DIR / "history.json"
 
     if dry_run:
         logger.info("DRY RUN - would write to:")
         logger.info(f"  {latest_path}")
-        logger.info(f"  {history_path}")
         logger.info(f"Output preview:\n{json.dumps(output, indent=2)[:2000]}...")
         return
 
     with open(latest_path, "w") as f:
         json.dump(output, f, indent=2)
     logger.info(f"Wrote {latest_path}")
-
-    # History file would be populated from DB
-    # For now, just maintain compatibility
-    with open(history_path, "w") as f:
-        json.dump({"snapshots": []}, f, indent=2)
-    logger.info(f"Wrote {history_path}")
 
 
 def main():
@@ -543,25 +558,22 @@ def main():
     conn = migrations.init_db(DB_PATH)
     today = date.today().isoformat()
 
-    # Import config singleton for thresholds (distinct from assets_config YAML)
-    from pipeline.config import config as cfg
-
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "snapshot_date": today,
         "framework_version": "2.0",
         "weight_profiles": composite.WEIGHTS_BY_TYPE,
         "thresholds": {
-            "min_display_score": cfg.composite.min_display_score,
-            "stale_hours": cfg.display.stale_hours,
+            "min_display_score": config.composite.min_display_score,
+            "stale_hours": config.display.stale_hours,
             "rsi": {
-                "overbought": cfg.rsi.overbought_weekly,
-                "oversold": cfg.rsi.oversold_daily,
-                "capitulation": cfg.rsi.capitulation_weekly,
+                "overbought": config.rsi.overbought_weekly,
+                "oversold": config.rsi.oversold_daily,
+                "capitulation": config.rsi.capitulation_weekly,
             },
         },
         "gli": {
-            "enabled": cfg.gli.enabled,
+            "enabled": config.gli.enabled,
             "downtrend": gli_downtrend,
             "current": gli_data["current"],
             "offset_value": gli_data["offset_value"],

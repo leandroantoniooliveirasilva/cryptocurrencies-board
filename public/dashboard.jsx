@@ -325,19 +325,23 @@ function getActionReasoning(asset) {
   const rsiDaily = asset.rsi_daily;
   const rsiWeekly = asset.rsi_weekly;
 
+  // Helpers to safely format RSI values that may be null/undefined.
+  const hasRsi = (v) => typeof v === 'number' && !isNaN(v);
+  const fmtRsi = (v) => (hasRsi(v) ? v : 'n/a');
+
   // Detect if this is a capitulation signal (RSI-driven) vs Wyckoff-driven
-  const isCapitulation = rsiWeekly !== null && rsiWeekly < 30;
-  const isDeepCapitulation = isCapitulation && rsiDaily !== null && rsiDaily < 30;
+  const isCapitulation = hasRsi(rsiWeekly) && rsiWeekly < 30;
+  const isDeepCapitulation = isCapitulation && hasRsi(rsiDaily) && rsiDaily < 30;
 
   switch (action) {
     case 'strong-accumulate':
       if (isDeepCapitulation) {
-        return `Capitulation detected: both daily RSI (${rsiDaily}) and weekly RSI (${rsiWeekly}) below 30. This panic selling in a quality leader is historically a strong entry point. Fundamentals intact at ${composite}.`;
+        return `Capitulation detected: both daily RSI (${fmtRsi(rsiDaily)}) and weekly RSI (${fmtRsi(rsiWeekly)}) below 30. This panic selling in a quality leader is historically a strong entry point. Fundamentals intact at ${composite}.`;
       }
-      return `Daily RSI at ${rsiDaily} signals short-term oversold while weekly RSI (${rsiWeekly}) and composite (${composite}) remain healthy. This dislocation within an accumulation zone is a high-conviction entry point.`;
+      return `Daily RSI at ${fmtRsi(rsiDaily)} signals short-term oversold while weekly RSI (${fmtRsi(rsiWeekly)}) and composite (${composite}) remain healthy. This dislocation within an accumulation zone is a high-conviction entry point.`;
     case 'accumulate':
       if (isCapitulation) {
-        return `Weekly RSI at ${rsiWeekly} signals capitulation-level oversold. Quality leaders typically recover from panic selling. Consider measured accumulation while fundamentals remain intact (composite ${composite}).`;
+        return `Weekly RSI at ${fmtRsi(rsiWeekly)} signals capitulation-level oversold. Quality leaders typically recover from panic selling. Consider measured accumulation while fundamentals remain intact (composite ${composite}).`;
       }
       return `Composite score of ${composite} with ${delta >= 0 ? 'stable' : 'minor pullback'} trend. RSI levels support accumulation. Leader-tier asset in favorable Wyckoff phase for tranche building.`;
     case 'promote':
@@ -348,8 +352,10 @@ function getActionReasoning(asset) {
       return `Signal building but not yet confirmed. Composite at ${composite}${delta > 0 ? ` with ${delta}-point uptick` : ''}. Monitor for entry criteria before activation.`;
     case 'observe':
       return `Observation tier — scanning only. ${composite >= 70 ? 'Composite healthy but' : 'Composite at ' + composite + ','} no position warranted at this time.`;
-    case 'stand-aside':
-      return `Distribution risk detected${delta < -3 ? ` with ${Math.abs(delta)}-point weekly decline` : ''}${rsiWeekly >= 70 ? ` and elevated weekly RSI (${rsiWeekly})` : ''}. Do not engage regardless of price action.`;
+    case 'stand-aside': {
+      const weeklyElevated = hasRsi(rsiWeekly) && rsiWeekly >= 70;
+      return `Distribution risk detected${delta < -3 ? ` with ${Math.abs(delta)}-point weekly decline` : ''}${weeklyElevated ? ` and elevated weekly RSI (${rsiWeekly})` : ''}. Do not engage regardless of price action.`;
+    }
     default:
       return null;
   }

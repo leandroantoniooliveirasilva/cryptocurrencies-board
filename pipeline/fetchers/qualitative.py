@@ -170,7 +170,8 @@ def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
             # Extract content between code blocks
             parts = text.split("```")
             for part in parts[1:]:
-                if part.startswith("json"):
+                # Check for a language marker like ```json / ```JSON / ```Json
+                if part[:4].lower() == "json":
                     text = part[4:].strip()
                     break
                 elif part.strip().startswith("{"):
