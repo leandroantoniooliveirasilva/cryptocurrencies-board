@@ -957,8 +957,11 @@ function StrategySection({ isMobile }) {
               <p style={{ margin: `0 0 ${SPACE.sm}px` }}>
                 <strong style={{ color: PALETTE.textPrimary }}>Buying weakness in leaders = mean reversion.</strong> Quality assets recover from panic selling and technical dislocations.
               </p>
-              <p style={{ margin: 0 }}>
+              <p style={{ margin: `0 0 ${SPACE.sm}px` }}>
                 <strong style={{ color: PALETTE.textPrimary }}>Buying weakness in non-leaders = momentum trap.</strong> Without fundamental strength, oversold assets often continue declining.
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong style={{ color: PALETTE.textPrimary }}>Macro context matters.</strong> Global Liquidity Index (GLI) with a 75-day offset correlates with crypto cycle tops and bottoms. When liquidity contracts, even quality dips may have further to fall.
               </p>
             </div>
           </div>
@@ -1053,8 +1056,12 @@ function StrategySection({ isMobile }) {
                 <div style={{ color: PALETTE.textSecondary, marginBottom: '2px' }}>Wyckoff Dip</div>
                 Phase C + daily RSI ≤32 + weekly RSI ≥42 (stable) + composite ≥75. Short-term flush within healthy structure.
               </div>
-              <p style={{ margin: `${SPACE.md}px 0 0`, fontStyle: 'italic' }}>
-                Filtered when: GLI contracting, or weekly RSI falling from elevated levels (&gt;55, dropped &gt;8 points).
+              <div style={{ marginTop: `${SPACE.md}px`, paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid #d49a6a` }}>
+                <div style={{ color: '#d49a6a', marginBottom: '2px' }}>Macro Filter: GLI 75-Day Offset</div>
+                Compares current Global Liquidity Index vs 75 days ago. When GLI is contracting (today &lt; 75d ago), strong-accumulate downgrades to regular accumulate. Based on 56-90 day lag between liquidity inflection and BTC cycle turns.
+              </div>
+              <p style={{ margin: `${SPACE.sm}px 0 0`, fontStyle: 'italic' }}>
+                Also filtered when weekly RSI falling from elevated levels (&gt;55, dropped &gt;8 points) — catches "first leg down" scenarios.
               </p>
             </div>
           </div>
@@ -1096,8 +1103,8 @@ function ActionLegend({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   const items = [
-    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dislocation (Phase C+, daily RSI ≤32, composite ≥75).' },
-    { key: 'accumulate', text: 'Weekly RSI <30 capitulation, or composite ≥75 in Phase C+ with stable trend.' },
+    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32). Suppressed when GLI contracting (75d offset).' },
+    { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by GLI/RSI slope. Also fallback when strong-accumulate is suppressed.' },
     { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8.' },
     { key: 'hold', text: 'Active position. No signal. Patience by design.' },
     { key: 'await', text: 'Runner-up building signal. Not yet activated.' },
