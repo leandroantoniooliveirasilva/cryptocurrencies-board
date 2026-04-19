@@ -1484,7 +1484,6 @@ function Dashboard() {
   const [rs, setRs] = useState(null); // Relative Strength vs BTC status
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTier, setActiveTier] = useState('all');
   const isMobile = useIsMobile();
 
   const fetchData = () => {
@@ -1531,7 +1530,7 @@ function Dashboard() {
       (a.composite || 0) >= minScore || a.tier === 'leader'
     );
 
-    const sorted = [...qualified].sort((a, b) => {
+    return [...qualified].sort((a, b) => {
       const aStrong = a.action === 'strong-accumulate' ? 0 : 1;
       const bStrong = b.action === 'strong-accumulate' ? 0 : 1;
       const tierDiff = (TIER_CONFIG[a.tier]?.order || 0) - (TIER_CONFIG[b.tier]?.order || 0);
@@ -1539,9 +1538,7 @@ function Dashboard() {
       if (aStrong !== bStrong) return aStrong - bStrong;
       return (b.composite || 0) - (a.composite || 0);
     });
-    if (activeTier === 'all') return sorted;
-    return sorted.filter(a => a.tier === activeTier);
-  }, [activeTier, assets, thresholds.min_display_score]);
+  }, [assets, thresholds.min_display_score]);
 
   const groupedAssets = useMemo(() => {
     const groups = { leader: [], 'runner-up': [], observation: [] };
@@ -1598,45 +1595,15 @@ function Dashboard() {
             )}
           </div>
         </div>
-        <StrategySection isMobile={isMobile} />
       </div>
 
       <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} strongCount={strongCount} gli={gli} rs={rs} />
 
-      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.base}px` }}>
-        <select
-          value={activeTier}
-          onChange={(e) => setActiveTier(e.target.value)}
-          style={{
-            background: PALETTE.cardBg,
-            color: PALETTE.textPrimary,
-            border: `1px solid ${PALETTE.border}`,
-            padding: `${SPACE.sm}px ${SPACE.md}px`,
-            paddingRight: `${SPACE.xl}px`,
-            fontSize: TYPE.small,
-            fontFamily: 'ui-monospace, monospace',
-            letterSpacing: '0.04em',
-            cursor: 'pointer',
-            appearance: 'none',
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a39a8a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: `right ${SPACE.sm}px center`,
-            minWidth: isMobile ? '50%' : '180px',
-            maxWidth: isMobile ? '60%' : '220px',
-          }}
-        >
-          <option value="all">All tiers</option>
-          <option value="leader">Leaders</option>
-          <option value="runner-up">Runner-ups</option>
-          <option value="observation">Observation</option>
-        </select>
-      </div>
-
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {['leader', 'runner-up', 'observation'].map(tier => {
           const tierAssets = groupedAssets[tier];
-          // Skip tier if no assets and not filtering to this specific tier
-          if (tierAssets.length === 0 && activeTier !== tier) return null;
+          // Skip tier if no assets
+          if (tierAssets.length === 0) return null;
 
           return (
             <TierSection
@@ -1652,12 +1619,10 @@ function Dashboard() {
 
       {/* Footer with reference info */}
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
-        <ActionLegend isMobile={isMobile} />
-
         {/* GLI indicator */}
         {gli && gli.enabled && gli.source !== 'fallback' && (
           <div style={{
-            marginTop: `${SPACE.base}px`,
+            marginBottom: `${SPACE.base}px`,
             padding: `${SPACE.sm}px ${SPACE.md}px`,
             background: 'transparent',
             border: `1px solid ${PALETTE.border}`,
@@ -1675,6 +1640,8 @@ function Dashboard() {
         )}
 
         <RelativeStrengthSection assets={assets} rs={rs} isMobile={isMobile} />
+        <StrategySection isMobile={isMobile} />
+        <ActionLegend isMobile={isMobile} />
       </div>
     </div>
   );
