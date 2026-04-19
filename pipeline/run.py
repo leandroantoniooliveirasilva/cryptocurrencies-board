@@ -236,9 +236,14 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
         trend_30d = [composite_score]
 
     # Derive action (with GLI macro filter and weekly RSI slope check)
+    # Use explicit None check: composite can legitimately be 0 for an asset
+    # whose every dimension collapses, and `or` would silently replace it.
+    effective_last_week = (
+        composite_last_week if composite_last_week is not None else composite_score
+    )
     action = actions.derive_action(
         composite=composite_score,
-        composite_last_week=composite_last_week or composite_score,
+        composite_last_week=effective_last_week,
         tier=tier,
         wyckoff_phase=wyckoff_phase,
         trend_7d=trend_7d,
@@ -284,7 +289,7 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
         "scores": scores,
         "weights": weights,
         "composite": composite_score,
-        "composite_last_week": composite_last_week or composite_score,
+        "composite_last_week": effective_last_week,
         "wyckoff_phase": wyckoff_phase,
         "trend": trend_7d[-7:],  # Last 7 days
         "trend_30d": trend_30d[-30:],  # Last 30 days
@@ -454,10 +459,17 @@ def _build_detailed_reasoning(
     wyck_score = scores.get("wyckoff")
     wyck_weight = weights.get("wyckoff", 0)
     phase_lower = wyckoff_phase.lower() if wyckoff_phase else ""
+    is_distribution = "distribution" in phase_lower
+    is_bullish_phase = (not is_distribution) and (
+        "accumulation" in phase_lower
+        or "phase c" in phase_lower
+        or "b→c" in phase_lower
+        or "b->c" in phase_lower
+    )
     if wyck_score is not None:
-        if "accumulation" in phase_lower or "phase c" in phase_lower or "b→c" in phase_lower or "b->c" in phase_lower:
+        if is_bullish_phase:
             wyck_desc = f"Currently in {wyckoff_phase}—historically favorable for position building as price structure suggests markup potential."
-        elif "distribution" in phase_lower:
+        elif is_distribution:
             wyck_desc = f"Currently in {wyckoff_phase}—caution warranted as price structure suggests potential markdown phase ahead."
         elif "markup" in phase_lower:
             wyck_desc = f"Currently in {wyckoff_phase}—trend is favorable but entries should be measured as some move has already occurred."

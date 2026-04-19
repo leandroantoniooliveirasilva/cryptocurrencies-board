@@ -195,7 +195,10 @@ wyckoff:
 # =============================================================================
 data:
   # Price history
-  price_history_days: 120       # Days of daily prices to fetch
+  # Must be large enough to compute weekly RSI from 4 weeks ago:
+  # need min_weekly_points + 4 = 19 distinct ISO weeks of closes.
+  # 150 days yields ~21–22 ISO weeks, leaving a safe margin.
+  price_history_days: 150       # Days of daily prices to fetch
   min_daily_points: 15          # Minimum points for daily RSI
   min_weekly_points: 15         # Minimum points for weekly RSI
   min_wyckoff_days: 30          # Minimum days for Wyckoff detection

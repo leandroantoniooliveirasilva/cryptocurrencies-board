@@ -205,25 +205,51 @@ def get_action_history(
 
 def get_label_changed_days_ago(conn: sqlite3.Connection, symbol: str) -> int:
     """
-    Calculate days since last action change.
+    Calculate calendar days since the most recent action change.
+
+    Excludes today so that repeated same-day pipeline runs don't flip the
+    result depending on whether today's snapshot has already been saved.
+    Uses real date deltas rather than row counts, so a gap in coverage (e.g.
+    the pipeline was skipped for a few days) is reported as elapsed calendar
+    time rather than a single row step.
 
     Args:
         conn: Database connection
         symbol: Asset symbol
 
     Returns:
-        Number of days since action changed
+        Number of calendar days since the action changed. Returns 0 when
+        there is insufficient history to establish a previous action.
     """
-    history = get_action_history(conn, symbol, 90)
+    today = date.today()
+    today_iso = today.isoformat()
+
+    cursor = conn.execute(
+        """
+        SELECT snapshot_date, action FROM snapshots
+        WHERE asset_symbol = ?
+          AND action IS NOT NULL
+          AND snapshot_date < ?
+        ORDER BY snapshot_date DESC
+        LIMIT 180
+        """,
+        (symbol, today_iso),
+    )
+    history = [
+        (date.fromisoformat(row["snapshot_date"]), row["action"])
+        for row in cursor
+    ]
+
     if len(history) < 2:
         return 0
 
-    current_action = history[0]["action"]
-    for i, entry in enumerate(history[1:], 1):
-        if entry["action"] != current_action:
-            return i
+    current_action = history[0][1]
+    for entry_date, entry_action in history[1:]:
+        if entry_action != current_action:
+            return (today - entry_date).days
 
-    return len(history) - 1
+    # No change found within the window — report span from oldest row.
+    return (today - history[-1][0]).days
 
 
 def get_strong_accumulate_days(conn: sqlite3.Connection, symbol: str) -> int:
