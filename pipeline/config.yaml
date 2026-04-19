@@ -26,7 +26,7 @@ gli:
 # simply hold BTC instead of accumulating that asset.
 rs:
   enabled: true
-  lookback_days: 30              # Compare RS now vs RS N days ago
+  lookback_days: 90              # Compare RS now vs RS N days ago
   underperformance_threshold: 0.10  # 10% underperformance triggers warning
   # When asset/BTC ratio has declined by >= threshold over lookback period:
   # - strong-accumulate downgrades to accumulate
