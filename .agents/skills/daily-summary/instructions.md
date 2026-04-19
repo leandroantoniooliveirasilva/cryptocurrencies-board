@@ -28,7 +28,23 @@ cat public/latest.json
 | await | Building | Monitor |
 | observe | Watching | No position |
 
-### Step 3: Generate Summary
+### Step 3: Consistency Check (MANDATORY)
+
+Before generating the summary, scan for logical inconsistencies:
+
+| Check | Inconsistency | Fix |
+|-------|---------------|-----|
+| Wyckoff vs Action | Accumulation phase + stand-aside | If stand-aside from delta (not distribution), note "sharp decline despite accumulation structure" |
+| RSI vs Action | Oversold RSI + stand-aside | If composite declined sharply, stand-aside is correct; note the conflict |
+| Composite vs Tier | Leader with composite <60 | Flag for potential demotion review |
+| Action vs Description | Action text contradicts Wyckoff phase | Rewrite description to match actual trigger |
+
+**If inconsistencies found:**
+1. Note them in the summary under "⚠️ Inconsistencies Detected"
+2. Explain the actual reason (e.g., "SOL shows stand-aside due to -7pt weekly decline, not distribution")
+3. Flag for potential calibration review if pattern repeats
+
+### Step 4: Generate Summary
 
 ```markdown
 ## Daily Signals — [Date]
@@ -37,7 +53,10 @@ cat public/latest.json
 [List strong-accumulate or accumulate signals with context]
 
 ### Stand Aside
-[List warnings]
+[List warnings with actual trigger reason]
+
+### ⚠️ Inconsistencies Detected (if any)
+[List any logical conflicts between dimensions, phases, and actions]
 
 ### Notable Changes
 [Score movements, RSI extremes, phase changes]
