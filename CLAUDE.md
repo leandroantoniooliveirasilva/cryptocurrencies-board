@@ -82,9 +82,9 @@ Tiers are computed automatically from composite scores:
 
 | Tier | Composite | Purpose |
 |------|-----------|---------|
-| Leaders | ≥70 | Core positions for accumulation |
-| Runner-ups | 60-69 | Promotion candidates |
-| Observation | 50-59 | Watch only, no position |
+| Leaders | ≥80 | Core positions for accumulation |
+| Runner-ups | 65-79 | Promotion candidates |
+| Observation | 50-64 | Watch only, no position |
 
 Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
 

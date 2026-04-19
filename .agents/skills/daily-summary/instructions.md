@@ -95,7 +95,7 @@ Fires ~5-15 times per year. Two paths:
 - Weekly RSI <30 alone
 
 **Wyckoff** (structural):
-- Composite ≥75, Phase C or B→C
+- Composite ≥80, Phase C or B→C
 - Non-negative 7-day trend
 - Weekly RSI <70
 
@@ -113,7 +113,7 @@ Overrides all other signals.
 ### Promote
 
 Runner-up showing leader metrics:
-- Composite ≥75
+- Composite ≥80
 - 30-day trend ≥+8
 - 7-day trend ≥+2
 

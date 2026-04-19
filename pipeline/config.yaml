@@ -62,7 +62,7 @@ rsi:
 # =============================================================================
 composite:
   # Accumulation triggers
-  accumulate_threshold: 70      # Composite must be >= this for accumulate signal
+  accumulate_threshold: 80      # Composite must be >= this for accumulate signal
 
   # Stability check (week-over-week)
   stability_tolerance: -3       # Max acceptable weekly decline for "stable"
@@ -77,15 +77,15 @@ composite:
 # DYNAMIC TIER THRESHOLDS (computed from composite score)
 # =============================================================================
 tiers:
-  leader: 70                    # Composite >= 70 → Leader
-  runner_up: 60                 # Composite >= 60 → Runner-up
-  # Below 60 → Observation
+  leader: 80                    # Composite >= 80 → Leader
+  runner_up: 65                 # Composite >= 65 → Runner-up
+  # Below 65 → Observation
 
 # =============================================================================
 # PROMOTION THRESHOLDS (runner-up → leader)
 # =============================================================================
 promotion:
-  composite_threshold: 70       # Composite must be >= this
+  composite_threshold: 80       # Composite must be >= this
   delta_30d: 8                  # 30-day trend must be >= this
   delta_7d: 2                   # 7-day trend must be >= this
 

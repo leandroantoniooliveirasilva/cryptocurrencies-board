@@ -94,10 +94,10 @@ Uniform weights don't reflect fundamentally different value propositions:
 - OR both RSI <30 (capitulation)
 
 **Accumulate** (leaders):
-- Composite ≥75, Phase C or B→C, trend ≥0, weekly RSI <70
+- Composite ≥80, Phase C or B→C, trend ≥0, weekly RSI <70
 
 **Promote** (runner-ups):
-- Composite ≥75, 30d trend ≥+8, 7d trend ≥+2
+- Composite ≥80, 30d trend ≥+8, 7d trend ≥+2
 
 **Stand Aside** (overrides all):
 - Distribution + negative trend

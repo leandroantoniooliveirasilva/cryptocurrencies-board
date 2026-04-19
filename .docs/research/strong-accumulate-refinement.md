@@ -28,7 +28,7 @@ The weekly RSI being >42 doesn't distinguish between "healthy uptrend" and "earl
 ```python
 # Wyckoff-based strong-accumulate (actions.py lines 105-116)
 accumulate_regime = (
-    composite >= 75 and
+    composite >= 80 and
     wyckoff_ready and      # Phase C or B→C
     delta >= 0 and         # 7-day trend not negative
     not overbought         # weekly RSI < 70
@@ -218,7 +218,7 @@ Path 1: True Capitulation (what you want)
   - This is the "both RSIs flushed" scenario ✓
 
 Path 2: Wyckoff Dislocation (your concern)
-  - Phase C + composite ≥75 + daily RSI ≤32 + weekly RSI ≥42 → strong-accumulate
+  - Phase C + composite ≥80 + daily RSI ≤32 + weekly RSI ≥42 → strong-accumulate
   - GLI downtrend → downgrades to accumulate
   - In 2022 bear, GLI was contracting → would have been downgraded ✓
 ```

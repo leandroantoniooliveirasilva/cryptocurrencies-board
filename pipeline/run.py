@@ -101,9 +101,9 @@ def compute_tier(composite_score: int) -> str:
     Compute tier dynamically from composite score.
 
     Thresholds from config.yaml:
-        - Leader:      composite >= 75
-        - Runner-up:   composite >= 55
-        - Observation: composite < 55
+        - Leader:      composite >= 80
+        - Runner-up:   composite >= 65
+        - Observation: composite < 65
     """
     leader_threshold = getattr(config, 'tiers', None)
     if leader_threshold:
@@ -111,8 +111,8 @@ def compute_tier(composite_score: int) -> str:
         runner_up_threshold = config.tiers.runner_up
     else:
         # Fallback defaults
-        leader_threshold = 75
-        runner_up_threshold = 55
+        leader_threshold = 80
+        runner_up_threshold = 65
 
     if composite_score >= leader_threshold:
         return "leader"
