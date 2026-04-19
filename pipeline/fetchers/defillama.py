@@ -121,7 +121,7 @@ def fetch_daily_prices(coingecko_id: str, days: int = 120) -> Optional[list[floa
         return None
 
 
-def compute_revenue_score(revenue_24h: Optional[float], tvl: Optional[float]) -> int:
+def compute_revenue_score(revenue_24h: Optional[float], tvl: Optional[float]) -> Optional[int]:
     """
     Compute revenue score (0-100) based on revenue metrics.
 
@@ -129,9 +129,11 @@ def compute_revenue_score(revenue_24h: Optional[float], tvl: Optional[float]) ->
     - Revenue-to-TVL ratio is a key efficiency metric
     - Higher daily revenue relative to TVL = better
     - Absolute revenue matters for sustainability
+
+    Returns None if data is unavailable (excluded from composite).
     """
     if revenue_24h is None or tvl is None or tvl == 0:
-        return 50  # Neutral score for missing data
+        return None  # Missing data - exclude from composite
 
     # Annualized revenue / TVL ratio
     annual_revenue = revenue_24h * 365

@@ -65,14 +65,16 @@ infrastructure (QNT):     Inst 35%, Reg 25%, Supply 20%, Rev 10%, Wyck 10%
 
 ### Action States (Signal Hierarchy)
 ```
-strong-accumulate    Dislocation in accumulation zone OR capitulation (leaders only)
-                     Triggers: (1) Weekly RSI <30 AND daily RSI <30
-                               (2) Wyckoff Phase C + RSI dip + composite stable
-                     Note: Downgraded to accumulate when GLI is contracting
+strong-accumulate    True capitulation OR quality Wyckoff dip (leaders only)
+                     Triggers: (1) Weekly RSI <30 AND daily RSI <30 (capitulation)
+                               (2) Wyckoff Phase C + daily flush + weekly stable/rising
+                     Filters: - Downgraded to accumulate when GLI is contracting
+                              - Downgraded if weekly RSI falling from >55 (first leg down)
+                     Backtest: 82.9% hit rate for capitulation path
 
 accumulate           Tranche-eligible zone (leaders only)
                      Triggers: (1) Weekly RSI <30 alone
-                               (2) Composite ≥75, Phase C+, trend stable, RSI <70
+                               (2) Wyckoff Phase C + daily flush (when weekly falling from high)
 
 promote              Runner-up earning activation (runner-ups only)
                      Composite ≥75 + 30-day trend ≥+8

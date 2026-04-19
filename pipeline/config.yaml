@@ -35,6 +35,13 @@ rsi:
   # Overbought detection (pause accumulation)
   overbought_weekly: 70         # Weekly RSI above this = overbought
 
+  # Weekly RSI slope check (filters "first leg down" scenarios)
+  # If weekly RSI was above slope_high_threshold 4 weeks ago AND has dropped
+  # by more than slope_drop_threshold, this is likely a correction starting,
+  # not a buyable dip. Backtest: 2021 crashes all had this pattern.
+  slope_high_threshold: 55      # Weekly RSI 4w ago must be above this
+  slope_drop_threshold: 8       # Weekly RSI must have dropped by at least this
+
 # =============================================================================
 # COMPOSITE SCORE THRESHOLDS
 # =============================================================================

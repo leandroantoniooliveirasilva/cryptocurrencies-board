@@ -133,6 +133,14 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
     rsi_daily = rsi.compute_rsi(daily_prices, rsi_period) if len(daily_prices) >= data_cfg.min_daily_points else None
     rsi_weekly = rsi.compute_rsi(weekly_prices, rsi_period) if len(weekly_prices) >= data_cfg.min_weekly_points else None
 
+    # Calculate weekly RSI from 4 weeks ago for slope check
+    # This helps detect "first leg down" scenarios where weekly RSI is falling from elevated levels
+    rsi_weekly_4w_ago = None
+    if len(weekly_prices) >= data_cfg.min_weekly_points + 4:
+        # Exclude the last 4 weekly prices to get RSI from ~4 weeks ago
+        weekly_prices_4w_ago = weekly_prices[:-4]
+        rsi_weekly_4w_ago = rsi.compute_rsi(weekly_prices_4w_ago, rsi_period)
+
     # Detect Wyckoff phase from price structure (or use manual override)
     if wyckoff_override:
         wyckoff_phase = wyckoff_override
@@ -141,7 +149,7 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
         wyckoff_phase, wyckoff_score = wyckoff.detect_wyckoff_phase(daily_prices)
     else:
         wyckoff_phase = "Unknown"
-        wyckoff_score = 50
+        wyckoff_score = None  # Insufficient data - exclude from composite
 
     # Get qualitative scores (cached or fresh)
     cached_regulatory = migrations.get_cached_qualitative_score(conn, symbol, "regulatory")
@@ -165,8 +173,8 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
             institutional_data["score"], institutional_data["rationale"]
         )
 
-    # Compute revenue score
-    revenue_score = 50  # Default neutral
+    # Compute revenue score (None if data unavailable)
+    revenue_score = None
     if defi_data and defi_data.get("revenue_24h") is not None:
         revenue_score = defillama.compute_revenue_score(
             defi_data.get("revenue_24h"),
@@ -212,7 +220,7 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
     else:
         trend_30d = [composite_score]
 
-    # Derive action (with GLI macro filter)
+    # Derive action (with GLI macro filter and weekly RSI slope check)
     action = actions.derive_action(
         composite=composite_score,
         composite_last_week=composite_last_week or composite_score,
@@ -222,6 +230,7 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
         trend_30d=trend_30d,
         rsi_daily=rsi_daily,
         rsi_weekly=rsi_weekly,
+        rsi_weekly_4w_ago=rsi_weekly_4w_ago,
         gli_downtrend=gli_downtrend,
     )
 
@@ -405,29 +414,35 @@ def _build_detailed_reasoning(
     lines.append(f"• Supply/On-Chain ({supply_score}/100, {int(supply_weight*100)}% weight): {supply_desc}")
 
     # Revenue
-    rev_score = scores.get("revenue", 0)
+    rev_score = scores.get("revenue")
     rev_weight = weights.get("revenue", 0)
-    if rev_score >= 80:
-        rev_desc = "Strong fee generation indicating sustainable protocol economics."
-    elif rev_score >= 50:
-        rev_desc = "Moderate revenue, typical for growth-phase protocols."
+    if rev_score is not None:
+        if rev_score >= 80:
+            rev_desc = "Strong fee generation indicating sustainable protocol economics."
+        elif rev_score >= 50:
+            rev_desc = "Moderate revenue, typical for growth-phase protocols."
+        else:
+            rev_desc = "Limited fee revenue—protocol may rely on token incentives or is early-stage."
+        lines.append(f"• Revenue/Fees ({rev_score}/100, {int(rev_weight*100)}% weight): {rev_desc}")
     else:
-        rev_desc = "Limited fee revenue—protocol may rely on token incentives or is early-stage."
-    lines.append(f"• Revenue/Fees ({rev_score}/100, {int(rev_weight*100)}% weight): {rev_desc}")
+        lines.append(f"• Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.")
 
     # Wyckoff
-    wyck_score = scores.get("wyckoff", 50)
+    wyck_score = scores.get("wyckoff")
     wyck_weight = weights.get("wyckoff", 0)
-    phase_lower = wyckoff_phase.lower()
-    if "accumulation" in phase_lower or "phase c" in phase_lower:
-        wyck_desc = f"Currently in {wyckoff_phase}—historically favorable for position building as price structure suggests markup potential."
-    elif "distribution" in phase_lower:
-        wyck_desc = f"Currently in {wyckoff_phase}—caution warranted as price structure suggests potential markdown phase ahead."
-    elif "markup" in phase_lower:
-        wyck_desc = f"Currently in {wyckoff_phase}—trend is favorable but entries should be measured as some move has already occurred."
+    phase_lower = wyckoff_phase.lower() if wyckoff_phase else ""
+    if wyck_score is not None:
+        if "accumulation" in phase_lower or "phase c" in phase_lower or "b→c" in phase_lower or "b->c" in phase_lower:
+            wyck_desc = f"Currently in {wyckoff_phase}—historically favorable for position building as price structure suggests markup potential."
+        elif "distribution" in phase_lower:
+            wyck_desc = f"Currently in {wyckoff_phase}—caution warranted as price structure suggests potential markdown phase ahead."
+        elif "markup" in phase_lower:
+            wyck_desc = f"Currently in {wyckoff_phase}—trend is favorable but entries should be measured as some move has already occurred."
+        else:
+            wyck_desc = f"Currently in {wyckoff_phase}. Technical structure is being monitored for clearer phase identification."
+        lines.append(f"• Wyckoff ({wyck_score}/100, {int(wyck_weight*100)}% weight): {wyck_desc}")
     else:
-        wyck_desc = f"Currently in {wyckoff_phase}. Technical structure is being monitored for clearer phase identification."
-    lines.append(f"• Wyckoff ({wyck_score}/100, {int(wyck_weight*100)}% weight): {wyck_desc}")
+        lines.append(f"• Wyckoff (N/A, excluded): Insufficient price data for Wyckoff phase detection.")
 
     # 4. RSI context
     if rsi_daily is not None or rsi_weekly is not None:

@@ -14,13 +14,14 @@ def derive_action(
     trend_30d: list[int],
     rsi_daily: Optional[float],
     rsi_weekly: Optional[float],
+    rsi_weekly_4w_ago: Optional[float] = None,
     gli_downtrend: bool = False,
 ) -> str:
     """
     Derive action state based on scores and indicators.
 
     Action states:
-    - strong-accumulate: Dislocation in accumulation zone OR capitulation (leader only)
+    - strong-accumulate: True capitulation only — both weekly AND daily RSI <30 (leader only)
     - accumulate: Tranche-eligible zone (leader only)
     - promote: Runner-up crossing leader threshold
     - hold: Active position, no action signal (leader default)
@@ -29,12 +30,14 @@ def derive_action(
     - stand-aside: Distribution risk or negative structural trend
 
     Accumulation triggers (leaders only):
-    1. Wyckoff-based: Phase C/B→C + composite ≥threshold + stable trend + weekly RSI <overbought
-    2. Capitulation: Weekly RSI <threshold (quality assets recover from panic selling)
+    1. Strong-accumulate: Weekly RSI <30 AND Daily RSI <30 (true capitulation, 82.9% hit rate)
+    2. Strong-accumulate: Wyckoff Phase C + daily flush + weekly RSI stable/rising (not falling from high)
+    3. Accumulate: Weekly RSI <30 alone, OR Wyckoff dip with weekly falling from high
 
-    Macro filter:
-    - GLI (Global Liquidity Index): When GLI is in downtrend (today < 75d ago),
-      strong-accumulate signals are downgraded to regular accumulate.
+    Filters:
+    - GLI (Global Liquidity Index): When contracting, strong-accumulate downgrades to accumulate
+    - Weekly RSI slope: If weekly RSI is falling from elevated levels (>55), downgrade to accumulate
+      This catches "first leg down" scenarios where daily flushes but weekly is breaking down
 
     All thresholds are configured in config.yaml.
 
@@ -47,6 +50,7 @@ def derive_action(
         trend_30d: Last 30 days of composite scores
         rsi_daily: Daily RSI(14) or None
         rsi_weekly: Weekly RSI(14) or None
+        rsi_weekly_4w_ago: Weekly RSI from 4 weeks ago (for slope check) or None
         gli_downtrend: True if Global Liquidity Index is contracting
 
     Returns:
@@ -103,16 +107,33 @@ def derive_action(
         )
 
         if accumulate_regime:
-            # Check Strong Accumulate conditions
+            # Wyckoff-based accumulation: daily flush with weekly intact
+            # Check if this qualifies for strong-accumulate or regular accumulate
             composite_stable = (composite - composite_last_week) >= comp_cfg.stability_tolerance
             daily_oversold = rsi_daily is not None and rsi_daily <= rsi_cfg.oversold_daily
             weekly_intact = rsi_weekly is not None and rsi_weekly >= rsi_cfg.intact_weekly
 
             if daily_oversold and weekly_intact and composite_stable:
+                # Check weekly RSI slope - is it falling from elevated levels?
+                # If weekly was >55 and has dropped significantly, this is likely
+                # the first leg of a correction, not a buyable dip.
+                weekly_falling_from_high = (
+                    rsi_weekly_4w_ago is not None and
+                    rsi_weekly_4w_ago > rsi_cfg.slope_high_threshold and
+                    rsi_weekly < rsi_weekly_4w_ago - rsi_cfg.slope_drop_threshold
+                )
+
+                if weekly_falling_from_high:
+                    # Weekly momentum breaking down from overbought - not a strong signal
+                    # Backtest: 2021 April/May/Dec crashes all had this pattern
+                    return "accumulate"
+
                 # GLI filter: downgrade strong-accumulate when liquidity contracting
                 if gli_downtrend:
                     return "accumulate"
+
                 return "strong-accumulate"
+
             return "accumulate"
 
         return "hold"

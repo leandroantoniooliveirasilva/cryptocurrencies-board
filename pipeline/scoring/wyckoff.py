@@ -227,12 +227,14 @@ def _classify_phase(
         return "Downtrend", scores_cfg.downtrend
 
 
-def get_wyckoff_score(phase: str) -> int:
+def get_wyckoff_score(phase: str) -> Optional[int]:
     """
     Get a normalized Wyckoff score (0-100) from phase string.
 
     Used for backward compatibility with manual phase overrides.
     Scores are loaded from config.yaml.
+
+    Returns None for unrecognized phases (excluded from composite).
     """
     scores_cfg = config.wyckoff.scores
     phase_lower = phase.lower()
@@ -272,6 +274,11 @@ def get_wyckoff_score(phase: str) -> int:
             return scores_cfg.accumulation_phase_a
         return scores_cfg.accumulation_default
 
+    # Phase transitions (e.g., "Phase B→C" without explicit accumulation/distribution)
+    # These are typically accumulation patterns when not specified otherwise
+    if "b→c" in phase_lower or "b->c" in phase_lower:
+        return scores_cfg.accumulation_phase_b_to_c
+
     # Other phases
     if "markup" in phase_lower:
         return scores_cfg.markup
@@ -290,4 +297,8 @@ def get_wyckoff_score(phase: str) -> int:
     if "pre-market" in phase_lower:
         return scores_cfg.default
 
-    return scores_cfg.default  # Default neutral
+    # Unknown phase - exclude from composite rather than assuming neutral
+    if "unknown" in phase_lower:
+        return None
+
+    return scores_cfg.default  # Recognized but uncategorized phase
