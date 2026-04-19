@@ -1,164 +1,127 @@
 # Conviction Board
 
-A self-hosted cryptocurrency conviction scoring system for long-term accumulation. Runs locally on demand, deploys to GitHub Pages.
+A personal cryptocurrency scoring system for long-term accumulation. Scores assets across five dimensions, derives action signals, and displays results on a dashboard.
 
-## Architecture
+**Key property**: No server, no hosted database. The repo is the database.
+
+## How It Works
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Local Pipeline (on-demand, runs on laptop)                 │
-│  ───────────────────────────────────────────                │
-│  1. Fetch data (DefiLlama, CoinGecko)                       │
-│  2. Claude API for qualitative scoring (regulatory,         │
-│     institutional, supply)                                  │
-│  3. Compute RSI(14) daily + weekly from OHLC                │
-│  4. Compute composite scores per asset (5 dimensions)       │
-│  5. Derive action state (Accumulate, Strong, Hold, etc.)    │
-│  6. Append snapshot to history.sqlite                       │
-│  7. Write latest.json to /public                            │
-│  8. Commit and push to repo                                 │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  GitHub Actions (deploy only)                               │
-│  ────────────────────────────                               │
-│  Deploys /public to GitHub Pages on push                    │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  GitHub Pages (static hosting)                              │
-│  ──────────────────────────────                             │
-│  index.html + React dashboard                               │
-│  Reads /public/latest.json on load                          │
-└─────────────────────────────────────────────────────────────┘
+Local Pipeline (on-demand)
+├── Fetch prices and revenue (DefiLlama, CoinGecko)
+├── Score qualitative dimensions (Claude API)
+├── Compute RSI(14) daily + weekly
+├── Detect Wyckoff phase from price structure
+├── Calculate weighted composite by asset type
+├── Derive action signal from composite + RSI + Wyckoff
+├── Append snapshot to history.sqlite
+└── Write latest.json → commit → push
+         │
+         ▼
+GitHub Actions deploys /public to GitHub Pages
+         │
+         ▼
+Dashboard reads latest.json
 ```
 
-**Key property**: no server, no database host. The repo *is* the database.
+## Signal Framework
 
-## Scoring Framework
+### Dimensions
 
-### Dimensions (5)
+Assets are scored 0-100 across five dimensions, weighted by asset type:
 
-Weighted by asset type (store-of-value, smart-contract, defi, infrastructure):
-
-- **Institutional**: Fund holdings, ETF products, custody solutions
-- **Revenue**: Protocol fees, revenue sustainability
-- **Regulatory**: Jurisdictional clarity, compliance posture
-- **Supply**: Exchange reserves, holder distribution, inflation
-- **Wyckoff**: Technical phase analysis
+| Dimension | What It Measures |
+|-----------|------------------|
+| Institutional | ETF flows, fund holdings, custody adoption |
+| Revenue | Protocol fees, sustainable revenue |
+| Regulatory | Jurisdictional clarity, compliance |
+| Supply | Exchange reserves, holder distribution |
+| Wyckoff | Technical phase (accumulation/distribution) |
 
 ### Action States
 
-- **Strong Accumulate**: Dislocation in accumulation zone or capitulation (rare)
-- **Accumulate**: Leader tranche-eligible zone
-- **Promote Candidate**: Runner-up crossing leader threshold
-- **Hold & Monitor**: Active position, no action signal
-- **Await Confirmation**: Signal building, not yet activated
-- **Observe**: Watching only, no position
-- **Stand Aside**: Distribution risk, do not engage
+| State | When | What It Means |
+|-------|------|---------------|
+| **strong-accumulate** | Leaders only | True capitulation or quality dip — act now |
+| **accumulate** | Leaders only | Tranche-eligible zone |
+| **promote** | Runner-ups | Crossing leader threshold |
+| **hold** | Leaders | Default — patience |
+| **await** | Runner-ups | Signal building |
+| **observe** | Observation | Watch only |
+| **stand-aside** | Any | Distribution risk — do not engage |
 
-### Macro Filters
+### Signal Logic
 
-- **GLI (Global Liquidity Index)**: When global liquidity is contracting (GLI today < GLI 75 days ago), strong-accumulate signals are downgraded to regular accumulate. Based on research showing 56-90 day lag between liquidity inflection points and crypto local tops/bottoms.
+**Strong Accumulate** fires rarely (~5-15x/year across the watchlist):
+
+1. **Capitulation**: Weekly RSI <30 AND daily RSI <30 (82.9% hit rate)
+2. **Wyckoff dip**: Phase C + daily RSI ≤32 + weekly RSI ≥42 + composite stable
+
+Filtered to regular accumulate when:
+- GLI (Global Liquidity Index) is contracting
+- Weekly RSI is falling from elevated levels (>55, dropping >8 points)
 
 ### Asset Tiers
 
-- **Leaders** (4-6): Core conviction positions for accumulation
-- **Runner-ups** (4-6): Promotion candidates with strong fundamentals
-- **Observation** (5-8): Watch list only, no position
+| Tier | Count | Purpose |
+|------|-------|---------|
+| Leaders | 4-6 | Core positions for accumulation |
+| Runner-ups | 4-6 | Promotion candidates |
+| Observation | 5-8 | Watch only, no position |
 
-See `pipeline/assets.yaml` for current watchlist.
-
-## Setup
-
-### 1. Clone and configure
+## Quick Start
 
 ```bash
-git clone https://github.com/yourusername/cryptocurrencies-board.git
-cd cryptocurrencies-board
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate
+# Setup
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-```
 
-### 2. Set environment variables
-
-Create a `.env` file or export API keys:
-```bash
-# Required
+# Configure (create .env)
 ANTHROPIC_API_KEY=your_key_here
+FRED_API_KEY=your_fred_key_here  # Optional, for GLI filter
 
-# Optional (for GLI macro filter)
-FRED_API_KEY=your_fred_key_here  # Free from https://fred.stlouisfed.org/
-```
-
-### 3. Enable GitHub Pages
-
-Go to repo Settings → Pages:
-- Source: `main` branch
-- Folder: `/public`
-
-### 4. Run pipeline locally
-
-```bash
-# Run daily scoring
+# Run
 python -m pipeline.run
-
-# Build dashboard
 npm run build
-
-# Commit and push
 git add . && git commit -m "daily scan" && git push
 ```
 
 ## Project Structure
 
 ```
-cryptocurrencies-board/
-├── .github/workflows/
-│   └── deploy-pages.yml       # GitHub Pages deployment
-├── .agents/skills/            # Local agent skills
-│   ├── discovery/             # Monthly watchlist discovery
-│   └── daily-summary/         # Daily scan interpretation
-├── pipeline/
-│   ├── assets.yaml            # Watchlist configuration
-│   ├── config.yaml            # All thresholds and scoring parameters
-│   ├── fetchers/              # Data fetching (DefiLlama, CoinGecko, Claude, GLI)
-│   ├── scoring/               # Score computation (composite, RSI, actions)
-│   ├── storage/               # SQLite persistence
-│   └── run.py                 # Orchestrator entry point
-├── public/                    # Served by GitHub Pages
-│   ├── index.html
-│   ├── dashboard.jsx          # React dashboard source
-│   ├── dashboard.js           # Compiled bundle
-│   └── latest.json            # Today's snapshot
-├── discovery/                 # Monthly discovery reports
-├── docs/
-│   └── decisions.md           # Framework calibration log
-└── requirements.txt
+pipeline/
+├── assets.yaml          # Watchlist (source of truth)
+├── config.yaml          # All thresholds and parameters
+├── run.py               # Pipeline orchestrator
+├── fetchers/            # Data sources
+├── scoring/             # Score computation
+└── storage/             # SQLite persistence
+
+public/
+├── dashboard.jsx        # React dashboard
+├── latest.json          # Today's snapshot
+└── index.html           # Entry point
+
+.docs/
+├── decisions.md         # Calibration log (change history)
+└── research/            # Research and backtests
+
+.agents/skills/
+├── discovery/           # Monthly watchlist discovery
+└── daily-summary/       # Scan interpretation
 ```
-
-## Calibration
-
-Track changes in `docs/decisions.md`. Watch for:
-- Does Strong Accumulate fire at sensible moments?
-- Does Promote Candidate fire too readily or too rarely?
-- Is composite stable week-over-week?
-- Does Hold feel right for most leaders most of the time?
 
 ## Design Principles
 
-1. **No Server**: GitHub repo itself is the database
-2. **Immutable History**: SQLite append-only (never update/delete)
-3. **Framework-Driven**: Calibration log prevents drift
-4. **Lean Dependencies**: No heavy ORMs, frameworks, or bloat
-5. **Deliberately Slow**: Daily rhythm, not real-time
-6. **Single User**: Personal decision support, not a trading tool
+1. **No Server** — GitHub repo is the database
+2. **Immutable History** — Append-only SQLite
+3. **Framework-Driven** — Calibration log prevents drift
+4. **Deliberately Slow** — Daily rhythm, not real-time
+5. **Single User** — Personal decision support
 
-## License
+## Calibration
 
-Private repository. Not for redistribution.
+Track changes in `.docs/decisions.md`. Monitor:
+- Does strong-accumulate fire at sensible moments?
+- Is composite stable week-over-week?
+- Does hold feel right most of the time?

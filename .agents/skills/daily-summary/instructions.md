@@ -2,16 +2,13 @@
 
 Interpret daily scan results and provide actionable insights.
 
-> **Note**: The scoring pipeline runs locally via `python -m pipeline.run`. This skill interprets the results in `public/latest.json`.
-
 ## When to Use
 
-Invoke this skill when:
-- After running the daily pipeline (`python -m pipeline.run`)
-- The user asks "what's the signal today?", "summarize the scan", or "what should I do?"
-- Reviewing `public/latest.json` for today's results
+- After running `python -m pipeline.run`
+- When asked "what's the signal today?" or "summarize the scan"
+- When reviewing `public/latest.json`
 
-## Quick Interpretation
+## Interpretation
 
 ### Step 1: Read Today's Scan
 
@@ -19,162 +16,112 @@ Invoke this skill when:
 cat public/latest.json
 ```
 
-Or read the file directly to understand current state.
-
 ### Step 2: Identify Action Items
 
-Look for assets with actionable signals:
-
-| Action | Meaning | What To Do |
-|--------|---------|------------|
-| `strong-accumulate` | Rare dislocation or capitulation | **Act today** — high-conviction entry |
-| `accumulate` | Tranche-eligible | Add to position in measured size |
-| `promote` | Runner-up earning activation | Review for tier promotion |
-| `stand-aside` | Distribution risk | **Do not engage** regardless of price |
-| `hold` | No signal | Do nothing — patience |
-| `await` | Building | Monitor, don't act yet |
-| `observe` | Watching | No position warranted |
+| Action | Meaning | Response |
+|--------|---------|----------|
+| strong-accumulate | Rare dislocation or capitulation | Act today — high conviction |
+| accumulate | Tranche-eligible | Add measured size |
+| promote | Runner-up earning activation | Review for tier change |
+| stand-aside | Distribution risk | Do not engage |
+| hold | No signal | Do nothing |
+| await | Building | Monitor |
+| observe | Watching | No position |
 
 ### Step 3: Generate Summary
 
-Provide a concise summary in this format:
-
 ```markdown
-## Daily Conviction Signals — [Date]
+## Daily Signals — [Date]
 
 ### Action Required
-[List any strong-accumulate or accumulate signals with context]
+[List strong-accumulate or accumulate signals with context]
 
 ### Stand Aside
-[List any stand-aside warnings]
+[List warnings]
 
 ### Notable Changes
-[Any significant score movements, new RSI extremes, or phase changes]
+[Score movements, RSI extremes, phase changes]
 
 ### Watchlist Health
 - Leaders firing accumulate: X/Y
 - Strong signals active: N days
-- Assets below threshold: N (filtered from view)
-- GLI status: [expanding/contracting] (filter [active/inactive])
+- GLI status: [expanding/contracting]
 
 ### Interpretation
-[1-2 sentences on overall market posture and what it means for the framework]
+[1-2 sentences on market posture]
 ```
 
-## Signal Interpretation Guidelines
+## Signal Details
 
 ### Strong Accumulate
-This is rare (~5-15 times per year across all assets). When it fires:
 
-**Capitulation-triggered** (RSI-based):
-- Weekly RSI < 30 AND daily RSI < 30
-- Indicates panic selling in a quality leader
-- High probability of recovery — act decisively
-
-**Wyckoff-triggered** (structural):
-- Daily RSI ≤ 32 while weekly RSI ≥ 42
-- Composite stable week-over-week
-- Phase C spring zone
-- Short-term dip within healthy structure
-
-**GLI Filter**: When Global Liquidity Index is contracting (GLI today < GLI 75 days ago), strong-accumulate is automatically downgraded to regular accumulate. This prevents aggressive accumulation during liquidity contractions which historically precede local tops.
-
-If strong-accumulate has been firing for multiple consecutive days, note the day count. Continuation signals are valid but early entries are better.
-
-### Accumulate
-More common signal. Valid when:
+Fires ~5-15 times per year. Two paths:
 
 **Capitulation** (RSI-based):
-- Weekly RSI < 30 alone
-- Leaders typically recover from panic selling
+- Weekly RSI <30 AND daily RSI <30
+- 82.9% hit rate — act decisively
+
+**Wyckoff dip** (structural):
+- Daily RSI ≤32 while weekly RSI ≥42 (stable/rising)
+- Composite stable week-over-week
+- Phase C spring zone
+
+**Filters** (downgrade to accumulate):
+- GLI contracting
+- Weekly RSI was >55 and dropped >8 points (first leg down)
+
+### Accumulate
+
+**Capitulation** (RSI-based):
+- Weekly RSI <30 alone
 
 **Wyckoff** (structural):
-- Composite ≥ 75
-- Phase C or B→C
+- Composite ≥75, Phase C or B→C
 - Non-negative 7-day trend
-- Weekly RSI < 70 (not overbought)
+- Weekly RSI <70
+
+**Downgraded from strong**:
+- GLI contracting
+- Weekly RSI falling from elevated levels
 
 ### Stand Aside
-Framework says do not engage when:
-- Distribution phase detected AND negative delta
-- Weekly delta ≤ -5 points (sharp decline)
 
-This overrides all other signals. Even if price looks attractive, structural breakdown suggests more downside.
+- Distribution phase + negative trend
+- Weekly delta ≤-5 points
+
+Overrides all other signals.
 
 ### Promote
-Runner-up showing leader-quality metrics:
-- Composite ≥ 75
-- 30-day trend ≥ +8 points
-- 7-day trend ≥ +2 points
 
-Requires manual decision to actually promote in `assets.yaml`.
+Runner-up showing leader metrics:
+- Composite ≥75
+- 30-day trend ≥+8
+- 7-day trend ≥+2
+
+Requires manual decision to promote in `assets.yaml`.
 
 ## RSI Context
 
-Provide RSI context for actionable assets:
-
-| RSI Range | Daily | Weekly | Interpretation |
-|-----------|-------|--------|----------------|
-| < 30 | Oversold | Capitulation | Strong buy zone for leaders |
+| Range | Daily | Weekly | Interpretation |
+|-------|-------|--------|----------------|
+| <30 | Oversold | Capitulation | Strong buy zone for leaders |
 | 30-40 | Weak | Building | Watch for confirmation |
 | 40-60 | Neutral | Healthy | Normal range |
 | 60-70 | Strong | Extended | Momentum intact |
-| ≥ 70 | Overbought | Euphoric | Accumulation paused |
-
-## Example Summary
-
-```markdown
-## Daily Conviction Signals — 2026-04-18
-
-### Action Required
-
-**LINK** — Strong Accumulate (Day 2)
-- Composite: 78 (+2 WoW)
-- Daily RSI: 28 | Weekly RSI: 45
-- Wyckoff dislocation in Phase C
-- *This is a high-conviction entry window*
-
-**SOL** — Accumulate
-- Composite: 82 (stable)
-- Weekly RSI: 31 (capitulation zone)
-- *Measured tranche building appropriate*
-
-### Stand Aside
-
-None — all leaders structurally healthy
-
-### Notable Changes
-
-- BTC weekly RSI dropped from 55 to 48 (approaching accumulate zone)
-- HYPE composite improved +4 to 76 (crossing leader threshold)
-- QNT removed from view (composite 58, below threshold)
-
-### Watchlist Health
-- Leaders firing accumulate: 2/5
-- Strong signals active: LINK (day 2)
-- Assets below threshold: 3
-- GLI status: expanding (+2.1% vs 75d ago) — macro filter inactive
-
-### Interpretation
-Market showing localized weakness with LINK and SOL in accumulation zones while BTC approaches. GLI expanding supports accumulation signals. Framework posture: selective accumulation in leaders, patience elsewhere.
-```
+| ≥70 | Overbought | Euphoric | Accumulation paused |
 
 ## Historical Context
 
-When interpreting signals, consider:
-
-1. **Trend arrays** (`trend` and `trend_30d`): Are scores improving or declining?
-2. **Days since label change** (`label_changed_days_ago`): Recent changes are more actionable
-3. **Strong accumulate streak** (`strong_accumulate_days_active`): Continuation or new signal?
-4. **Missing dimensions** (`missing_dimensions`): Incomplete data lowers confidence
-5. **GLI status** (`gli` object in JSON): Check `downtrend` boolean and `source` field
-   - If `downtrend: true` → strong signals were suppressed
-   - If `source: "fallback"` → GLI data unavailable, filter inactive
+Check in the JSON:
+- `trend` and `trend_30d`: Score trajectory
+- `label_changed_days_ago`: Signal freshness
+- `strong_accumulate_days_active`: Continuation vs new
+- `gli.downtrend`: Whether GLI filter is active
 
 ## What NOT to Do
 
 - Don't interpret hold/await/observe as requiring action
 - Don't ignore stand-aside signals
-- Don't assume daily RSI extremes alone trigger signals (weekly matters more)
-- Don't recommend action on assets below the 60-score threshold
+- Don't assume daily RSI extremes alone trigger signals
+- Don't recommend action on assets below 60 composite
 - Don't treat this as trading advice — it's accumulation guidance

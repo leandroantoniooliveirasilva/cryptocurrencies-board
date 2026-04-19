@@ -212,9 +212,7 @@ __marimo__/
 # Node
 node_modules/
 
-# AI Plans
-
-.docs
+# AI Plans (exclude sensitive strategy docs if needed)
 
 # Local logs (keep directory, ignore contents)
 logs/*
