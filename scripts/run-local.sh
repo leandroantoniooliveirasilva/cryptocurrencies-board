@@ -52,7 +52,7 @@ if python -m pipeline.run 2>&1 | tee -a "$LOG_FILE"; then
     log "Committing and pushing to GitHub..."
     cd "$PROJECT_DIR"
 
-    git add public/latest.json public/history.json pipeline/storage/history.sqlite
+    git add public/latest.json pipeline/storage/history.sqlite
 
     if git diff --staged --quiet; then
         log "No changes to commit"
