@@ -1084,33 +1084,33 @@ function Dashboard() {
 
       <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} strongCount={strongCount} gli={gli} />
 
-      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.base}px`, display: 'flex', gap: `${SPACE.xs}px`, flexWrap: 'nowrap' }}>
-        {[
-          { id: 'all', label: 'All' },
-          { id: 'leader', label: 'Leaders' },
-          { id: 'runner-up', label: 'Runner-ups' },
-          { id: 'observation', label: 'Observation' },
-        ].map(t => (
-          <button
-            key={t.id}
-            onClick={() => setActiveTier(t.id)}
-            style={{
-              background: activeTier === t.id ? PALETTE.textPrimary : 'transparent',
-              color: activeTier === t.id ? PALETTE.bg : PALETTE.textMuted,
-              border: 'none',
-              padding: `${SPACE.xs}px ${SPACE.md}px`,
-              minHeight: isMobile ? '36px' : 'auto',
-              fontSize: TYPE.caption,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              fontFamily: 'ui-monospace, monospace',
-              cursor: 'pointer',
-              flex: isMobile ? 1 : 'none',
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.base}px` }}>
+        <select
+          value={activeTier}
+          onChange={(e) => setActiveTier(e.target.value)}
+          style={{
+            background: PALETTE.cardBg,
+            color: PALETTE.textPrimary,
+            border: `1px solid ${PALETTE.border}`,
+            padding: `${SPACE.sm}px ${SPACE.md}px`,
+            paddingRight: `${SPACE.xl}px`,
+            fontSize: TYPE.small,
+            fontFamily: 'ui-monospace, monospace',
+            letterSpacing: '0.04em',
+            cursor: 'pointer',
+            appearance: 'none',
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a39a8a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: `right ${SPACE.sm}px center`,
+            minWidth: isMobile ? '50%' : '180px',
+            maxWidth: isMobile ? '60%' : '220px',
+          }}
+        >
+          <option value="all">All tiers</option>
+          <option value="leader">Leaders</option>
+          <option value="runner-up">Runner-ups</option>
+          <option value="observation">Observation</option>
+        </select>
       </div>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
