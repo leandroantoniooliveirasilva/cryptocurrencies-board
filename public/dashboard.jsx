@@ -87,19 +87,19 @@ const SPACE = {
   '4xl': 96,
 };
 
-// Type scale: 1.25 ratio, rem-based for accessibility
-// Minimum readable size: 12px (0.75rem)
+// Type scale: rem-based for accessibility
+// Desktop root is 18px, mobile is 16px (set in index.html)
 const TYPE = {
-  // Sizes
-  caption: '0.75rem',    // 12px - minimum for labels
-  small: '0.8125rem',    // 13px - secondary text
-  body: '0.875rem',      // 14px - body copy
-  base: '1rem',          // 16px - emphasized body
-  subhead: '1.125rem',   // 18px - subheadings
-  heading: '1.5rem',     // 24px - card headings
-  title: '2rem',         // 32px - page title
-  display: '2.5rem',     // 40px - large numbers (mobile)
-  displayLg: '3rem',     // 48px - large numbers (desktop)
+  // Sizes (desktop effective: multiply by 1.125)
+  caption: '0.8125rem',  // 13px mobile, 14.6px desktop - labels
+  small: '0.875rem',     // 14px mobile, 15.75px desktop - secondary text
+  body: '1rem',          // 16px mobile, 18px desktop - body copy
+  base: '1.125rem',      // 18px mobile, 20.25px desktop - emphasized body
+  subhead: '1.25rem',    // 20px mobile, 22.5px desktop - subheadings
+  heading: '1.5rem',     // 24px mobile, 27px desktop - card headings
+  title: '2rem',         // 32px mobile, 36px desktop - page title
+  display: '2.5rem',     // 40px mobile, 45px desktop - large numbers
+  displayLg: '3rem',     // 48px mobile, 54px desktop - large numbers
   // Line heights
   tight: 1.1,
   snug: 1.25,
