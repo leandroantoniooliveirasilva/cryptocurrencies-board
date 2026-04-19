@@ -1,25 +1,40 @@
 # Watchlist configuration
-# Tiers: leaders (core positions), runner_ups (promotion candidates), observation (watch only)
+# Tiers are computed DYNAMICALLY from composite scores:
+#   - Leader:      composite >= 75
+#   - Runner-up:   composite >= 55
+#   - Observation: composite < 55
 #
-# Asset Types (for tiered weight calculation):
+# Asset Types (for weight calculation):
 #   - store-of-value: BTC and similar (institutional/supply focused)
 #   - smart-contract: L1 platforms like SOL, ETH, AVAX (balanced)
-#   - defi: DeFi protocols like LINK, AAVE, MORPHO (revenue focused)
+#   - defi: DeFi protocols like LINK, AAVE (revenue focused)
 #   - infrastructure: Enterprise/infra like QNT, HBAR (institutional focused)
 #
-# Weight profiles by asset type:
-#   store-of-value:    Institutional 40%, Supply 25%, Regulatory 15%, Wyckoff 15%, Revenue 5%
-#   smart-contract:    Institutional 30%, Revenue 25%, Supply 20%, Regulatory 15%, Wyckoff 10%
-#   defi:              Revenue 35%, Institutional 25%, Regulatory 20%, Supply 15%, Wyckoff 5%
-#   infrastructure:    Institutional 35%, Regulatory 25%, Supply 20%, Revenue 10%, Wyckoff 10%
+# Discovery adds/removes assets from this list. Tiers are NOT hardcoded.
 
-leaders:
+assets:
+  # Store of Value
   - symbol: BTC
     name: Bitcoin
     asset_type: store-of-value
     coingecko_id: bitcoin
     defillama_slug: null
     wyckoff_override: "Phase B→C"
+
+  - symbol: KAS
+    name: Kaspa
+    asset_type: store-of-value
+    coingecko_id: kaspa
+    defillama_slug: null
+    wyckoff_override: null
+
+  # Smart Contract Platforms
+  - symbol: ETH
+    name: Ethereum
+    asset_type: smart-contract
+    coingecko_id: ethereum
+    defillama_slug: ethereum
+    wyckoff_override: null
 
   - symbol: SOL
     name: Solana
@@ -28,6 +43,21 @@ leaders:
     defillama_slug: solana
     wyckoff_override: null
 
+  - symbol: AVAX
+    name: Avalanche
+    asset_type: smart-contract
+    coingecko_id: avalanche-2
+    defillama_slug: avalanche
+    wyckoff_override: null
+
+  - symbol: SUI
+    name: Sui
+    asset_type: smart-contract
+    coingecko_id: sui
+    defillama_slug: sui
+    wyckoff_override: null
+
+  # DeFi Protocols
   - symbol: LINK
     name: Chainlink
     asset_type: defi
@@ -42,7 +72,6 @@ leaders:
     defillama_slug: hyperliquid
     wyckoff_override: null
 
-  # PROMOTED: Apollo $112.5M investment, 5x TVL growth, institutional curator standard
   - symbol: MORPHO
     name: Morpho
     asset_type: defi
@@ -50,7 +79,42 @@ leaders:
     defillama_slug: morpho
     wyckoff_override: null
 
-runner_ups:
+  - symbol: AAVE
+    name: Aave
+    asset_type: defi
+    coingecko_id: aave
+    defillama_slug: aave
+    wyckoff_override: null
+
+  - symbol: ONDO
+    name: Ondo
+    asset_type: defi
+    coingecko_id: ondo-finance
+    defillama_slug: ondo-finance
+    wyckoff_override: null
+
+  - symbol: PENDLE
+    name: Pendle
+    asset_type: defi
+    coingecko_id: pendle
+    defillama_slug: pendle
+    wyckoff_override: null
+
+  - symbol: JUP
+    name: Jupiter
+    asset_type: defi
+    coingecko_id: jupiter-exchange-solana
+    defillama_slug: jupiter
+    wyckoff_override: null
+
+  - symbol: ENA
+    name: Ethena
+    asset_type: defi
+    coingecko_id: ethena
+    defillama_slug: ethena
+    wyckoff_override: null
+
+  # Infrastructure
   - symbol: QNT
     name: Quant
     asset_type: infrastructure
@@ -65,9 +129,6 @@ runner_ups:
     defillama_slug: null
     wyckoff_override: null
 
-  # DEMOTED: KAS moved to observation - lacking institutional traction
-
-  # PROMOTED: SEC settlement complete, $1.4B ETF inflows, OCC charter
   - symbol: XRP
     name: Ripple
     asset_type: infrastructure
@@ -75,63 +136,6 @@ runner_ups:
     defillama_slug: null
     wyckoff_override: null
 
-  # PROMOTED: $2.1B RWA TVL, VanEck ETF, BlackRock $500M fund
-  - symbol: AVAX
-    name: Avalanche
-    asset_type: smart-contract
-    coingecko_id: avalanche-2
-    defillama_slug: avalanche
-    wyckoff_override: null
-
-  # PROMOTED: SEC investigation closed, SOC 2 compliance, Horizon RWA platform
-  - symbol: AAVE
-    name: Aave
-    asset_type: defi
-    coingecko_id: aave
-    defillama_slug: aave
-    wyckoff_override: null
-
-  # NEW: CME futures, multiple ETF filings, Grayscale 2x ETF live
-  - symbol: SUI
-    name: Sui
-    asset_type: smart-contract
-    coingecko_id: sui
-    defillama_slug: sui
-    wyckoff_override: null
-
-  # PROMOTED: $3B+ TVL, 200+ tokenized securities, State Street partnership
-  - symbol: ONDO
-    name: Ondo
-    asset_type: defi
-    coingecko_id: ondo-finance
-    defillama_slug: ondo-finance
-    wyckoff_override: null
-
-  # PROMOTED: Dominant yield trading, $40M revenue, institutional Citadels product
-  - symbol: PENDLE
-    name: Pendle
-    asset_type: defi
-    coingecko_id: pendle
-    defillama_slug: pendle
-    wyckoff_override: null
-
-  # NEW: $37M revenue, 93-95% Solana aggregator market share
-  - symbol: JUP
-    name: Jupiter
-    asset_type: defi
-    coingecko_id: jupiter-exchange-solana
-    defillama_slug: jupiter
-    wyckoff_override: null
-
-  # NEW: 93.9% restaking dominance, EigenDA launched
-  - symbol: EIGEN
-    name: EigenLayer
-    asset_type: infrastructure
-    coingecko_id: eigenlayer
-    defillama_slug: eigenlayer
-    wyckoff_override: null
-
-observation:
   - symbol: HBAR
     name: Hedera
     asset_type: infrastructure
@@ -139,11 +143,6 @@ observation:
     defillama_slug: null
     wyckoff_override: null
 
-  # REMOVED: CANTON - No trading activity, 3/3 reports agreed
-
-  # PROMOTED: ONDO moved to runner-ups
-
-  # NEW: Grayscale ETF filing, DCG backing, AI-crypto leader
   - symbol: TAO
     name: Bittensor
     asset_type: infrastructure
@@ -151,15 +150,6 @@ observation:
     defillama_slug: null
     wyckoff_override: null
 
-  # DEMOTED: Lacking institutional traction, PoW-only narrative
-  - symbol: KAS
-    name: Kaspa
-    asset_type: store-of-value
-    coingecko_id: kaspa
-    defillama_slug: null
-    wyckoff_override: null
-
-  # NEW: Modular DA leader, 100+ rollups using Celestia
   - symbol: TIA
     name: Celestia
     asset_type: infrastructure
@@ -167,10 +157,9 @@ observation:
     defillama_slug: null
     wyckoff_override: null
 
-  # NEW: $6B+ USDe, institutional iUSDe, but MiCA exit concerning
-  - symbol: ENA
-    name: Ethena
-    asset_type: defi
-    coingecko_id: ethena
-    defillama_slug: ethena
+  - symbol: EIGEN
+    name: EigenLayer
+    asset_type: infrastructure
+    coingecko_id: eigenlayer
+    defillama_slug: eigenlayer
     wyckoff_override: null

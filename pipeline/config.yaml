@@ -56,7 +56,15 @@ composite:
   stand_aside_delta: -5         # Weekly delta <= this = stand aside
 
   # Display threshold (frontend)
-  min_display_score: 50         # Assets below this hidden (except leaders)
+  min_display_score: 50         # Assets below this hidden from dashboard
+
+# =============================================================================
+# DYNAMIC TIER THRESHOLDS (computed from composite score)
+# =============================================================================
+tiers:
+  leader: 75                    # Composite >= 75 → Leader
+  runner_up: 55                 # Composite >= 55 → Runner-up
+  # Below 55 → Observation
 
 # =============================================================================
 # PROMOTION THRESHOLDS (runner-up → leader)

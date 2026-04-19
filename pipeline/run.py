@@ -96,13 +96,39 @@ def load_config() -> dict:
         return {"leaders": [], "runner_ups": [], "observation": []}
 
 
-def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> dict:
+def compute_tier(composite_score: int) -> str:
+    """
+    Compute tier dynamically from composite score.
+
+    Thresholds from config.yaml:
+        - Leader:      composite >= 75
+        - Runner-up:   composite >= 55
+        - Observation: composite < 55
+    """
+    leader_threshold = getattr(config, 'tiers', None)
+    if leader_threshold:
+        leader_threshold = config.tiers.leader
+        runner_up_threshold = config.tiers.runner_up
+    else:
+        # Fallback defaults
+        leader_threshold = 75
+        runner_up_threshold = 55
+
+    if composite_score >= leader_threshold:
+        return "leader"
+    elif composite_score >= runner_up_threshold:
+        return "runner-up"
+    else:
+        return "observation"
+
+
+def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
     """
     Build complete asset data from config entry.
+    Tier is computed dynamically from composite score.
 
     Args:
         entry: Asset config from YAML
-        tier: Asset tier (leader, runner-up, observation)
         conn: Database connection
         gli_downtrend: True if Global Liquidity Index is contracting
 
@@ -218,6 +244,9 @@ def build_asset(entry: dict, tier: str, conn, gli_downtrend: bool = False) -> di
     # Compute composite with asset-type-specific weights
     # Returns (score, missing_count) - missing dimensions are excluded from calculation
     composite_score, missing_dimensions = composite.compute_composite(scores, asset_type=asset_type)
+
+    # Compute tier dynamically from composite score
+    tier = compute_tier(composite_score)
 
     # Get historical data for trends
     trend_7d = migrations.get_trend_data(conn, symbol, 7)
@@ -559,10 +588,17 @@ def main():
     logger.info("Starting daily scoring pipeline (v2 - tiered weights)")
     logger.info("=" * 60)
 
-    # Load asset definitions
+    # Load asset definitions (flat list - tiers computed dynamically)
     assets_config = load_config()
-    total_assets = sum(len(v) for k, v in assets_config.items() if isinstance(v, list))
-    logger.info(f"Loaded {total_assets} assets from config")
+    assets_list = assets_config.get("assets", [])
+    # Fallback for old tiered format
+    if not assets_list:
+        assets_list = (
+            assets_config.get("leaders", []) +
+            assets_config.get("runner_ups", []) +
+            assets_config.get("observation", [])
+        )
+    logger.info(f"Loaded {len(assets_list)} assets from config")
 
     # Fetch Global Liquidity Index status (macro filter)
     gli_data = gli.fetch_gli_data()
@@ -601,28 +637,25 @@ def main():
         "assets": [],
     }
 
-    # Process all tiers
-    tier_map = [
-        ("leader", assets_config.get("leaders", [])),
-        ("runner-up", assets_config.get("runner_ups", [])),
-        ("observation", assets_config.get("observation", [])),
-    ]
+    # Process all assets (tiers computed dynamically from composite scores)
+    logger.info(f"\nProcessing {len(assets_list)} assets...")
+    for entry in assets_list:
+        try:
+            asset = build_asset(entry, conn, gli_downtrend=gli_downtrend)
 
-    for tier, entries in tier_map:
-        logger.info(f"\nProcessing {tier} tier ({len(entries)} assets)...")
-        for entry in entries:
-            try:
-                asset = build_asset(entry, tier, conn, gli_downtrend=gli_downtrend)
+            # Save to database
+            migrations.save_snapshot(conn, asset, today)
 
-                # Save to database
-                migrations.save_snapshot(conn, asset, today)
+            output["assets"].append(asset)
+            logger.info(f"  {asset['symbol']} ({asset['tier']}): composite={asset['composite']}, action={asset['action']}")
 
-                output["assets"].append(asset)
-                logger.info(f"  {asset['symbol']} ({asset['asset_type']}): composite={asset['composite']}, action={asset['action']}")
+        except Exception as e:
+            logger.error(f"  Failed to process {entry.get('symbol', 'unknown')}: {e}")
+            continue
 
-            except Exception as e:
-                logger.error(f"  Failed to process {entry.get('symbol', 'unknown')}: {e}")
-                continue
+    # Sort assets by tier priority then composite score
+    tier_order = {"leader": 0, "runner-up": 1, "observation": 2}
+    output["assets"].sort(key=lambda a: (tier_order.get(a["tier"], 3), -a["composite"]))
 
     # Commit database changes
     conn.commit()

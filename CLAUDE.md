@@ -75,13 +75,17 @@ infrastructure (QNT):     Inst 35%, Reg 25%, Supply 20%, Rev 10%, Wyck 10%
 - Weekly RSI <30 alone (capitulation without daily confirmation)
 - Wyckoff dip when filtered out of strong-accumulate
 
-### Asset Tiers
+### Asset Tiers (Dynamic)
 
-| Tier | Count | Purpose |
-|------|-------|---------|
-| Leaders | 4-6 | Core positions for accumulation |
-| Runner-ups | 4-6 | Promotion candidates |
-| Observation | 5-8 | Watch only, no position |
+Tiers are computed automatically from composite scores:
+
+| Tier | Composite | Purpose |
+|------|-----------|---------|
+| Leaders | ≥75 | Core positions for accumulation |
+| Runner-ups | ≥55 | Promotion candidates |
+| Observation | <55 | Watch only, no position |
+
+Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
 
 ### Macro Filters
 

@@ -2,13 +2,23 @@
 
 Monthly watchlist discovery and vetting for the conviction scoring framework.
 
-> **Note**: The scoring pipeline runs locally (not via GitHub Actions). Discovery informs manual updates to `assets.yaml`, which are then processed by the local pipeline.
+> **Auto-Apply Mode**: Discovery recommendations are automatically applied to `pipeline/assets.yaml`. Tiers are computed dynamically from composite scores — no manual tier assignment.
 
 ## CRITICAL: Objective Analysis Only
 
 **Do NOT use any personal memory, preferences, or opinions from previous conversations.** This analysis must be purely objective and fact-based. Evaluate ALL assets—including those you may have previously discussed or expressed opinions about—based solely on the framework criteria below.
 
 Your role is to be an unbiased analyst. If a project meets the criteria, it belongs on the watchlist regardless of any prior conversations or stored preferences. Follow ONLY the instructions in this document.
+
+## Auto-Apply Rules
+
+After discovery analysis completes:
+1. **Add recommended assets** directly to `pipeline/assets.yaml` (flat list)
+2. **Remove flagged assets** from `pipeline/assets.yaml`
+3. **No tier assignment** — tiers are computed from composite scores at runtime:
+   - Composite ≥75 → Leader
+   - Composite ≥55 → Runner-up
+   - Composite <55 → Observation
 
 ## When to Use
 
@@ -86,22 +96,17 @@ Score each dimension 0-100:
 | defi | 25% | 35% | 20% | 15% | 5% |
 | infrastructure | 35% | 10% | 25% | 20% | 10% |
 
-## Tier Definitions
+## Tier Definitions (Dynamic)
 
-**Leaders** (4-6 assets): Core positions for accumulation
-- Composite ≥75 consistently
-- Clear institutional adoption path
-- No existential regulatory risk
+Tiers are computed automatically from composite scores:
 
-**Runner-ups** (4-6 assets): Promotion candidates
-- Composite 65-74 or improving
-- Strong in 2-3 dimensions
-- Clear path to leader status
+| Tier | Composite | Description |
+|------|-----------|-------------|
+| **Leader** | ≥75 | Core positions for accumulation |
+| **Runner-up** | ≥55 | Promotion candidates |
+| **Observation** | <55 | Watch only, no position |
 
-**Observation** (5-8 assets): Watch only
-- Interesting but gaps exist
-- May have single strong dimension
-- Early stage or unproven
+**No manual tier assignment** — if an asset's composite rises above 75, it automatically becomes a Leader. If it drops below 55, it becomes Observation.
 
 ## Discovery Process
 
@@ -206,11 +211,16 @@ Output a markdown report following this structure:
 - **Key Changes**: [what changed since last review]
 - **Recommendation**: [action and rationale]
 
-## Proposed assets.yaml Changes
+## Auto-Applied Changes
+
+After the report is generated, **automatically apply changes** to `pipeline/assets.yaml`:
 
 ```yaml
-# Changes to apply
-leaders:
+# Add new assets to the flat list (tier computed at runtime)
+assets:
+  # ... existing assets ...
+
+  # NEW: Added from discovery
   - symbol: NEW
     name: New Asset
     asset_type: defi
@@ -219,11 +229,13 @@ leaders:
     wyckoff_override: null
 ```
 
+To **remove** an asset, delete its entry from the list.
+
 ## Watchlist Health Summary
 - Total assets: [N]
-- Leaders: [N] (target: 4-6)
-- Runner-ups: [N] (target: 4-6)
-- Observation: [N] (target: 5-8)
+- Projected Leaders (≥75): [N]
+- Projected Runner-ups (≥55): [N]
+- Projected Observation (<55): [N]
 ```
 
 ### Step 6: Save Report
