@@ -899,6 +899,7 @@ function StrategySection({ isMobile }) {
       {/* Expand/collapse button */}
       <button
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
         style={{
           background: 'transparent',
           border: `1px solid ${PALETTE.border}`,
