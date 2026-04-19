@@ -919,8 +919,7 @@ function StrategySection({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div style={{ marginTop: `${SPACE.base}px` }}>
-      {/* Expand/collapse button */}
+    <div>
       <button
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
@@ -1294,7 +1293,7 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
   };
 
   return (
-    <div style={{ marginTop: `${SPACE.base}px` }}>
+    <div>
       <button
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
@@ -1615,11 +1614,10 @@ function Dashboard() {
       </div>
 
       {/* Footer with reference info */}
-      <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
+      <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px`, display: 'flex', flexDirection: 'column', gap: `${SPACE.md}px` }}>
         {/* GLI indicator */}
         {gli && gli.enabled && gli.source !== 'fallback' && (
           <div style={{
-            marginBottom: `${SPACE.base}px`,
             padding: `${SPACE.sm}px ${SPACE.md}px`,
             background: 'transparent',
             border: `1px solid ${PALETTE.border}`,
@@ -1630,6 +1628,7 @@ function Dashboard() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: `${SPACE.sm}px`,
+            alignSelf: 'flex-start',
           }}>
             <span style={{ textTransform: 'uppercase' }}>GLI {gli.downtrend ? '▼ Contracting' : '▲ Expanding'}</span>
             <span style={{ color: PALETTE.textMuted }}>({gli.offset_days}d offset)</span>
