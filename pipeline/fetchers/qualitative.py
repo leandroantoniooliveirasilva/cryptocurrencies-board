@@ -15,7 +15,7 @@ _score_cache: dict = {}
 USE_CLI = os.environ.get("USE_CLAUDE_CLI", "true").lower() == "true"
 
 # Model to use for API calls (configurable via env var)
-CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
 
 
 REGULATORY_PROMPT = """Score the regulatory trajectory for {symbol} ({name}) on a 0-100 scale.
