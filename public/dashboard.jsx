@@ -743,14 +743,12 @@ function ScoreCard({ asset, isMobile }) {
   );
 }
 
-function ActionSummary({ assets, isMobile, minScore = 50 }) {
+function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli = null }) {
   // Get actionable items (not hold, await, observe) with score above threshold
   const actionableStates = ['strong-accumulate', 'accumulate', 'stand-aside', 'promote'];
   const actionableAssets = assets.filter(a =>
     actionableStates.includes(a.action) && (a.composite || 0) >= minScore
   );
-
-  if (actionableAssets.length === 0) return null;
 
   // Group by action type
   const grouped = actionableAssets.reduce((acc, asset) => {
@@ -763,145 +761,153 @@ function ActionSummary({ assets, isMobile, minScore = 50 }) {
   // Order: strong-accumulate first, then accumulate, then promote, then stand-aside
   const orderedActions = ['strong-accumulate', 'accumulate', 'promote', 'stand-aside'];
 
+  const hasActions = actionableAssets.length > 0;
+  const showGliWarning = gli && gli.enabled && gli.downtrend && gli.source !== 'fallback';
+
+  // If no actions and no GLI warning, show nothing
+  if (!hasActions && !showGliWarning) return null;
+
   return (
     <div style={{
       maxWidth: '1400px',
       margin: `0 auto ${SPACE.lg}px`,
-      padding: `${SPACE.base}px`,
-      background: PALETTE.cardBg,
-      border: `1px solid ${PALETTE.border}`,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: `${SPACE.sm}px`,
     }}>
-      <div style={{
-        fontSize: TYPE.caption,
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        color: PALETTE.textMuted,
-        marginBottom: `${SPACE.md}px`,
-        fontFamily: 'ui-monospace, monospace',
-      }}>
-        Recommended Actions
-      </div>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `${SPACE.sm}px`,
-      }}>
-        {orderedActions.map(action => {
-          const items = grouped[action];
-          if (!items || items.length === 0) return null;
-          const cfg = ACTION_CONFIG[action];
-          const ActionIcon = cfg.icon;
+      {/* GLI warning banner when contracting */}
+      {showGliWarning && (
+        <div style={{
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          background: 'rgba(212, 154, 106, 0.1)',
+          border: '1px solid #d49a6a',
+          fontSize: TYPE.small,
+          color: '#d49a6a',
+          fontFamily: 'ui-monospace, monospace',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+        }}>
+          <Info size={14} strokeWidth={1.5} />
+          <span>GLI contracting — strong-accumulate signals downgraded</span>
+        </div>
+      )}
 
-          return (
-            <div
-              key={action}
-              style={{
-                display: 'flex',
-                alignItems: isMobile ? 'flex-start' : 'center',
-                flexDirection: isMobile ? 'column' : 'row',
-                gap: isMobile ? SPACE.xs : SPACE.md,
-                padding: `${SPACE.sm}px ${SPACE.md}px`,
-                background: cfg.bg || 'transparent',
-                border: cfg.border ? `1px solid ${cfg.dot}` : `1px solid transparent`,
-              }}
-            >
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: SPACE.sm,
-                minWidth: isMobile ? 'auto' : '160px',
-              }}>
-                {ActionIcon ? (
-                  <ActionIcon size={14} color={cfg.dot} strokeWidth={1.75} fill={action === 'strong-accumulate' ? cfg.dot : 'none'} />
-                ) : (
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.dot }} />
-                )}
-                <span style={{
-                  fontSize: TYPE.caption,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  fontFamily: 'ui-monospace, monospace',
-                  fontWeight: 600,
-                  color: cfg.fg,
-                }}>
-                  {cfg.label}
-                </span>
-              </div>
-              <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: SPACE.sm,
-                flex: 1,
-              }}>
-                {items.map(asset => {
-                  // Different styling for light vs dark backgrounds
-                  const isLightBg = action === 'strong-accumulate' || action === 'accumulate';
+      {/* Action rows */}
+      {orderedActions.map(action => {
+        const items = grouped[action];
+        if (!items || items.length === 0) return null;
+        const cfg = ACTION_CONFIG[action];
+        const ActionIcon = cfg.icon;
+        const isStrong = action === 'strong-accumulate';
 
-                  return (
-                  <span
-                    key={asset.symbol}
-                    style={{
-                      fontSize: TYPE.body,
-                      fontFamily: 'Georgia, serif',
-                      fontWeight: 500,
-                      color: isLightBg ? '#fff' : PALETTE.textPrimary,
-                      padding: `3px ${SPACE.md}px`,
-                      background: isLightBg ? 'rgba(0,0,0,0.35)' : PALETTE.cardInset,
-                      borderRadius: '2px',
-                      letterSpacing: '0.01em',
-                    }}
-                  >
-                    {asset.symbol}
-                    <span style={{
-                      opacity: 0.75,
-                      marginLeft: 6,
-                      fontSize: TYPE.small,
-                      fontWeight: 400,
-                    }}>
-                      {asset.composite}
-                    </span>
-                  </span>
-                  );
-                })}
-              </div>
+        return (
+          <div
+            key={action}
+            style={{
+              display: 'flex',
+              alignItems: isMobile ? 'flex-start' : 'center',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? SPACE.xs : SPACE.md,
+              padding: `${SPACE.sm}px ${SPACE.md}px`,
+              background: cfg.bg || 'transparent',
+              border: cfg.border ? `1px solid ${cfg.dot}` : isStrong ? `1px solid #4ac0e0` : `1px solid ${PALETTE.border}`,
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: SPACE.sm,
+              minWidth: isMobile ? 'auto' : '160px',
+            }}>
+              {ActionIcon ? (
+                <ActionIcon size={14} color={cfg.dot} strokeWidth={1.75} fill={isStrong ? cfg.dot : 'none'} />
+              ) : (
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.dot }} />
+              )}
+              <span style={{
+                fontSize: TYPE.caption,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                fontFamily: 'ui-monospace, monospace',
+                fontWeight: 600,
+                color: cfg.fg,
+              }}>
+                {cfg.label}
+              </span>
             </div>
-          );
-        })}
-      </div>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: SPACE.sm,
+              flex: 1,
+            }}>
+              {items.map(asset => {
+                // Different styling for light vs dark backgrounds
+                const isLightBg = action === 'strong-accumulate' || action === 'accumulate';
+
+                return (
+                <span
+                  key={asset.symbol}
+                  style={{
+                    fontSize: TYPE.body,
+                    fontFamily: 'Georgia, serif',
+                    fontWeight: 500,
+                    color: isLightBg ? '#fff' : PALETTE.textPrimary,
+                    padding: `3px ${SPACE.md}px`,
+                    background: isLightBg ? 'rgba(0,0,0,0.35)' : PALETTE.cardInset,
+                    borderRadius: '2px',
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  {asset.symbol}
+                  <span style={{
+                    opacity: 0.75,
+                    marginLeft: 6,
+                    fontSize: TYPE.small,
+                    fontWeight: 400,
+                  }}>
+                    {asset.composite}
+                  </span>
+                </span>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 function ActionLegend({ isMobile }) {
   const items = [
-    { key: 'strong-accumulate', text: 'Triggers: (1) Capitulation — weekly RSI <30 AND daily RSI <30 on leaders; (2) Wyckoff dislocation — Phase C+, daily RSI ≤32, weekly ≥42, composite ≥75 stable WoW. Shows day-counter when firing consecutively.' },
-    { key: 'accumulate', text: 'Triggers: (1) Capitulation — weekly RSI <30 on leaders (panic selling recovery); (2) Wyckoff — composite ≥75, Phase C+, non-negative trend, weekly RSI <70.' },
-    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8. Manual promotion decision required.' },
-    { key: 'hold', text: 'Active position. No add/trim signal. The default state — patience by design.' },
-    { key: 'await', text: 'Runner-up building signal. Analytical hold only, no activation yet.' },
-    { key: 'observe', text: 'Observation tier. Scanning, not deciding. No position.' },
-    { key: 'stand-aside', text: 'Distribution risk or sharp negative trend. Do not engage regardless of price.' },
+    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dislocation (Phase C+, daily RSI ≤32, composite ≥75).' },
+    { key: 'accumulate', text: 'Weekly RSI <30 capitulation, or composite ≥75 in Phase C+ with stable trend.' },
+    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8.' },
+    { key: 'hold', text: 'Active position. No signal. Patience by design.' },
+    { key: 'await', text: 'Runner-up building signal. Not yet activated.' },
+    { key: 'observe', text: 'Observation tier. Scanning only.' },
+    { key: 'stand-aside', text: 'Distribution risk. Do not engage.' },
   ];
   return (
-    <details style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+    <details style={{ fontSize: TYPE.small, color: PALETTE.textSecondary }}>
       <summary style={{ cursor: 'pointer', fontFamily: 'ui-monospace, monospace', fontSize: TYPE.small, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textMuted, display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, listStyle: 'none', minHeight: isMobile ? '44px' : 'auto', padding: isMobile ? `${SPACE.sm}px 0` : 0 }}>
         <span style={{ transition: 'transform 0.2s', display: 'inline-block' }}>▸</span>
-        Action rules
+        Signal reference
       </summary>
       <style>{`details[open] summary span:first-child { transform: rotate(90deg); }`}</style>
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: `${SPACE.base}px`, marginTop: `${SPACE.lg}px` }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: `${SPACE.base}px`, marginTop: `${SPACE.md}px` }}>
         {items.map(item => {
           const cfg = ACTION_CONFIG[item.key];
           return (
-            <div key={item.key} style={{ display: 'flex', gap: `${SPACE.md}px`, alignItems: 'flex-start' }}>
-              <div style={{ width: `${SPACE.sm}px`, height: `${SPACE.sm}px`, borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '5px', flexShrink: 0 }} />
+            <div key={item.key} style={{ display: 'flex', gap: `${SPACE.sm}px`, alignItems: 'flex-start' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: cfg.dot === '#121110' ? cfg.bg : cfg.dot, marginTop: '6px', flexShrink: 0 }} />
               <div>
-                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: TYPE.caption, letterSpacing: '0.08em', textTransform: 'uppercase', color: PALETTE.textPrimary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textSecondary, fontWeight: 500 }}>
                   {cfg.label}
-                </div>
-                <div style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', lineHeight: TYPE.normal }}>
-                  {item.text}
-                </div>
+                </span>
+                <span style={{ color: PALETTE.textMuted }}> — {item.text}</span>
               </div>
             </div>
           );
@@ -1052,84 +1058,57 @@ function Dashboard() {
       color: PALETTE.textPrimary,
       padding: isMobile ? `${SPACE.lg}px ${SPACE.base}px` : `${SPACE['2xl']}px ${SPACE.lg}px`,
     }}>
-      <div style={{ maxWidth: '1400px', margin: `0 auto ${isMobile ? SPACE.lg : SPACE['2xl']}px`, borderBottom: `1px solid ${PALETTE.borderStrong}`, paddingBottom: `${SPACE.lg}px` }}>
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', gap: `${SPACE.lg}px` }}>
-          <div style={{ flex: '1 1 auto' }}>
-            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.15em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace' }}>
-              Cryptocurrency Investment Framework
-            </div>
-            <h1 style={{ fontSize: isMobile ? '1.75rem' : TYPE.title, fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1.1, color: PALETTE.textPrimary }}>
-              Conviction Board
-            </h1>
-            <div style={{ fontSize: TYPE.body, color: PALETTE.textSecondary, marginTop: `${SPACE.sm}px`, fontFamily: 'Georgia, serif', lineHeight: TYPE.snug }}>
-              Multi-dimensional scoring for long-term crypto accumulation. Identifies <em>what</em> to buy based on fundamentals, <em>when</em> to buy based on technicals.
-            </div>
+      {/* Minimal header: title + metadata */}
+      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.lg}px` }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: `${SPACE.sm}px` }}>
+          <h1 style={{ fontSize: isMobile ? '1.5rem' : '1.75rem', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1, color: PALETTE.textPrimary }}>
+            Conviction Board
+          </h1>
+          <div style={{ fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexWrap: 'wrap' }}>
             {generatedAt && (
-              <div style={{ fontSize: TYPE.small, color: isStale(generatedAt, thresholds.stale_hours) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexWrap: 'wrap' }}>
+              <>
                 {isStale(generatedAt, thresholds.stale_hours) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
-                <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt, thresholds.stale_hours) ? ' · Data may be stale' : ''}</span>
-              </div>
+                <span style={{ color: isStale(generatedAt, thresholds.stale_hours) ? '#d49a6a' : PALETTE.textMuted }}>
+                  {relativeTime(generatedAt)}
+                </span>
+              </>
+            )}
+            {gli && gli.enabled && gli.source !== 'fallback' && (
+              <span style={{ color: gli.downtrend ? '#d49a6a' : '#6a9a90' }}>
+                · GLI {gli.downtrend ? '▼' : '▲'}
+              </span>
             )}
           </div>
-          {strongCount > 0 && (
-            <div style={{ padding: `${SPACE.md}px ${SPACE.base}px`, background: '#0f2028', border: '1px solid #4ac0e0', display: 'inline-flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexShrink: 0 }}>
-              <Zap size={14} color="#4ac0e0" fill="#4ac0e0" strokeWidth={1.75} />
-              <span style={{ fontSize: TYPE.caption, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4ac0e0', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>
-                {strongCount} Strong Accumulate signal{strongCount > 1 ? 's' : ''} active
-              </span>
-            </div>
-          )}
         </div>
       </div>
 
-      <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} />
+      <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} strongCount={strongCount} gli={gli} />
 
-      <ActionLegend isMobile={isMobile} />
-
-      {gli && gli.enabled && gli.source !== 'fallback' && (
-        <div style={{
-          maxWidth: '1400px',
-          margin: `0 auto ${SPACE.lg}px`,
-          fontSize: TYPE.small,
-          color: gli.downtrend ? '#d49a6a' : '#6a9a90',
-          fontFamily: 'ui-monospace, monospace',
-          display: 'flex',
-          alignItems: 'center',
-          gap: `${SPACE.sm}px`,
-        }}>
-          <Info size={14} strokeWidth={1.5} />
-          <span>
-            Global Liquidity {gli.downtrend ? '▼ contracting' : '▲ expanding'}
-            {gli.downtrend && ' — strong-accumulate signals downgraded to accumulate'}
-          </span>
-        </div>
-      )}
-
-      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, display: 'flex', gap: isMobile ? `${SPACE.xs}px` : `${SPACE.sm}px`, flexWrap: 'nowrap' }}>
+      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.base}px`, display: 'flex', gap: `${SPACE.xs}px`, flexWrap: 'nowrap' }}>
         {[
-          { id: 'all', label: 'All', mobileLabel: 'All' },
-          { id: 'leader', label: 'Leaders', mobileLabel: 'Lead' },
-          { id: 'runner-up', label: 'Runner-ups', mobileLabel: 'Run' },
-          { id: 'observation', label: 'Observation', mobileLabel: 'Obs' },
+          { id: 'all', label: 'All' },
+          { id: 'leader', label: 'Leaders' },
+          { id: 'runner-up', label: 'Runner-ups' },
+          { id: 'observation', label: 'Observation' },
         ].map(t => (
           <button
             key={t.id}
             onClick={() => setActiveTier(t.id)}
             style={{
               background: activeTier === t.id ? PALETTE.textPrimary : 'transparent',
-              color: activeTier === t.id ? PALETTE.bg : PALETTE.textPrimary,
-              border: `1px solid ${PALETTE.borderStrong}`,
-              padding: isMobile ? `${SPACE.sm}px ${SPACE.md}px` : `${SPACE.sm}px ${SPACE.base}px`,
-              minHeight: isMobile ? '40px' : 'auto',
-              fontSize: isMobile ? TYPE.caption : TYPE.small,
-              letterSpacing: isMobile ? '0.04em' : '0.06em',
+              color: activeTier === t.id ? PALETTE.bg : PALETTE.textMuted,
+              border: 'none',
+              padding: `${SPACE.xs}px ${SPACE.md}px`,
+              minHeight: isMobile ? '36px' : 'auto',
+              fontSize: TYPE.caption,
+              letterSpacing: '0.06em',
               textTransform: 'uppercase',
               fontFamily: 'ui-monospace, monospace',
               cursor: 'pointer',
               flex: isMobile ? 1 : 'none',
             }}
           >
-            {isMobile ? t.mobileLabel : t.label}
+            {t.label}
           </button>
         ))}
       </div>
@@ -1178,8 +1157,10 @@ function Dashboard() {
         })}
       </div>
 
+      {/* Footer with reference info */}
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.03em', lineHeight: TYPE.relaxed }}>
+        <ActionLegend isMobile={isMobile} />
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(240px, 1fr))', gap: `${SPACE.lg}px`, fontSize: TYPE.small, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.03em', lineHeight: TYPE.relaxed, marginTop: `${SPACE.lg}px` }}>
           <div>
             <div style={{ color: PALETTE.textSecondary, marginBottom: `${SPACE.xs}px`, fontWeight: 500 }}>Scoring</div>
             Daily conviction framework. Data refreshed at 12:00 UTC.
