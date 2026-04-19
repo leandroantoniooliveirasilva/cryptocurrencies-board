@@ -919,16 +919,16 @@ function StrategySection({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div style={{ marginBottom: `${SPACE.xl}px` }}>
+    <div style={{ marginBottom: `${SPACE.lg}px` }}>
       {/* Summary - always visible */}
       <div style={{
-        fontSize: TYPE.body,
+        fontSize: TYPE.small,
         color: PALETTE.textSecondary,
         fontFamily: 'Georgia, serif',
         lineHeight: TYPE.relaxed,
-        marginBottom: `${SPACE.md}px`,
+        marginBottom: `${SPACE.sm}px`,
       }}>
-        A conviction scoring system for patient accumulation. Scores assets across five dimensions to identify <em>what</em> to buy based on fundamentals, uses RSI and Wyckoff analysis to determine <em>when</em> to buy based on technicals.
+        Fundamentals identify <em>what</em> to buy, technicals determine <em>when</em>.
       </div>
 
       {/* Expand/collapse button */}
@@ -1581,9 +1581,9 @@ function Dashboard() {
       color: PALETTE.textPrimary,
       padding: isMobile ? `${SPACE.lg}px ${SPACE.base}px` : `${SPACE['2xl']}px ${SPACE.lg}px`,
     }}>
-      {/* Minimal header: title + metadata */}
+      {/* Header: title + timestamp + description */}
       <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.lg}px` }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: `${SPACE.sm}px` }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: `${SPACE.sm}px`, marginBottom: `${SPACE.sm}px` }}>
           <h1 style={{ fontSize: isMobile ? '1.5rem' : '1.75rem', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1, color: PALETTE.textPrimary }}>
             Conviction Board
           </h1>
@@ -1596,13 +1596,9 @@ function Dashboard() {
                 </span>
               </>
             )}
-            {gli && gli.enabled && gli.source !== 'fallback' && (
-              <span style={{ color: gli.downtrend ? '#d49a6a' : '#6a9a90' }}>
-                · GLI {gli.downtrend ? '▼' : '▲'}
-              </span>
-            )}
           </div>
         </div>
+        <StrategySection isMobile={isMobile} />
       </div>
 
       <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} strongCount={strongCount} gli={gli} rs={rs} />
@@ -1654,10 +1650,30 @@ function Dashboard() {
         })}
       </div>
 
-      {/* Footer with strategy and reference info */}
+      {/* Footer with reference info */}
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
-        <StrategySection isMobile={isMobile} />
         <ActionLegend isMobile={isMobile} />
+
+        {/* GLI indicator */}
+        {gli && gli.enabled && gli.source !== 'fallback' && (
+          <div style={{
+            marginTop: `${SPACE.base}px`,
+            padding: `${SPACE.sm}px ${SPACE.md}px`,
+            background: 'transparent',
+            border: `1px solid ${PALETTE.border}`,
+            fontSize: TYPE.caption,
+            color: gli.downtrend ? '#d49a6a' : '#6a9a90',
+            fontFamily: 'ui-monospace, monospace',
+            letterSpacing: '0.06em',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: `${SPACE.sm}px`,
+          }}>
+            <span style={{ textTransform: 'uppercase' }}>GLI {gli.downtrend ? '▼ Contracting' : '▲ Expanding'}</span>
+            <span style={{ color: PALETTE.textMuted }}>({gli.offset_days}d offset)</span>
+          </div>
+        )}
+
         <RelativeStrengthSection assets={assets} rs={rs} isMobile={isMobile} />
       </div>
     </div>
