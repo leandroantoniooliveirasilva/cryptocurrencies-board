@@ -799,14 +799,8 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
   const hasActions = actionableAssets.length > 0;
   const showGliWarning = gli && gli.enabled && gli.downtrend && gli.source !== 'fallback';
 
-  // Count assets underperforming BTC
-  const underperformingAssets = assets.filter(a =>
-    a.rs_vs_btc && a.rs_vs_btc.underperforming && a.symbol !== 'BTC'
-  );
-  const showRsWarning = rs && rs.enabled && underperformingAssets.length > 0;
-
-  // If no actions and no warnings, show nothing
-  if (!hasActions && !showGliWarning && !showRsWarning) return null;
+  // If no actions and no GLI warning, show nothing
+  if (!hasActions && !showGliWarning) return null;
 
   return (
     <div style={{
@@ -831,35 +825,6 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
         }}>
           <Info size={14} strokeWidth={1.5} />
           <span>GLI contracting — strong-accumulate signals downgraded</span>
-        </div>
-      )}
-
-      {/* RS warning banner for underperforming assets */}
-      {showRsWarning && (
-        <div style={{
-          padding: `${SPACE.sm}px ${SPACE.md}px`,
-          background: 'rgba(200, 150, 120, 0.1)',
-          border: '1px solid #c89678',
-          fontSize: TYPE.small,
-          color: '#c89678',
-          fontFamily: 'ui-monospace, monospace',
-          display: 'flex',
-          alignItems: 'center',
-          gap: `${SPACE.sm}px`,
-          flexWrap: 'wrap',
-        }}>
-          <Info size={14} strokeWidth={1.5} />
-          <span>
-            Underperforming BTC ({rs.lookback_days}d, &gt;{rs.threshold_pct}%):
-            {' '}
-            {underperformingAssets.map((a, i) => (
-              <span key={a.symbol}>
-                {i > 0 && ', '}
-                <span style={{ fontWeight: 600 }}>{a.symbol}</span>
-                <span style={{ opacity: 0.7 }}> ({(a.rs_vs_btc.change_pct * 100).toFixed(0)}%)</span>
-              </span>
-            ))}
-          </span>
         </div>
       )}
 
@@ -1240,6 +1205,139 @@ function ActionLegend({ isMobile }) {
   );
 }
 
+function RelativeStrengthSection({ assets, rs, isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+
+  // Filter to assets with RS data (excluding BTC)
+  const assetsWithRs = assets.filter(a => a.rs_vs_btc && a.symbol !== 'BTC');
+  const underperforming = assetsWithRs.filter(a => a.rs_vs_btc.underperforming);
+  const total = assetsWithRs.length;
+  const count = underperforming.length;
+
+  // Don't render if RS is disabled or no data
+  if (!rs || !rs.enabled || total === 0) return null;
+
+  const lookbackDays = rs.lookback_days || 90;
+
+  // Sort underperforming by severity (most negative first)
+  const sorted = [...underperforming].sort((a, b) => {
+    const aChange = a.rs_vs_btc.change_pct || 0;
+    const bChange = b.rs_vs_btc.change_pct || 0;
+    return aChange - bChange; // Most negative first
+  });
+
+  return (
+    <div style={{ marginTop: `${SPACE.base}px` }}>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: `1px solid ${PALETTE.border}`,
+          color: count > 0 ? '#c89678' : PALETTE.textMuted,
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          fontSize: TYPE.caption,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+        }}>▸</span>
+        {count}/{total} underperforming BTC ({lookbackDays}d)
+      </button>
+
+      {expanded && (
+        <div style={{
+          marginTop: `${SPACE.lg}px`,
+          padding: `${SPACE.lg}px`,
+          background: PALETTE.cardBg,
+          border: `1px solid ${PALETTE.border}`,
+        }}>
+          {count === 0 ? (
+            <div style={{
+              fontSize: TYPE.small,
+              color: PALETTE.textMuted,
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+            }}>
+              All assets are performing at or above BTC over the {lookbackDays}-day lookback.
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: `${SPACE.md}px`,
+            }}>
+              {sorted.map(asset => {
+                const changePct = asset.rs_vs_btc.change_pct || 0;
+                const tierConfig = TIER_CONFIG[asset.tier];
+                return (
+                  <div key={asset.symbol} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: `${SPACE.sm}px`,
+                    padding: `${SPACE.sm}px ${SPACE.md}px`,
+                    background: PALETTE.cardInset,
+                  }}>
+                    <span style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: TYPE.body,
+                      color: PALETTE.textPrimary,
+                      minWidth: '60px',
+                    }}>
+                      {asset.symbol}
+                    </span>
+                    <span style={{
+                      fontSize: TYPE.caption,
+                      color: tierConfig?.accent || PALETTE.textMuted,
+                      fontFamily: 'ui-monospace, monospace',
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      opacity: 0.7,
+                    }}>
+                      {asset.tier}
+                    </span>
+                    <span style={{
+                      marginLeft: 'auto',
+                      fontSize: TYPE.small,
+                      color: '#c89678',
+                      fontFamily: 'ui-monospace, monospace',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}>
+                      <TrendingDown size={12} strokeWidth={2} />
+                      {(changePct * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div style={{
+            marginTop: `${SPACE.md}px`,
+            fontSize: TYPE.caption,
+            color: PALETTE.textMuted,
+            fontFamily: 'ui-monospace, monospace',
+            fontStyle: 'italic',
+          }}>
+            Assets underperforming BTC by ≥{((rs.underperformance_threshold || 0.1) * 100).toFixed(0)}% have strong-accumulate signals suppressed.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LoadingState() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: '16px' }}>
@@ -1489,6 +1587,7 @@ function Dashboard() {
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px` }}>
         <StrategySection isMobile={isMobile} />
         <ActionLegend isMobile={isMobile} />
+        <RelativeStrengthSection assets={assets} rs={rs} isMobile={isMobile} />
       </div>
     </div>
   );
