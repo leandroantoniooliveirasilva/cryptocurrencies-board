@@ -69,6 +69,7 @@ infrastructure (QNT):     Inst 35%, Reg 25%, Supply 20%, Rev 10%, Wyck 10%
 
 **Filters** (downgrade to regular accumulate):
 - GLI contracting (GLI today < GLI 75 days ago)
+- RS underperforming BTC (asset/BTC ratio declined ≥10% over 30 days)
 - Weekly RSI falling from elevated levels (>55, dropped >8 points)
 
 **Accumulate** triggers:
@@ -87,13 +88,20 @@ Tiers are computed automatically from composite scores:
 
 Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
 
-### Macro Filters
+### Filters
 
 **GLI (Global Liquidity Index)**:
 - Compares current GLI vs 75 days ago
 - If contracting → strong-accumulate downgrades to accumulate
 - Based on 56-90 day lag between liquidity inflection and BTC tops/bottoms
 - Sources: Manual override, TradingView, FRED M2, Fallback (neutral)
+
+**RS (Relative Strength vs BTC)**:
+- Compares each asset's price ratio to BTC over lookback period (default 30 days)
+- If underperforming BTC by ≥threshold (default 10%) → strong-accumulate downgrades to accumulate
+- Rationale: if an asset is underperforming BTC, you may be better off just holding BTC
+- Dashboard shows warning banner and indicator on affected asset cards
+- BTC excluded (RS vs itself is always 1.0)
 
 ### Display Threshold
 
