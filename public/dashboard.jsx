@@ -1068,16 +1068,6 @@ function Dashboard() {
               <div style={{ fontSize: TYPE.small, color: isStale(generatedAt, thresholds.stale_hours) ? '#d49a6a' : PALETTE.textMuted, marginTop: `${SPACE.sm}px`, fontFamily: 'ui-monospace, monospace', display: 'flex', alignItems: 'center', gap: `${SPACE.sm}px`, flexWrap: 'wrap' }}>
                 {isStale(generatedAt, thresholds.stale_hours) && <AlertCircle size={12} color="#d49a6a" strokeWidth={2} />}
                 <span>Updated {relativeTime(generatedAt)}{isStale(generatedAt, thresholds.stale_hours) ? ' · Data may be stale' : ''}</span>
-                {gli && gli.enabled && gli.source !== 'fallback' && (
-                  <span style={{
-                    color: gli.downtrend ? '#d49a6a' : '#6a9a90',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: `${SPACE.xs}px`,
-                  }}>
-                    · GLI {gli.downtrend ? '▼ contracting' : '▲ expanding'}
-                  </span>
-                )}
               </div>
             )}
           </div>
@@ -1095,6 +1085,25 @@ function Dashboard() {
       <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} />
 
       <ActionLegend isMobile={isMobile} />
+
+      {gli && gli.enabled && gli.source !== 'fallback' && (
+        <div style={{
+          maxWidth: '1400px',
+          margin: `0 auto ${SPACE.lg}px`,
+          fontSize: TYPE.small,
+          color: gli.downtrend ? '#d49a6a' : '#6a9a90',
+          fontFamily: 'ui-monospace, monospace',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+        }}>
+          <Info size={14} strokeWidth={1.5} />
+          <span>
+            Global Liquidity {gli.downtrend ? '▼ contracting' : '▲ expanding'}
+            {gli.downtrend && ' — strong-accumulate signals downgraded to accumulate'}
+          </span>
+        </div>
+      )}
 
       <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.xl}px`, display: 'flex', gap: isMobile ? `${SPACE.xs}px` : `${SPACE.sm}px`, flexWrap: 'nowrap' }}>
         {[
