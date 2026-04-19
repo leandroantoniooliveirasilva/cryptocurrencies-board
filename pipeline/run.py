@@ -503,6 +503,12 @@ def _build_detailed_reasoning(
     # 5. Action reasoning
     lines.append("")
     lines.append("CURRENT ACTION:")
+    # Build stand-aside reason based on actual trigger (distribution vs sharp decline)
+    if is_distribution:
+        stand_aside_reason = "STAND ASIDE is active due to distribution phase detection. Capital preservation takes priority."
+    else:
+        stand_aside_reason = "STAND ASIDE is active due to sharp composite decline. This may be a temporary pullback, but capital preservation takes priority until structure stabilizes."
+
     action_reasoning = {
         "strong-accumulate": f"STRONG ACCUMULATE is firing because daily RSI shows a short-term oversold flush while weekly RSI and composite score remain healthy. This dislocation within an otherwise solid structure represents a high-conviction entry window.",
         "accumulate": f"ACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.",
@@ -510,7 +516,7 @@ def _build_detailed_reasoning(
         "hold": f"HOLD status indicates the position is active with no current add or trim signals. Current allocation is appropriate—patience is the strategy.",
         "await": f"AWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.",
         "observe": f"OBSERVE status reflects Observation-tier placement—tracked for research, not positioned. No action required.",
-        "stand-aside": f"STAND ASIDE is active due to distribution risk or sharp negative trend. Capital preservation takes priority regardless of price action.",
+        "stand-aside": stand_aside_reason,
     }
     lines.append(action_reasoning.get(action, f"Current action: {action}"))
 

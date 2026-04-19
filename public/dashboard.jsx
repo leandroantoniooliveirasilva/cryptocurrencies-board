@@ -69,7 +69,10 @@ const PALETTE = {
   border: '#3a342d',
   borderStrong: '#55493c',
   textPrimary: '#ede7d9',
-  textSecondary: '#a39a8a',
+  // Was #a39a8a (~6.4:1) → now ~9.6:1 for comfortable long-form reading
+  // on dark backgrounds. Keeps warm tint to match palette. Avoids pure
+  // white to prevent halation on Georgia italic body text.
+  textSecondary: '#d3c8b4',
   textMuted: '#958b7b', // Was #6e665a (3.1:1) → now 4.6:1 contrast
   trackBg: '#2a2620',
 };
@@ -354,7 +357,14 @@ function getActionReasoning(asset) {
       return `Observation tier — scanning only. ${composite >= 70 ? 'Composite healthy but' : 'Composite at ' + composite + ','} no position warranted at this time.`;
     case 'stand-aside': {
       const weeklyElevated = hasRsi(rsiWeekly) && rsiWeekly >= 70;
-      return `Distribution risk detected${delta < -3 ? ` with ${Math.abs(delta)}-point weekly decline` : ''}${weeklyElevated ? ` and elevated weekly RSI (${rsiWeekly})` : ''}. Do not engage regardless of price action.`;
+      const wyckoff = (asset.wyckoff_phase || '').toLowerCase();
+      const isDistribution = wyckoff.includes('distribution');
+      const reason = isDistribution
+        ? 'Distribution phase detected'
+        : delta < -3
+          ? `Sharp composite decline (${Math.abs(delta)} pts this week)`
+          : 'Structural weakness detected';
+      return `${reason}${weeklyElevated ? ` with elevated weekly RSI (${rsiWeekly})` : ''}. Capital preservation takes priority — do not engage.`;
     }
     default:
       return null;
@@ -494,7 +504,7 @@ function DetailModal({ asset, onClose, isMobile }) {
               <div style={{ fontSize: TYPE.small, letterSpacing: '0.08em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: cfg?.fg || PALETTE.textPrimary }}>
                 {cfg?.label}
               </div>
-              <div style={{ fontSize: TYPE.caption, color: cfg?.fg || PALETTE.textSecondary, opacity: 0.8, fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>
+              <div style={{ fontSize: TYPE.caption, color: cfg?.fg || PALETTE.textSecondary, fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>
                 {cfg?.desc}
               </div>
             </div>
@@ -506,7 +516,7 @@ function DetailModal({ asset, onClose, isMobile }) {
             color: PALETTE.textSecondary,
             fontFamily: 'Georgia, serif',
             fontStyle: 'italic',
-            lineHeight: TYPE.normal,
+            lineHeight: TYPE.relaxed,
             marginBottom: SPACE.xl,
           }}>
             {getActionReasoning(asset)}
@@ -566,7 +576,7 @@ function DetailModal({ asset, onClose, isMobile }) {
               {asset.wyckoff_phase}
             </div>
             {asset.note && (
-              <div style={{ fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.normal }}>
+              <div style={{ fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed }}>
                 {asset.note}
               </div>
             )}
@@ -1115,7 +1125,7 @@ function ActionLegend({ isMobile }) {
     { key: 'hold', text: 'Active position. No signal. Patience by design.' },
     { key: 'await', text: 'Runner-up building signal. Not yet activated.' },
     { key: 'observe', text: 'Observation tier. Scanning only.' },
-    { key: 'stand-aside', text: 'Distribution risk. Do not engage.' },
+    { key: 'stand-aside', text: 'Distribution phase or sharp composite decline (≥5 pts/week). Capital preservation.' },
   ];
 
   return (
