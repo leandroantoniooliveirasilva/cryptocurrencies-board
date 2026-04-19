@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T15:37:16.244073+00:00",
+  "generated_at": "2026-04-19T17:15:03.745707+00:00",
   "snapshot_date": "2026-04-19",
   "framework_version": "2.0",
   "weight_profiles": {
@@ -85,14 +85,14 @@
       "trend_30d": [
         86
       ],
-      "rsi_daily": 61.6,
-      "rsi_weekly": 46.3,
+      "rsi_daily": 61.7,
+      "rsi_weekly": 46.1,
       "action": "accumulate",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Strong institutional adoption. Regulatory clarity. Wyckoff spring zone",
-      "note_detailed": "BTC holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nAs a store-of-value asset, the scoring heavily weights institutional adoption (40%) and supply dynamics (25%), with less emphasis on protocol revenue.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (92/100, 40% weight): Excellent institutional presence. ETF flows, corporate treasuries, major custody support\n\u2022 Regulatory (88/100, 15% weight): Clear regulatory standing. ETF approved, commodity classification in most jurisdictions\n\u2022 Supply/On-Chain (85/100, 25% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 15% weight): Currently in Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 61.6 sits in neutral range.\n\u2022 Weekly RSI at 46.3 remains in healthy range.\n\nCURRENT ACTION:\nACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.\n\nCOMPOSITE SCORE: 86/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
+      "note_detailed": "BTC holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nAs a store-of-value asset, the scoring heavily weights institutional adoption (40%) and supply dynamics (25%), with less emphasis on protocol revenue.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (92/100, 40% weight): Excellent institutional presence. ETF flows, corporate treasuries, major custody support\n\u2022 Regulatory (88/100, 15% weight): Clear regulatory standing. ETF approved, commodity classification in most jurisdictions\n\u2022 Supply/On-Chain (85/100, 25% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 15% weight): Currently in Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 61.7 sits in neutral range.\n\u2022 Weekly RSI at 46.1 remains in healthy range.\n\nCURRENT ACTION:\nACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.\n\nCOMPOSITE SCORE: 86/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
     },
     {
       "symbol": "LINK",
@@ -122,14 +122,14 @@
       "trend_30d": [
         80
       ],
-      "rsi_daily": 55.7,
-      "rsi_weekly": 39.4,
+      "rsi_daily": 54.7,
+      "rsi_weekly": 39.5,
       "action": "accumulate",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Strong institutional adoption. Wyckoff spring zone",
-      "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (68/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 5% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 55.7 sits in neutral range.\n\u2022 Weekly RSI at 39.4 remains in healthy range.\n\nCURRENT ACTION:\nACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.\n\nCOMPOSITE SCORE: 80/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
+      "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (68/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 5% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 54.7 sits in neutral range.\n\u2022 Weekly RSI at 39.5 remains in healthy range.\n\nCURRENT ACTION:\nACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.\n\nCOMPOSITE SCORE: 80/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
     },
     {
       "symbol": "XRP",
@@ -159,14 +159,14 @@
       "trend_30d": [
         74
       ],
-      "rsi_daily": 57.4,
+      "rsi_daily": 56.6,
       "rsi_weekly": 36.6,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Wyckoff spring zone",
-      "note_detailed": "XRP is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 35% weight): Strong institutional presence. Banking partnerships, payment rails focus\n\u2022 Regulatory (82/100, 25% weight): Favorable regulatory standing. SEC lawsuit partially resolved favorably\n\u2022 Supply/On-Chain (58/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 57.4 sits in neutral range.\n\u2022 Weekly RSI at 36.6 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 74/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "XRP is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 35% weight): Strong institutional presence. Banking partnerships, payment rails focus\n\u2022 Regulatory (82/100, 25% weight): Favorable regulatory standing. SEC lawsuit partially resolved favorably\n\u2022 Supply/On-Chain (58/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 56.6 sits in neutral range.\n\u2022 Weekly RSI at 36.6 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 74/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "HYPE",
@@ -196,14 +196,14 @@
       "trend_30d": [
         71
       ],
-      "rsi_daily": 66.0,
-      "rsi_weekly": 65.4,
+      "rsi_daily": 64.7,
+      "rsi_weekly": 64.5,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "Revenue-per-user sector leader",
-      "note_detailed": "HYPE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (72/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (84/100, 35% weight): Strong fee generation indicating sustainable protocol economics.\n\u2022 Wyckoff (82/100, 5% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 66.0 sits in neutral range.\n\u2022 Weekly RSI at 65.4 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 71/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "HYPE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (72/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (84/100, 35% weight): Strong fee generation indicating sustainable protocol economics.\n\u2022 Wyckoff (82/100, 5% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 64.7 sits in neutral range.\n\u2022 Weekly RSI at 64.5 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 71/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "HBAR",
@@ -233,14 +233,14 @@
       "trend_30d": [
         70
       ],
-      "rsi_daily": 49.8,
-      "rsi_weekly": 28.4,
+      "rsi_daily": 48.9,
+      "rsi_weekly": 27.6,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Wyckoff spring zone",
-      "note_detailed": "HBAR is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (68/100, 35% weight): Moderate institutional presence. Enterprise council, limited retail-focused\n\u2022 Regulatory (78/100, 25% weight): Favorable regulatory standing. Enterprise governance structure helps compliance\n\u2022 Supply/On-Chain (62/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 49.8 sits in neutral range.\n\u2022 Weekly RSI at 28.4 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 70/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "HBAR is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (68/100, 35% weight): Moderate institutional presence. Enterprise council, limited retail-focused\n\u2022 Regulatory (78/100, 25% weight): Favorable regulatory standing. Enterprise governance structure helps compliance\n\u2022 Supply/On-Chain (62/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 48.9 sits in neutral range.\n\u2022 Weekly RSI at 27.6 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 70/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "ETH",
@@ -249,7 +249,7 @@
       "asset_type": "smart-contract",
       "scores": {
         "institutional": 82,
-        "revenue": 35,
+        "revenue": 43,
         "regulatory": 92,
         "supply": 72,
         "wyckoff": 58
@@ -261,23 +261,60 @@
         "regulatory": 0.15,
         "wyckoff": 0.1
       },
-      "composite": 67,
-      "composite_last_week": 67,
+      "composite": 69,
+      "composite_last_week": 69,
       "wyckoff_phase": "Accumulation Phase B",
       "trend": [
-        67
+        69
       ],
       "trend_30d": [
-        67
+        69
       ],
-      "rsi_daily": 60.4,
-      "rsi_weekly": 46.2,
+      "rsi_daily": 60.6,
+      "rsi_weekly": 46.3,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "Regulatory clarity",
-      "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (82/100, 30% weight): Strong institutional presence. Ethereum has robust institutional adoption with spot ETFs holding $12-16B AUM (BlackRock ETHA alone >$6.5B), staked ETH ETF products launching from BlackRock and VanEck, corporate treasuries holding 1M+ ETH, and major TradFi integration via JP Morgan's tokenized fund and Robinhood L2. Second only to Bitcoin in institutional crypto infrastructure.\n\u2022 Regulatory (92/100, 15% weight): Clear regulatory standing. ETH was formally classified as a digital commodity by SEC-CFTC joint ruling in March 2026, removing securities concerns. Spot ETH ETFs with staking are live in the US, EU MiCA framework provides clarity, and the CLARITY Act codifying this status has 72% odds of passing in 2026.\n\u2022 Supply/On-Chain (72/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (35/100, 25% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (58/100, 10% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 60.4 sits in neutral range.\n\u2022 Weekly RSI at 46.2 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 67/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (82/100, 30% weight): Strong institutional presence. Ethereum has robust institutional adoption with spot ETFs holding $12-16B AUM (BlackRock ETHA alone >$6.5B), staked ETH ETF products launching from BlackRock and VanEck, corporate treasuries holding 1M+ ETH, and major TradFi integration via JP Morgan's tokenized fund and Robinhood L2. Second only to Bitcoin in institutional crypto infrastructure.\n\u2022 Regulatory (92/100, 15% weight): Clear regulatory standing. ETH was formally classified as a digital commodity by SEC-CFTC joint ruling in March 2026, removing securities concerns. Spot ETH ETFs with staking are live in the US, EU MiCA framework provides clarity, and the CLARITY Act codifying this status has 72% odds of passing in 2026.\n\u2022 Supply/On-Chain (72/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (43/100, 25% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (58/100, 10% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 60.6 sits in neutral range.\n\u2022 Weekly RSI at 46.3 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 69/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+    },
+    {
+      "symbol": "SOL",
+      "name": "Solana",
+      "tier": "runner-up",
+      "asset_type": "smart-contract",
+      "scores": {
+        "institutional": 84,
+        "revenue": 56,
+        "regulatory": 78,
+        "supply": 62,
+        "wyckoff": 58
+      },
+      "weights": {
+        "institutional": 0.3,
+        "revenue": 0.25,
+        "supply": 0.2,
+        "regulatory": 0.15,
+        "wyckoff": 0.1
+      },
+      "composite": 69,
+      "composite_last_week": 69,
+      "wyckoff_phase": "Accumulation Phase B",
+      "trend": [
+        69
+      ],
+      "trend_30d": [
+        69
+      ],
+      "rsi_daily": 52.9,
+      "rsi_weekly": 34.0,
+      "action": "await",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 0,
+      "missing_dimensions": 0,
+      "note": "High-throughput L1, DeFi ecosystem",
+      "note_detailed": "SOL is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (84/100, 30% weight): Strong institutional presence. Growing fund holdings, major VC backing\n\u2022 Regulatory (78/100, 15% weight): Favorable regulatory standing. Growing institutional interest, no adverse rulings\n\u2022 Supply/On-Chain (62/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (56/100, 25% weight): Moderate revenue, typical for growth-phase protocols.\n\u2022 Wyckoff (58/100, 10% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.9 sits in neutral range.\n\u2022 Weekly RSI at 34.0 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 69/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "QNT",
@@ -307,14 +344,14 @@
       "trend_30d": [
         64
       ],
-      "rsi_daily": 53.0,
-      "rsi_weekly": 50.6,
+      "rsi_daily": 51.8,
+      "rsi_weekly": 49.7,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Enterprise interoperability",
-      "note_detailed": "QNT is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 35% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 25% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (78/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (65/100, 10% weight): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.0 sits in neutral range.\n\u2022 Weekly RSI at 50.6 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 64/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "QNT is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 35% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 25% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (78/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (65/100, 10% weight): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.8 sits in neutral range.\n\u2022 Weekly RSI at 49.7 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 64/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "KAS",
@@ -344,125 +381,14 @@
       "trend_30d": [
         63
       ],
-      "rsi_daily": 56.0,
-      "rsi_weekly": 48.2,
+      "rsi_daily": 54.5,
+      "rsi_weekly": 47.8,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Store of value, supply-focused",
-      "note_detailed": "KAS is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a store-of-value asset, the scoring heavily weights institutional adoption (40%) and supply dynamics (25%), with less emphasis on protocol revenue.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 40% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (78/100, 25% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (58/100, 15% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 56.0 sits in neutral range.\n\u2022 Weekly RSI at 48.2 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 63/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
-    },
-    {
-      "symbol": "SOL",
-      "name": "Solana",
-      "tier": "runner-up",
-      "asset_type": "smart-contract",
-      "scores": {
-        "institutional": 84,
-        "revenue": 33,
-        "regulatory": 78,
-        "supply": 62,
-        "wyckoff": 58
-      },
-      "weights": {
-        "institutional": 0.3,
-        "revenue": 0.25,
-        "supply": 0.2,
-        "regulatory": 0.15,
-        "wyckoff": 0.1
-      },
-      "composite": 63,
-      "composite_last_week": 63,
-      "wyckoff_phase": "Accumulation Phase B",
-      "trend": [
-        63
-      ],
-      "trend_30d": [
-        63
-      ],
-      "rsi_daily": 53.2,
-      "rsi_weekly": 34.4,
-      "action": "await",
-      "strong_accumulate_days_active": 0,
-      "label_changed_days_ago": 0,
-      "missing_dimensions": 0,
-      "note": "High-throughput L1, DeFi ecosystem",
-      "note_detailed": "SOL is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (84/100, 30% weight): Strong institutional presence. Growing fund holdings, major VC backing\n\u2022 Regulatory (78/100, 15% weight): Favorable regulatory standing. Growing institutional interest, no adverse rulings\n\u2022 Supply/On-Chain (62/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (33/100, 25% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (58/100, 10% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.2 sits in neutral range.\n\u2022 Weekly RSI at 34.4 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 63/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
-    },
-    {
-      "symbol": "SUI",
-      "name": "Sui",
-      "tier": "runner-up",
-      "asset_type": "smart-contract",
-      "scores": {
-        "institutional": 72,
-        "revenue": null,
-        "regulatory": 72,
-        "supply": 42,
-        "wyckoff": 58
-      },
-      "weights": {
-        "institutional": 0.3,
-        "revenue": 0.25,
-        "supply": 0.2,
-        "regulatory": 0.15,
-        "wyckoff": 0.1
-      },
-      "composite": 62,
-      "composite_last_week": 62,
-      "wyckoff_phase": "Accumulation Phase B",
-      "trend": [
-        62
-      ],
-      "trend_30d": [
-        62
-      ],
-      "rsi_daily": 54.3,
-      "rsi_weekly": 42.0,
-      "action": "await",
-      "strong_accumulate_days_active": 0,
-      "label_changed_days_ago": 0,
-      "missing_dimensions": 1,
-      "note": "Smart contract platform",
-      "note_detailed": "SUI is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 30% weight): Strong institutional presence. SUI has achieved significant institutional adoption with multiple ETFs from Grayscale, 21Shares, Bitwise launching in 2026, CME futures contracts approved, custody from major providers (Coinbase, Fireblocks, Sygnum, Crypto.com), and notable corporate treasury adoption including Mill City Ventures' $450M investment and presence on institutional platforms, though still below Bitcoin/Ethereum levels.\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. SUI has achieved significant regulatory progress with multiple spot ETF launches in the US (21Shares, Grayscale, Canary Capital) in early 2026 and no SEC enforcement actions, though definitive securities classification clarity from regulators remains absent despite strong institutional adoption signals.\n\u2022 Supply/On-Chain (42/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (58/100, 10% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 54.3 sits in neutral range.\n\u2022 Weekly RSI at 42.0 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 62/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
-    },
-    {
-      "symbol": "TAO",
-      "name": "Bittensor",
-      "tier": "runner-up",
-      "asset_type": "infrastructure",
-      "scores": {
-        "institutional": 45,
-        "revenue": null,
-        "regulatory": 68,
-        "supply": 78,
-        "wyckoff": 58
-      },
-      "weights": {
-        "institutional": 0.35,
-        "regulatory": 0.25,
-        "supply": 0.2,
-        "revenue": 0.1,
-        "wyckoff": 0.1
-      },
-      "composite": 60,
-      "composite_last_week": 60,
-      "wyckoff_phase": "Accumulation Phase B",
-      "trend": [
-        60
-      ],
-      "trend_30d": [
-        60
-      ],
-      "rsi_daily": 42.2,
-      "rsi_weekly": 46.2,
-      "action": "await",
-      "strong_accumulate_days_active": 0,
-      "label_changed_days_ago": 0,
-      "missing_dimensions": 1,
-      "note": "Infrastructure/enterprise",
-      "note_detailed": "TAO is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (45/100, 35% weight): Limited institutional presence. Grayscale ETF filing pending SEC approval (decision expected end 2026), $200M Polychain commitment, 19% institutional staking, one corporate treasury adoption (Synaptogenix/TAO Synergies), and Coinbase listing indicate emerging but still early-stage institutional adoption without confirmed ETF approval or major custody provider integration.\n\u2022 Regulatory (68/100, 25% weight): Uncertain regulatory standing. TAO gained SEC-reporting status in March 2026 via Grayscale Trust and has multiple ETF applications pending (decision expected late 2026), with EU MiCAR compliance and UK regulatory clarity emerging. However, securities classification remains unresolved in the US despite positive institutional adoption signals including $691M+ staking commitments and regulated custody solutions.\n\u2022 Supply/On-Chain (78/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (58/100, 10% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 42.2 sits in neutral range.\n\u2022 Weekly RSI at 46.2 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 60/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "KAS is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a store-of-value asset, the scoring heavily weights institutional adoption (40%) and supply dynamics (25%), with less emphasis on protocol revenue.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 40% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (78/100, 25% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (58/100, 15% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 54.5 sits in neutral range.\n\u2022 Weekly RSI at 47.8 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 63/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "XLM",
@@ -492,14 +418,14 @@
       "trend_30d": [
         59
       ],
-      "rsi_daily": 58.2,
-      "rsi_weekly": 38.7,
+      "rsi_daily": 55.8,
+      "rsi_weekly": 37.8,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Wyckoff spring zone",
-      "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 35% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 25% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (52/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 58.2 sits in neutral range.\n\u2022 Weekly RSI at 38.7 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 59/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 35% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 25% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (52/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 55.8 sits in neutral range.\n\u2022 Weekly RSI at 37.8 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 59/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "AVAX",
@@ -529,14 +455,88 @@
       "trend_30d": [
         58
       ],
-      "rsi_daily": 52.1,
-      "rsi_weekly": 37.9,
+      "rsi_daily": 51.1,
+      "rsi_weekly": 37.6,
       "action": "await",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "Wyckoff spring zone",
-      "note_detailed": "AVAX is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (62/100, 30% weight): Moderate institutional presence. Some institutional interest, not tier-1\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. No major regulatory issues, moderate clarity\n\u2022 Supply/On-Chain (68/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (31/100, 25% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.1 sits in neutral range.\n\u2022 Weekly RSI at 37.9 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 58/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "AVAX is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (62/100, 30% weight): Moderate institutional presence. Some institutional interest, not tier-1\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. No major regulatory issues, moderate clarity\n\u2022 Supply/On-Chain (68/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (31/100, 25% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (70/100, 10% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.1 sits in neutral range.\n\u2022 Weekly RSI at 37.6 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 58/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+    },
+    {
+      "symbol": "TAO",
+      "name": "Bittensor",
+      "tier": "runner-up",
+      "asset_type": "infrastructure",
+      "scores": {
+        "institutional": 45,
+        "revenue": null,
+        "regulatory": 68,
+        "supply": 78,
+        "wyckoff": 42
+      },
+      "weights": {
+        "institutional": 0.35,
+        "regulatory": 0.25,
+        "supply": 0.2,
+        "revenue": 0.1,
+        "wyckoff": 0.1
+      },
+      "composite": 58,
+      "composite_last_week": 58,
+      "wyckoff_phase": "Downtrend",
+      "trend": [
+        58
+      ],
+      "trend_30d": [
+        58
+      ],
+      "rsi_daily": 42.8,
+      "rsi_weekly": 45.1,
+      "action": "await",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 0,
+      "missing_dimensions": 1,
+      "note": "Infrastructure/enterprise",
+      "note_detailed": "TAO is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (45/100, 35% weight): Limited institutional presence. Grayscale ETF filing pending SEC approval (decision expected end 2026), $200M Polychain commitment, 19% institutional staking, one corporate treasury adoption (Synaptogenix/TAO Synergies), and Coinbase listing indicate emerging but still early-stage institutional adoption without confirmed ETF approval or major custody provider integration.\n\u2022 Regulatory (68/100, 25% weight): Uncertain regulatory standing. TAO gained SEC-reporting status in March 2026 via Grayscale Trust and has multiple ETF applications pending (decision expected late 2026), with EU MiCAR compliance and UK regulatory clarity emerging. However, securities classification remains unresolved in the US despite positive institutional adoption signals including $691M+ staking commitments and regulated custody solutions.\n\u2022 Supply/On-Chain (78/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (42/100, 10% weight): Currently in Downtrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 42.8 sits in neutral range.\n\u2022 Weekly RSI at 45.1 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 58/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+    },
+    {
+      "symbol": "SUI",
+      "name": "Sui",
+      "tier": "runner-up",
+      "asset_type": "smart-contract",
+      "scores": {
+        "institutional": 72,
+        "revenue": 33,
+        "regulatory": 72,
+        "supply": 42,
+        "wyckoff": 58
+      },
+      "weights": {
+        "institutional": 0.3,
+        "revenue": 0.25,
+        "supply": 0.2,
+        "regulatory": 0.15,
+        "wyckoff": 0.1
+      },
+      "composite": 55,
+      "composite_last_week": 55,
+      "wyckoff_phase": "Accumulation Phase B",
+      "trend": [
+        55
+      ],
+      "trend_30d": [
+        55
+      ],
+      "rsi_daily": 53.1,
+      "rsi_weekly": 41.5,
+      "action": "await",
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 0,
+      "missing_dimensions": 0,
+      "note": "Smart contract platform",
+      "note_detailed": "SUI is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nAs a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 30% weight): Strong institutional presence. SUI has achieved significant institutional adoption with multiple ETFs from Grayscale, 21Shares, Bitwise launching in 2026, CME futures contracts approved, custody from major providers (Coinbase, Fireblocks, Sygnum, Crypto.com), and notable corporate treasury adoption including Mill City Ventures' $450M investment and presence on institutional platforms, though still below Bitcoin/Ethereum levels.\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. SUI has achieved significant regulatory progress with multiple spot ETF launches in the US (21Shares, Grayscale, Canary Capital) in early 2026 and no SEC enforcement actions, though definitive securities classification clarity from regulators remains absent despite strong institutional adoption signals.\n\u2022 Supply/On-Chain (42/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (33/100, 25% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (58/100, 10% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.1 sits in neutral range.\n\u2022 Weekly RSI at 41.5 remains in healthy range.\n\nCURRENT ACTION:\nAWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.\n\nCOMPOSITE SCORE: 55/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "AAVE",
@@ -548,7 +548,7 @@
         "revenue": 34,
         "regulatory": 65,
         "supply": 72,
-        "wyckoff": 75
+        "wyckoff": 70
       },
       "weights": {
         "revenue": 0.35,
@@ -559,21 +559,21 @@
       },
       "composite": 53,
       "composite_last_week": 53,
-      "wyckoff_phase": "Accumulation Phase C",
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         53
       ],
       "trend_30d": [
         53
       ],
-      "rsi_daily": 60.2,
-      "rsi_weekly": 41.7,
+      "rsi_daily": 58.2,
+      "rsi_weekly": 41.2,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "Wyckoff spring zone",
-      "note_detailed": "AAVE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (72/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (34/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (75/100, 5% weight): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 60.2 sits in neutral range.\n\u2022 Weekly RSI at 41.7 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "AAVE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (72/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (34/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (70/100, 5% weight): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 58.2 sits in neutral range.\n\u2022 Weekly RSI at 41.2 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "MORPHO",
@@ -603,14 +603,14 @@
       "trend_30d": [
         51
       ],
-      "rsi_daily": 62.8,
-      "rsi_weekly": 60.0,
+      "rsi_daily": 61.5,
+      "rsi_weekly": 60.5,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "MORPHO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (62/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (30/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (82/100, 5% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 62.8 sits in neutral range.\n\u2022 Weekly RSI at 60.0 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 51/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "MORPHO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (62/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (30/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (82/100, 5% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 61.5 sits in neutral range.\n\u2022 Weekly RSI at 60.5 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 51/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "EIGEN",
@@ -640,14 +640,14 @@
       "trend_30d": [
         51
       ],
-      "rsi_daily": 56.3,
-      "rsi_weekly": 23.4,
+      "rsi_daily": 54.3,
+      "rsi_weekly": 25.1,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "Wyckoff spring zone",
-      "note_detailed": "EIGEN sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (52/100, 35% weight): Moderate institutional presence. EigenLayer raised $241M from top-tier VCs including a16z and Coinbase Ventures. Coinbase Prime offers institutional custody, staking, and trading for EIGEN with enterprise-grade infrastructure. However, no dedicated EIGEN ETF exists, corporate treasury adoption is negligible, and the token dropped 91% in 2025, indicating limited broader institutional conviction beyond initial VC backing.\n\u2022 Regulatory (65/100, 25% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (32/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (30/100, 10% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (75/100, 10% weight): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 56.3 sits in neutral range.\n\u2022 Weekly RSI at 23.4 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 51/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "EIGEN sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (52/100, 35% weight): Moderate institutional presence. EigenLayer raised $241M from top-tier VCs including a16z and Coinbase Ventures. Coinbase Prime offers institutional custody, staking, and trading for EIGEN with enterprise-grade infrastructure. However, no dedicated EIGEN ETF exists, corporate treasury adoption is negligible, and the token dropped 91% in 2025, indicating limited broader institutional conviction beyond initial VC backing.\n\u2022 Regulatory (65/100, 25% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (32/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (30/100, 10% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (75/100, 10% weight): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 54.3 sits in neutral range.\n\u2022 Weekly RSI at 25.1 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 51/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "ENA",
@@ -677,14 +677,14 @@
       "trend_30d": [
         49
       ],
-      "rsi_daily": 72.1,
-      "rsi_weekly": 39.0,
+      "rsi_daily": 69.3,
+      "rsi_weekly": 38.6,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "ENA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. Strong institutional backing from Franklin Templeton, Fidelity, Pantera, Dragonfly, and Polychain with $100M raise; dedicated treasury company StablecoinX raising $895M and planning Nasdaq listing; custody partnerships with Coinbase Prime, Copper, Zodia, and Anchorage; institutional product iUSDe launched; no ETF yet but significant TradFi integration underway.\n\u2022 Regulatory (42/100, 20% weight): Concerning regulatory standing. Ethena faces mixed regulatory signals: BaFin shutdown in EU (April 2025), no clear US legal status for ENA token, but USDtb partnership with federally-chartered Anchorage Digital shows compliance pathway. No ETF filings, though Grayscale candidate listing (April 2026) signals institutional interest. Jurisdictional clarity remains weak.\n\u2022 Supply/On-Chain (62/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (30/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (62/100, 5% weight): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 72.1 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 39.0 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 49/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "ENA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. Strong institutional backing from Franklin Templeton, Fidelity, Pantera, Dragonfly, and Polychain with $100M raise; dedicated treasury company StablecoinX raising $895M and planning Nasdaq listing; custody partnerships with Coinbase Prime, Copper, Zodia, and Anchorage; institutional product iUSDe launched; no ETF yet but significant TradFi integration underway.\n\u2022 Regulatory (42/100, 20% weight): Concerning regulatory standing. Ethena faces mixed regulatory signals: BaFin shutdown in EU (April 2025), no clear US legal status for ENA token, but USDtb partnership with federally-chartered Anchorage Digital shows compliance pathway. No ETF filings, though Grayscale candidate listing (April 2026) signals institutional interest. Jurisdictional clarity remains weak.\n\u2022 Supply/On-Chain (62/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Revenue/Fees (30/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (62/100, 5% weight): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 69.3 sits in neutral range.\n\u2022 Weekly RSI at 38.6 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 49/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "ONDO",
@@ -714,14 +714,14 @@
       "trend_30d": [
         46
       ],
-      "rsi_daily": 50.8,
-      "rsi_weekly": 31.7,
+      "rsi_daily": 49.2,
+      "rsi_weekly": 31.6,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "ONDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (42/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (30/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (58/100, 5% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 50.8 sits in neutral range.\n\u2022 Weekly RSI at 31.7 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 46/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "ONDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 20% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (42/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (30/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (58/100, 5% weight): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 49.2 sits in neutral range.\n\u2022 Weekly RSI at 31.6 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 46/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "JUP",
@@ -751,14 +751,14 @@
       "trend_30d": [
         44
       ],
-      "rsi_daily": 61.5,
-      "rsi_weekly": 43.4,
+      "rsi_daily": 59.0,
+      "rsi_weekly": 42.6,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "JUP sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (22/100, 25% weight): Limited institutional presence. JUP has limited but growing institutional presence: ParaFi Capital made a $35M strategic investment in February 2026 with extended lockup, and JupUSD is backed 90% by BlackRock's BUIDL Fund. However, there are no JUP-specific ETFs, no major custody solutions from traditional providers, and no corporate treasury adoption or integration with traditional finance infrastructure beyond these DeFi-native developments.\n\u2022 Regulatory (35/100, 20% weight): Concerning regulatory standing. Jupiter is a Solana DEX aggregator with no clear regulatory classification in major jurisdictions; as a DeFi governance token without ETF applications or institutional adoption signals, it faces the same regulatory uncertainty affecting most DeFi protocols, though it has avoided direct enforcement actions to date.\n\u2022 Supply/On-Chain (52/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (55/100, 35% weight): Moderate revenue, typical for growth-phase protocols.\n\u2022 Wyckoff (82/100, 5% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 61.5 sits in neutral range.\n\u2022 Weekly RSI at 43.4 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 44/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "JUP sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (22/100, 25% weight): Limited institutional presence. JUP has limited but growing institutional presence: ParaFi Capital made a $35M strategic investment in February 2026 with extended lockup, and JupUSD is backed 90% by BlackRock's BUIDL Fund. However, there are no JUP-specific ETFs, no major custody solutions from traditional providers, and no corporate treasury adoption or integration with traditional finance infrastructure beyond these DeFi-native developments.\n\u2022 Regulatory (35/100, 20% weight): Concerning regulatory standing. Jupiter is a Solana DEX aggregator with no clear regulatory classification in major jurisdictions; as a DeFi governance token without ETF applications or institutional adoption signals, it faces the same regulatory uncertainty affecting most DeFi protocols, though it has avoided direct enforcement actions to date.\n\u2022 Supply/On-Chain (52/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (55/100, 35% weight): Moderate revenue, typical for growth-phase protocols.\n\u2022 Wyckoff (82/100, 5% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 59.0 sits in neutral range.\n\u2022 Weekly RSI at 42.6 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 44/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "TIA",
@@ -788,14 +788,14 @@
       "trend_30d": [
         42
       ],
-      "rsi_daily": 72.1,
-      "rsi_weekly": 42.1,
+      "rsi_daily": 69.6,
+      "rsi_weekly": 42.2,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 1,
       "note": "Infrastructure/enterprise",
-      "note_detailed": "TIA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (35/100, 35% weight): Limited institutional presence. TIA has strong VC backing (Bain Capital, Polychain, 37 institutional investors) and Coinbase custody support, but lacks dedicated ETF products, major asset manager holdings (no Grayscale/Fidelity/BlackRock exposure), and corporate treasury adoption\u2014limiting institutional penetration to early-stage venture capital.\n\u2022 Regulatory (35/100, 25% weight): Concerning regulatory standing. Celestia (TIA) lacks clear regulatory classification in major jurisdictions, with no ETF applications or favorable rulings to date. As a modular data availability layer launched in late 2023, it remains in regulatory gray area similar to most alt-L1s, though its infrastructure focus and lack of DeFi-native features reduce direct enforcement risk.\n\u2022 Supply/On-Chain (42/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (82/100, 10% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 72.1 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 42.1 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 42/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "TIA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (35/100, 35% weight): Limited institutional presence. TIA has strong VC backing (Bain Capital, Polychain, 37 institutional investors) and Coinbase custody support, but lacks dedicated ETF products, major asset manager holdings (no Grayscale/Fidelity/BlackRock exposure), and corporate treasury adoption\u2014limiting institutional penetration to early-stage venture capital.\n\u2022 Regulatory (35/100, 25% weight): Concerning regulatory standing. Celestia (TIA) lacks clear regulatory classification in major jurisdictions, with no ETF applications or favorable rulings to date. As a modular data availability layer launched in late 2023, it remains in regulatory gray area similar to most alt-L1s, though its infrastructure focus and lack of DeFi-native features reduce direct enforcement risk.\n\u2022 Supply/On-Chain (42/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.\n\u2022 Wyckoff (82/100, 10% weight): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 69.6 sits in neutral range.\n\u2022 Weekly RSI at 42.2 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 42/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "PENDLE",
@@ -804,10 +804,10 @@
       "asset_type": "defi",
       "scores": {
         "institutional": 25,
-        "revenue": 31,
+        "revenue": 35,
         "regulatory": 42,
         "supply": 40,
-        "wyckoff": 62
+        "wyckoff": 75
       },
       "weights": {
         "revenue": 0.35,
@@ -816,23 +816,23 @@
         "supply": 0.15,
         "wyckoff": 0.05
       },
-      "composite": 35,
-      "composite_last_week": 35,
-      "wyckoff_phase": "Uptrend",
+      "composite": 37,
+      "composite_last_week": 37,
+      "wyckoff_phase": "Accumulation Phase C",
       "trend": [
-        35
+        37
       ],
       "trend_30d": [
-        35
+        37
       ],
-      "rsi_daily": 69.8,
-      "rsi_weekly": 42.4,
+      "rsi_daily": 65.1,
+      "rsi_weekly": 41.7,
       "action": "observe",
       "strong_accumulate_days_active": 0,
       "label_changed_days_ago": 0,
       "missing_dimensions": 0,
-      "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (25/100, 25% weight): Limited institutional presence. Pendle has raised $3.7M from notable VCs including Binance Labs, Mechanism Capital, and Hashkey Capital, and is pursuing institutional adoption through KYC-compliant Citadels launched in 2025. However, there's no evidence of major ETF products, corporate treasury adoption, or presence on major institutional custody platforms like Coinbase Custody or Fireblocks.\n\u2022 Regulatory (42/100, 20% weight): Concerning regulatory standing. PENDLE was not included in the SEC-CFTC's 2026 classification of 18 digital commodities, leaving its legal status uncertain in the US. While pursuing institutional adoption via KYC-compliant Citadels and benefiting from improved crypto ETF frameworks, the lack of explicit regulatory clarity in major jurisdictions limits its trajectory score.\n\u2022 Supply/On-Chain (40/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (31/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (62/100, 5% weight): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 69.8 sits in neutral range.\n\u2022 Weekly RSI at 42.4 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 35/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note": "Wyckoff spring zone",
+      "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nAs a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (25/100, 25% weight): Limited institutional presence. Pendle has raised $3.7M from notable VCs including Binance Labs, Mechanism Capital, and Hashkey Capital, and is pursuing institutional adoption through KYC-compliant Citadels launched in 2025. However, there's no evidence of major ETF products, corporate treasury adoption, or presence on major institutional custody platforms like Coinbase Custody or Fireblocks.\n\u2022 Regulatory (42/100, 20% weight): Concerning regulatory standing. PENDLE was not included in the SEC-CFTC's 2026 classification of 18 digital commodities, leaving its legal status uncertain in the US. While pursuing institutional adoption via KYC-compliant Citadels and benefiting from improved crypto ETF frameworks, the lack of explicit regulatory clarity in major jurisdictions limits its trajectory score.\n\u2022 Supply/On-Chain (40/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Revenue/Fees (35/100, 35% weight): Limited fee revenue\u2014protocol may rely on token incentives or is early-stage.\n\u2022 Wyckoff (75/100, 5% weight): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 65.1 sits in neutral range.\n\u2022 Weekly RSI at 41.7 remains in healthy range.\n\nCURRENT ACTION:\nOBSERVE status reflects Observation-tier placement\u2014tracked for research, not positioned. No action required.\n\nCOMPOSITE SCORE: 37/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     }
   ]
 }

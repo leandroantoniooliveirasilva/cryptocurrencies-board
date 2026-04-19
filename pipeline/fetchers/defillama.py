@@ -43,17 +43,30 @@ def fetch_defillama_data(slug: str) -> Optional[dict]:
             if chain_tvl is not None:
                 tvl_value = chain_tvl
 
-        # Fetch fees and revenue separately. DefiLlama's /summary/fees/{slug}
-        # endpoint returns fees in `total24h`; to get revenue we must request
-        # the same endpoint with dataType=dailyRevenue, which then returns the
-        # daily revenue figure in `total24h`.
+        # Fetch fees and revenue. DefiLlama's /summary/fees/{slug} returns:
+        # - total24h: total fees paid by users
+        # - With dataType=dailyRevenue: protocol revenue (for protocols, often
+        #   a portion of fees; for chains, typically burned tokens)
+        #
+        # For L1 chains (category="Chain"), the relevant metric is total fees,
+        # not "protocol revenue" which may just be burned tokens. For protocols,
+        # we use the dailyRevenue endpoint which captures their actual revenue.
         fees_data = _fetch_fees(slug)
-        revenue_data = _fetch_fees(slug, data_type="dailyRevenue")
+        fees_24h = fees_data.get("total24h") if fees_data else None
+        category = fees_data.get("category") if fees_data else None
+
+        # For L1 chains, use total fees as revenue (chains earn from tx fees)
+        # For protocols, fetch explicit dailyRevenue (their cut of fees)
+        if category == "Chain":
+            revenue_24h = fees_24h
+        else:
+            revenue_data = _fetch_fees(slug, data_type="dailyRevenue")
+            revenue_24h = revenue_data.get("total24h") if revenue_data else None
 
         return {
             "tvl": tvl_value,
-            "fees_24h": fees_data.get("total24h") if fees_data else None,
-            "revenue_24h": revenue_data.get("total24h") if revenue_data else None,
+            "fees_24h": fees_24h,
+            "revenue_24h": revenue_24h,
         }
 
     except Exception as e:
