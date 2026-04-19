@@ -687,6 +687,7 @@ function ScoreCard({ asset, isMobile }) {
   const action = asset.action || 'observe';
   const isStrong = action === 'strong-accumulate';
   const cfg = ACTION_CONFIG[action];
+  const isUnderperforming = asset.rs_vs_btc && asset.rs_vs_btc.underperforming && asset.symbol !== 'BTC';
 
   const deltaColor = delta > 0 ? '#7aa872' : delta < 0 ? '#c27878' : PALETTE.textMuted;
   const DeltaIcon = delta > 0 ? TrendingUp : delta < 0 ? TrendingDown : Minus;
@@ -709,8 +710,26 @@ function ScoreCard({ asset, isMobile }) {
       {/* Header: Symbol + Action badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: SPACE.md }}>
         <div>
-          <div style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.subhead : TYPE.heading, fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
-            {asset.symbol}
+          <div style={{ display: 'flex', alignItems: 'center', gap: SPACE.sm }}>
+            <span style={{ fontFamily: 'Georgia, serif', fontSize: isMobile ? TYPE.subhead : TYPE.heading, fontWeight: 400, color: PALETTE.textPrimary, lineHeight: 1 }}>
+              {asset.symbol}
+            </span>
+            {isUnderperforming && (
+              <span
+                title={`Underperforming BTC by ${Math.abs(asset.rs_vs_btc.change_pct * 100).toFixed(0)}%`}
+                style={{
+                  fontSize: TYPE.caption,
+                  color: '#c89678',
+                  fontFamily: 'ui-monospace, monospace',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                }}
+              >
+                <TrendingDown size={10} strokeWidth={2} />
+                <span style={{ fontSize: '0.7rem' }}>BTC</span>
+              </span>
+            )}
           </div>
           <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
             {asset.name}
@@ -759,7 +778,7 @@ function ScoreCard({ asset, isMobile }) {
   );
 }
 
-function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli = null }) {
+function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli = null, rs = null }) {
   // Get actionable items (not hold, await, observe) with score above threshold
   const actionableStates = ['strong-accumulate', 'accumulate', 'stand-aside', 'promote'];
   const actionableAssets = assets.filter(a =>
@@ -780,8 +799,14 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
   const hasActions = actionableAssets.length > 0;
   const showGliWarning = gli && gli.enabled && gli.downtrend && gli.source !== 'fallback';
 
-  // If no actions and no GLI warning, show nothing
-  if (!hasActions && !showGliWarning) return null;
+  // Count assets underperforming BTC
+  const underperformingAssets = assets.filter(a =>
+    a.rs_vs_btc && a.rs_vs_btc.underperforming && a.symbol !== 'BTC'
+  );
+  const showRsWarning = rs && rs.enabled && underperformingAssets.length > 0;
+
+  // If no actions and no warnings, show nothing
+  if (!hasActions && !showGliWarning && !showRsWarning) return null;
 
   return (
     <div style={{
@@ -806,6 +831,35 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
         }}>
           <Info size={14} strokeWidth={1.5} />
           <span>GLI contracting — strong-accumulate signals downgraded</span>
+        </div>
+      )}
+
+      {/* RS warning banner for underperforming assets */}
+      {showRsWarning && (
+        <div style={{
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          background: 'rgba(200, 150, 120, 0.1)',
+          border: '1px solid #c89678',
+          fontSize: TYPE.small,
+          color: '#c89678',
+          fontFamily: 'ui-monospace, monospace',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+          flexWrap: 'wrap',
+        }}>
+          <Info size={14} strokeWidth={1.5} />
+          <span>
+            Underperforming BTC ({rs.lookback_days}d, &gt;{rs.threshold_pct}%):
+            {' '}
+            {underperformingAssets.map((a, i) => (
+              <span key={a.symbol}>
+                {i > 0 && ', '}
+                <span style={{ fontWeight: 600 }}>{a.symbol}</span>
+                <span style={{ opacity: 0.7 }}> ({(a.rs_vs_btc.change_pct * 100).toFixed(0)}%)</span>
+              </span>
+            ))}
+          </span>
         </div>
       )}
 
@@ -1232,6 +1286,7 @@ function Dashboard() {
   const [generatedAt, setGeneratedAt] = useState(null);
   const [thresholds, setThresholds] = useState(DEFAULT_THRESHOLDS);
   const [gli, setGli] = useState(null); // Global Liquidity Index status
+  const [rs, setRs] = useState(null); // Relative Strength vs BTC status
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTier, setActiveTier] = useState('all');
@@ -1256,6 +1311,10 @@ function Dashboard() {
         // Load GLI (Global Liquidity Index) status
         if (data.gli) {
           setGli(data.gli);
+        }
+        // Load RS (Relative Strength vs BTC) status
+        if (data.rs) {
+          setRs(data.rs);
         }
         setLoading(false);
       })
@@ -1351,7 +1410,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} strongCount={strongCount} gli={gli} />
+      <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} strongCount={strongCount} gli={gli} rs={rs} />
 
       <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.base}px` }}>
         <select

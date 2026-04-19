@@ -19,6 +19,21 @@ gli:
   tradingview_symbol: "ECONOMICS:GLI"
 
 # =============================================================================
+# RELATIVE STRENGTH (RS) vs BTC FILTER
+# =============================================================================
+# Compares each asset's performance against BTC over a lookback period.
+# If an asset is significantly underperforming BTC, it may be better to
+# simply hold BTC instead of accumulating that asset.
+rs:
+  enabled: true
+  lookback_days: 30              # Compare RS now vs RS N days ago
+  underperformance_threshold: 0.10  # 10% underperformance triggers warning
+  # When asset/BTC ratio has declined by >= threshold over lookback period:
+  # - strong-accumulate downgrades to accumulate
+  # - warning note is added to the asset
+  # Note: BTC is excluded from this filter (RS vs itself is always 1.0)
+
+# =============================================================================
 # RSI THRESHOLDS
 # =============================================================================
 rsi:

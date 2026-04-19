@@ -21,7 +21,7 @@ from pathlib import Path
 import yaml
 
 from pipeline.config import config
-from pipeline.fetchers import defillama, gli, qualitative, supply
+from pipeline.fetchers import defillama, gli, qualitative, relative_strength, supply
 from pipeline.scoring import actions, composite, rsi, wyckoff
 from pipeline.storage import migrations
 
@@ -264,7 +264,11 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
     else:
         trend_30d = [composite_score]
 
-    # Derive action (with GLI macro filter and weekly RSI slope check)
+    # Calculate Relative Strength vs BTC
+    rs_data = relative_strength.compute_relative_strength(dated_prices, symbol)
+    rs_underperforming = rs_data["underperforming"]
+
+    # Derive action (with GLI macro filter, RS filter, and weekly RSI slope check)
     # Use explicit None check: composite can legitimately be 0 for an asset
     # whose every dimension collapses, and `or` would silently replace it.
     effective_last_week = (
@@ -281,6 +285,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
         rsi_weekly=rsi_weekly,
         rsi_weekly_4w_ago=rsi_weekly_4w_ago,
         gli_downtrend=gli_downtrend,
+        rs_underperforming=rs_underperforming,
     )
 
     # Get action metadata
@@ -308,6 +313,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
         action=action,
         rsi_daily=rsi_daily,
         rsi_weekly=rsi_weekly,
+        rs_data=rs_data,
     )
 
     return {
@@ -328,6 +334,10 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
         "strong_accumulate_days_active": strong_accumulate_days + (1 if action == "strong-accumulate" else 0),
         "label_changed_days_ago": label_changed_days_ago,
         "missing_dimensions": missing_dimensions,
+        "rs_vs_btc": {
+            "underperforming": rs_data["underperforming"],
+            "change_pct": rs_data["rs_change_pct"],
+        },
         "note": note,
         "note_detailed": note_detailed,
     }
@@ -403,6 +413,7 @@ def _build_detailed_reasoning(
     action: str,
     rsi_daily,  # float or None
     rsi_weekly,  # float or None
+    rs_data: dict = None,  # Relative strength vs BTC data
 ) -> str:
     """
     Build detailed reasoning explaining why this asset is on the list,
@@ -529,7 +540,22 @@ def _build_detailed_reasoning(
                 rsi_w_desc = f"Weekly RSI at {rsi_weekly:.1f} remains in healthy range."
             lines.append(f"• {rsi_w_desc}")
 
-    # 5. Action reasoning
+    # 5. Relative Strength vs BTC
+    if rs_data and symbol.upper() != "BTC":
+        rs_change = rs_data.get("rs_change_pct")
+        rs_underperforming = rs_data.get("underperforming", False)
+        if rs_change is not None:
+            lines.append("")
+            lines.append("RELATIVE STRENGTH vs BTC:")
+            change_pct = rs_change * 100
+            if rs_underperforming:
+                lines.append(f"• ⚠️ CAUTION: Underperforming BTC by {abs(change_pct):.1f}% over {config.rs.lookback_days} days. Consider whether BTC itself may be a better allocation.")
+            elif change_pct > 0:
+                lines.append(f"• Outperforming BTC by {change_pct:.1f}% over {config.rs.lookback_days} days—relative strength is favorable.")
+            else:
+                lines.append(f"• Slight underperformance vs BTC ({change_pct:.1f}% over {config.rs.lookback_days} days) but within tolerance.")
+
+    # 6. Action reasoning
     lines.append("")
     lines.append("CURRENT ACTION:")
     # Build stand-aside reason based on actual trigger (distribution vs sharp decline)
@@ -549,7 +575,7 @@ def _build_detailed_reasoning(
     }
     lines.append(action_reasoning.get(action, f"Current action: {action}"))
 
-    # 6. Composite summary
+    # 7. Composite summary
     lines.append("")
     lines.append(f"COMPOSITE SCORE: {composite}/100")
     if composite >= 80:
@@ -608,6 +634,11 @@ def main():
     else:
         logger.info("GLI data unavailable - macro filter disabled")
 
+    # Clear RS cache for fresh BTC price data
+    relative_strength.clear_cache()
+    if config.rs.enabled:
+        logger.info(f"RS filter enabled: {config.rs.lookback_days}d lookback, {config.rs.underperformance_threshold*100:.0f}% threshold")
+
     # Initialize database
     conn = migrations.init_db(DB_PATH)
     today = date.today().isoformat()
@@ -633,6 +664,11 @@ def main():
             "offset_value": gli_data["offset_value"],
             "offset_days": gli_data["offset_days"],
             "source": gli_data["source"],
+        },
+        "rs": {
+            "enabled": config.rs.enabled,
+            "lookback_days": config.rs.lookback_days,
+            "threshold_pct": config.rs.underperformance_threshold * 100,
         },
         "assets": [],
     }

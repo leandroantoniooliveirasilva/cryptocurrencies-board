@@ -16,6 +16,7 @@ def derive_action(
     rsi_weekly: Optional[float],
     rsi_weekly_4w_ago: Optional[float] = None,
     gli_downtrend: bool = False,
+    rs_underperforming: bool = False,
 ) -> str:
     """
     Derive action state based on scores and indicators.
@@ -36,6 +37,7 @@ def derive_action(
 
     Filters:
     - GLI (Global Liquidity Index): When contracting, strong-accumulate downgrades to accumulate
+    - RS vs BTC: When asset is underperforming BTC, strong-accumulate downgrades to accumulate
     - Weekly RSI slope: If weekly RSI is falling from elevated levels (>55), downgrade to accumulate
       This catches "first leg down" scenarios where daily flushes but weekly is breaking down
 
@@ -52,6 +54,7 @@ def derive_action(
         rsi_weekly: Weekly RSI(14) or None
         rsi_weekly_4w_ago: Weekly RSI from 4 weeks ago (for slope check) or None
         gli_downtrend: True if Global Liquidity Index is contracting
+        rs_underperforming: True if asset is underperforming BTC over lookback period
 
     Returns:
         Action state string
@@ -85,6 +88,9 @@ def derive_action(
             if daily_capitulation:
                 # GLI filter: downgrade strong-accumulate when liquidity contracting
                 if gli_downtrend:
+                    return "accumulate"
+                # RS filter: downgrade when asset is underperforming BTC
+                if rs_underperforming:
                     return "accumulate"
                 return "strong-accumulate"
             # Weekly deeply oversold alone = accumulate signal
@@ -132,6 +138,10 @@ def derive_action(
 
                 # GLI filter: downgrade strong-accumulate when liquidity contracting
                 if gli_downtrend:
+                    return "accumulate"
+
+                # RS filter: downgrade when asset is underperforming BTC
+                if rs_underperforming:
                     return "accumulate"
 
                 return "strong-accumulate"
