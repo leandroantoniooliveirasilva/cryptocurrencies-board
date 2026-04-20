@@ -222,3 +222,4 @@ logs/*
 discovery/*
 !discovery/.gitkeep
 
+pipeline/storage/history.sqlite-journal

@@ -915,6 +915,134 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
   );
 }
 
+function GliSection({ gli, isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (!gli || !gli.enabled || gli.source === 'fallback') {
+    return null;
+  }
+
+  const statusColor = gli.downtrend ? '#d49a6a' : '#6a9a90';
+  const statusText = gli.downtrend ? '▼ Contracting' : '▲ Expanding';
+
+  return (
+    <div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: `1px solid ${PALETTE.border}`,
+          color: statusColor,
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          fontSize: TYPE.caption,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+        }}>▸</span>
+        <span>GLI {statusText}</span>
+        <span style={{ color: PALETTE.textMuted }}>({gli.offset_days}d offset)</span>
+      </button>
+
+      {expanded && (
+        <div style={{
+          marginTop: `${SPACE.sm}px`,
+          padding: `${SPACE.md}px`,
+          background: PALETTE.cardBg,
+          border: `1px solid ${PALETTE.border}`,
+          fontSize: TYPE.small,
+          color: PALETTE.textSecondary,
+          lineHeight: TYPE.relaxed,
+        }}>
+          <p style={{ margin: 0 }}>
+            <strong style={{ color: PALETTE.textPrimary }}>Global Liquidity Index</strong> tracks aggregate central bank liquidity with a 75-day offset.
+            When liquidity is contracting (current GLI &lt; 75 days ago), accumulation signals are downgraded because even quality assets tend to fall further during liquidity withdrawal.
+          </p>
+          <p style={{ margin: `${SPACE.sm}px 0 0`, fontSize: TYPE.caption, color: PALETTE.textMuted }}>
+            Current: {gli.current?.toLocaleString() ?? 'N/A'} | 75d ago: {gli.offset_value?.toLocaleString() ?? 'N/A'} | Source: {gli.source}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FearGreedSection({ fearGreed, isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (!fearGreed || !fearGreed.enabled || fearGreed.value === null) {
+    return null;
+  }
+
+  const isGreedy = fearGreed.greedy;
+  const statusColor = isGreedy ? '#d49a6a' : '#6a9a90';
+  const value = fearGreed.value;
+  const classification = fearGreed.classification || 'Unknown';
+
+  return (
+    <div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: `1px solid ${PALETTE.border}`,
+          color: statusColor,
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          fontSize: TYPE.caption,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+        }}>▸</span>
+        <span>Fear & Greed: {value}</span>
+        <span style={{ color: PALETTE.textMuted }}>({classification})</span>
+      </button>
+
+      {expanded && (
+        <div style={{
+          marginTop: `${SPACE.sm}px`,
+          padding: `${SPACE.md}px`,
+          background: PALETTE.cardBg,
+          border: `1px solid ${PALETTE.border}`,
+          fontSize: TYPE.small,
+          color: PALETTE.textSecondary,
+          lineHeight: TYPE.relaxed,
+        }}>
+          <p style={{ margin: 0 }}>
+            <strong style={{ color: PALETTE.textPrimary }}>Fear & Greed Index</strong> measures market sentiment from 0 (Extreme Fear) to 100 (Extreme Greed).
+            When the index reaches {fearGreed.threshold}+ (Greed/Extreme Greed), accumulation signals are downgraded because buying during euphoria often means buying near local tops.
+          </p>
+          <p style={{ margin: `${SPACE.sm}px 0 0`, fontSize: TYPE.caption, color: PALETTE.textMuted }}>
+            Current: {value} ({classification}) | Threshold: ≥{fearGreed.threshold} triggers downgrade | {isGreedy ? '⚠️ Downgrade active' : '✓ No downgrade'}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StrategySection({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -1470,6 +1598,7 @@ function Dashboard() {
   const [thresholds, setThresholds] = useState(DEFAULT_THRESHOLDS);
   const [gli, setGli] = useState(null); // Global Liquidity Index status
   const [rs, setRs] = useState(null); // Relative Strength vs BTC status
+  const [fearGreed, setFearGreed] = useState(null); // Fear & Greed Index status
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMobile = useIsMobile();
@@ -1497,6 +1626,10 @@ function Dashboard() {
         // Load RS (Relative Strength vs BTC) status
         if (data.rs) {
           setRs(data.rs);
+        }
+        // Load Fear & Greed Index status
+        if (data.fear_greed) {
+          setFearGreed(data.fear_greed);
         }
         setLoading(false);
       })
@@ -1615,26 +1748,8 @@ function Dashboard() {
 
       {/* Footer with reference info */}
       <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px`, display: 'flex', flexDirection: 'column', gap: `${SPACE.md}px` }}>
-        {/* GLI indicator */}
-        {gli && gli.enabled && gli.source !== 'fallback' && (
-          <div style={{
-            padding: `${SPACE.sm}px ${SPACE.md}px`,
-            background: 'transparent',
-            border: `1px solid ${PALETTE.border}`,
-            fontSize: TYPE.caption,
-            color: gli.downtrend ? '#d49a6a' : '#6a9a90',
-            fontFamily: 'ui-monospace, monospace',
-            letterSpacing: '0.06em',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: `${SPACE.sm}px`,
-            alignSelf: 'flex-start',
-          }}>
-            <span style={{ textTransform: 'uppercase' }}>GLI {gli.downtrend ? '▼ Contracting' : '▲ Expanding'}</span>
-            <span style={{ color: PALETTE.textMuted }}>({gli.offset_days}d offset)</span>
-          </div>
-        )}
-
+        <GliSection gli={gli} isMobile={isMobile} />
+        <FearGreedSection fearGreed={fearGreed} isMobile={isMobile} />
         <RelativeStrengthSection assets={assets} rs={rs} isMobile={isMobile} />
         <StrategySection isMobile={isMobile} />
         <ActionLegend isMobile={isMobile} />
