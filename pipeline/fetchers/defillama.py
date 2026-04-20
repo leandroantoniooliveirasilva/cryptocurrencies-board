@@ -63,6 +63,13 @@ def fetch_defillama_data(slug: str) -> Optional[dict]:
             revenue_data = _fetch_fees(slug, data_type="dailyRevenue")
             revenue_24h = revenue_data.get("total24h") if revenue_data else None
 
+        # Fallback: if dailyRevenue is 0 but fees exist, use fees as revenue proxy
+        # This handles protocols like oracles where "fees" are the revenue model
+        # but DefiLlama doesn't separate them into "protocol revenue"
+        if (revenue_24h is None or revenue_24h == 0) and fees_24h and fees_24h > 0:
+            revenue_24h = fees_24h
+            logger.debug(f"Using fees as revenue proxy for {slug}: ${fees_24h:.0f}")
+
         return {
             "tvl": tvl_value,
             "fees_24h": fees_24h,
@@ -255,17 +262,36 @@ def compute_revenue_score(revenue_24h: Optional[float], tvl: Optional[float]) ->
     """
     Compute revenue score (0-100) based on revenue metrics.
 
-    Scoring heuristic:
-    - Revenue-to-TVL ratio is a key efficiency metric
-    - Higher daily revenue relative to TVL = better
-    - Absolute revenue matters for sustainability
+    Scoring heuristics:
+    1. For protocols WITH TVL: Revenue-to-TVL ratio (capital efficiency)
+    2. For protocols WITHOUT TVL (oracles, infra): Absolute revenue tiers
 
-    Returns None if data is unavailable (excluded from composite).
+    Returns None if no revenue data available.
     """
-    if revenue_24h is None or tvl is None or tvl == 0:
-        return None  # Missing data - exclude from composite
+    if revenue_24h is None:
+        return None  # No revenue data at all
 
-    # Annualized revenue / TVL ratio
+    # For protocols without TVL (oracles, infrastructure), use absolute revenue tiers
+    # These protocols don't have locked value but still generate fees
+    if tvl is None or tvl == 0:
+        annual_revenue = revenue_24h * 365
+        # Absolute revenue scoring (annualized):
+        # >$50M/year = excellent (85+)
+        # $10-50M = strong (70-84)
+        # $1-10M = moderate (50-69)
+        # <$1M = limited (30-49)
+        if annual_revenue >= 50_000_000:
+            return min(95, 85 + int((annual_revenue - 50_000_000) / 50_000_000 * 10))
+        elif annual_revenue >= 10_000_000:
+            return 70 + int((annual_revenue - 10_000_000) / 40_000_000 * 14)
+        elif annual_revenue >= 1_000_000:
+            return 50 + int((annual_revenue - 1_000_000) / 9_000_000 * 19)
+        elif annual_revenue > 0:
+            return max(30, 30 + int(annual_revenue / 1_000_000 * 19))
+        else:
+            return 30  # Zero revenue
+
+    # For protocols with TVL: use revenue-to-TVL ratio
     annual_revenue = revenue_24h * 365
     ratio = annual_revenue / tvl
 

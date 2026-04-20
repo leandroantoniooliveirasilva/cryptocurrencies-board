@@ -230,13 +230,14 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     revenue_score = None
     revenue_estimated = False
     if defi_data and defi_data.get("revenue_24h") is not None:
-        # Factual data from DefiLlama API
+        # Factual data from DefiLlama API (includes fees fallback for oracles)
         revenue_score = defillama.compute_revenue_score(
             defi_data.get("revenue_24h"),
             defi_data.get("tvl")
         )
-    else:
-        # Fallback: LLM-based estimation when API data unavailable
+
+    # LLM fallback only when API has no data at all
+    if revenue_score is None:
         logger.info(f"No API revenue data for {symbol}, using LLM estimation")
         revenue_data = qualitative.score_revenue(symbol, name)
         revenue_score = revenue_data.get("score")
