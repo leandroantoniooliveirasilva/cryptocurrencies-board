@@ -36,13 +36,13 @@ def derive_action(
     2. Strong-accumulate: Wyckoff Phase C + daily flush + weekly RSI stable/rising (not falling from high)
     3. Accumulate: Weekly RSI <30 alone, OR Wyckoff dip with weekly falling from high
 
-    Downgrade Filters (OR logic - aggressive):
+    Downgrade Filters (OR logic):
     When ANY of these conditions is true:
     - GLI contracting (liquidity tightening)
     - RS underperforming BTC (losing to market leader)
     - Fear & Greed >= 70 (market euphoria)
 
-    The following downgrades apply:
+    Single-level downgrades apply:
     - strong-accumulate → accumulate
     - accumulate → hold
 
@@ -99,12 +99,12 @@ def derive_action(
             # Both daily AND weekly deeply oversold = strong capitulation
             if daily_capitulation:
                 if downgrade_active:
-                    # Downgrade: strong-accumulate → accumulate → hold
-                    return "hold"
+                    # Downgrade: strong-accumulate → accumulate (one level)
+                    return "accumulate"
                 return "strong-accumulate"
             # Weekly deeply oversold alone = accumulate signal
             if downgrade_active:
-                # Downgrade: accumulate → hold
+                # Downgrade: accumulate → hold (one level)
                 return "hold"
             return "accumulate"
 
@@ -151,13 +151,14 @@ def derive_action(
                     return "accumulate"
 
                 if downgrade_active:
-                    # Downgrade: strong-accumulate → accumulate → hold
-                    return "hold"
+                    # Downgrade: strong-accumulate → accumulate (one level)
+                    return "accumulate"
 
                 return "strong-accumulate"
 
             # Regular accumulate signal
             if downgrade_active:
+                # Downgrade: accumulate → hold (one level)
                 return "hold"
             return "accumulate"
 

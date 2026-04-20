@@ -97,11 +97,11 @@ Fires ~5-15 times per year. Two paths:
 - Weekly RSI <30 alone
 
 **Wyckoff** (structural):
-- Composite ≥80, Phase C or B→C
+- Composite ≥75, Phase C or B→C
 - Non-negative 7-day trend
 - Weekly RSI <70
 
-**Also downgrades to hold when any filter active**:
+**Downgrades one level when any filter active** (strong-acc→acc, acc→hold):
 - GLI contracting
 - RS underperforming BTC
 - Fear & Greed ≥70
@@ -117,7 +117,7 @@ Overrides all other signals.
 ### Promote
 
 Runner-up showing leader metrics:
-- Composite ≥80
+- Composite ≥75
 - 30-day trend ≥+8
 - 7-day trend ≥+2
 

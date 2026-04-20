@@ -89,31 +89,31 @@ Tiers are computed automatically from composite scores:
 
 | Tier | Composite | Purpose |
 |------|-----------|---------|
-| Leaders | ≥80 | Core positions for accumulation |
-| Runner-ups | 65-79 | Promotion candidates |
+| Leaders | ≥75 | Core positions for accumulation |
+| Runner-ups | 65-74 | Promotion candidates |
 | Observation | 50-64 | Watch only, no position |
 
 Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
 
 ### Filters
 
-All three filters use OR logic — when ANY is active, accumulation signals downgrade to hold.
+All three filters use OR logic — when ANY is active, signals downgrade ONE level (strong-accumulate→accumulate, accumulate→hold).
 
 **GLI (Global Liquidity Index)**:
 - Compares current GLI vs 75 days ago
-- If contracting → accumulation signals downgrade to hold
+- If contracting → signal downgrades one level
 - Based on 56-90 day lag between liquidity inflection and BTC tops/bottoms
 - Sources: FRED M2, Manual override, Fallback (neutral)
 
 **RS (Relative Strength vs BTC)**:
 - Compares each asset's price ratio to BTC over 90 days
-- If underperforming BTC by ≥10% → accumulation signals downgrade to hold
+- If underperforming BTC by ≥10% → signal downgrades one level
 - Rationale: if an asset is underperforming BTC, you may be better off just holding BTC
 - BTC excluded (RS vs itself is always 1.0)
 
 **Fear & Greed Index**:
 - Fetches Bitcoin Fear & Greed Index from Alternative.me API
-- If ≥70 (Greed/Extreme Greed) → accumulation signals downgrade to hold
+- If ≥70 (Greed/Extreme Greed) → signal downgrades one level
 - Rationale: buying during euphoria often means buying near local tops
 
 ### Display Threshold

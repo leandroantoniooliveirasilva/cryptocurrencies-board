@@ -84,13 +84,13 @@ Different asset types have different weight profiles reflecting their value driv
 ## Tier Definitions
 
 **Leaders**: Core positions for accumulation
-- Composite score consistently ≥80
+- Composite score consistently ≥75
 - Clear institutional adoption path
 - No existential regulatory risk
 - Typically 4-6 assets
 
 **Runner-ups**: Promotion candidates
-- Composite score 65-79 or improving
+- Composite score 65-74 or improving
 - Strong in 2-3 dimensions
 - Clear path to leader status
 - Typically 4-6 assets

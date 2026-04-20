@@ -16,7 +16,7 @@ After discovery analysis completes:
 1. **Add recommended assets** directly to `pipeline/assets.yaml` (flat list)
 2. **Remove flagged assets** from `pipeline/assets.yaml`
 3. **No tier assignment** — tiers are computed from composite scores at runtime:
-   - Composite ≥80 → Leader
+   - Composite ≥75 → Leader
    - Composite ≥65 → Runner-up
    - Composite <65 → Observation
 
@@ -102,11 +102,11 @@ Tiers are computed automatically from composite scores:
 
 | Tier | Composite | Description |
 |------|-----------|-------------|
-| **Leader** | ≥80 | Core positions for accumulation |
-| **Runner-up** | 65-79 | Promotion candidates |
+| **Leader** | ≥75 | Core positions for accumulation |
+| **Runner-up** | 65-74 | Promotion candidates |
 | **Observation** | 50-64 | Watch only, no position |
 
-**No manual tier assignment** — if an asset's composite rises above 80, it automatically becomes a Leader. If it drops below 65, it becomes Observation.
+**No manual tier assignment** — if an asset's composite rises above 75, it automatically becomes a Leader. If it drops below 65, it becomes Observation.
 
 ## Discovery Process
 
@@ -233,8 +233,8 @@ To **remove** an asset, delete its entry from the list.
 
 ## Watchlist Health Summary
 - Total assets: [N]
-- Projected Leaders (≥80): [N]
-- Projected Runner-ups (65-79): [N]
+- Projected Leaders (≥75): [N]
+- Projected Runner-ups (65-74): [N]
 - Projected Observation (50-64): [N]
 ```
 

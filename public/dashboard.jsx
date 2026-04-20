@@ -354,7 +354,7 @@ function getActionReasoning(asset) {
     case 'await':
       return `Signal building but not yet confirmed. Composite at ${composite}${delta > 0 ? ` with ${delta}-point uptick` : ''}. Monitor for entry criteria before activation.`;
     case 'observe':
-      return `Observation tier — scanning only. ${composite >= 80 ? 'Composite healthy but' : 'Composite at ' + composite + ','} no position warranted at this time.`;
+      return `Observation tier — scanning only. ${composite >= 75 ? 'Composite healthy but' : 'Composite at ' + composite + ','} no position warranted at this time.`;
     case 'stand-aside': {
       const weeklyElevated = hasRsi(rsiWeekly) && rsiWeekly >= 70;
       const wyckoff = (asset.wyckoff_phase || '').toLowerCase();
@@ -1169,7 +1169,7 @@ function StrategySection({ isMobile }) {
               lineHeight: TYPE.relaxed,
             }}>
               <div style={{ marginBottom: `${SPACE.sm}px` }}>
-                <span style={{ color: TIER_CONFIG['leader'].accent }}>Leaders</span> — Core positions for accumulation. Composite ≥80, clear institutional path, no existential regulatory risk.
+                <span style={{ color: TIER_CONFIG['leader'].accent }}>Leaders</span> — Core positions for accumulation. Composite ≥75, clear institutional path, no existential regulatory risk.
               </div>
               <div style={{ marginBottom: `${SPACE.sm}px` }}>
                 <span style={{ color: TIER_CONFIG['runner-up'].accent }}>Runner-ups</span> — Promotion candidates. Strong in 2-3 dimensions, improving trajectory toward leader status.
@@ -1208,11 +1208,11 @@ function StrategySection({ isMobile }) {
               </div>
               <div style={{ paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid ${ACTION_CONFIG['strong-accumulate'].bg}` }}>
                 <div style={{ color: PALETTE.textSecondary, marginBottom: '2px' }}>Wyckoff Dip</div>
-                Phase C + daily RSI ≤32 + weekly RSI ≥42 (stable) + composite ≥80. Short-term flush within healthy structure.
+                Phase C + daily RSI ≤32 + weekly RSI ≥42 (stable) + composite ≥75. Short-term flush within healthy structure.
               </div>
               <div style={{ marginTop: `${SPACE.md}px`, paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid #d49a6a` }}>
                 <div style={{ color: '#d49a6a', marginBottom: '2px' }}>Downgrade Filters (OR logic)</div>
-                When ANY of these conditions is true, accumulation signals downgrade to hold:<br/>
+                When ANY of these conditions is true, signals downgrade one level (strong-accumulate→accumulate, accumulate→hold):<br/>
                 • <strong>GLI contracting</strong> — Global Liquidity Index today &lt; 75 days ago<br/>
                 • <strong>RS underperforming</strong> — Asset/BTC ratio declined ≥10% over 90 days<br/>
                 • <strong>Fear & Greed ≥70</strong> — Market in greed/extreme greed territory
@@ -1262,7 +1262,7 @@ function ActionLegend({ isMobile }) {
   const items = [
     { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32, weekly RSI ≥42). Downgrades to hold when any filter active: GLI contracting, RS underperforming BTC, or Fear & Greed ≥70.' },
     { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by RSI slope. Also downgrades to hold when any macro filter active (GLI, RS, or F&G).' },
-    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥80 with 30-day trend ≥+8 and 7-day trend ≥+2.' },
+    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8 and 7-day trend ≥+2.' },
     { key: 'hold', text: 'Active leader position. No accumulation signal. Patience by design — also the downgrade target when macro filters suppress accumulation.' },
     { key: 'await', text: 'Runner-up building signal. Monitoring for promotion criteria.' },
     { key: 'observe', text: 'Observation tier (composite 50-64). Research only, no position.' },

@@ -73,8 +73,8 @@ Tiers are computed automatically from composite scores:
 
 | Tier | Composite | Purpose |
 |------|-----------|---------|
-| Leaders | ≥80 | Core positions for accumulation |
-| Runner-ups | 65-79 | Promotion candidates |
+| Leaders | ≥75 | Core positions for accumulation |
+| Runner-ups | 65-74 | Promotion candidates |
 | Observation | 50-64 | Watch only, no position |
 
 ## Quick Start

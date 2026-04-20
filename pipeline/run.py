@@ -112,7 +112,7 @@ def compute_tier(composite_score: int) -> str:
     Compute tier dynamically from composite score.
 
     Thresholds from config.yaml:
-        - Leader:      composite >= 80
+        - Leader:      composite >= 75
         - Runner-up:   composite >= 65
         - Observation: composite < 65
     """
@@ -122,7 +122,7 @@ def compute_tier(composite_score: int) -> str:
         runner_up_threshold = config.tiers.runner_up
     else:
         # Fallback defaults
-        leader_threshold = 80
+        leader_threshold = 75
         runner_up_threshold = 65
 
     if composite_score >= leader_threshold:
@@ -591,7 +591,7 @@ def _build_detailed_reasoning(
     # 7. Composite summary
     lines.append("")
     lines.append(f"COMPOSITE SCORE: {composite}/100")
-    if composite >= 80:
+    if composite >= 75:
         lines.append("This places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.")
     elif composite >= 65:
         lines.append("This score reflects solid fundamentals with room for improvement in specific dimensions.")
