@@ -67,14 +67,21 @@ infrastructure (QNT):     Inst 35%, Reg 25%, Supply 20%, Rev 10%, Wyck 10%
 1. **Capitulation**: Weekly RSI <30 AND daily RSI <30 (82.9% hit rate)
 2. **Wyckoff dip**: Phase C + daily RSI ≤32 + weekly RSI ≥42 + composite stable
 
-**Filters** (downgrade to regular accumulate):
-- GLI contracting (GLI today < GLI 75 days ago)
-- RS underperforming BTC (asset/BTC ratio declined ≥10% over 30 days)
-- Weekly RSI falling from elevated levels (>55, dropped >8 points)
-
 **Accumulate** triggers:
 - Weekly RSI <30 alone (capitulation without daily confirmation)
-- Wyckoff dip when filtered out of strong-accumulate
+- Wyckoff dip when weekly RSI is falling from elevated levels
+
+**Downgrade Filters** (OR logic — any one triggers):
+When ANY of these conditions is true:
+- GLI contracting (GLI today < GLI 75 days ago)
+- RS underperforming BTC (asset/BTC ratio declined ≥10% over 90 days)
+- Fear & Greed ≥70 (market euphoria)
+
+The following downgrades apply:
+- strong-accumulate → accumulate → **hold**
+- accumulate → **hold**
+
+This is aggressive filtering — designed to suppress accumulation signals during unfavorable macro conditions.
 
 ### Asset Tiers (Dynamic)
 
@@ -127,9 +134,13 @@ GitHub Actions → Deploy /public to GitHub Pages
 ## Commands
 
 ```bash
-# Pipeline
+# Weekly full scoring (all dimensions + Wyckoff)
 python -m pipeline.run
 python -m pipeline.run --dry-run
+
+# Daily indicators update (RSI, GLI, RS, F&G)
+python -m pipeline.indicators
+python -m pipeline.indicators --dry-run
 
 # Frontend
 npm run build
@@ -141,6 +152,24 @@ npm run watch
 # Local dev
 cd public && python -m http.server 8000
 ```
+
+## Local Cron Setup (macOS)
+
+The pipeline runs locally via cron, not GitHub Actions:
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add these entries (adjust paths as needed):
+# Weekly full scoring - Sunday 00:00 UTC
+0 0 * * 0 cd ~/Projects/personal/cryptocurrencies-board && source .venv/bin/activate && python -m pipeline.run && git add -A && git commit -m "chore: weekly scoring update" && git push
+
+# Daily indicators - 00:00 UTC
+0 0 * * * cd ~/Projects/personal/cryptocurrencies-board && source .venv/bin/activate && python -m pipeline.indicators && git add -A && git commit -m "chore: daily indicators update" && git push
+```
+
+**Note**: Adjust for your timezone. UTC 00:00 = PT 17:00 (previous day).
 
 ## Environment
 

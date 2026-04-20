@@ -17,6 +17,7 @@ def derive_action(
     rsi_weekly_4w_ago: Optional[float] = None,
     gli_downtrend: bool = False,
     rs_underperforming: bool = False,
+    fg_greedy: bool = False,
 ) -> str:
     """
     Derive action state based on scores and indicators.
@@ -35,9 +36,17 @@ def derive_action(
     2. Strong-accumulate: Wyckoff Phase C + daily flush + weekly RSI stable/rising (not falling from high)
     3. Accumulate: Weekly RSI <30 alone, OR Wyckoff dip with weekly falling from high
 
-    Filters:
-    - GLI (Global Liquidity Index): When contracting, strong-accumulate downgrades to accumulate
-    - RS vs BTC: When asset is underperforming BTC, strong-accumulate downgrades to accumulate
+    Downgrade Filters (OR logic - aggressive):
+    When ANY of these conditions is true:
+    - GLI contracting (liquidity tightening)
+    - RS underperforming BTC (losing to market leader)
+    - Fear & Greed >= 70 (market euphoria)
+
+    The following downgrades apply:
+    - strong-accumulate → accumulate
+    - accumulate → hold
+
+    Additional filter:
     - Weekly RSI slope: If weekly RSI is falling from elevated levels (>55), downgrade to accumulate
       This catches "first leg down" scenarios where daily flushes but weekly is breaking down
 
@@ -55,10 +64,13 @@ def derive_action(
         rsi_weekly_4w_ago: Weekly RSI from 4 weeks ago (for slope check) or None
         gli_downtrend: True if Global Liquidity Index is contracting
         rs_underperforming: True if asset is underperforming BTC over lookback period
+        fg_greedy: True if Fear & Greed Index >= threshold (market greed)
 
     Returns:
         Action state string
     """
+    # Combined downgrade filter (OR logic)
+    downgrade_active = gli_downtrend or rs_underperforming or fg_greedy
     # Load thresholds from config
     rsi_cfg = config.rsi
     comp_cfg = config.composite
@@ -86,14 +98,14 @@ def derive_action(
         if weekly_capitulation:
             # Both daily AND weekly deeply oversold = strong capitulation
             if daily_capitulation:
-                # GLI filter: downgrade strong-accumulate when liquidity contracting
-                if gli_downtrend:
-                    return "accumulate"
-                # RS filter: downgrade when asset is underperforming BTC
-                if rs_underperforming:
-                    return "accumulate"
+                if downgrade_active:
+                    # Downgrade: strong-accumulate → accumulate → hold
+                    return "hold"
                 return "strong-accumulate"
             # Weekly deeply oversold alone = accumulate signal
+            if downgrade_active:
+                # Downgrade: accumulate → hold
+                return "hold"
             return "accumulate"
 
         # === WYCKOFF-BASED ACCUMULATION (structural) ===
@@ -134,18 +146,19 @@ def derive_action(
                 if weekly_falling_from_high:
                     # Weekly momentum breaking down from overbought - not a strong signal
                     # Backtest: 2021 April/May/Dec crashes all had this pattern
+                    if downgrade_active:
+                        return "hold"
                     return "accumulate"
 
-                # GLI filter: downgrade strong-accumulate when liquidity contracting
-                if gli_downtrend:
-                    return "accumulate"
-
-                # RS filter: downgrade when asset is underperforming BTC
-                if rs_underperforming:
-                    return "accumulate"
+                if downgrade_active:
+                    # Downgrade: strong-accumulate → accumulate → hold
+                    return "hold"
 
                 return "strong-accumulate"
 
+            # Regular accumulate signal
+            if downgrade_active:
+                return "hold"
             return "accumulate"
 
         return "hold"

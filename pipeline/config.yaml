@@ -4,11 +4,14 @@
 # =============================================================================
 # GLOBAL LIQUIDITY INDEX (GLI) FILTER
 # =============================================================================
-# Macro filter: suppress strong-accumulate when global liquidity is contracting
+# Macro filter: suppress accumulation when global liquidity is contracting
 gli:
   enabled: true
   offset_days: 75                # Compare current GLI vs N days ago
-  # When GLI today < GLI N days ago, strong-accumulate downgrades to accumulate
+  # When GLI today < GLI N days ago:
+  # - strong-accumulate downgrades to accumulate
+  # - accumulate downgrades to hold
+  # Combined with RS and F&G filters using OR logic (aggressive)
 
   # Data source options (in priority order):
   # 1. Manual override in assets.yaml (gli_override: 1.05)
@@ -29,9 +32,22 @@ rs:
   lookback_days: 90              # Compare RS now vs RS N days ago
   underperformance_threshold: 0.10  # 10% underperformance triggers warning
   # When asset/BTC ratio has declined by >= threshold over lookback period:
-  # - strong-accumulate downgrades to accumulate
-  # - warning note is added to the asset
+  # - Accumulation signals downgraded
+  # - Warning note is added to the asset
   # Note: BTC is excluded from this filter (RS vs itself is always 1.0)
+
+# =============================================================================
+# FEAR & GREED INDEX FILTER
+# =============================================================================
+# Sentiment filter: suppress accumulation signals during extreme greed.
+# Source: Alternative.me API (Bitcoin Fear & Greed Index)
+fear_greed:
+  enabled: true
+  threshold: 70                   # F&G >= this triggers downgrade
+  # When Fear & Greed >= threshold (Greed/Extreme Greed):
+  # - strong-accumulate downgrades to accumulate
+  # - accumulate downgrades to hold
+  # Combined with GLI and RS filters using OR logic (aggressive)
 
 # =============================================================================
 # RSI THRESHOLDS

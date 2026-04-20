@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 """
-Pipeline orchestrator - daily scoring scan.
+Weekly full scoring pipeline - all dimensions + Wyckoff phase detection.
+
+This runs the complete scoring pipeline including:
+- Qualitative scores (regulatory, institutional) via Claude API
+- Revenue scores from DefiLlama
+- Supply/on-chain analysis
+- Wyckoff phase detection from price structure
+- RSI calculation (daily/weekly)
+- Macro filters (GLI, RS vs BTC, Fear & Greed)
+
+Run weekly (Sunday 00:00 UTC) via cron.
+For daily indicator updates, use: python -m pipeline.indicators
 
 Usage:
     python -m pipeline.run
@@ -21,7 +32,7 @@ from pathlib import Path
 import yaml
 
 from pipeline.config import config
-from pipeline.fetchers import defillama, gli, qualitative, relative_strength, supply
+from pipeline.fetchers import defillama, fear_greed, gli, qualitative, relative_strength, supply
 from pipeline.scoring import actions, composite, rsi, wyckoff
 from pipeline.storage import migrations
 
@@ -122,7 +133,7 @@ def compute_tier(composite_score: int) -> str:
         return "observation"
 
 
-def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
+def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool = False) -> dict:
     """
     Build complete asset data from config entry.
     Tier is computed dynamically from composite score.
@@ -131,6 +142,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
         entry: Asset config from YAML
         conn: Database connection
         gli_downtrend: True if Global Liquidity Index is contracting
+        fg_greedy: True if Fear & Greed Index >= threshold (market greed)
 
     Returns:
         Complete asset dict for dashboard
@@ -286,6 +298,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False) -> dict:
         rsi_weekly_4w_ago=rsi_weekly_4w_ago,
         gli_downtrend=gli_downtrend,
         rs_underperforming=rs_underperforming,
+        fg_greedy=fg_greedy,
     )
 
     # Get action metadata
@@ -611,7 +624,7 @@ def main():
     args = parser.parse_args()
 
     logger.info("=" * 60)
-    logger.info("Starting daily scoring pipeline (v2 - tiered weights)")
+    logger.info("Weekly full scoring pipeline")
     logger.info("=" * 60)
 
     # Load asset definitions (flat list - tiers computed dynamically)
@@ -633,6 +646,14 @@ def main():
         logger.info(f"GLI status: {'contracting' if gli_downtrend else 'expanding'} (source: {gli_data['source']})")
     else:
         logger.info("GLI data unavailable - macro filter disabled")
+
+    # Fetch Fear & Greed Index (sentiment filter)
+    fg_data = fear_greed.fetch_fear_greed()
+    fg_greedy = fg_data.get("greedy", False)
+    if fg_data.get("enabled") and fg_data.get("value") is not None:
+        logger.info(f"Fear & Greed: {fg_data['value']} ({fg_data['classification']}) - {'GREEDY' if fg_greedy else 'neutral'}")
+    else:
+        logger.info("Fear & Greed data unavailable - sentiment filter disabled")
 
     # Clear RS cache for fresh BTC price data
     relative_strength.clear_cache()
@@ -670,6 +691,13 @@ def main():
             "lookback_days": config.rs.lookback_days,
             "threshold_pct": config.rs.underperformance_threshold * 100,
         },
+        "fear_greed": {
+            "enabled": fg_data.get("enabled", False),
+            "value": fg_data.get("value"),
+            "classification": fg_data.get("classification"),
+            "threshold": fg_data.get("threshold", 70),
+            "greedy": fg_greedy,
+        },
         "assets": [],
     }
 
@@ -677,7 +705,7 @@ def main():
     logger.info(f"\nProcessing {len(assets_list)} assets...")
     for entry in assets_list:
         try:
-            asset = build_asset(entry, conn, gli_downtrend=gli_downtrend)
+            asset = build_asset(entry, conn, gli_downtrend=gli_downtrend, fg_greedy=fg_greedy)
 
             # Save to database
             migrations.save_snapshot(conn, asset, today)
