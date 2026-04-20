@@ -43,6 +43,22 @@ Consider:
 Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences>"}}
 No other text."""
 
+REVENUE_PROMPT = """Score the revenue/fee generation for {symbol} ({name}) on a 0-100 scale.
+
+Research and consider:
+- Protocol fees (transaction fees, trading fees, service fees)
+- Revenue model sustainability
+- For oracles: data feed fees, CCIP fees, node operator payments
+- For L1/L2: transaction fees, MEV revenue
+- For DeFi: trading fees, interest spreads, liquidation fees
+- Recent revenue trends and growth
+- Revenue relative to competitors in the same category
+
+Use your knowledge of recent reports, documentation, and public data. If exact figures aren't available, estimate based on protocol activity and adoption.
+
+Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences explaining the revenue model and estimated strength>"}}
+No other text."""
+
 
 def score_regulatory(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
@@ -242,6 +258,66 @@ def _get_fallback_institutional(symbol: str) -> dict:
         "CANTON": {"score": 55, "rationale": "Enterprise blockchain, pre-market phase"},
     }
     return fallbacks.get(symbol, {"score": 55, "rationale": "Limited institutional presence"})
+
+
+def score_revenue(symbol: str, name: str, use_cache: bool = True) -> dict:
+    """
+    Score revenue/fees using Claude when API data is unavailable.
+
+    This is a fallback for when DefiLlama doesn't have revenue data.
+    The score is marked as 'estimated' to indicate it's LLM-derived.
+
+    Args:
+        symbol: Asset symbol (e.g., 'LINK')
+        name: Asset name (e.g., 'Chainlink')
+        use_cache: Whether to use cached scores
+
+    Returns:
+        Dict with 'score' (int), 'rationale' (str), and 'estimated' (bool)
+    """
+    cache_key = f"revenue_{symbol}"
+
+    if use_cache and cache_key in _score_cache:
+        return _score_cache[cache_key]
+
+    result = _query_claude(
+        REVENUE_PROMPT.format(symbol=symbol, name=name), cache_key
+    )
+
+    if result:
+        result["estimated"] = True
+        _score_cache[cache_key] = result
+        return result
+
+    # Fallback scores based on known assets
+    fallback = _get_fallback_revenue(symbol)
+    fallback["estimated"] = True
+    return fallback
+
+
+def _get_fallback_revenue(symbol: str) -> dict:
+    """Fallback revenue scores for known assets."""
+    fallbacks = {
+        "BTC": {"score": 75, "rationale": "Mining fees, ordinals revenue, strong network activity"},
+        "ETH": {"score": 85, "rationale": "Transaction fees, MEV, blob fees, high network utilization"},
+        "SOL": {"score": 82, "rationale": "High transaction volume, MEV revenue, growing DeFi fees"},
+        "LINK": {"score": 72, "rationale": "Oracle data feed fees, CCIP cross-chain fees, growing enterprise adoption"},
+        "XRP": {"score": 55, "rationale": "Minimal transaction fees by design, payment network model"},
+        "AVAX": {"score": 68, "rationale": "Subnet fees, C-chain activity, moderate DeFi revenue"},
+        "HBAR": {"score": 60, "rationale": "Enterprise transaction fees, consensus service revenue"},
+        "HYPE": {"score": 88, "rationale": "Exchange fees, high trading volume, sustainable fee model"},
+        "MORPHO": {"score": 75, "rationale": "Lending spreads, vault management fees, growing TVL"},
+        "QNT": {"score": 50, "rationale": "Enterprise licensing model, limited on-chain fee activity"},
+        "XLM": {"score": 45, "rationale": "Minimal fees by design for payments use case"},
+        "KAS": {"score": 40, "rationale": "PoW chain with basic transaction fees, early stage"},
+        "AAVE": {"score": 78, "rationale": "Interest spreads, flash loan fees, liquidation revenue"},
+        "SUI": {"score": 65, "rationale": "Transaction fees, growing DeFi activity"},
+        "ONDO": {"score": 60, "rationale": "RWA management fees, yield distribution"},
+        "TAO": {"score": 45, "rationale": "Subnet registration fees, compute marketplace fees"},
+        "PENDLE": {"score": 70, "rationale": "Yield trading fees, PT/YT swap fees"},
+        "ENA": {"score": 65, "rationale": "Yield generation from staked assets, sUSDe fees"},
+    }
+    return fallbacks.get(symbol, {"score": 50, "rationale": "Limited revenue data available"})
 
 
 def clear_cache():

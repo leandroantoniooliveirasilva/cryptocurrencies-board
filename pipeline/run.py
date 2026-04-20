@@ -226,13 +226,21 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
             institutional_data["score"], institutional_data["rationale"]
         )
 
-    # Compute revenue score (None if data unavailable)
+    # Compute revenue score - try API first, fall back to LLM estimation
     revenue_score = None
+    revenue_estimated = False
     if defi_data and defi_data.get("revenue_24h") is not None:
+        # Factual data from DefiLlama API
         revenue_score = defillama.compute_revenue_score(
             defi_data.get("revenue_24h"),
             defi_data.get("tvl")
         )
+    else:
+        # Fallback: LLM-based estimation when API data unavailable
+        logger.info(f"No API revenue data for {symbol}, using LLM estimation")
+        revenue_data = qualitative.score_revenue(symbol, name)
+        revenue_score = revenue_data.get("score")
+        revenue_estimated = True
 
     # Compute supply/on-chain score (AI-powered with data from CoinGecko)
     supply_score = supply.compute_supply_score(
@@ -327,6 +335,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         rsi_daily=rsi_daily,
         rsi_weekly=rsi_weekly,
         rs_data=rs_data,
+        revenue_estimated=revenue_estimated,
     )
 
     return {
@@ -347,6 +356,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         "strong_accumulate_days_active": strong_accumulate_days + (1 if action == "strong-accumulate" else 0),
         "label_changed_days_ago": label_changed_days_ago,
         "missing_dimensions": missing_dimensions,
+        "revenue_estimated": revenue_estimated,
         "rs_vs_btc": {
             "underperforming": rs_data["underperforming"],
             "change_pct": rs_data["rs_change_pct"],
@@ -427,6 +437,7 @@ def _build_detailed_reasoning(
     rsi_daily,  # float or None
     rsi_weekly,  # float or None
     rs_data: dict = None,  # Relative strength vs BTC data
+    revenue_estimated: bool = False,  # True if revenue was LLM-estimated
 ) -> str:
     """
     Build detailed reasoning explaining why this asset is on the list,
@@ -504,7 +515,10 @@ def _build_detailed_reasoning(
             rev_desc = "Moderate revenue, typical for growth-phase protocols."
         else:
             rev_desc = "Limited fee revenue—protocol may rely on token incentives or is early-stage."
-        lines.append(f"• Revenue/Fees ({rev_score}/100, {int(rev_weight*100)}% weight): {rev_desc}")
+        estimated_tag = " ⚠️ ESTIMATED" if revenue_estimated else ""
+        lines.append(f"• Revenue/Fees ({rev_score}/100, {int(rev_weight*100)}% weight{estimated_tag}): {rev_desc}")
+        if revenue_estimated:
+            lines.append("  (Score derived from LLM research — API data unavailable)")
     else:
         lines.append(f"• Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.")
 
