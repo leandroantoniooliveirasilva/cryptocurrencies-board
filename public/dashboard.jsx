@@ -431,7 +431,7 @@ function DetailModal({ asset, onClose, isMobile }) {
         style={{
           background: PALETTE.cardBg,
           border: `1px solid ${PALETTE.borderStrong}`,
-          maxWidth: '560px',
+          maxWidth: '600px',
           width: '100%',
           maxHeight: '90vh',
           overflow: 'auto',
@@ -804,7 +804,7 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
 
   return (
     <div style={{
-      maxWidth: '1400px',
+      maxWidth: '900px',
       margin: `0 auto ${SPACE.lg}px`,
       display: 'flex',
       flexDirection: 'column',
@@ -1705,7 +1705,7 @@ function Dashboard() {
       padding: isMobile ? `${SPACE.lg}px ${SPACE.base}px` : `${SPACE['2xl']}px ${SPACE.lg}px`,
     }}>
       {/* Header: title + timestamp + description */}
-      <div style={{ maxWidth: '1400px', margin: `0 auto ${SPACE.lg}px` }}>
+      <div style={{ maxWidth: '900px', margin: `0 auto ${SPACE.lg}px` }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: `${SPACE.sm}px`, marginBottom: `${SPACE.sm}px` }}>
           <h1 style={{ fontSize: isMobile ? '1.5rem' : '1.75rem', fontWeight: 400, margin: 0, letterSpacing: '-0.01em', lineHeight: 1, color: PALETTE.textPrimary }}>
             Conviction Board
@@ -1733,7 +1733,7 @@ function Dashboard() {
 
       <ActionSummary assets={assets} isMobile={isMobile} minScore={thresholds.min_display_score} strongCount={strongCount} gli={gli} rs={rs} />
 
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
         {['leader', 'runner-up', 'observation'].map(tier => {
           const tierAssets = groupedAssets[tier];
           // Skip tier if no assets
@@ -1752,7 +1752,7 @@ function Dashboard() {
       </div>
 
       {/* Footer with reference info */}
-      <div style={{ maxWidth: '1400px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px`, display: 'flex', flexDirection: 'column', gap: `${SPACE.md}px` }}>
+      <div style={{ maxWidth: '900px', margin: `${isMobile ? SPACE['2xl'] : SPACE['3xl']}px auto 0`, borderTop: `1px solid ${PALETTE.border}`, paddingTop: `${SPACE.lg}px`, display: 'flex', flexDirection: 'column', gap: `${SPACE.md}px` }}>
         <GliSection gli={gli} isMobile={isMobile} />
         <FearGreedSection fearGreed={fearGreed} isMobile={isMobile} />
         <RelativeStrengthSection assets={assets} rs={rs} isMobile={isMobile} />
