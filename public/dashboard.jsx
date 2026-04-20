@@ -944,6 +944,7 @@ function GliSection({ gli, isMobile }) {
           alignItems: 'center',
           gap: `${SPACE.sm}px`,
           minHeight: isMobile ? '44px' : 'auto',
+          width: isMobile ? '100%' : 'auto',
         }}
       >
         <span style={{
@@ -1009,6 +1010,7 @@ function FearGreedSection({ fearGreed, isMobile }) {
           alignItems: 'center',
           gap: `${SPACE.sm}px`,
           minHeight: isMobile ? '44px' : 'auto',
+          width: isMobile ? '100%' : 'auto',
         }}
       >
         <span style={{
@@ -1065,6 +1067,7 @@ function StrategySection({ isMobile }) {
           alignItems: 'center',
           gap: `${SPACE.sm}px`,
           minHeight: isMobile ? '44px' : 'auto',
+          width: isMobile ? '100%' : 'auto',
         }}
       >
         <span style={{
@@ -1282,6 +1285,7 @@ function ActionLegend({ isMobile }) {
           alignItems: 'center',
           gap: `${SPACE.sm}px`,
           minHeight: isMobile ? '44px' : 'auto',
+          width: isMobile ? '100%' : 'auto',
         }}
       >
         <span style={{
@@ -1439,6 +1443,7 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
           alignItems: 'center',
           gap: `${SPACE.sm}px`,
           minHeight: isMobile ? '44px' : 'auto',
+          width: isMobile ? '100%' : 'auto',
         }}
       >
         <span style={{
