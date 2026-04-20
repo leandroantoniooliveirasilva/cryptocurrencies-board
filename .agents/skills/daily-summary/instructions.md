@@ -4,7 +4,7 @@ Interpret daily scan results and provide actionable insights.
 
 ## When to Use
 
-- After running `python -m pipeline.run`
+- After running `python -m pipeline.indicators` (daily) or `python -m pipeline.run` (weekly)
 - When asked "what's the signal today?" or "summarize the scan"
 - When reviewing `public/latest.json`
 
@@ -85,9 +85,11 @@ Fires ~5-15 times per year. Two paths:
 - Composite stable week-over-week
 - Phase C spring zone
 
-**Filters** (downgrade to accumulate):
-- GLI contracting
-- Weekly RSI was >55 and dropped >8 points (first leg down)
+**Downgrade Filters** (OR logic — any one downgrades to hold):
+- GLI contracting (liquidity withdrawal)
+- RS underperforming BTC by ≥10% over 90 days
+- Fear & Greed ≥70 (market greed/euphoria)
+- Weekly RSI was >55 and dropped >8 points (downgrades to accumulate only)
 
 ### Accumulate
 
@@ -99,9 +101,11 @@ Fires ~5-15 times per year. Two paths:
 - Non-negative 7-day trend
 - Weekly RSI <70
 
-**Downgraded from strong**:
+**Also downgrades to hold when any filter active**:
 - GLI contracting
-- Weekly RSI falling from elevated levels
+- RS underperforming BTC
+- Fear & Greed ≥70
+- Weekly RSI falling from elevated levels (to accumulate only)
 
 ### Stand Aside
 
@@ -136,11 +140,14 @@ Check in the JSON:
 - `label_changed_days_ago`: Signal freshness
 - `strong_accumulate_days_active`: Continuation vs new
 - `gli.downtrend`: Whether GLI filter is active
+- `fear_greed.greedy`: Whether Fear & Greed filter is active
+- `rs.enabled`: Whether RS vs BTC filter is enabled
+- `rs_vs_btc.underperforming`: Per-asset RS filter status
 
 ## What NOT to Do
 
 - Don't interpret hold/await/observe as requiring action
 - Don't ignore stand-aside signals
 - Don't assume daily RSI extremes alone trigger signals
-- Don't recommend action on assets below 60 composite
+- Don't recommend action on assets below 50 composite (hidden from dashboard)
 - Don't treat this as trading advice — it's accumulation guidance

@@ -1115,7 +1115,7 @@ function StrategySection({ isMobile }) {
                 <strong style={{ color: PALETTE.textPrimary }}>Buying weakness in non-leaders = momentum trap.</strong> Without fundamental strength, oversold assets often continue declining.
               </p>
               <p style={{ margin: 0 }}>
-                <strong style={{ color: PALETTE.textPrimary }}>Macro context matters.</strong> Global Liquidity Index (GLI) with a 75-day offset correlates with crypto cycle tops and bottoms. When liquidity contracts, even quality dips may have further to fall.
+                <strong style={{ color: PALETTE.textPrimary }}>Macro filters suppress accumulation</strong> when conditions are unfavorable: GLI contracting, asset underperforming BTC, or Fear & Greed in greed territory. When any filter is active, accumulation signals downgrade to hold.
               </p>
             </div>
           </div>
@@ -1211,11 +1211,14 @@ function StrategySection({ isMobile }) {
                 Phase C + daily RSI ≤32 + weekly RSI ≥42 (stable) + composite ≥80. Short-term flush within healthy structure.
               </div>
               <div style={{ marginTop: `${SPACE.md}px`, paddingLeft: `${SPACE.md}px`, borderLeft: `2px solid #d49a6a` }}>
-                <div style={{ color: '#d49a6a', marginBottom: '2px' }}>Macro Filter: GLI 75-Day Offset</div>
-                Compares current Global Liquidity Index vs 75 days ago. When GLI is contracting (today &lt; 75d ago), strong-accumulate downgrades to regular accumulate. Based on 56-90 day lag between liquidity inflection and BTC cycle turns.
+                <div style={{ color: '#d49a6a', marginBottom: '2px' }}>Downgrade Filters (OR logic)</div>
+                When ANY of these conditions is true, accumulation signals downgrade to hold:<br/>
+                • <strong>GLI contracting</strong> — Global Liquidity Index today &lt; 75 days ago<br/>
+                • <strong>RS underperforming</strong> — Asset/BTC ratio declined ≥10% over 90 days<br/>
+                • <strong>Fear & Greed ≥70</strong> — Market in greed/extreme greed territory
               </div>
               <p style={{ margin: `${SPACE.sm}px 0 0`, fontStyle: 'italic' }}>
-                Also filtered when weekly RSI falling from elevated levels (&gt;55, dropped &gt;8 points) — catches "first leg down" scenarios.
+                Additional filter: Weekly RSI falling from elevated levels (&gt;55, dropped &gt;8 points) downgrades strong-accumulate to accumulate only.
               </p>
             </div>
           </div>
@@ -1241,7 +1244,7 @@ function StrategySection({ isMobile }) {
               color: PALETTE.textMuted,
               fontFamily: 'ui-monospace, monospace',
             }}>
-              <div><span style={{ color: PALETTE.textSecondary }}>Deliberate</span> — Daily rhythm, not real-time</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Deliberate</span> — Weekly scoring, daily indicators</div>
               <div><span style={{ color: PALETTE.textSecondary }}>Patient</span> — Hold is the default state</div>
               <div><span style={{ color: PALETTE.textSecondary }}>Rare signals</span> — Quality over frequency</div>
               <div><span style={{ color: PALETTE.textSecondary }}>Framework-driven</span> — Prevents emotional drift</div>
@@ -1257,13 +1260,13 @@ function ActionLegend({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   const items = [
-    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32). Suppressed when GLI contracting (75d offset).' },
-    { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by GLI/RSI slope. Also fallback when strong-accumulate is suppressed.' },
-    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥80 with 30-day trend ≥+8.' },
-    { key: 'hold', text: 'Active position. No signal. Patience by design.' },
-    { key: 'await', text: 'Runner-up building signal. Not yet activated.' },
-    { key: 'observe', text: 'Observation tier. Scanning only.' },
-    { key: 'stand-aside', text: 'Distribution phase or sharp composite decline (≥5 pts/week). Capital preservation.' },
+    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32, weekly RSI ≥42). Downgrades to hold when any filter active: GLI contracting, RS underperforming BTC, or Fear & Greed ≥70.' },
+    { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by RSI slope. Also downgrades to hold when any macro filter active (GLI, RS, or F&G).' },
+    { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥80 with 30-day trend ≥+8 and 7-day trend ≥+2.' },
+    { key: 'hold', text: 'Active leader position. No accumulation signal. Patience by design — also the downgrade target when macro filters suppress accumulation.' },
+    { key: 'await', text: 'Runner-up building signal. Monitoring for promotion criteria.' },
+    { key: 'observe', text: 'Observation tier (composite 50-64). Research only, no position.' },
+    { key: 'stand-aside', text: 'Distribution phase detected or sharp composite decline (≥5 pts/week). Capital preservation priority.' },
   ];
 
   return (
@@ -1451,7 +1454,7 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
           display: 'inline-block',
           transform: expanded ? 'rotate(90deg)' : 'none',
         }}>▸</span>
-        <span>RS vs BTC ({lookbackDays}d):</span>
+        <span>Relative Strength vs BTC ({lookbackDays}d):</span>
         <span style={{ color: '#7aa872' }}>{outperforming.length}↑</span>
         <span style={{ color: PALETTE.textMuted }}>{stable.length}—</span>
         <span style={{ color: '#c89678' }}>{underperforming.length}↓</span>

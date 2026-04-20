@@ -7,14 +7,17 @@ A personal cryptocurrency scoring system for long-term accumulation. Scores asse
 ## How It Works
 
 ```
-Local Pipeline (on-demand)
-├── Fetch prices and revenue (DefiLlama, CoinGecko)
+Weekly Pipeline (Sundays)
 ├── Score qualitative dimensions (Claude API)
-├── Compute RSI(14) daily + weekly
-├── Detect Wyckoff phase from price structure
+├── Compute Wyckoff phase from price structure
 ├── Calculate weighted composite by asset type
-├── Derive action signal from composite + RSI + Wyckoff
-├── Append snapshot to history.sqlite
+└── Append snapshot to history.sqlite
+
+Daily Pipeline
+├── Fetch prices (DefiLlama)
+├── Compute RSI(14) daily + weekly
+├── Check macro filters (GLI, RS vs BTC, Fear & Greed)
+├── Derive action signal from composite + indicators
 └── Write latest.json → commit → push
          │
          ▼
@@ -45,7 +48,7 @@ Assets are scored 0-100 across five dimensions, weighted by asset type:
 | **strong-accumulate** | Leaders only | True capitulation or quality dip — act now |
 | **accumulate** | Leaders only | Tranche-eligible zone |
 | **promote** | Runner-ups | Crossing leader threshold |
-| **hold** | Leaders | Default — patience |
+| **hold** | Leaders | Default — patience (also downgrade target) |
 | **await** | Runner-ups | Signal building |
 | **observe** | Observation | Watch only |
 | **stand-aside** | Any | Distribution risk — do not engage |
@@ -57,17 +60,22 @@ Assets are scored 0-100 across five dimensions, weighted by asset type:
 1. **Capitulation**: Weekly RSI <30 AND daily RSI <30 (82.9% hit rate)
 2. **Wyckoff dip**: Phase C + daily RSI ≤32 + weekly RSI ≥42 + composite stable
 
-Filtered to regular accumulate when:
-- GLI (Global Liquidity Index) is contracting
-- Weekly RSI is falling from elevated levels (>55, dropping >8 points)
+**Downgrade Filters (OR logic)** — when ANY is true, accumulation signals downgrade to hold:
+- **GLI contracting**: Global Liquidity Index today < 75 days ago
+- **RS underperforming**: Asset/BTC ratio declined ≥10% over 90 days
+- **Fear & Greed ≥70**: Market in greed/extreme greed territory
 
-### Asset Tiers
+Additional filter: Weekly RSI falling from elevated levels (>55, dropping >8 points) downgrades strong-accumulate to accumulate only.
 
-| Tier | Count | Purpose |
-|------|-------|---------|
-| Leaders | 4-6 | Core positions for accumulation |
-| Runner-ups | 4-6 | Promotion candidates |
-| Observation | 5-8 | Watch only, no position |
+### Asset Tiers (Dynamic)
+
+Tiers are computed automatically from composite scores:
+
+| Tier | Composite | Purpose |
+|------|-----------|---------|
+| Leaders | ≥80 | Core positions for accumulation |
+| Runner-ups | 65-79 | Promotion candidates |
+| Observation | 50-64 | Watch only, no position |
 
 ## Quick Start
 
@@ -80,10 +88,17 @@ pip install -r requirements.txt
 ANTHROPIC_API_KEY=your_key_here
 FRED_API_KEY=your_fred_key_here  # Optional, for GLI filter
 
-# Run
+# Run weekly scoring
 python -m pipeline.run
+
+# Run daily indicators
+python -m pipeline.indicators
+
+# Build dashboard
 npm run build
-git add . && git commit -m "daily scan" && git push
+
+# Commit and push
+git add . && git commit -m "update" && git push
 ```
 
 ## Project Structure
@@ -92,7 +107,8 @@ git add . && git commit -m "daily scan" && git push
 pipeline/
 ├── assets.yaml          # Watchlist (source of truth)
 ├── config.yaml          # All thresholds and parameters
-├── run.py               # Pipeline orchestrator
+├── run.py               # Weekly full scoring
+├── indicators.py        # Daily indicator updates
 ├── fetchers/            # Data sources
 ├── scoring/             # Score computation
 └── storage/             # SQLite persistence
@@ -116,7 +132,7 @@ public/
 1. **No Server** — GitHub repo is the database
 2. **Immutable History** — Append-only SQLite
 3. **Framework-Driven** — Calibration log prevents drift
-4. **Deliberately Slow** — Daily rhythm, not real-time
+4. **Deliberately Slow** — Weekly scoring, daily indicators
 5. **Single User** — Personal decision support
 
 ## Calibration

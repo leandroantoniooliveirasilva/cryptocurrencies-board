@@ -15,7 +15,7 @@ A personal cryptocurrency scoring system for long-term accumulation. Runs locall
 - Leaders go up over time due to strong fundamentals
 - Buying weakness in leaders = mean reversion (they recover)
 - Buying weakness in non-leaders = momentum trap (they continue down)
-- Daily rhythm, not real-time — deliberately slow
+- Weekly scoring, daily indicators — deliberately slow
 
 ### Conviction Over Trading
 
@@ -97,18 +97,24 @@ Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tier
 
 ### Filters
 
+All three filters use OR logic — when ANY is active, accumulation signals downgrade to hold.
+
 **GLI (Global Liquidity Index)**:
 - Compares current GLI vs 75 days ago
-- If contracting → strong-accumulate downgrades to accumulate
+- If contracting → accumulation signals downgrade to hold
 - Based on 56-90 day lag between liquidity inflection and BTC tops/bottoms
-- Sources: Manual override, TradingView, FRED M2, Fallback (neutral)
+- Sources: FRED M2, Manual override, Fallback (neutral)
 
 **RS (Relative Strength vs BTC)**:
-- Compares each asset's price ratio to BTC over lookback period (default 90 days)
-- If underperforming BTC by ≥threshold (default 10%) → strong-accumulate downgrades to accumulate
+- Compares each asset's price ratio to BTC over 90 days
+- If underperforming BTC by ≥10% → accumulation signals downgrade to hold
 - Rationale: if an asset is underperforming BTC, you may be better off just holding BTC
-- Dashboard shows warning banner and indicator on affected asset cards
 - BTC excluded (RS vs itself is always 1.0)
+
+**Fear & Greed Index**:
+- Fetches Bitcoin Fear & Greed Index from Alternative.me API
+- If ≥70 (Greed/Extreme Greed) → accumulation signals downgrade to hold
+- Rationale: buying during euphoria often means buying near local tops
 
 ### Display Threshold
 
@@ -117,14 +123,18 @@ Assets with composite score below 50 are hidden from the dashboard.
 ## Pipeline
 
 ```
-Local (on-demand)
-├── Fetch: DefiLlama (TVL, revenue), CoinGecko (prices)
+Weekly (Sundays via cron)
+├── Fetch: DefiLlama (TVL, revenue)
 ├── Score: Claude API for regulatory, institutional, supply
-├── Compute: RSI(14) daily + weekly from 120 days OHLC
 ├── Detect: Wyckoff phase from price structure
 ├── Composite: Weighted score by asset type
-├── Action: Derive signal from composite + RSI + Wyckoff + trend
-├── Store: Append snapshot to history.sqlite
+└── Store: Append snapshot to history.sqlite
+
+Daily (via cron)
+├── Fetch: Prices (DefiLlama)
+├── Compute: RSI(14) daily + weekly
+├── Check: Macro filters (GLI, RS vs BTC, Fear & Greed)
+├── Action: Derive signal from composite + indicators
 └── Output: Write latest.json, commit, push
          │
          ▼
@@ -217,7 +227,7 @@ public/
 2. **Immutable History** — Append-only SQLite
 3. **Framework-Driven** — Calibration log prevents drift
 4. **Lean Dependencies** — No heavy ORMs or frameworks
-5. **Deliberately Slow** — Daily rhythm, not real-time
+5. **Deliberately Slow** — Weekly scoring, daily indicators
 6. **Single User** — Personal decision support
 7. **Warm Minimalism** — Clean without being cold (see .impeccable.md)
 
