@@ -61,10 +61,10 @@ assets:
     defillama_slug: sui
     wyckoff_override: null
 
-  # DeFi Protocols
+  # Oracle / Infrastructure
   - symbol: LINK
     name: Chainlink
-    asset_type: defi
+    asset_type: infrastructure
     coingecko_id: chainlink
     defillama_slug: chainlink
     wyckoff_override: null

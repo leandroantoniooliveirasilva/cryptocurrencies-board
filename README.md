@@ -8,16 +8,14 @@ A personal cryptocurrency scoring system for long-term accumulation. Scores asse
 
 ```
 Weekly Pipeline (Sundays)
-├── Score qualitative dimensions (Claude API)
-├── Compute Wyckoff phase from price structure
-├── Calculate weighted composite by asset type
-└── Append snapshot to history.sqlite
-
-Daily Pipeline
 ├── Fetch prices (DefiLlama)
-├── Compute RSI(14) daily + weekly
+├── Score qualitative dimensions (Claude API)
+├── Compute RSI(14) from daily + weekly prices
+├── Compute Wyckoff phase from price structure
 ├── Check macro filters (GLI, RS vs BTC, Fear & Greed)
+├── Calculate weighted composite by asset type
 ├── Derive action signal from composite + indicators
+├── Append snapshot to history.sqlite
 └── Write latest.json → commit → push
          │
          ▼
@@ -91,9 +89,6 @@ FRED_API_KEY=your_fred_key_here  # Optional, for GLI filter
 # Run weekly scoring
 python -m pipeline.run
 
-# Run daily indicators
-python -m pipeline.indicators
-
 # Build dashboard
 npm run build
 
@@ -107,15 +102,14 @@ git add . && git commit -m "update" && git push
 pipeline/
 ├── assets.yaml          # Watchlist (source of truth)
 ├── config.yaml          # All thresholds and parameters
-├── run.py               # Weekly full scoring
-├── indicators.py        # Daily indicator updates
+├── run.py               # Weekly scoring orchestrator
 ├── fetchers/            # Data sources
 ├── scoring/             # Score computation
 └── storage/             # SQLite persistence
 
 public/
 ├── dashboard.jsx        # React dashboard
-├── latest.json          # Today's snapshot
+├── latest.json          # Weekly snapshot
 └── index.html           # Entry point
 
 .docs/
@@ -124,7 +118,7 @@ public/
 
 .agents/skills/
 ├── discovery/           # Monthly watchlist discovery
-└── daily-summary/       # Scan interpretation
+└── weekly-summary/      # Scan interpretation
 ```
 
 ## Design Principles
@@ -132,7 +126,7 @@ public/
 1. **No Server** — GitHub repo is the database
 2. **Immutable History** — Append-only SQLite
 3. **Framework-Driven** — Calibration log prevents drift
-4. **Deliberately Slow** — Weekly scoring, daily indicators
+4. **Deliberately Slow** — Weekly scoring rhythm
 5. **Single User** — Personal decision support
 
 ## Calibration

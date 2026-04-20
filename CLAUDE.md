@@ -15,7 +15,7 @@ A personal cryptocurrency scoring system for long-term accumulation. Runs locall
 - Leaders go up over time due to strong fundamentals
 - Buying weakness in leaders = mean reversion (they recover)
 - Buying weakness in non-leaders = momentum trap (they continue down)
-- Weekly scoring, daily indicators — deliberately slow
+- Weekly scoring rhythm — deliberately slow
 
 ### Conviction Over Trading
 
@@ -137,12 +137,7 @@ Weekly (Sundays via cron)
 ├── Composite: Weighted score by asset type
 └── Store: Append snapshot to history.sqlite
 
-Daily (via cron)
-├── Fetch: Prices (DefiLlama)
-├── Compute: RSI(14) daily + weekly
-├── Check: Macro filters (GLI, RS vs BTC, Fear & Greed)
-├── Action: Derive signal from composite + indicators
-└── Output: Write latest.json, commit, push
+Output: Write latest.json, commit, push
          │
          ▼
 GitHub Actions → Deploy /public to GitHub Pages
@@ -151,13 +146,9 @@ GitHub Actions → Deploy /public to GitHub Pages
 ## Commands
 
 ```bash
-# Weekly full scoring (all dimensions + Wyckoff)
+# Weekly scoring (all dimensions + indicators)
 python -m pipeline.run
 python -m pipeline.run --dry-run
-
-# Daily indicators update (RSI, GLI, RS, F&G)
-python -m pipeline.indicators
-python -m pipeline.indicators --dry-run
 
 # Frontend
 npm run build
@@ -178,15 +169,12 @@ The pipeline runs locally via cron, not GitHub Actions:
 # Edit crontab
 crontab -e
 
-# Add these entries (adjust paths as needed):
-# Weekly full scoring - Sunday 00:00 UTC
-0 0 * * 0 cd ~/Projects/personal/cryptocurrencies-board && source .venv/bin/activate && python -m pipeline.run && git add -A && git commit -m "chore: weekly scoring update" && git push
-
-# Daily indicators - 00:00 UTC
-0 0 * * * cd ~/Projects/personal/cryptocurrencies-board && source .venv/bin/activate && python -m pipeline.indicators && git add -A && git commit -m "chore: daily indicators update" && git push
+# Add this entry (adjust paths as needed):
+# Weekly scoring - Sunday 00:00 UTC
+0 0 * * 0 cd ~/Projects/personal/cryptocurrencies-board && source .venv/bin/activate && python -m pipeline.run && git add -A && git commit -m "chore: weekly scoring" && git push
 ```
 
-**Note**: Adjust for your timezone. UTC 00:00 = PT 17:00 (previous day).
+**Note**: Adjust for your timezone. UTC 00:00 = PT 17:00 (previous day). Discovery runs monthly (manual).
 
 ## Environment
 
@@ -225,7 +213,7 @@ public/
 
 .agents/skills/
 ├── discovery/               # Monthly watchlist discovery
-└── daily-summary/           # Scan interpretation
+└── weekly-summary/          # Weekly scan interpretation
 ```
 
 ## Design Principles
@@ -234,7 +222,7 @@ public/
 2. **Immutable History** — Append-only SQLite
 3. **Framework-Driven** — Calibration log prevents drift
 4. **Lean Dependencies** — No heavy ORMs or frameworks
-5. **Deliberately Slow** — Weekly scoring, daily indicators
+5. **Deliberately Slow** — Weekly scoring rhythm
 6. **Single User** — Personal decision support
 7. **Warm Minimalism** — Clean without being cold (see .impeccable.md)
 
@@ -257,7 +245,7 @@ Track changes in `.docs/decisions.md`. Monitor:
 ## Skills
 
 - `discovery` — Monthly watchlist discovery and vetting
-- `daily-summary` — Interpret daily scan results
+- `weekly-summary` — Interpret weekly scan results
 
 ## Documentation Updates
 

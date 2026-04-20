@@ -29,7 +29,12 @@ def derive_action(
     - hold: Active position, no action signal (leader default)
     - await: Signal building, not yet activated (runner-up default)
     - observe: Observation tier only (observation default)
-    - stand-aside: Distribution risk or negative structural trend
+    - stand-aside: Distribution risk or sharp decline
+
+    Stand Aside triggers (overrides all other signals):
+    - Sharp weekly decline (delta <= -5)
+    - Non-leaders in distribution phase (any delta) — they lack mean-reversion property
+    - Leaders in distribution phase with negative delta
 
     Accumulation triggers (leaders only):
     1. Strong-accumulate: Weekly RSI <30 AND Daily RSI <30 (true capitulation, 82.9% hit rate)
@@ -80,12 +85,20 @@ def derive_action(
     delta = _weekly_delta(trend_7d)
     delta_30 = _monthly_delta(trend_30d)
     phase_lower = wyckoff_phase.lower() if wyckoff_phase else ""
+    is_distribution = "distribution" in phase_lower
 
     # Stand Aside overrides everything - structural break
-    if "distribution" in phase_lower and delta < 0:
-        return "stand-aside"
+    # Sharp weekly decline = stand aside regardless of tier
     if delta <= comp_cfg.stand_aside_delta:
         return "stand-aside"
+
+    # Distribution phases = stand aside for non-leaders (they lack mean-reversion property)
+    # Leaders get more lenience: only stand aside if distribution + negative delta
+    if is_distribution:
+        if tier != "leader":
+            return "stand-aside"  # Non-leaders: distribution alone = risk
+        elif delta < 0:
+            return "stand-aside"  # Leaders: distribution + negative delta = risk
 
     if tier == "leader":
         # === CAPITULATION SIGNALS (RSI-based, independent of Wyckoff) ===
@@ -112,7 +125,6 @@ def derive_action(
         # Check for Phase C or B→C (spring/transition zones)
         # Must exclude distribution phases (UTAD) which share the "phase c"
         # substring but are bearish, not bullish.
-        is_distribution = "distribution" in phase_lower
         wyckoff_ready = (not is_distribution) and (
             "phase c" in phase_lower or
             "→c" in phase_lower or

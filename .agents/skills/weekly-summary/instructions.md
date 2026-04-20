@@ -1,16 +1,16 @@
-# Daily Summary Skill
+# Weekly Summary Skill
 
-Interpret daily scan results and provide actionable insights.
+Interpret weekly scan results and provide actionable insights.
 
 ## When to Use
 
-- After running `python -m pipeline.indicators` (daily) or `python -m pipeline.run` (weekly)
-- When asked "what's the signal today?" or "summarize the scan"
+- After running `python -m pipeline.run` (weekly scoring)
+- When asked "what's the signal this week?" or "summarize the scan"
 - When reviewing `public/latest.json`
 
 ## Interpretation
 
-### Step 1: Read Today's Scan
+### Step 1: Read This Week's Scan
 
 ```bash
 cat public/latest.json
@@ -20,7 +20,7 @@ cat public/latest.json
 
 | Action | Meaning | Response |
 |--------|---------|----------|
-| strong-accumulate | Rare dislocation or capitulation | Act today — high conviction |
+| strong-accumulate | Rare dislocation or capitulation | Act now — high conviction |
 | accumulate | Tranche-eligible | Add measured size |
 | promote | Runner-up earning activation | Review for tier change |
 | stand-aside | Distribution risk | Do not engage |
@@ -34,20 +34,21 @@ Before generating the summary, scan for logical inconsistencies:
 
 | Check | Inconsistency | Fix |
 |-------|---------------|-----|
-| Wyckoff vs Action | Accumulation phase + stand-aside | If stand-aside from delta (not distribution), note "sharp decline despite accumulation structure" |
+| Wyckoff vs Action | Distribution phase + Await/Observe (no Stand Aside) | Distribution = risk, should flag or Stand Aside |
 | RSI vs Action | Oversold RSI + stand-aside | If composite declined sharply, stand-aside is correct; note the conflict |
-| Composite vs Tier | Leader with composite <60 | Flag for potential demotion review |
+| Composite vs Tier | Leader with composite <65 | Flag for potential demotion review |
 | Action vs Description | Action text contradicts Wyckoff phase | Rewrite description to match actual trigger |
 
-**If inconsistencies found:**
-1. Note them in the summary under "⚠️ Inconsistencies Detected"
-2. Explain the actual reason (e.g., "SOL shows stand-aside due to -7pt weekly decline, not distribution")
-3. Flag for potential calibration review if pattern repeats
+**You MUST count inconsistencies and report at the top level.**
 
 ### Step 4: Generate Summary
 
 ```markdown
-## Daily Signals — [Date]
+## Weekly Signals — [Date]
+
+### ⚠️ Inconsistency Count: N
+
+[If N > 0, list each inconsistency with explanation]
 
 ### Action Required
 [List strong-accumulate or accumulate signals with context]
@@ -55,16 +56,14 @@ Before generating the summary, scan for logical inconsistencies:
 ### Stand Aside
 [List warnings with actual trigger reason]
 
-### ⚠️ Inconsistencies Detected (if any)
-[List any logical conflicts between dimensions, phases, and actions]
-
 ### Notable Changes
 [Score movements, RSI extremes, phase changes]
 
 ### Watchlist Health
 - Leaders firing accumulate: X/Y
-- Strong signals active: N days
+- Strong signals active: N weeks
 - GLI status: [expanding/contracting]
+- Fear & Greed: [value] ([classification])
 
 ### Interpretation
 [1-2 sentences on market posture]
@@ -109,10 +108,11 @@ Fires ~5-15 times per year. Two paths:
 
 ### Stand Aside
 
-- Distribution phase + negative trend
+Triggers for ANY tier (not just leaders):
+- Distribution phase (A, B, C, D, E) + negative trend
 - Weekly delta ≤-5 points
 
-Overrides all other signals.
+**Overrides all other signals.**
 
 ### Promote
 
@@ -136,7 +136,7 @@ Requires manual decision to promote in `assets.yaml`.
 ## Historical Context
 
 Check in the JSON:
-- `trend` and `trend_30d`: Score trajectory
+- `trend` and `trend_30d`: Score trajectory (requires 4+ weeks of data)
 - `label_changed_days_ago`: Signal freshness
 - `strong_accumulate_days_active`: Continuation vs new
 - `gli.downtrend`: Whether GLI filter is active
@@ -151,3 +151,4 @@ Check in the JSON:
 - Don't assume daily RSI extremes alone trigger signals
 - Don't recommend action on assets below 50 composite (hidden from dashboard)
 - Don't treat this as trading advice — it's accumulation guidance
+- Don't ignore distribution phases in non-leaders — they still indicate risk

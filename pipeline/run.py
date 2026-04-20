@@ -271,9 +271,11 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     # Compute tier dynamically from composite score
     tier = compute_tier(composite_score)
 
-    # Get historical data for trends
+    # Get historical data for trends (weekly snapshots accumulate over time)
+    # trend_7d = last 7 weekly snapshots (~7 weeks)
+    # trend_30d = last 30 weekly snapshots (~30 weeks) — for longer-term view
     trend_7d = migrations.get_trend_data(conn, symbol, 7)
-    trend_30d = migrations.get_trend_data(conn, symbol, 30)
+    trend_30d = migrations.get_trend_data(conn, symbol, 12)  # 12 weeks = ~quarter
     composite_last_week = migrations.get_composite_last_week(conn, symbol)
 
     # Add current score to trends if we have history
@@ -636,7 +638,7 @@ def write_output(output: dict, dry_run: bool = False) -> None:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run daily scoring pipeline")
+    parser = argparse.ArgumentParser(description="Run weekly scoring pipeline")
     parser.add_argument("--dry-run", action="store_true", help="Don't write output files")
     args = parser.parse_args()
 
