@@ -163,3 +163,25 @@ assets:
     coingecko_id: eigenlayer
     defillama_slug: eigenlayer
     wyckoff_override: null
+
+  - symbol: CANTON
+    name: Canton Network
+    asset_type: infrastructure
+    coingecko_id: canton-network
+    defillama_slug: canton
+    wyckoff_override: null
+
+  # Additional DeFi Protocols (Discovery April 2026)
+  - symbol: UNI
+    name: Uniswap
+    asset_type: defi
+    coingecko_id: uniswap
+    defillama_slug: uniswap
+    wyckoff_override: null
+
+  - symbol: LDO
+    name: Lido DAO
+    asset_type: defi
+    coingecko_id: lido-dao
+    defillama_slug: lido
+    wyckoff_override: null
