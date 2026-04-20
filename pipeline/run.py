@@ -32,7 +32,7 @@ from pathlib import Path
 import yaml
 
 from pipeline.config import config
-from pipeline.fetchers import defillama, fear_greed, gli, qualitative, relative_strength, supply
+from pipeline.fetchers import coingecko, defillama, fear_greed, gli, qualitative, relative_strength, supply
 from pipeline.scoring import actions, composite, rsi, wyckoff
 from pipeline.storage import migrations
 
@@ -674,6 +674,14 @@ def main():
     else:
         logger.info("Fear & Greed data unavailable - sentiment filter disabled")
 
+    # Fetch global market data (BTC dominance, stablecoin supply)
+    global_market = coingecko.fetch_global_market_data()
+    stablecoin_mcap = coingecko.fetch_stablecoin_mcap()
+    if global_market.get("btc_dominance"):
+        logger.info(f"BTC dominance: {global_market['btc_dominance']}%")
+    if stablecoin_mcap:
+        logger.info(f"Stablecoin market cap: ${stablecoin_mcap/1e9:.1f}B")
+
     # Clear RS cache for fresh BTC price data
     relative_strength.clear_cache()
     if config.rs.enabled:
@@ -716,6 +724,11 @@ def main():
             "classification": fg_data.get("classification"),
             "threshold": fg_data.get("threshold", 70),
             "greedy": fg_greedy,
+        },
+        "market_context": {
+            "btc_dominance": global_market.get("btc_dominance"),
+            "stablecoin_mcap_billions": round(stablecoin_mcap / 1e9, 1) if stablecoin_mcap else None,
+            "total_mcap_trillions": round(global_market.get("total_mcap", 0) / 1e12, 2) if global_market.get("total_mcap") else None,
         },
         "assets": [],
     }

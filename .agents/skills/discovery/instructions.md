@@ -190,6 +190,11 @@ For each candidate, apply the full framework and recommend adding if it meets AN
 - **Token Unlocks**: https://token.unlocks.app — Vesting schedules and unlock events
 - **Messari**: https://messari.io — Token supply analysis (free tier)
 
+**Developer Activity (Early Signal for L1/L2)**
+- **Artemis**: https://www.artemis.xyz — Developer activity, ecosystem growth, weekly active developers
+- Check weekly active developers trend — strong early indicator before institutional adoption
+- Growing developer count often precedes revenue and TVL growth
+
 **Market Intelligence Reports**
 - **Messari Reports**: https://messari.io/research — Quarterly reports on major protocols
 - **The Block Research**: https://www.theblock.co/data — Data dashboards
@@ -205,6 +210,7 @@ A project qualifies for discovery if it meets ANY of these criteria:
 3. **Regulatory Leader**: Clear commodity classification or MiCA compliance, listed on all major regulated exchanges
 4. **Supply Excellence**: >70% in long-term holder wallets, declining exchange reserves, deflationary or low inflation
 5. **Emerging Momentum**: >$500M market cap with clear value accrual mechanism and growing TVL/revenue
+6. **Developer Growth**: Top 20 in weekly active developers on Artemis, especially with growing trend (early signal for L1/L2)
 
 **Key Principle**: A project does NOT need to score high on all dimensions. Excellence in ONE dimension (especially revenue or institutional) can justify inclusion. The scoring framework will rank them appropriately.
 

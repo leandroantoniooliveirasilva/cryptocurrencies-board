@@ -64,6 +64,8 @@ Before generating the summary, scan for logical inconsistencies:
 - Strong signals active: N weeks
 - GLI status: [expanding/contracting]
 - Fear & Greed: [value] ([classification])
+- BTC dominance: [value]% (rising dominance = alts underperform)
+- Stablecoin supply: $[value]B (rising = dry powder, falling = deployed)
 
 ### Interpretation
 [1-2 sentences on market posture]
@@ -143,6 +145,8 @@ Check in the JSON:
 - `fear_greed.greedy`: Whether Fear & Greed filter is active
 - `rs.enabled`: Whether RS vs BTC filter is enabled
 - `rs_vs_btc.underperforming`: Per-asset RS filter status
+- `market_context.btc_dominance`: BTC market share (rising = alts underperform)
+- `market_context.stablecoin_mcap_billions`: Dry powder indicator
 
 ## What NOT to Do
 

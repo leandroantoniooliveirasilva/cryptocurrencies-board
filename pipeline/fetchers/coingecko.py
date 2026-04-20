@@ -288,3 +288,59 @@ def extract_weekly_closes(ohlc_data: list[list]) -> list[float]:
     # Return closes sorted by week (oldest to newest)
     sorted_weeks = sorted(weekly_closes.keys())
     return [weekly_closes[w] for w in sorted_weeks]
+
+
+def fetch_global_market_data() -> dict:
+    """
+    Fetch global market data including BTC dominance and stablecoin market cap.
+
+    Returns:
+        Dict with:
+        - btc_dominance: BTC market dominance percentage
+        - stablecoin_mcap: Total stablecoin market cap in USD
+        - total_mcap: Total crypto market cap in USD
+    """
+    try:
+        url = f"{_get_base_url()}/global"
+        resp = _request_with_retry(url, {}, _get_headers())
+        if not resp:
+            logger.warning("Failed to fetch global market data")
+            return {}
+
+        data = resp.json().get("data", {})
+        return {
+            "btc_dominance": round(data.get("market_cap_percentage", {}).get("btc", 0), 1),
+            "total_mcap": data.get("total_market_cap", {}).get("usd"),
+            "stablecoin_mcap": None,  # Not directly available, need separate call
+        }
+    except Exception as e:
+        logger.warning(f"Error fetching global data: {e}")
+        return {}
+
+
+def fetch_stablecoin_mcap() -> Optional[float]:
+    """
+    Fetch total stablecoin market cap from CoinGecko categories.
+
+    Returns:
+        Total stablecoin market cap in USD or None
+    """
+    try:
+        url = f"{_get_base_url()}/coins/markets"
+        params = {
+            "vs_currency": "usd",
+            "category": "stablecoins",
+            "order": "market_cap_desc",
+            "per_page": 20,
+            "page": 1,
+        }
+        resp = _request_with_retry(url, params, _get_headers())
+        if not resp:
+            return None
+
+        coins = resp.json()
+        total = sum(c.get("market_cap", 0) or 0 for c in coins)
+        return total
+    except Exception as e:
+        logger.warning(f"Error fetching stablecoin data: {e}")
+        return None
