@@ -1,6 +1,6 @@
 # Watchlist configuration
 # Tiers are computed DYNAMICALLY from composite scores:
-#   - Leader:      composite >= 80
+#   - Leader:      composite >= 75
 #   - Runner-up:   composite >= 65
 #   - Observation: composite < 65
 #
