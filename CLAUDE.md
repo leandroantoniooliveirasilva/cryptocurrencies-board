@@ -33,10 +33,17 @@ Each scored 0-100, weighted by asset type:
 | Dimension | What It Measures |
 |-----------|------------------|
 | Institutional | ETF flows, fund holdings, custody adoption |
-| Revenue | Protocol fees, sustainable revenue |
+| Revenue | Protocol fee activity (revenue or burns) |
 | Regulatory | Jurisdictional clarity, compliance |
 | Supply | Exchange reserves, holder distribution, inflation |
 | Wyckoff | Technical phase (accumulation/distribution) |
+
+**Fee Models**: Not all protocol fees are "revenue" in the traditional sense:
+- **Revenue**: Fees → treasury/validators (ETH tips, AAVE)
+- **Burn**: Fees → destroyed, reducing supply (Canton, ETH EIP-1559)
+- **Hybrid**: Burns + revenue combined (most L1s)
+
+Burns are valid value accrual — supply reduction benefits holders.
 
 **Value Accrual (Discovery Filter)**: How protocol success translates to token appreciation. A project may succeed but if success doesn't flow to token holders (fee burns, revenue sharing, staking requirements), it's not a strong candidate. Evaluated during discovery, not scored numerically.
 

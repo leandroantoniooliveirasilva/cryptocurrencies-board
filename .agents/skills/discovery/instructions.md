@@ -46,11 +46,28 @@ Score each dimension 0-100:
 - Institutional custody availability (Coinbase Custody, Fireblocks)
 - Corporate treasury adoption
 
-### 2. Revenue (Protocol Sustainability)
-- Annualized protocol revenue
-- Revenue-to-TVL ratio (for DeFi)
-- Revenue trend (growing/stable/declining)
-- Fee sustainability without token inflation
+### 2. Revenue / Fee Activity (Protocol Sustainability)
+
+**IMPORTANT**: Not all fees are revenue. Understand the fee model before scoring:
+
+| Fee Model | How It Works | Value Accrual | Examples |
+|-----------|--------------|---------------|----------|
+| **Revenue** | Fees → Treasury/Validators | Direct income to holders | ETH, SOL, AAVE |
+| **Burn** | Fees → Destroyed | Deflationary supply reduction | Canton, ETH EIP-1559 |
+| **Mint-Reward** | Usage → Mint new tokens → Builders | Indirect via ecosystem growth | Canton (combined) |
+
+**Scoring guidance:**
+- **Revenue model**: Score based on revenue-to-TVL ratio or absolute revenue
+- **Burn model**: Score based on burn rate relative to supply — burns ARE value accrual (supply reduction)
+- **Hybrid**: Many protocols combine burns + revenue (e.g., ETH burns base fee, tips go to validators)
+
+**Key metrics:**
+- Annualized fee activity (burns count as fee activity)
+- Revenue-to-TVL ratio (for DeFi with actual revenue)
+- Fee/burn trend (growing/stable/declining)
+- Fee sustainability without excessive inflation
+
+**Canton-specific note**: Canton uses burn-mint equilibrium with USD-denominated fees (~$2-3M/day burns). The burn removes tokens from circulation while minting rewards validators/builders. This is deflationary value accrual, not traditional revenue.
 
 ### 3. Regulatory (Jurisdictional Clarity)
 - SEC/CFTC classification clarity
