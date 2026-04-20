@@ -46,28 +46,23 @@ Score each dimension 0-100:
 - Institutional custody availability (Coinbase Custody, Fireblocks)
 - Corporate treasury adoption
 
-### 2. Revenue / Fee Activity (Protocol Sustainability)
+### 2. Revenue (Protocol Income)
 
-**IMPORTANT**: Not all fees are revenue. Understand the fee model before scoring:
+**IMPORTANT**: This dimension scores actual protocol revenue, not fee burns.
 
-| Fee Model | How It Works | Value Accrual | Examples |
-|-----------|--------------|---------------|----------|
-| **Revenue** | Fees → Treasury/Validators | Direct income to holders | ETH, SOL, AAVE |
-| **Burn** | Fees → Destroyed | Deflationary supply reduction | Canton, ETH EIP-1559 |
-| **Mint-Reward** | Usage → Mint new tokens → Builders | Indirect via ecosystem growth | Canton (combined) |
+| Fee Model | Scoring Approach |
+|-----------|------------------|
+| **Revenue** (fees → treasury/validators) | Score on this dimension |
+| **Burn** (fees → destroyed) | Skip this dimension, set `fee_model: burn` in assets.yaml |
+| **Hybrid** (ETH: burns + tips) | Score based on revenue portion only |
 
-**Scoring guidance:**
-- **Revenue model**: Score based on revenue-to-TVL ratio or absolute revenue
-- **Burn model**: Score based on burn rate relative to supply — burns ARE value accrual (supply reduction)
-- **Hybrid**: Many protocols combine burns + revenue (e.g., ETH burns base fee, tips go to validators)
+**Burn-model assets**: When a protocol burns fees instead of collecting revenue (e.g., Canton), do NOT score them on Revenue. Add `fee_model: burn` to their assets.yaml entry. Burns are evaluated as a tokenomics benefit under the Supply dimension instead.
 
-**Key metrics:**
-- Annualized fee activity (burns count as fee activity)
-- Revenue-to-TVL ratio (for DeFi with actual revenue)
-- Fee/burn trend (growing/stable/declining)
-- Fee sustainability without excessive inflation
-
-**Canton-specific note**: Canton uses burn-mint equilibrium with USD-denominated fees (~$2-3M/day burns). The burn removes tokens from circulation while minting rewards validators/builders. This is deflationary value accrual, not traditional revenue.
+**Key metrics (for revenue-model assets):**
+- Annualized protocol revenue
+- Revenue-to-TVL ratio (for DeFi)
+- Revenue trend (growing/stable/declining)
+- Fee sustainability without token inflation
 
 ### 3. Regulatory (Jurisdictional Clarity)
 - SEC/CFTC classification clarity
@@ -75,11 +70,14 @@ Score each dimension 0-100:
 - Exchange listing breadth (major regulated exchanges)
 - Compliance infrastructure
 
-### 4. Supply (On-Chain Health)
+### 4. Supply (On-Chain Health & Tokenomics)
 - Exchange reserve trends (declining = bullish)
 - Long-term holder percentage
 - Token distribution (avoid concentrated holdings)
 - Inflation/emission schedule
+- **Burn rate** (for burn-model assets): High burn rate relative to supply = strong tokenomics
+  - For burn-mint equilibrium (Canton): burns should exceed or match mints for net deflation
+  - Burns from fee activity indicate real usage and demand
 
 ### 5. Wyckoff (Technical Phase)
 - Current accumulation/distribution phase
@@ -91,8 +89,8 @@ Score each dimension 0-100:
 **A successful project does not guarantee token appreciation.** Evaluate how protocol success translates to token value:
 
 **Strong Value Accrual:**
-- Fee burns (deflationary pressure from usage)
-- Revenue sharing / staking yields (direct value to holders)
+- Fee burns (deflationary pressure from usage) — set `fee_model: burn` in assets.yaml, evaluated under Supply
+- Revenue sharing / staking yields (direct value to holders) — scored under Revenue
 - Required token staking for network participation
 - Governance rights over meaningful treasury/protocol parameters
 

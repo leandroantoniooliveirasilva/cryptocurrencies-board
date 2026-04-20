@@ -10,6 +10,10 @@
 #   - defi: DeFi protocols like LINK, AAVE (revenue focused)
 #   - infrastructure: Enterprise/infra like QNT, HBAR (institutional focused)
 #
+# Fee Models (optional, defaults to null = normal revenue):
+#   - null: Normal revenue model, score on Revenue dimension
+#   - burn: Fees are burned, skip Revenue dimension (weight redistributes)
+#
 # Discovery adds/removes assets from this list. Tiers are NOT hardcoded.
 
 assets:
@@ -170,6 +174,7 @@ assets:
     coingecko_id: canton-network
     defillama_slug: canton
     wyckoff_override: null
+    fee_model: burn  # Fees are burned, not revenue — skip Revenue dimension
 
   # Additional DeFi Protocols (Discovery April 2026)
   - symbol: UNI

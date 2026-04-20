@@ -153,6 +153,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     coingecko_id = entry.get("coingecko_id")
     defillama_slug = entry.get("defillama_slug")
     wyckoff_override = entry.get("wyckoff_override")
+    fee_model = entry.get("fee_model")  # burn, hybrid, or null (normal revenue)
 
     logger.info(f"Processing {symbol}...")
 
@@ -226,18 +227,19 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
             institutional_data["score"], institutional_data["rationale"]
         )
 
-    # Compute revenue score - try API first, fall back to LLM estimation
+    # Compute revenue score - skip for burn-model assets (weight redistributes)
     revenue_score = None
     revenue_estimated = False
-    if defi_data and defi_data.get("revenue_24h") is not None:
+    if fee_model == "burn":
+        logger.info(f"Skipping revenue scoring for {symbol} (fee_model=burn, weight redistributes)")
+    elif defi_data and defi_data.get("revenue_24h") is not None:
         # Factual data from DefiLlama API (includes fees fallback for oracles)
         revenue_score = defillama.compute_revenue_score(
             defi_data.get("revenue_24h"),
             defi_data.get("tvl")
         )
-
-    # LLM fallback only when API has no data at all
-    if revenue_score is None:
+    else:
+        # LLM fallback only when API has no data at all
         logger.info(f"No API revenue data for {symbol}, using LLM estimation")
         revenue_data = qualitative.score_revenue(symbol, name)
         revenue_score = revenue_data.get("score")
