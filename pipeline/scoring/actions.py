@@ -62,8 +62,8 @@ def derive_action(
         composite_last_week: Composite score from 7 days ago
         tier: Asset tier ('leader', 'runner-up', 'observation')
         wyckoff_phase: Current Wyckoff phase string
-        trend_7d: Last 7 days of composite scores
-        trend_30d: Last 30 days of composite scores
+        trend_7d: Last 7 weekly snapshots (~7 weeks)
+        trend_30d: Last 12 weekly snapshots (~quarterly, variable name is historical)
         rsi_daily: Daily RSI(14) or None
         rsi_weekly: Weekly RSI(14) or None
         rsi_weekly_4w_ago: Weekly RSI from 4 weeks ago (for slope check) or None
@@ -150,6 +150,7 @@ def derive_action(
                 # If weekly was >55 and has dropped significantly, this is likely
                 # the first leg of a correction, not a buyable dip.
                 weekly_falling_from_high = (
+                    rsi_weekly is not None and
                     rsi_weekly_4w_ago is not None and
                     rsi_weekly_4w_ago > rsi_cfg.slope_high_threshold and
                     rsi_weekly < rsi_weekly_4w_ago - rsi_cfg.slope_drop_threshold

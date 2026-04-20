@@ -18,7 +18,7 @@ def compute_rsi(prices: list[float], period: int = 14) -> Optional[float]:
     Returns:
         RSI value (0-100) or None if insufficient or invalid data
     """
-    if len(prices) < period + 1:
+    if not prices or len(prices) < period + 1:
         return None
 
     # Validate prices contain no None/NaN values

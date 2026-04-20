@@ -82,7 +82,7 @@ def fetch_fear_greed() -> dict:
 def _fallback_result() -> dict:
     """Return neutral fallback when API fails."""
     return {
-        "enabled": True,
+        "enabled": False,  # Filter unavailable when API fails
         "value": None,
         "classification": None,
         "greedy": False,  # Don't trigger downgrade on failure

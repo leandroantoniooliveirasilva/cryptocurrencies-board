@@ -270,8 +270,11 @@ def get_gli_status() -> dict:
             "message": "GLI data unavailable",
         }
 
-    pct_change = ((data["current"] - data["offset_value"]) / data["offset_value"] * 100
-                  if data["offset_value"] else 0)
+    # Guard against both None and zero to prevent division by zero
+    if data["offset_value"] is not None and data["offset_value"] != 0:
+        pct_change = (data["current"] - data["offset_value"]) / data["offset_value"] * 100
+    else:
+        pct_change = 0
 
     return {
         "available": True,

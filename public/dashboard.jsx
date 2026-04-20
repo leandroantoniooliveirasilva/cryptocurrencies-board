@@ -49,17 +49,27 @@ const Loader2 = (props) => <Icon {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56
 const X = (props) => <Icon {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
 const Info = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></Icon>;
 
-// Tiered weights by asset type
-const WEIGHTS_BY_TYPE = {
+// Default weights by asset type (fallback for backward compatibility)
+// NOTE: These are overridden by weight_profiles from latest.json
+const DEFAULT_WEIGHTS_BY_TYPE = {
   'store-of-value': { institutional: 0.40, supply: 0.25, regulatory: 0.15, wyckoff: 0.15, revenue: 0.05 },
   'smart-contract': { institutional: 0.30, revenue: 0.25, supply: 0.20, regulatory: 0.15, wyckoff: 0.10 },
   'defi': { revenue: 0.35, institutional: 0.25, regulatory: 0.20, supply: 0.15, wyckoff: 0.05 },
   'infrastructure': { institutional: 0.35, regulatory: 0.25, supply: 0.20, revenue: 0.10, wyckoff: 0.10 },
+  'default': { institutional: 0.30, revenue: 0.20, regulatory: 0.20, supply: 0.20, wyckoff: 0.10 },
 };
-const DEFAULT_WEIGHTS = { institutional: 0.30, revenue: 0.20, regulatory: 0.20, supply: 0.20, wyckoff: 0.10 };
+
+// Global weight profiles (populated from latest.json or defaults)
+let WEIGHTS_BY_TYPE = DEFAULT_WEIGHTS_BY_TYPE;
+
+function setWeightProfiles(profiles) {
+  if (profiles && typeof profiles === 'object') {
+    WEIGHTS_BY_TYPE = { ...DEFAULT_WEIGHTS_BY_TYPE, ...profiles };
+  }
+}
 
 function getWeights(assetType) {
-  return WEIGHTS_BY_TYPE[assetType] || DEFAULT_WEIGHTS;
+  return WEIGHTS_BY_TYPE[assetType] || WEIGHTS_BY_TYPE['default'];
 }
 
 const PALETTE = {
@@ -1626,6 +1636,10 @@ function Dashboard() {
         // Load thresholds from backend, fallback to defaults
         if (data.thresholds) {
           setThresholds({ ...DEFAULT_THRESHOLDS, ...data.thresholds });
+        }
+        // Load weight profiles from backend (overrides defaults)
+        if (data.weight_profiles) {
+          setWeightProfiles(data.weight_profiles);
         }
         // Load GLI (Global Liquidity Index) status
         if (data.gli) {

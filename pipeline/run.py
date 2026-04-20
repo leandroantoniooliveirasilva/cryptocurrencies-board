@@ -116,14 +116,9 @@ def compute_tier(composite_score: int) -> str:
         - Runner-up:   composite >= 65
         - Observation: composite < 65
     """
-    leader_threshold = getattr(config, 'tiers', None)
-    if leader_threshold:
-        leader_threshold = config.tiers.leader
-        runner_up_threshold = config.tiers.runner_up
-    else:
-        # Fallback defaults
-        leader_threshold = 75
-        runner_up_threshold = 65
+    # Config loader guarantees tiers section exists; no fallback needed
+    leader_threshold = config.tiers.leader
+    runner_up_threshold = config.tiers.runner_up
 
     if composite_score >= leader_threshold:
         return "leader"
@@ -273,9 +268,10 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
 
     # Get historical data for trends (weekly snapshots accumulate over time)
     # trend_7d = last 7 weekly snapshots (~7 weeks)
-    # trend_30d = last 30 weekly snapshots (~30 weeks) — for longer-term view
+    # trend_30d = last 12 weekly snapshots (~12 weeks = quarter)
+    # Note: Variable name is historical; represents quarterly trend, not 30 days
     trend_7d = migrations.get_trend_data(conn, symbol, 7)
-    trend_30d = migrations.get_trend_data(conn, symbol, 12)  # 12 weeks = ~quarter
+    trend_30d = migrations.get_trend_data(conn, symbol, 12)
     composite_last_week = migrations.get_composite_last_week(conn, symbol)
 
     # Add current score to trends if we have history

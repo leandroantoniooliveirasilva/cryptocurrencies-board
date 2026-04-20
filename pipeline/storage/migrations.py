@@ -254,7 +254,11 @@ def get_label_changed_days_ago(conn: sqlite3.Connection, symbol: str) -> int:
 
 def get_strong_accumulate_days(conn: sqlite3.Connection, symbol: str) -> int:
     """
-    Calculate consecutive days of strong-accumulate action BEFORE today.
+    Calculate consecutive weeks of strong-accumulate action BEFORE today.
+
+    For a weekly pipeline (Sundays), this counts consecutive weekly snapshots
+    in strong-accumulate state. Returns the count in days for backward compatibility
+    (consecutive_weeks * 7).
 
     This excludes today's date to prevent double-counting when the pipeline
     is re-run on the same day (since run.py adds 1 if today is strong-accumulate).
@@ -264,7 +268,7 @@ def get_strong_accumulate_days(conn: sqlite3.Connection, symbol: str) -> int:
         symbol: Asset symbol
 
     Returns:
-        Number of consecutive days before today (0 if none)
+        Number of days represented by consecutive weekly strong-accumulate snapshots (0 if none)
     """
     today = date.today().isoformat()
 
@@ -283,21 +287,24 @@ def get_strong_accumulate_days(conn: sqlite3.Connection, symbol: str) -> int:
     if not history:
         return 0
 
-    # Count consecutive strong-accumulate days before today, requiring the
-    # snapshot dates to be calendar-adjacent. A gap (e.g. pipeline skipped a
-    # day) should reset the streak rather than silently extend it.
+    # Count consecutive strong-accumulate snapshots (weekly pipeline runs on Sundays)
+    # Accept snapshots that are 6-8 days apart to handle weekly runs with slight timing variance
     count = 0
-    expected_date = date.today() - timedelta(days=1)
+    prev_date = None
     for entry in history:
         entry_date = date.fromisoformat(entry["date"])
         if entry["action"] != "strong-accumulate":
             break
-        if entry_date != expected_date:
-            break
+        if prev_date is not None:
+            days_gap = (prev_date - entry_date).days
+            # Expect ~7 day gap for weekly pipeline; allow 6-8 days for timing variance
+            if days_gap < 6 or days_gap > 8:
+                break
         count += 1
-        expected_date = entry_date - timedelta(days=1)
+        prev_date = entry_date
 
-    return count
+    # Return count in days (weeks * 7) for backward compatibility
+    return count * 7
 
 
 def get_history(
