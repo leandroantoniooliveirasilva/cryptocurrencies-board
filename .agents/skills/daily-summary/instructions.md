@@ -85,7 +85,7 @@ Fires ~5-15 times per year. Two paths:
 - Composite stable week-over-week
 - Phase C spring zone
 
-**Downgrade Filters** (OR logic — any one downgrades to hold):
+**Downgrade Filters** (OR logic — any one downgrades one level: strong-acc→acc, acc→hold):
 - GLI contracting (liquidity withdrawal)
 - RS underperforming BTC by ≥10% over 90 days
 - Fear & Greed ≥70 (market greed/euphoria)

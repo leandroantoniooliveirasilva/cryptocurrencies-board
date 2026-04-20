@@ -1115,7 +1115,7 @@ function StrategySection({ isMobile }) {
                 <strong style={{ color: PALETTE.textPrimary }}>Buying weakness in non-leaders = momentum trap.</strong> Without fundamental strength, oversold assets often continue declining.
               </p>
               <p style={{ margin: 0 }}>
-                <strong style={{ color: PALETTE.textPrimary }}>Macro filters suppress accumulation</strong> when conditions are unfavorable: GLI contracting, asset underperforming BTC, or Fear & Greed in greed territory. When any filter is active, accumulation signals downgrade to hold.
+                <strong style={{ color: PALETTE.textPrimary }}>Macro filters suppress accumulation</strong> when conditions are unfavorable: GLI contracting, asset underperforming BTC, or Fear & Greed in greed territory. When any filter is active, signals downgrade one level (strong-accumulate→accumulate, accumulate→hold).
               </p>
             </div>
           </div>
@@ -1260,8 +1260,8 @@ function ActionLegend({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   const items = [
-    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32, weekly RSI ≥42). Downgrades to hold when any filter active: GLI contracting, RS underperforming BTC, or Fear & Greed ≥70.' },
-    { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by RSI slope. Also downgrades to hold when any macro filter active (GLI, RS, or F&G).' },
+    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32, weekly RSI ≥42). Downgrades to accumulate when any filter active: GLI contracting, RS underperforming BTC, or Fear & Greed ≥70.' },
+    { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by RSI slope. Downgrades to hold when any macro filter active (GLI, RS, or F&G).' },
     { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8 and 7-day trend ≥+2.' },
     { key: 'hold', text: 'Active leader position. No accumulation signal. Patience by design — also the downgrade target when macro filters suppress accumulation.' },
     { key: 'await', text: 'Runner-up building signal. Monitoring for promotion criteria.' },

@@ -60,7 +60,7 @@ Assets are scored 0-100 across five dimensions, weighted by asset type:
 1. **Capitulation**: Weekly RSI <30 AND daily RSI <30 (82.9% hit rate)
 2. **Wyckoff dip**: Phase C + daily RSI ≤32 + weekly RSI ≥42 + composite stable
 
-**Downgrade Filters (OR logic)** — when ANY is true, accumulation signals downgrade to hold:
+**Downgrade Filters (OR logic)** — when ANY is true, signals downgrade one level (strong-accumulate→accumulate, accumulate→hold):
 - **GLI contracting**: Global Liquidity Index today < 75 days ago
 - **RS underperforming**: Asset/BTC ratio declined ≥10% over 90 days
 - **Fear & Greed ≥70**: Market in greed/extreme greed territory
