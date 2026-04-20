@@ -119,33 +119,82 @@ Understand the current state before making changes.
 
 ### Step 2: Omission Audit (MANDATORY)
 
-Before searching for new projects, explicitly evaluate whether any **major established assets** are missing from the watchlist:
+Before searching for new projects, systematically check these sources for missing high-value assets:
 
-- Check top-20 market cap assets not on the watchlist
-- Check assets with significant ETF infrastructure
-- Check category leaders (L1s, DeFi, infrastructure) that are absent
+#### Revenue Leaders Check
+1. Open https://defillama.com/fees and check top 30 protocols by 24h fees
+2. Open https://defillama.com/fees/chains and check top 20 chains by fees
+3. For each protocol/chain NOT on the watchlist with >$10K daily fees, evaluate for inclusion
 
-**Common omissions to evaluate**: ETH, BNB, ADA, DOT, MATIC, ATOM, UNI, LTC, etc.
+#### Market Cap Check
+- Check top-30 market cap assets on CoinGecko not on the watchlist
+- Prioritize those with clear value accrual mechanisms
 
-For each candidate, apply the full framework and recommend adding if it scores well — regardless of whether it's "new" or "exciting."
+#### Institutional Products Check
+- Check Grayscale, 21Shares, and other ETF/ETP providers for assets with products
+- Any asset with an institutional product should be evaluated
 
-### Step 3: Search for New Projects
+#### Category Leaders Check
+- L1 platforms: Check top 10 by TVL on DefiLlama
+- DeFi protocols: Check top 10 by revenue on Token Terminal
+- Infrastructure: Check oracle, bridge, and data provider leaders
 
-Use web search to find projects that:
-- Launched or gained traction in the past 60 days
-- Have institutional interest signals (fund raises, partnerships)
-- Show sustainable revenue or clear path to it
-- Have favorable tokenomics
-- Are NOT already in the watchlist
+**Common omissions to evaluate**: ETH, BNB, ADA, DOT, MATIC, ATOM, UNI, LTC, NEAR, APT, ARB, OP, etc.
 
-Search sources:
-- CoinGecko / CoinMarketCap (market data)
-- DefiLlama (TVL, revenue data)
-- Token Terminal (revenue metrics)
-- Messari (institutional reports)
-- The Block Research
-- Protocol documentation and blogs
-- SEC filings and regulatory news
+For each candidate, apply the full framework and recommend adding if it meets ANY of the inclusive criteria above — regardless of whether it's "new" or "exciting."
+
+### Step 3: Search for New Projects Using Specific Data Sources
+
+**IMPORTANT**: Use the specific URLs and sources below. Do NOT rely solely on general web searches.
+
+#### Primary Data Sources (MUST CHECK)
+
+**Revenue & Fees (Most Important Signal)**
+- **DefiLlama Fees**: https://defillama.com/fees — Check "Fees by Protocol" and "Revenue by Chain"
+- **DefiLlama Revenue**: https://defillama.com/fees/simple — Daily/weekly revenue rankings
+- **Token Terminal**: https://tokenterminal.com/terminal/metrics/revenue — Protocol revenue rankings
+- Look for protocols with >$1M annualized revenue that are NOT on the watchlist
+
+**Institutional Adoption**
+- **ETF Filings**: Search SEC EDGAR for "crypto ETF" filings (https://www.sec.gov/cgi-bin/browse-edgar)
+- **Grayscale Products**: https://grayscale.com/products/ — Check their trust/fund offerings
+- **21Shares Products**: https://21shares.com/products — ETF/ETP product list
+- **CoinShares**: https://coinshares.com/products — Institutional products
+- **Galaxy Digital Holdings**: Check their portfolio and fund disclosures
+- **a16z Crypto Portfolio**: https://a16zcrypto.com/portfolio/ — Major VC holdings
+
+**Regulatory Clarity**
+- **SEC Actions**: Search recent SEC enforcement actions and settlements
+- **CFTC Statements**: Check CFTC.gov for commodity classifications
+- **EU MiCA Registry**: Check for MiCA-compliant tokens
+- **Exchange Listings**: Check if listed on Coinbase, Kraken, Gemini (regulated US exchanges)
+
+**Supply & On-Chain Health**
+- **CoinGecko**: https://www.coingecko.com — Market cap, supply data, holder distribution
+- **DefiLlama**: https://defillama.com — TVL trends, chain comparisons
+- **Token Unlocks**: https://token.unlocks.app — Vesting schedules and unlock events
+- **Messari**: https://messari.io — Token supply analysis (free tier)
+
+**Market Intelligence Reports**
+- **Messari Reports**: https://messari.io/research — Quarterly reports on major protocols
+- **The Block Research**: https://www.theblock.co/data — Data dashboards
+- **Delphi Digital**: https://delphidigital.io — Research reports (some free)
+- **CoinGecko Research**: https://www.coingecko.com/research — Quarterly reports
+
+#### Discovery Criteria (Inclusive)
+
+A project qualifies for discovery if it meets ANY of these criteria:
+
+1. **Revenue Champion**: Top 50 in DefiLlama fees/revenue rankings, even if institutional adoption is low
+2. **Institutional Darling**: ETF product exists or filed, or held by 2+ major funds (Grayscale, a16z, Paradigm, Galaxy)
+3. **Regulatory Leader**: Clear commodity classification or MiCA compliance, listed on all major regulated exchanges
+4. **Supply Excellence**: >70% in long-term holder wallets, declining exchange reserves, deflationary or low inflation
+5. **Emerging Momentum**: >$500M market cap with clear value accrual mechanism and growing TVL/revenue
+
+**Key Principle**: A project does NOT need to score high on all dimensions. Excellence in ONE dimension (especially revenue or institutional) can justify inclusion. The scoring framework will rank them appropriately.
+
+Example: Hyperliquid has limited institutional adoption but exceptional revenue — valid discovery candidate.
+Example: Canton has high fees/revenue on DefiLlama — should be evaluated even if other metrics are unclear.
 
 ### Step 3: Review Existing Assets
 
@@ -267,7 +316,20 @@ The ensemble script automates this:
 ## Important Guidelines
 
 - **Be specific**: Cite sources, include metrics, name dates
-- **Be conservative**: Only recommend what you can verify
+- **Be inclusive**: One exceptional dimension can justify inclusion — don't require all dimensions to be strong
+- **Revenue is king**: A protocol with >$5M annualized revenue is a serious candidate even if other dimensions are weak
 - **Maintain balance**: Don't exceed tier targets
-- **Flag uncertainty**: If data is incomplete, say so
+- **Flag uncertainty**: If data is incomplete, note it but still evaluate based on available data
 - **Think long-term**: This is for accumulation, not trading
+- **Check before excluding**: If a project appears on DefiLlama fee leaderboards, it deserves evaluation
+
+## Handling Incomplete Data
+
+For newer or less-covered projects:
+
+1. **Revenue data available but others missing**: Include as observation tier, note data gaps
+2. **Institutional unclear but revenue strong**: Include — revenue demonstrates real adoption
+3. **Regulatory unclear but institutional strong**: Include — institutional adoption implies compliance
+4. **Missing DefiLlama slug**: Set `defillama_slug: null`, the pipeline will use LLM estimation
+
+**Do NOT exclude** a project just because one or two dimensions lack data. The scoring framework handles missing dimensions through weight redistribution.
