@@ -303,9 +303,9 @@ def compute_supply_score(
     name: str = None,
     coingecko_id: str = None,
     conn = None,
-) -> int:
+) -> dict:
     """
-    Compute supply/on-chain score (0-100).
+    Compute supply/on-chain score (0-100) with rationale.
 
     This is the main entry point - uses cached DB scores or computes fresh.
 
@@ -316,14 +316,14 @@ def compute_supply_score(
         conn: Database connection for caching
 
     Returns:
-        Supply score 0-100
+        Dict with 'score' (int 0-100) and 'rationale' (str)
     """
     # Try to get cached score from database
     if conn:
         from pipeline.storage import migrations
         cached = migrations.get_cached_qualitative_score(conn, symbol, "supply")
         if cached:
-            return cached["score"]
+            return {"score": cached["score"], "rationale": cached["rationale"]}
 
     # Compute fresh score
     name = name or symbol
@@ -342,7 +342,7 @@ def compute_supply_score(
             result["score"], result["rationale"]
         )
 
-    return result["score"]
+    return {"score": result["score"], "rationale": result["rationale"]}
 
 
 def clear_cache():

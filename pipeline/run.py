@@ -194,11 +194,13 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     if wyckoff_override:
         wyckoff_phase = wyckoff_override
         wyckoff_score = wyckoff.get_wyckoff_score(wyckoff_phase)
+        wyckoff_rationale = f"Manual override: {wyckoff_override}"
     elif len(daily_prices) >= data_cfg.min_wyckoff_days:
-        wyckoff_phase, wyckoff_score = wyckoff.detect_wyckoff_phase(daily_prices)
+        wyckoff_phase, wyckoff_score, wyckoff_rationale = wyckoff.detect_wyckoff_phase(daily_prices)
     else:
         wyckoff_phase = "Unknown"
         wyckoff_score = None  # Insufficient data - exclude from composite
+        wyckoff_rationale = "Insufficient price data"
 
     # Get qualitative scores (cached or fresh)
     cached_regulatory = migrations.get_cached_qualitative_score(conn, symbol, "regulatory")
@@ -225,28 +227,35 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     # Compute revenue score - skip for burn-model assets (weight redistributes)
     revenue_score = None
     revenue_estimated = False
+    revenue_rationale = None
     if fee_model == "burn":
         logger.info(f"Skipping revenue scoring for {symbol} (fee_model=burn, weight redistributes)")
+        revenue_rationale = "Fee model uses token burns (not protocol revenue). Dimension excluded, weight redistributed."
     elif defi_data and defi_data.get("revenue_24h") is not None:
         # Factual data from DefiLlama API (includes fees fallback for oracles)
-        revenue_score = defillama.compute_revenue_score(
-            defi_data.get("revenue_24h"),
-            defi_data.get("tvl")
-        )
+        revenue_24h = defi_data.get("revenue_24h")
+        tvl = defi_data.get("tvl")
+        fees_24h = defi_data.get("fees_24h")
+        revenue_score = defillama.compute_revenue_score(revenue_24h, tvl)
+        # Build evidence-backed rationale from actual data
+        revenue_rationale = _build_revenue_rationale(revenue_24h, tvl, fees_24h, revenue_score)
     else:
         # LLM fallback only when API has no data at all
         logger.info(f"No API revenue data for {symbol}, using LLM estimation")
-        revenue_data = qualitative.score_revenue(symbol, name)
-        revenue_score = revenue_data.get("score")
+        revenue_result = qualitative.score_revenue(symbol, name)
+        revenue_score = revenue_result.get("score")
+        revenue_rationale = revenue_result.get("rationale", "LLM-estimated score (no API data available)")
         revenue_estimated = True
 
     # Compute supply/on-chain score (AI-powered with data from CoinGecko)
-    supply_score = supply.compute_supply_score(
+    supply_data = supply.compute_supply_score(
         symbol=symbol,
         name=name,
         coingecko_id=coingecko_id,
         conn=conn,
     )
+    supply_score = supply_data["score"]
+    supply_rationale = supply_data["rationale"]
 
     # Wyckoff score already computed above from price data or manual override
 
@@ -345,6 +354,13 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         "tier": tier,
         "asset_type": asset_type,
         "scores": scores,
+        "score_rationales": {
+            "institutional": institutional_data["rationale"],
+            "regulatory": regulatory_data["rationale"],
+            "revenue": revenue_rationale,
+            "supply": supply_rationale,
+            "wyckoff": wyckoff_rationale,
+        },
         "weights": weights,
         "composite": composite_score,
         "composite_last_week": effective_last_week,
@@ -367,6 +383,52 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     }
 
 
+
+
+def _build_revenue_rationale(
+    revenue_24h: float,
+    tvl: float,
+    fees_24h: float,
+    score: int,
+) -> str:
+    """
+    Build evidence-backed rationale for revenue score from DefiLlama data.
+
+    Args:
+        revenue_24h: Daily protocol revenue in USD
+        tvl: Total value locked in USD (or None for oracles/infra)
+        fees_24h: Daily fees in USD (may equal revenue for some protocols)
+        score: The computed revenue score
+
+    Returns:
+        Rationale string with actual data backing the score
+    """
+    annual_revenue = revenue_24h * 365
+
+    # Format large numbers for readability
+    def fmt(n):
+        if n >= 1_000_000_000:
+            return f"${n/1e9:.2f}B"
+        elif n >= 1_000_000:
+            return f"${n/1e6:.1f}M"
+        elif n >= 1_000:
+            return f"${n/1e3:.0f}K"
+        else:
+            return f"${n:.0f}"
+
+    parts = [f"Daily revenue: {fmt(revenue_24h)} (~{fmt(annual_revenue)}/year)"]
+
+    if tvl and tvl > 0:
+        ratio = annual_revenue / tvl * 100
+        parts.append(f"TVL: {fmt(tvl)}")
+        parts.append(f"Revenue/TVL ratio: {ratio:.2f}%")
+    else:
+        parts.append("No TVL (oracle/infra model, scored on absolute revenue)")
+
+    if fees_24h and fees_24h != revenue_24h:
+        parts.append(f"Daily fees: {fmt(fees_24h)}")
+
+    return ". ".join(parts) + "."
 
 
 def _build_note(

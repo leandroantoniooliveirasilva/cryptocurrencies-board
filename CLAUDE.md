@@ -225,6 +225,28 @@ public/
 5. **Deliberately Slow** — Weekly scoring rhythm
 6. **Single User** — Personal decision support
 7. **Warm Minimalism** — Clean without being cold (see .impeccable.md)
+8. **Evidence-Backed Claims** — Every score and phase identification must include rationale
+
+### Evidence-Backed Claims (Principle 8)
+
+All dimension scores and Wyckoff phase identifications must include supporting evidence:
+
+**Required for each dimension:**
+- **Wyckoff**: Price metrics that led to phase classification (position in 90d range, 7d/30d trends, volatility)
+- **Institutional**: Specific ETF products, fund holdings, custody availability cited
+- **Revenue**: Actual fee/revenue data from DefiLlama or research sources
+- **Regulatory**: Specific regulatory actions, classifications, or compliance status
+- **Supply**: Exchange reserve data, holder distribution, inflation metrics
+
+**Format in JSON output:**
+```json
+"scores": {
+  "wyckoff": 65,
+  "wyckoff_rationale": "Distribution Phase B: position 72% in 90d range, 7d trend -2.1%, 30d trend +3.4%, consolidating near highs"
+}
+```
+
+This enables validation of claims and debugging of scoring logic.
 
 ## Git Workflow
 

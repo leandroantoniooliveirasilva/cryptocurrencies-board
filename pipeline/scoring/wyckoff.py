@@ -32,7 +32,7 @@ from pipeline.config import config
 def detect_wyckoff_phase(
     daily_prices: list[float],
     lookback_days: Optional[int] = None
-) -> Tuple[str, int]:
+) -> Tuple[str, int, str]:
     """
     Detect current Wyckoff phase from price data.
 
@@ -41,8 +41,9 @@ def detect_wyckoff_phase(
         lookback_days: Days to analyze (defaults to config.wyckoff.lookback_days)
 
     Returns:
-        Tuple of (phase_string, score 0-100)
+        Tuple of (phase_string, score 0-100, rationale)
         Higher score = more bullish positioning
+        Rationale includes the metrics that led to the classification
     """
     wyckoff_cfg = config.wyckoff
     scores_cfg = wyckoff_cfg.scores
@@ -51,7 +52,7 @@ def detect_wyckoff_phase(
         lookback_days = wyckoff_cfg.lookback_days
 
     if not daily_prices or len(daily_prices) < 30:
-        return "Unknown", scores_cfg.default
+        return "Unknown", scores_cfg.default, "Insufficient price data (<30 days)"
 
     # Use last N days
     prices = daily_prices[-lookback_days:] if len(daily_prices) >= lookback_days else daily_prices
@@ -88,7 +89,15 @@ def detect_wyckoff_phase(
         pct_from_low=pct_from_low
     )
 
-    return phase, score
+    # Build evidence rationale
+    rationale = (
+        f"Position {position_in_range*100:.0f}% in {lookback_days}d range, "
+        f"7d trend {trend_7d:+.1f}%, 30d trend {trend_30d:+.1f}%, "
+        f"volatility ratio {vol_ratio:.2f}x, "
+        f"{pct_from_high:.1f}% from high, {pct_from_low:.1f}% from low"
+    )
+
+    return phase, score, rationale
 
 
 def _calculate_trend(prices: list[float], days: int) -> float:

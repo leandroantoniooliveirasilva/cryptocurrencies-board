@@ -135,6 +135,29 @@ Requires manual decision to promote in `assets.yaml`.
 | 60-70 | Strong | Extended | Momentum intact |
 | ≥70 | Overbought | Euphoric | Accumulation paused |
 
+## Score Rationales (Evidence-Backed Claims)
+
+Each dimension score includes a rationale explaining the data behind it:
+
+```json
+"score_rationales": {
+  "institutional": "ETF products from BlackRock and Fidelity...",
+  "regulatory": "SEC clarity via Ripple ruling, Coinbase custody...",
+  "revenue": "Daily revenue: $1.2M (~$438M/year). TVL: $5.2B. Revenue/TVL ratio: 8.4%.",
+  "supply": "Fixed supply cap, 93% circulating, minimal inflation.",
+  "wyckoff": "Position 65% in 90d range, 7d trend +3.2%, 30d trend -1.5%..."
+}
+```
+
+**Use rationales for validation:**
+- When Wyckoff phase seems wrong, check `wyckoff` rationale for underlying metrics
+- When revenue score seems off, verify the actual fee data in rationale
+- Cross-reference supply rationale with tokenomics claims
+
+**Include in summary when relevant:**
+- Quote key metrics from rationales to support your analysis
+- Flag rationales that contradict expected behavior
+
 ## Historical Context
 
 Check in the JSON:
@@ -147,6 +170,7 @@ Check in the JSON:
 - `rs_vs_btc.underperforming`: Per-asset RS filter status
 - `market_context.btc_dominance`: BTC market share (rising = alts underperform)
 - `market_context.stablecoin_mcap_billions`: Dry powder indicator
+- `score_rationales`: Evidence backing each dimension score (see above)
 
 ## What NOT to Do
 
