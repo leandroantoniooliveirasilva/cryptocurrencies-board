@@ -558,50 +558,52 @@ function DecisionTraceSection({ trace, isMobile }) {
   );
 }
 
-// Extract unique insights from note_detailed, filtering out redundant sections
-function extractUniqueInsights(noteDetailed) {
-  if (!noteDetailed) return null;
+// Build concise decision logic explanation
+function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
+  if (!trace) return null;
 
-  // Sections that are already displayed elsewhere and should be filtered
-  const redundantSectionHeaders = [
-    'DIMENSION BREAKDOWN:',
-    'RSI CONTEXT:',
-    'CURRENT ACTION:',
-    'DECISION TRACE:',
-    'COMPOSITE SCORE:',
-    'RELATIVE STRENGTH vs BTC:',
-  ];
+  const hasDowngrades = (macroDowngrades > 0) || (wyckoffDowngrades > 0);
+  const downgrades = trace.downgrades || {};
+  const reasons = downgrades.reasons || [];
 
-  const lines = noteDetailed.split('\n');
-  const uniqueLines = [];
-  let skipUntilNextSection = false;
+  let parts = [];
 
-  for (const line of lines) {
-    const trimmed = line.trim();
+  // Tier
+  parts.push(`${tier.charAt(0).toUpperCase() + tier.slice(1)} tier`);
 
-    // Check if this is a redundant section header
-    if (redundantSectionHeaders.some(header => trimmed === header)) {
-      skipUntilNextSection = true;
-      continue;
+  // Downgrade status
+  if (!hasDowngrades) {
+    parts.push('no downgrades active');
+  } else {
+    const downgradeDesc = [];
+    if (macroDowngrades > 0) {
+      const macroReasons = reasons.filter(r => r.startsWith('macro:'));
+      if (macroReasons.length > 0) {
+        downgradeDesc.push(`macro (${macroReasons.map(r => r.replace('macro:', '')).join(', ')})`);
+      }
     }
-
-    // Check if we hit a new section (all caps ending with colon)
-    if (trimmed.match(/^[A-Z\s]+:$/) && !redundantSectionHeaders.includes(trimmed)) {
-      skipUntilNextSection = false;
+    if (wyckoffDowngrades > 0) {
+      const wyckReasons = reasons.filter(r => r.startsWith('wyckoff:'));
+      if (wyckReasons.length > 0) {
+        downgradeDesc.push(`Wyckoff (${wyckReasons.map(r => r.replace('wyckoff:', '')).join(', ')})`);
+      }
     }
-
-    // Include the line if we're not in a skip section
-    if (!skipUntilNextSection && trimmed.length > 0) {
-      uniqueLines.push(line);
+    if (trace.base_action && trace.final_action && trace.base_action !== trace.final_action) {
+      parts.push(`downgraded from ${trace.base_action} to ${trace.final_action}`);
+      if (downgradeDesc.length > 0) {
+        parts.push(`due to ${downgradeDesc.join(' and ')}`);
+      }
+    } else if (downgradeDesc.length > 0) {
+      parts.push(`${downgradeDesc.join(' and ')} filters active`);
     }
   }
 
-  const result = uniqueLines.join('\n').trim();
-  return result.length > 0 ? result : null;
+  return parts.join(', ') + '.';
 }
 
 function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
   // Collapsible section state
+  const [dimensionsExpanded, setDimensionsExpanded] = useState(false);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const [technicalExpanded, setTechnicalExpanded] = useState(false);
 
@@ -658,8 +660,8 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
   const fgNeutral = fearGreed?.enabled && fgValue !== null && fgValue < 70;
   const rsNeutral = showRsContext && !asset.rs_vs_btc.underperforming;
 
-  // Extract only unique insights from detailed note (filtering redundant sections)
-  const uniqueInsights = extractUniqueInsights(asset.note_detailed);
+  // Build concise decision logic
+  const decisionLogic = buildDecisionLogic(asset.decision_trace, tier, macroDowngrades, wyckoffDowngrades);
 
   return (
     <div
@@ -764,20 +766,21 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
             </div>
           </div>
 
-          {/* Action reasoning — backend summary when available, else heuristic copy */}
-          <div style={{
-            fontSize: TYPE.small,
-            color: PALETTE.textSecondary,
-            fontFamily: 'Georgia, serif',
-            fontStyle: 'italic',
-            lineHeight: TYPE.relaxed,
-            marginBottom: isMobile ? SPACE.lg : SPACE.xl,
-            maxWidth: '55ch',
-          }}>
-            {asset.decision_trace?.summary || getActionReasoning(asset)}
-          </div>
-
-          <DecisionTraceSection trace={asset.decision_trace} isMobile={isMobile} />
+          {/* Why this action - concise decision logic */}
+          {decisionLogic && (
+            <div style={{
+              fontSize: TYPE.small,
+              color: PALETTE.textSecondary,
+              fontFamily: 'ui-monospace, monospace',
+              lineHeight: TYPE.relaxed,
+              marginBottom: isMobile ? SPACE.xl : SPACE.lg,
+              padding: `${SPACE.md}px ${SPACE.base}px`,
+              background: PALETTE.cardInset,
+              border: `1px solid ${PALETTE.border}`,
+            }}>
+              {decisionLogic}
+            </div>
+          )}
 
           {/* Score section - increased spacing for emphasis */}
           <div style={{
@@ -816,10 +819,10 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
             </div>
           </div>
 
-          {/* Weighted dimensions - increased spacing before */}
+          {/* Weighted dimensions - visual summary */}
           <div style={{
             marginTop: isMobile ? SPACE['2xl'] : SPACE.xl,
-            marginBottom: isMobile ? SPACE['2xl'] : SPACE.lg,
+            marginBottom: isMobile ? SPACE.lg : SPACE.base,
           }}>
             <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.base, fontFamily: 'ui-monospace, monospace' }}>
               Weighted dimensions
@@ -835,10 +838,10 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
             ))}
           </div>
 
-          {/* Global filters - collapsible on mobile */}
-          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.lg, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+          {/* Dimension Evidence - verbose explanations */}
+          <div style={{ marginTop: SPACE.base, marginBottom: isMobile ? SPACE['2xl'] : SPACE.xl }}>
             <button
-              onClick={() => setFiltersExpanded(!filtersExpanded)}
+              onClick={() => setDimensionsExpanded(!dimensionsExpanded)}
               style={{
                 background: 'none',
                 border: 'none',
@@ -848,64 +851,101 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: filtersExpanded ? SPACE.base : 0,
+                marginBottom: dimensionsExpanded ? SPACE.base : 0,
               }}
             >
               <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
-                Global filters {isMobile && !filtersExpanded ? '· Tap to expand' : ''}
+                Dimension evidence {!dimensionsExpanded && '· Tap to expand'}
               </div>
               <span style={{
                 display: 'inline-block',
-                transform: filtersExpanded ? 'rotate(90deg)' : 'none',
+                transform: dimensionsExpanded ? 'rotate(90deg)' : 'none',
                 transition: 'transform 0.2s ease',
                 color: PALETTE.textMuted,
               }}>▸</span>
             </button>
 
-            {filtersExpanded && (
-              <>
-                <div style={{ fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, marginBottom: SPACE.base, maxWidth: '50ch' }}>
-                  Macro filters reduce signals during unfavorable conditions.
-                </div>
-                <div style={{ display: 'grid', rowGap: SPACE.sm, marginTop: SPACE.base }}>
-                  {/* Only show downgrades when there are actual downgrades */}
-                  {hasDowngrades && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
-                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Downgrades active</span>
-                      <span style={{ textAlign: 'right', color: '#c27878' }}>
-                        {macroDowngrades > 0 && `Macro −${macroDowngrades}`}
-                        {macroDowngrades > 0 && wyckoffDowngrades > 0 && ' · '}
-                        {wyckoffDowngrades > 0 && `Wyckoff −${wyckoffDowngrades}`}
-                      </span>
+            {dimensionsExpanded && (
+              <div style={{ marginTop: SPACE.base, display: 'grid', gap: SPACE.lg }}>
+                {weightedDimensions.map(dim => {
+                  const rationale = asset.score_rationales?.[dim];
+                  const score = asset.scores?.[dim];
+                  const weight = weights[dim];
+                  if (!rationale) return null;
+
+                  return (
+                    <div key={dim}>
+                      <div style={{
+                        fontSize: TYPE.small,
+                        fontFamily: 'ui-monospace, monospace',
+                        color: PALETTE.textMuted,
+                        marginBottom: SPACE.xs,
+                      }}>
+                        {DIMENSION_LABELS[dim] || dim} ({score}/100, {Math.round(weight * 100)}% weight)
+                      </div>
+                      <div style={{
+                        fontSize: TYPE.small,
+                        color: PALETTE.textSecondary,
+                        fontFamily: 'Georgia, serif',
+                        lineHeight: TYPE.relaxed,
+                        maxWidth: '60ch',
+                      }}>
+                        {rationale}
+                      </div>
                     </div>
-                  )}
-                  {showRsContext && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
-                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
-                      <span style={{ textAlign: 'right', color: rsNeutral ? '#7aa872' : '#c27878' }}>
-                        {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding'}
-                        {typeof asset.rs_vs_btc.change_pct === 'number' ? ` ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%` : ''}
-                      </span>
-                    </div>
-                  )}
-                  {gli?.enabled && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
-                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
-                      <span style={{ textAlign: 'right', color: gliNeutral ? '#7aa872' : '#c27878' }}>{gliTrendLabel}</span>
-                    </div>
-                  )}
-                  {fearGreed?.enabled && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
-                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
-                      <span style={{ textAlign: 'right', color: fgNeutral ? '#7aa872' : '#c27878' }}>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
-                    </div>
-                  )}
-                </div>
-              </>
+                  );
+                })}
+              </div>
             )}
           </div>
 
-          {/* Technical context - collapsible on mobile */}
+          {/* Global filters - list all filters with color coding */}
+          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.xl, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.base, fontFamily: 'ui-monospace, monospace' }}>
+              Global filters
+            </div>
+            <div style={{ fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, marginBottom: SPACE.base, maxWidth: '50ch' }}>
+              Filters that can downgrade signals regardless of dimension scores.
+            </div>
+            <div style={{ display: 'grid', rowGap: SPACE.sm }}>
+              {/* Wyckoff Phase */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Wyckoff</span>
+                <span style={{
+                  textAlign: 'right',
+                  color: (asset.wyckoff_phase && (asset.wyckoff_phase.toLowerCase().includes('distribution') || asset.wyckoff_phase.toLowerCase().includes('markdown'))) ? '#c27878' : '#7aa872'
+                }}>
+                  {asset.wyckoff_phase || 'Unknown'}
+                </span>
+              </div>
+              {/* RS vs BTC */}
+              {showRsContext && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
+                  <span style={{ textAlign: 'right', color: rsNeutral ? '#7aa872' : '#c27878' }}>
+                    {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding'}
+                    {typeof asset.rs_vs_btc.change_pct === 'number' ? ` ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%` : ''}
+                  </span>
+                </div>
+              )}
+              {/* GLI */}
+              {gli?.enabled && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
+                  <span style={{ textAlign: 'right', color: gliNeutral ? '#7aa872' : '#c27878' }}>{gliTrendLabel}</span>
+                </div>
+              )}
+              {/* Fear & Greed */}
+              {fearGreed?.enabled && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
+                  <span style={{ textAlign: 'right', color: fgNeutral ? '#7aa872' : '#c27878' }}>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Technical Analysis - detailed reasoning for filters */}
           <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.lg, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
             <button
               onClick={() => setTechnicalExpanded(!technicalExpanded)}
@@ -922,7 +962,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
               }}
             >
               <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
-                Technical context {isMobile && !technicalExpanded ? '· Tap to expand' : ''}
+                Technical analysis {!technicalExpanded && '· Tap to expand'}
               </div>
               <span style={{
                 display: 'inline-block',
@@ -932,43 +972,129 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
               }}>▸</span>
             </button>
             {technicalExpanded && (
-              <>
-                {/* Wyckoff phase and rationale */}
-                <div style={{ marginTop: SPACE.base }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, marginBottom: wyckoffRationale ? SPACE.sm : 0 }}>
-                    <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Wyckoff Phase</span>
-                    <span style={{ color: PALETTE.textPrimary, textAlign: 'right' }}>{asset.wyckoff_phase || 'Unknown'}</span>
-                  </div>
-                  {wyckoffRationale && (
-                    <div style={{ marginTop: SPACE.xs, fontSize: TYPE.caption, color: PALETTE.textMuted, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, maxWidth: '55ch' }}>
+              <div style={{ marginTop: SPACE.base, display: 'grid', gap: SPACE.lg }}>
+                {/* Wyckoff Phase Analysis */}
+                {wyckoffRationale && (
+                  <div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      fontFamily: 'ui-monospace, monospace',
+                      color: PALETTE.textMuted,
+                      marginBottom: SPACE.xs,
+                    }}>
+                      Wyckoff Phase: {asset.wyckoff_phase || 'Unknown'}
+                    </div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      color: PALETTE.textSecondary,
+                      fontFamily: 'Georgia, serif',
+                      lineHeight: TYPE.relaxed,
+                      maxWidth: '60ch',
+                    }}>
                       {wyckoffRationale}
                     </div>
-                  )}
-                </div>
-                {/* RSI context */}
-                <RsiRow asset={asset} />
-              </>
+                  </div>
+                )}
+
+                {/* RSI Analysis */}
+                {(asset.rsi_daily !== undefined || asset.rsi_weekly !== undefined) && (
+                  <div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      fontFamily: 'ui-monospace, monospace',
+                      color: PALETTE.textMuted,
+                      marginBottom: SPACE.xs,
+                    }}>
+                      RSI
+                    </div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      color: PALETTE.textSecondary,
+                      fontFamily: 'Georgia, serif',
+                      lineHeight: TYPE.relaxed,
+                    }}>
+                      {asset.rsi_daily !== undefined && `Daily: ${asset.rsi_daily.toFixed(1)}`}
+                      {asset.rsi_daily !== undefined && asset.rsi_weekly !== undefined && ' · '}
+                      {asset.rsi_weekly !== undefined && `Weekly: ${asset.rsi_weekly.toFixed(1)}`}
+                    </div>
+                  </div>
+                )}
+
+                {/* GLI Analysis */}
+                {gli?.enabled && (
+                  <div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      fontFamily: 'ui-monospace, monospace',
+                      color: PALETTE.textMuted,
+                      marginBottom: SPACE.xs,
+                    }}>
+                      Global Liquidity Index
+                    </div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      color: PALETTE.textSecondary,
+                      fontFamily: 'Georgia, serif',
+                      lineHeight: TYPE.relaxed,
+                      maxWidth: '60ch',
+                    }}>
+                      {gliTrendLabel.charAt(0).toUpperCase() + gliTrendLabel.slice(1)}
+                      {gli.current && gli.offset_value && ` (current: $${(gli.current / 1000).toFixed(1)}T vs ${gli.offset_days}d ago: $${(gli.offset_value / 1000).toFixed(1)}T)`}
+                      {gli.source && ` · Source: ${gli.source}`}
+                    </div>
+                  </div>
+                )}
+
+                {/* RS vs BTC Analysis */}
+                {showRsContext && (
+                  <div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      fontFamily: 'ui-monospace, monospace',
+                      color: PALETTE.textMuted,
+                      marginBottom: SPACE.xs,
+                    }}>
+                      Relative Strength vs BTC
+                    </div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      color: PALETTE.textSecondary,
+                      fontFamily: 'Georgia, serif',
+                      lineHeight: TYPE.relaxed,
+                    }}>
+                      {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding or outperforming'} BTC
+                      {typeof asset.rs_vs_btc.change_pct === 'number' && ` by ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%`}
+                      {` over ${rs?.lookback_days || 90} days`}
+                    </div>
+                  </div>
+                )}
+
+                {/* Fear & Greed Analysis */}
+                {fearGreed?.enabled && (
+                  <div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      fontFamily: 'ui-monospace, monospace',
+                      color: PALETTE.textMuted,
+                      marginBottom: SPACE.xs,
+                    }}>
+                      Fear & Greed Index
+                    </div>
+                    <div style={{
+                      fontSize: TYPE.small,
+                      color: PALETTE.textSecondary,
+                      fontFamily: 'Georgia, serif',
+                      lineHeight: TYPE.relaxed,
+                    }}>
+                      {fgClassification}{fgValue !== null && ` (${fgValue}/100)`}
+                      {fgValue !== null && fgValue >= 70 && ' — signals extreme greed, downgrade active'}
+                      {fgValue !== null && fgValue < 70 && ' — neutral, no downgrade'}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
-
-          {/* Analysis - only unique insights not already displayed */}
-          {uniqueInsights && (
-            <div style={{ marginTop: isMobile ? SPACE['3xl'] : SPACE.xl, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
-              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.base, fontFamily: 'ui-monospace, monospace' }}>
-                Additional context
-              </div>
-              <div style={{
-                fontFamily: 'Georgia, serif',
-                fontSize: TYPE.small,
-                lineHeight: TYPE.relaxed,
-                color: PALETTE.textSecondary,
-                whiteSpace: 'pre-wrap',
-                maxWidth: '55ch',
-              }}>
-                {uniqueInsights}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
