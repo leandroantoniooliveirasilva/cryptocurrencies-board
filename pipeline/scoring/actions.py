@@ -83,58 +83,39 @@ def derive_action(
     }
 
     # Stand Aside overrides everything - structural break
-    # Use weekly averages if available (handles multiple runs per week during calibration)
-    stand_aside_triggered = False
-    stand_aside_summary = ''
-    stand_aside_details = {}
+    # Requires 5+ weeks of weekly averages to ensure reliable signal
+    # (no stand-aside during initial calibration period)
+    if (weekly_averages
+        and len(weekly_averages) >= comp_cfg.stand_aside_weeks_required
+        and len(weekly_averages) > comp_cfg.stand_aside_lookback_weeks):
 
-    if weekly_averages and len(weekly_averages) >= comp_cfg.stand_aside_weeks_required:
-        # Weekly average logic: compare latest week avg to N weeks ago
         latest_week = weekly_averages[0]
         lookback_weeks = comp_cfg.stand_aside_lookback_weeks
+        comparison_week = weekly_averages[lookback_weeks]
+        weekly_delta = latest_week['avg_composite'] - comparison_week['avg_composite']
 
-        if len(weekly_averages) > lookback_weeks:
-            comparison_week = weekly_averages[lookback_weeks]
-            weekly_delta = latest_week['avg_composite'] - comparison_week['avg_composite']
-
-            if weekly_delta <= comp_cfg.stand_aside_delta:
-                stand_aside_triggered = True
-                stand_aside_summary = (
+        if weekly_delta <= comp_cfg.stand_aside_delta:
+            return 'stand-aside', _make_trace(
+                path='stand_aside_sharp_decline',
+                final_action='stand-aside',
+                summary=(
                     f'Stand-aside: {lookback_weeks}-week composite trend ({weekly_delta:.1f}) '
                     f'<= threshold ({comp_cfg.stand_aside_delta}). '
                     f'Latest week avg: {latest_week["avg_composite"]:.1f} '
                     f'({latest_week["week_id"]}, {latest_week["snapshot_count"]} runs); '
                     f'{lookback_weeks} weeks ago: {comparison_week["avg_composite"]:.1f} '
                     f'({comparison_week["week_id"]}). Structural break detected.'
-                )
-                stand_aside_details = {
+                ),
+                inputs={
+                    **common_inputs,
                     'rule': f'weekly_avg_delta_{lookback_weeks}w <= composite.stand_aside_delta',
                     'latest_week': latest_week['week_id'],
                     'latest_avg': latest_week['avg_composite'],
                     'comparison_week': comparison_week['week_id'],
                     'comparison_avg': comparison_week['avg_composite'],
                     'weekly_delta': weekly_delta,
-                }
-    else:
-        # Fallback to simple 7-day delta (legacy behavior or insufficient data)
-        if delta <= comp_cfg.stand_aside_delta:
-            stand_aside_triggered = True
-            stand_aside_summary = (
-                f'Stand-aside: 7d composite delta ({delta}) <= threshold '
-                f'({comp_cfg.stand_aside_delta}); treat as structural break.'
+                },
             )
-            stand_aside_details = {'rule': 'delta_7d <= composite.stand_aside_delta'}
-
-    if stand_aside_triggered:
-        return 'stand-aside', _make_trace(
-            path='stand_aside_sharp_decline',
-            final_action='stand-aside',
-            summary=stand_aside_summary,
-            inputs={
-                **common_inputs,
-                **stand_aside_details,
-            },
-        )
 
     if tier == 'leader':
         weekly_capitulation = bool(rsi_weekly is not None and rsi_weekly < rsi_cfg.capitulation_weekly)
