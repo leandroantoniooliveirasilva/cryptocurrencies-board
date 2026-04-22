@@ -178,6 +178,72 @@ def get_composite_last_week(conn: sqlite3.Connection, symbol: str) -> Optional[i
     return row["composite"] if row else None
 
 
+def get_weekly_composite_averages(
+    conn: sqlite3.Connection, symbol: str, weeks: int = 10
+) -> list[dict]:
+    """
+    Get weekly composite score averages for an asset.
+
+    Groups multiple snapshots within the same ISO calendar week and averages them.
+    This handles scenarios where scoring runs multiple times per week during calibration.
+
+    Args:
+        conn: Database connection
+        symbol: Asset symbol
+        weeks: Number of weeks to fetch (approximate - fetches enough days to cover this many weeks)
+
+    Returns:
+        List of {week_id, year, week, avg_composite, snapshot_count} dicts,
+        sorted newest to oldest (by week). week_id format: "2026-W17"
+    """
+    # Fetch snapshots from the last N weeks (plus buffer for partial weeks)
+    lookback_days = weeks * 7 + 14  # Add buffer for partial weeks
+    cutoff_date = (date.today() - timedelta(days=lookback_days)).isoformat()
+
+    cursor = conn.execute(
+        """
+        SELECT snapshot_date, composite FROM snapshots
+        WHERE asset_symbol = ?
+          AND composite IS NOT NULL
+          AND snapshot_date >= ?
+        ORDER BY snapshot_date ASC
+        """,
+        (symbol, cutoff_date),
+    )
+
+    rows = cursor.fetchall()
+    if not rows:
+        return []
+
+    # Group by ISO calendar week (year, week_number)
+    from collections import defaultdict
+    weeks_data = defaultdict(list)
+
+    for row in rows:
+        snapshot_date = date.fromisoformat(row["snapshot_date"])
+        iso_cal = snapshot_date.isocalendar()
+        year, week_num = iso_cal.year, iso_cal.week
+        week_id = f"{year}-W{week_num:02d}"
+        weeks_data[week_id].append(row["composite"])
+
+    # Calculate averages
+    weekly_averages = []
+    for week_id, composites in weeks_data.items():
+        year, week = week_id.split('-W')
+        weekly_averages.append({
+            "week_id": week_id,
+            "year": int(year),
+            "week": int(week),
+            "avg_composite": round(sum(composites) / len(composites), 1),
+            "snapshot_count": len(composites),
+        })
+
+    # Sort by year and week (newest first)
+    weekly_averages.sort(key=lambda x: (x["year"], x["week"]), reverse=True)
+
+    return weekly_averages
+
+
 def get_action_history(
     conn: sqlite3.Connection, symbol: str, days: int = 30
 ) -> list[dict]:

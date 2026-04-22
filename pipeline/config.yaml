@@ -119,8 +119,11 @@ composite:
   # Stability check (week-over-week)
   stability_tolerance: -3       # Max acceptable weekly decline for "stable"
 
-  # Stand-aside triggers
-  stand_aside_delta: -5         # Weekly delta <= this = stand aside
+  # Stand-aside triggers (calendar week-based averages)
+  # Averages multiple runs per week, then compares latest week avg to N weeks ago
+  stand_aside_delta: -5         # Weekly avg delta <= this = stand aside
+  stand_aside_weeks_required: 5 # Need N weeks of data before signal can trigger
+  stand_aside_lookback_weeks: 5 # Compare latest week to this many weeks ago
 
   # Display threshold (frontend)
   min_display_score: 50         # Assets below this hidden from dashboard

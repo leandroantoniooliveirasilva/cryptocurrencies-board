@@ -333,6 +333,10 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     trend_30d = migrations.get_trend_data(conn, symbol, 12)
     composite_last_week = migrations.get_composite_last_week(conn, symbol)
 
+    # Get weekly composite averages for stand-aside detection
+    # This handles multiple runs per week during calibration by averaging snapshots
+    weekly_averages = migrations.get_weekly_composite_averages(conn, symbol, weeks=10)
+
     # Add current score to trends if we have history
     if trend_7d:
         trend_7d.append(composite_score)
@@ -367,6 +371,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         gli_downtrend=gli_downtrend,
         rs_underperforming=rs_underperforming,
         fg_greedy=fg_greedy,
+        weekly_averages=weekly_averages,
     )
 
     # Get action metadata
@@ -689,7 +694,11 @@ def _build_detailed_reasoning(
     elif vc_weight and vc_score is None:
         lines.append("• Value capture (N/A, excluded): Not scored for this category or fee model.")
 
-    # 4. RSI context
+    # 4. Wyckoff phase context (for stand-aside logic)
+    phase_lower = wyckoff_phase.lower() if wyckoff_phase else ""
+    is_distribution = "distribution" in phase_lower
+
+    # 6. RSI context
     if rsi_daily is not None or rsi_weekly is not None:
         lines.append("")
         lines.append("RSI CONTEXT:")
@@ -710,7 +719,7 @@ def _build_detailed_reasoning(
                 rsi_w_desc = f"Weekly RSI at {rsi_weekly:.1f} remains in healthy range."
             lines.append(f"• {rsi_w_desc}")
 
-    # 5. Relative Strength vs BTC
+    # 7. Relative Strength vs BTC
     if rs_data and symbol.upper() != "BTC":
         rs_change = rs_data.get("rs_change_pct")
         rs_underperforming = rs_data.get("underperforming", False)
@@ -725,11 +734,11 @@ def _build_detailed_reasoning(
             else:
                 lines.append(f"• Slight underperformance vs BTC ({change_pct:.1f}% over {config.rs.lookback_days} days) but within tolerance.")
 
-    # 6. Action reasoning
+    # 8. Action reasoning
     lines.append("")
     lines.append("CURRENT ACTION:")
     # Build stand-aside reason based on actual trigger (distribution vs sharp decline)
-    if is_distribution:
+    if action == 'stand-aside' and is_distribution:
         stand_aside_reason = "STAND ASIDE is active due to distribution phase detection. Capital preservation takes priority."
     else:
         stand_aside_reason = "STAND ASIDE is active due to sharp composite decline. This may be a temporary pullback, but capital preservation takes priority until structure stabilizes."
@@ -771,7 +780,7 @@ def _build_detailed_reasoning(
                     f"• downgrade_reasons: {', '.join(_downgrade_reason_label(r) for r in reasons)}"
                 )
 
-    # 7. Composite summary
+    # 9. Composite summary
     lines.append("")
     lines.append(f"COMPOSITE SCORE: {composite}/100")
     if composite >= 75:
