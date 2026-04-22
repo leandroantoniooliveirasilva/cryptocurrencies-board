@@ -558,6 +558,48 @@ function DecisionTraceSection({ trace, isMobile }) {
   );
 }
 
+// Extract unique insights from note_detailed, filtering out redundant sections
+function extractUniqueInsights(noteDetailed) {
+  if (!noteDetailed) return null;
+
+  // Sections that are already displayed elsewhere and should be filtered
+  const redundantSectionHeaders = [
+    'DIMENSION BREAKDOWN:',
+    'RSI CONTEXT:',
+    'CURRENT ACTION:',
+    'DECISION TRACE:',
+    'COMPOSITE SCORE:',
+    'RELATIVE STRENGTH vs BTC:',
+  ];
+
+  const lines = noteDetailed.split('\n');
+  const uniqueLines = [];
+  let skipUntilNextSection = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Check if this is a redundant section header
+    if (redundantSectionHeaders.some(header => trimmed === header)) {
+      skipUntilNextSection = true;
+      continue;
+    }
+
+    // Check if we hit a new section (all caps ending with colon)
+    if (trimmed.match(/^[A-Z\s]+:$/) && !redundantSectionHeaders.includes(trimmed)) {
+      skipUntilNextSection = false;
+    }
+
+    // Include the line if we're not in a skip section
+    if (!skipUntilNextSection && trimmed.length > 0) {
+      uniqueLines.push(line);
+    }
+  }
+
+  const result = uniqueLines.join('\n').trim();
+  return result.length > 0 ? result : null;
+}
+
 function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
   // Collapsible section state
   const [filtersExpanded, setFiltersExpanded] = useState(false);
@@ -607,10 +649,17 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
   const decisionDowngrades = asset.decision_trace?.downgrades || {};
   const macroDowngrades = decisionDowngrades.macro_levels ?? 0;
   const wyckoffDowngrades = decisionDowngrades.wyckoff_levels ?? 0;
+  const hasDowngrades = macroDowngrades > 0 || wyckoffDowngrades > 0;
   const showRsContext = rs && rs.enabled && asset.symbol !== 'BTC' && asset.rs_vs_btc;
   const gliTrendLabel = gli?.trend || (gli?.downtrend ? 'contracting' : 'expanding');
+  const gliNeutral = gli?.enabled && !gli?.downtrend;
   const fgClassification = fearGreed?.classification || 'N/A';
   const fgValue = typeof fearGreed?.value === 'number' ? fearGreed.value : null;
+  const fgNeutral = fearGreed?.enabled && fgValue !== null && fgValue < 70;
+  const rsNeutral = showRsContext && !asset.rs_vs_btc.underperforming;
+
+  // Extract only unique insights from detailed note (filtering redundant sections)
+  const uniqueInsights = extractUniqueInsights(asset.note_detailed);
 
   return (
     <div
@@ -816,51 +865,42 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
             {filtersExpanded && (
               <>
                 <div style={{ fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, marginBottom: SPACE.base, maxWidth: '50ch' }}>
-                  These filters can reduce action aggressiveness even when core dimensions are strong.
+                  Macro filters reduce signals during unfavorable conditions.
                 </div>
                 <div style={{ display: 'grid', rowGap: SPACE.sm, marginTop: SPACE.base }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-                    <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Wyckoff</span>
-                    <span style={{ color: PALETTE.textPrimary, textAlign: 'right' }}>{asset.wyckoff_phase || 'Unknown'}</span>
-                  </div>
-                  {typeof macroDowngrades === 'number' || typeof wyckoffDowngrades === 'number' ? (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Downgrades</span>
-                      <span style={{ textAlign: 'right' }}>Macro {macroDowngrades} · Wyckoff {wyckoffDowngrades}</span>
+                  {/* Only show downgrades when there are actual downgrades */}
+                  {hasDowngrades && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Downgrades active</span>
+                      <span style={{ textAlign: 'right', color: '#c27878' }}>
+                        {macroDowngrades > 0 && `Macro −${macroDowngrades}`}
+                        {macroDowngrades > 0 && wyckoffDowngrades > 0 && ' · '}
+                        {wyckoffDowngrades > 0 && `Wyckoff −${wyckoffDowngrades}`}
+                      </span>
                     </div>
-                  ) : null}
-                  {showRsContext ? (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                  )}
+                  {showRsContext && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
                       <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
-                      <span style={{ textAlign: 'right' }}>
-                        {asset.rs_vs_btc.underperforming ? 'Under' : 'Hold/out'}
+                      <span style={{ textAlign: 'right', color: rsNeutral ? '#7aa872' : '#c27878' }}>
+                        {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding'}
                         {typeof asset.rs_vs_btc.change_pct === 'number' ? ` ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%` : ''}
                       </span>
                     </div>
-                  ) : null}
-                  {gli?.enabled ? (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                  )}
+                  {gli?.enabled && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
                       <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
-                      <span style={{ textAlign: 'right' }}>{gliTrendLabel}</span>
+                      <span style={{ textAlign: 'right', color: gliNeutral ? '#7aa872' : '#c27878' }}>{gliTrendLabel}</span>
                     </div>
-                  ) : null}
-                  {fearGreed?.enabled ? (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                  )}
+                  {fearGreed?.enabled && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
                       <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
-                      <span style={{ textAlign: 'right' }}>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
+                      <span style={{ textAlign: 'right', color: fgNeutral ? '#7aa872' : '#c27878' }}>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
                     </div>
-                  ) : null}
+                  )}
                 </div>
-                {(wyckoffRationale || asset.note) && (
-                  <>
-                    <div style={{ marginTop: SPACE.base, fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                      Wyckoff rationale
-                    </div>
-                    <div style={{ marginTop: SPACE.xs, fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, maxWidth: '55ch' }}>
-                      {wyckoffRationale || asset.note}
-                    </div>
-                  </>
-                )}
               </>
             )}
           </div>
@@ -891,14 +931,31 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                 color: PALETTE.textMuted,
               }}>▸</span>
             </button>
-            {technicalExpanded && <RsiRow asset={asset} />}
+            {technicalExpanded && (
+              <>
+                {/* Wyckoff phase and rationale */}
+                <div style={{ marginTop: SPACE.base }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, marginBottom: wyckoffRationale ? SPACE.sm : 0 }}>
+                    <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Wyckoff Phase</span>
+                    <span style={{ color: PALETTE.textPrimary, textAlign: 'right' }}>{asset.wyckoff_phase || 'Unknown'}</span>
+                  </div>
+                  {wyckoffRationale && (
+                    <div style={{ marginTop: SPACE.xs, fontSize: TYPE.caption, color: PALETTE.textMuted, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, maxWidth: '55ch' }}>
+                      {wyckoffRationale}
+                    </div>
+                  )}
+                </div>
+                {/* RSI context */}
+                <RsiRow asset={asset} />
+              </>
+            )}
           </div>
 
-          {/* Detailed analysis if available */}
-          {asset.note_detailed && (
+          {/* Analysis - only unique insights not already displayed */}
+          {uniqueInsights && (
             <div style={{ marginTop: isMobile ? SPACE['3xl'] : SPACE.xl, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
               <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.base, fontFamily: 'ui-monospace, monospace' }}>
-                Analysis
+                Additional context
               </div>
               <div style={{
                 fontFamily: 'Georgia, serif',
@@ -908,7 +965,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                 whiteSpace: 'pre-wrap',
                 maxWidth: '55ch',
               }}>
-                {asset.note_detailed}
+                {uniqueInsights}
               </div>
             </div>
           )}
