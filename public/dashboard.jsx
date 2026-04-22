@@ -165,6 +165,16 @@ const DECISION_REASON_LABELS = {
   'macro:fear_greed_euphoria': 'Fear & Greed euphoria',
   'wyckoff:markup': 'Wyckoff markup',
   'wyckoff:distribution_or_markdown': 'Wyckoff distribution / markdown',
+  'leader_capitulation_both_rsi': 'Leader capitulation (weekly + daily RSI < 30)',
+  'leader_capitulation_weekly_only': 'Leader capitulation (weekly RSI < 30)',
+  'leader_wyckoff_weekly_slope_downgrade': 'Leader Wyckoff setup reduced by weak weekly slope',
+  'leader_wyckoff_strong_accumulate': 'Leader strong-accumulate Wyckoff setup',
+  'leader_wyckoff_accumulate': 'Leader accumulate Wyckoff setup',
+  'leader_hold_default': 'Leader hold default (no active accumulate trigger)',
+  'stand_aside_sharp_decline': 'Stand aside due to sharp decline',
+  'runner_up_promote': 'Runner-up promoted',
+  'runner_up_await': 'Runner-up awaiting confirmation',
+  'observe_default': 'Observation default',
 };
 
 const ASSET_TYPE_LABELS = {
@@ -442,7 +452,7 @@ function DecisionTraceSection({ trace, isMobile }) {
   const dg = trace.downgrades || {};
   const levels = typeof dg.levels_applied === 'number' ? dg.levels_applied : 0;
   const reasons = Array.isArray(dg.reasons) ? dg.reasons : [];
-  const pathReadable = String(trace.path).replace(/_/g, ' ');
+  const pathLabel = DECISION_REASON_LABELS[trace.path] || String(trace.path).replace(/_/g, ' ');
 
   return (
     <div style={{ marginBottom: SPACE.lg }}>
@@ -472,7 +482,7 @@ function DecisionTraceSection({ trace, isMobile }) {
           display: 'inline-block',
           transform: expanded ? 'rotate(90deg)' : 'none',
         }}>▸</span>
-        <span>Decision rationale</span>
+        <span>Why this action</span>
       </button>
 
       {expanded && (
@@ -490,7 +500,7 @@ function DecisionTraceSection({ trace, isMobile }) {
             letterSpacing: '0.04em',
             lineHeight: TYPE.relaxed,
           }}>
-            {pathReadable}
+            Path: {pathLabel}
           </p>
           {trace.base_action && trace.final_action && trace.base_action !== trace.final_action && (
             <p style={{
@@ -528,13 +538,25 @@ function DecisionTraceSection({ trace, isMobile }) {
               ))}
             </ul>
           )}
+          {trace.summary && (
+            <p style={{
+              margin: `${SPACE.sm}px 0 0`,
+              fontSize: TYPE.small,
+              color: PALETTE.textSecondary,
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              lineHeight: TYPE.relaxed,
+            }}>
+              {trace.summary}
+            </p>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-function DetailModal({ asset, onClose, isMobile }) {
+function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
   // Handle ESC key to close
   useEffect(() => {
     const handleEsc = (e) => {
@@ -574,6 +596,15 @@ function DetailModal({ asset, onClose, isMobile }) {
   const sortedDimensions = Object.entries(weights)
     .sort(([, a], [, b]) => b - a)
     .map(([key]) => key);
+  const weightedDimensions = sortedDimensions.filter(dim => dim !== 'wyckoff');
+  const wyckoffRationale = asset.score_rationales?.wyckoff;
+  const decisionDowngrades = asset.decision_trace?.downgrades || {};
+  const macroDowngrades = decisionDowngrades.macro_levels ?? 0;
+  const wyckoffDowngrades = decisionDowngrades.wyckoff_levels ?? 0;
+  const showRsContext = rs && rs.enabled && asset.symbol !== 'BTC' && asset.rs_vs_btc;
+  const gliTrendLabel = gli?.trend || (gli?.downtrend ? 'contracting' : 'expanding');
+  const fgClassification = fearGreed?.classification || 'N/A';
+  const fgValue = typeof fearGreed?.value === 'number' ? fearGreed.value : null;
 
   return (
     <div
@@ -724,9 +755,12 @@ function DetailModal({ asset, onClose, isMobile }) {
             )}
           </div>
 
-          {/* Dimension bars */}
+          {/* Weighted dimensions */}
           <div style={{ marginBottom: SPACE.lg }}>
-            {sortedDimensions.map(dim => (
+            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.sm, fontFamily: 'ui-monospace, monospace' }}>
+              Weighted dimensions
+            </div>
+            {weightedDimensions.map(dim => (
               <DimensionBar
                 key={dim}
                 label={DIMENSION_LABELS[dim] || dim}
@@ -737,19 +771,65 @@ function DetailModal({ asset, onClose, isMobile }) {
             ))}
           </div>
 
-          {/* RSI */}
-          <RsiRow asset={asset} />
-
-          {/* Wyckoff phase */}
+          {/* Global filters */}
           <div style={{ marginTop: SPACE.lg, paddingTop: SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
             <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
-              {asset.wyckoff_phase}
+              Global filters
             </div>
-            {asset.note && (
-              <div style={{ fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed }}>
-                {asset.note}
+            <div style={{ fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, marginBottom: SPACE.sm }}>
+              These filters can reduce action aggressiveness even when core dimensions are strong.
+            </div>
+            <div style={{ display: 'grid', rowGap: SPACE.xs, marginTop: SPACE.sm }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Wyckoff (global filter, not weighted)</span>
+                <span style={{ color: PALETTE.textPrimary }}>{asset.wyckoff_phase || 'Unknown'}</span>
               </div>
+              {typeof macroDowngrades === 'number' || typeof wyckoffDowngrades === 'number' ? (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Applied downgrades</span>
+                  <span>Macro {macroDowngrades} · Wyckoff {wyckoffDowngrades}</span>
+                </div>
+              ) : null}
+              {showRsContext ? (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
+                  <span>
+                    {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding / outperforming'}
+                    {typeof asset.rs_vs_btc.change_pct === 'number' ? ` (${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%)` : ''}
+                  </span>
+                </div>
+              ) : null}
+              {gli?.enabled ? (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
+                  <span>{gliTrendLabel} ({gli.source || 'unknown source'})</span>
+                </div>
+              ) : null}
+              {fearGreed?.enabled ? (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
+                  <span>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
+                </div>
+              ) : null}
+            </div>
+            {(wyckoffRationale || asset.note) && (
+              <>
+                <div style={{ marginTop: SPACE.sm, fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                  Wyckoff rationale provenance
+                </div>
+                <div style={{ marginTop: SPACE.xs, fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed }}>
+                  {wyckoffRationale || asset.note}
+                </div>
+              </>
             )}
+          </div>
+
+          {/* Technical context */}
+          <div style={{ marginTop: SPACE.lg, paddingTop: SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.sm, fontFamily: 'ui-monospace, monospace' }}>
+              Technical context
+            </div>
+            <RsiRow asset={asset} />
           </div>
 
           {/* Detailed analysis if available */}
@@ -832,7 +912,7 @@ function ActionBanner({ action, daysAgo, strongDays }) {
   );
 }
 
-function ScoreCard({ asset, isMobile }) {
+function ScoreCard({ asset, isMobile, gli, rs, fearGreed }) {
   const [showDetail, setShowDetail] = useState(false);
   const assetType = asset.asset_type || 'smart-contract';
 
@@ -942,6 +1022,9 @@ function ScoreCard({ asset, isMobile }) {
           asset={asset}
           onClose={handleCloseModal}
           isMobile={isMobile}
+          gli={gli}
+          rs={rs}
+          fearGreed={fearGreed}
         />
       )}
     </div>
@@ -1677,7 +1760,7 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
   );
 }
 
-function TierSection({ tier, assets, isMobile, defaultExpanded = false }) {
+function TierSection({ tier, assets, isMobile, defaultExpanded = false, gli, rs, fearGreed }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const config = TIER_CONFIG[tier];
   if (!config) return null;
@@ -1740,7 +1823,7 @@ function TierSection({ tier, assets, isMobile, defaultExpanded = false }) {
               gap: `${isMobile ? SPACE.base : SPACE.lg}px`,
             }}>
               {assets.map(asset => (
-                <ScoreCard key={asset.symbol} asset={asset} isMobile={isMobile} />
+                <ScoreCard key={asset.symbol} asset={asset} isMobile={isMobile} gli={gli} rs={rs} fearGreed={fearGreed} />
               ))}
             </div>
           )}
@@ -1944,6 +2027,9 @@ function Dashboard() {
               assets={tierAssets}
               isMobile={isMobile}
               defaultExpanded={tier === 'leader'}
+              gli={gli}
+              rs={rs}
+              fearGreed={fearGreed}
             />
           );
         })}

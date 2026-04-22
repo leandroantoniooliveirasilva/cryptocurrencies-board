@@ -396,6 +396,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         rs_data=rs_data,
         value_capture_estimated=value_capture_estimated,
         decision_trace=decision_trace,
+        wyckoff_rationale=wyckoff_rationale,
     )
 
     score_rationales = {
@@ -588,6 +589,7 @@ def _build_detailed_reasoning(
     rs_data: dict = None,  # Relative strength vs BTC data
     value_capture_estimated: bool = False,
     decision_trace: dict = None,
+    wyckoff_rationale: str = '',
 ) -> str:
     """
     Build detailed reasoning explaining why this asset is on the list,
@@ -699,14 +701,28 @@ def _build_detailed_reasoning(
     )
     if wyck_score is not None:
         if is_bullish_phase:
-            wyck_desc = f"Currently in {wyckoff_phase}—historically favorable for position building as price structure suggests markup potential."
+            wyck_desc = (
+                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
+                f"(not part of the weighted composite)."
+            )
         elif is_distribution:
-            wyck_desc = f"Currently in {wyckoff_phase}—caution warranted as price structure suggests potential markdown phase ahead."
+            wyck_desc = (
+                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
+                f"(not part of the weighted composite). Current structure is risk-off."
+            )
         elif "markup" in phase_lower:
-            wyck_desc = f"Currently in {wyckoff_phase}—trend is favorable but entries should be measured as some move has already occurred."
+            wyck_desc = (
+                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
+                f"(not part of the weighted composite). Trend is constructive but may be extended."
+            )
         else:
-            wyck_desc = f"Currently in {wyckoff_phase}. Technical structure is being monitored for clearer phase identification."
+            wyck_desc = (
+                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
+                f"(not part of the weighted composite)."
+            )
         lines.append(f"• Wyckoff ({wyck_score}/100, global filter): {wyck_desc}")
+        if wyckoff_rationale:
+            lines.append(f"  Evidence: {wyckoff_rationale}")
     else:
         lines.append(f"• Wyckoff (N/A, excluded): Insufficient price data for Wyckoff phase detection.")
 
@@ -772,10 +788,14 @@ def _build_detailed_reasoning(
     if decision_trace:
         lines.append("")
         lines.append("DECISION TRACE:")
-        lines.append(f"• path: {decision_trace.get('path', '')}")
+        lines.append(f"• path: {_trace_path_label(decision_trace.get('path', ''))}")
         if decision_trace.get("base_action") is not None:
-            lines.append(f"• base_action: {decision_trace['base_action']}")
-        lines.append(f"• final_action: {decision_trace.get('final_action', action)}")
+            lines.append(
+                f"• base_action: {_action_label(decision_trace['base_action'])}"
+            )
+        lines.append(
+            f"• final_action: {_action_label(decision_trace.get('final_action', action))}"
+        )
         dg = decision_trace.get("downgrades") or {}
         if dg:
             reasons = dg.get("reasons") or []
@@ -784,7 +804,9 @@ def _build_detailed_reasoning(
                 f"macro_levels={dg.get('macro_levels')}, wyckoff_levels={dg.get('wyckoff_levels')}"
             )
             if reasons:
-                lines.append(f"• downgrade_reasons: {', '.join(reasons)}")
+                lines.append(
+                    f"• downgrade_reasons: {', '.join(_downgrade_reason_label(r) for r in reasons)}"
+                )
 
     # 7. Composite summary
     lines.append("")
@@ -797,6 +819,46 @@ def _build_detailed_reasoning(
         lines.append("This score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.")
 
     return "\n".join(lines)
+
+
+def _trace_path_label(path: str) -> str:
+    labels = {
+        'leader_capitulation_both_rsi': 'Leader capitulation (weekly + daily RSI)',
+        'leader_capitulation_weekly_only': 'Leader capitulation (weekly RSI only)',
+        'leader_wyckoff_weekly_slope_downgrade': 'Leader Wyckoff setup reduced by weekly RSI slope',
+        'leader_wyckoff_strong_accumulate': 'Leader strong-accumulate Wyckoff setup',
+        'leader_wyckoff_accumulate': 'Leader accumulate Wyckoff setup',
+        'leader_hold_default': 'Leader hold default',
+        'runner_up_promote': 'Runner-up promote',
+        'runner_up_await': 'Runner-up await',
+        'observe_default': 'Observation default',
+        'stand_aside_sharp_decline': 'Stand aside from sharp decline',
+    }
+    return labels.get(path, path.replace('_', ' '))
+
+
+def _action_label(action: str) -> str:
+    labels = {
+        'strong-accumulate': 'Strong Accumulate',
+        'accumulate': 'Accumulate',
+        'hold': 'Hold',
+        'await': 'Await Confirmation',
+        'promote': 'Promote Candidate',
+        'observe': 'Observe',
+        'stand-aside': 'Stand Aside',
+    }
+    return labels.get(action, action)
+
+
+def _downgrade_reason_label(reason: str) -> str:
+    labels = {
+        'macro:gli_contracting': 'Global liquidity contracting',
+        'macro:rs_underperforming_btc': 'Relative strength underperforming BTC',
+        'macro:fear_greed_euphoria': 'Fear & Greed in euphoria zone',
+        'wyckoff:markup': 'Wyckoff in markup (late-cycle entry risk)',
+        'wyckoff:distribution_or_markdown': 'Wyckoff in distribution/markdown (risk-off structure)',
+    }
+    return labels.get(reason, reason)
 
 
 def write_output(output: dict, dry_run: bool = False) -> None:

@@ -89,15 +89,53 @@ def detect_wyckoff_phase(
         pct_from_low=pct_from_low
     )
 
-    # Build evidence rationale
+    phase_explanation = _phase_explanation(phase)
     rationale = (
-        f"Position {position_in_range*100:.0f}% in {lookback_days}d range, "
+        f"Heuristic Wyckoff classifier (price-structure model, no LLM/news): {phase_explanation}. "
+        f"Evidence: position {position_in_range*100:.0f}% in {lookback_days}d range, "
         f"7d trend {trend_7d:+.1f}%, 30d trend {trend_30d:+.1f}%, "
         f"volatility ratio {vol_ratio:.2f}x, "
-        f"{pct_from_high:.1f}% from high, {pct_from_low:.1f}% from low"
+        f"{pct_from_high:.1f}% from high, {pct_from_low:.1f}% from low."
     )
 
     return phase, score, rationale
+
+
+def _phase_explanation(phase: str) -> str:
+    phase_lower = (phase or '').lower()
+    if 'accumulation phase c' in phase_lower:
+        return 'classified as spring/test behavior after low-zone shakeout and reversal evidence'
+    if 'accumulation phase b' in phase_lower and ('b→c' in phase_lower or 'b->c' in phase_lower):
+        return 'classified as transition from accumulation base into spring setup'
+    if 'accumulation phase b' in phase_lower:
+        return 'classified as base-building consolidation in the lower range'
+    if 'accumulation phase d' in phase_lower:
+        return 'classified as sign-of-strength continuation after successful accumulation tests'
+    if 'accumulation phase e' in phase_lower:
+        return 'classified as markup breakout after accumulation completion'
+    if 'distribution phase c' in phase_lower:
+        return 'classified as potential upthrust/failed breakout near highs with weak follow-through'
+    if 'distribution phase d' in phase_lower:
+        return 'classified as sign-of-weakness sequence with lower-high pressure'
+    if 'distribution phase e' in phase_lower:
+        return 'classified as markdown continuation after distribution failure'
+    if 'distribution phase b' in phase_lower:
+        return 'classified as distribution range near highs with sideways cause-building'
+    if 'distribution phase a' in phase_lower:
+        return 'classified as early distribution after a buying climax area'
+    if 're-accumulation' in phase_lower:
+        return 'classified as consolidation within a broader uptrend'
+    if 'markup' in phase_lower:
+        return 'classified as bullish continuation with elevated range position'
+    if 'markdown' in phase_lower:
+        return 'classified as bearish continuation with weak range position'
+    if 'range' in phase_lower:
+        return 'classified as non-trending range behavior'
+    if 'uptrend' in phase_lower:
+        return 'classified as positive directional trend outside explicit phase templates'
+    if 'downtrend' in phase_lower:
+        return 'classified as negative directional trend outside explicit phase templates'
+    return 'classified by fallback thresholds due to mixed or incomplete structure'
 
 
 def _calculate_trend(prices: list[float], days: int) -> float:

@@ -5,6 +5,26 @@ from typing import Any, Optional
 from pipeline.config import config
 
 
+_DOWNGRADE_REASON_COPY = {
+    'macro:gli_contracting': 'global liquidity is contracting',
+    'macro:rs_underperforming_btc': 'relative strength vs BTC is weak',
+    'macro:fear_greed_euphoria': 'market sentiment is euphoric',
+    'wyckoff:markup': 'Wyckoff structure is already in markup',
+    'wyckoff:distribution_or_markdown': 'Wyckoff structure is distribution/markdown',
+}
+
+
+_ACTION_COPY = {
+    'strong-accumulate': 'Strong Accumulate',
+    'accumulate': 'Accumulate',
+    'hold': 'Hold',
+    'await': 'Await Confirmation',
+    'promote': 'Promote Candidate',
+    'observe': 'Observe',
+    'stand-aside': 'Stand Aside',
+}
+
+
 def derive_action(
     composite: int,
     composite_last_week: int,
@@ -218,7 +238,10 @@ def derive_action(
         return 'hold', _make_trace(
             path='leader_hold_default',
             final_action='hold',
-            summary='Hold: leader tier but no capitulation or Wyckoff accumulation regime active.',
+            summary=(
+                'Hold: leader-tier asset remains active, but no accumulation trigger is currently confirmed '
+                '(no RSI capitulation and no active Wyckoff accumulation regime).'
+            ),
             inputs=wyckoff_inputs,
         )
 
@@ -243,14 +266,14 @@ def derive_action(
         return 'await', _make_trace(
             path='runner_up_await',
             final_action='await',
-            summary='Await: runner-up; promotion thresholds not met.',
+            summary='Await: runner-up quality is improving, but promotion thresholds are not yet met.',
             inputs=common_inputs,
         )
 
     return 'observe', _make_trace(
         path='observe_default',
         final_action='observe',
-        summary='Observe: observation tier default (no accumulation signals).',
+        summary='Observe: research/watchlist state only; no active accumulation signal.',
         inputs=common_inputs,
     )
 
@@ -284,15 +307,24 @@ def _accumulation_summary(
     downgrades: dict[str, Any],
     trigger: str,
 ) -> str:
-    parts = [f'Base signal: {base_action} ({trigger}).']
+    base_label = _ACTION_COPY.get(base_action, base_action)
+    final_label = _ACTION_COPY.get(final_action, final_action)
+    parts = [f'Base signal: {base_label} ({trigger}).']
     if final_action != base_action:
         lv = downgrades.get('levels_applied', 0)
         reasons = downgrades.get('reasons', [])
-        reason_txt = '; '.join(reasons) if reasons else 'macro/Wyckoff filters'
-        parts.append(f'After {lv} downgrade level(s) ({reason_txt}): {final_action}.')
+        reason_txt = _format_downgrade_reasons(reasons)
+        parts.append(f'After {lv} downgrade level(s) ({reason_txt}): {final_label}.')
     else:
         parts.append('No accumulation downgrades applied.')
     return ' '.join(parts)
+
+
+def _format_downgrade_reasons(reasons: list[str]) -> str:
+    if not reasons:
+        return 'macro/Wyckoff filters'
+    readable = [_DOWNGRADE_REASON_COPY.get(reason, reason) for reason in reasons]
+    return '; '.join(readable)
 
 
 def _apply_downgrades(
