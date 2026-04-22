@@ -21,6 +21,41 @@ gli:
   # TradingView symbol for Global Liquidity Index
   tradingview_symbol: "ECONOMICS:GLI"
 
+  # Preferred source order:
+  # 1) Manual override (GLI_CURRENT / GLI_OFFSET)
+  # 2) FRED composite of major central bank balance sheets
+  # 3) FRED M2 proxy fallback
+  use_fred_composite: true
+  allow_fred_m2_fallback: true
+
+  # Minimum share of enabled composite components required at both
+  # current and offset dates to accept the composite.
+  min_component_coverage: 0.60
+
+  # Staleness guards by data frequency.
+  # Daily-updated series should be fresh; monthly series can lag materially.
+  staleness:
+    daily_max_days: 10
+    weekly_max_days: 21
+    monthly_max_days: 62
+    quarterly_max_days: 200
+
+  # Component toggles (aligned to GLI panel defaults where feasible with
+  # publicly accessible, scriptable series).
+  components:
+    fed: true
+    tga: true
+    rrp: true
+    ecb: true
+    pbc: true
+    boj: true
+    smaller_cb: false
+
+  # Optional BIS CBTA endpoint for PBOC total assets (China, monthly, local currency).
+  # Keep configurable because BIS SDMX keys can evolve.
+  bis:
+    cbta_china_csv_url: "https://stats.bis.org/api/v1/data/WS_CBTA/Q.CN.B.XDF_R_B1GQ._Z.B?format=csv"
+
 # =============================================================================
 # RELATIVE STRENGTH (RS) vs BTC FILTER
 # =============================================================================

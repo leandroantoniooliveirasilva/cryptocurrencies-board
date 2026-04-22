@@ -200,6 +200,8 @@ def _max_staleness_days(frequency: str) -> int:
         return int(getattr(staleness_cfg, 'daily_max_days', 10))
     if frequency == 'weekly':
         return int(getattr(staleness_cfg, 'weekly_max_days', 21))
+    if frequency == 'quarterly':
+        return int(getattr(staleness_cfg, 'quarterly_max_days', 130))
     return int(getattr(staleness_cfg, 'monthly_max_days', 62))
 
 
@@ -251,7 +253,7 @@ def _try_bis_pbc_series(
     current_target: date,
     offset_target: date,
     end_date: date,
-) -> Optional[tuple[tuple[date, float], tuple[date, float]]]:
+) -> Optional[tuple[tuple[date, float], tuple[date, float], str, str]]:
     bis_cfg = getattr(config.gli, 'bis', None)
     if bis_cfg is None:
         return None
@@ -263,20 +265,44 @@ def _try_bis_pbc_series(
     if not values:
         return None
 
+    # Detect unit from header row by reading one line directly.
+    unit_measure = 'unknown'
+    cadence = 'monthly'
+    try:
+        resp = requests.get(csv_url, timeout=20)
+        if resp.status_code == 200:
+            reader = csv.DictReader(io.StringIO(resp.text))
+            first = next(reader, None)
+            if first:
+                unit_measure = first.get('UNIT_MEASURE') or 'unknown'
+                period = first.get('TIME_PERIOD') or ''
+                cadence = 'quarterly' if '-Q' in period else 'monthly'
+    except Exception:
+        pass
+
     current_obs = _latest_on_or_before(values, current_target)
     offset_obs = _latest_on_or_before(values, offset_target)
     if not current_obs or not offset_obs:
         return None
 
-    if _is_stale(current_obs[0], 'monthly', end_date):
+    if _is_stale(current_obs[0], cadence, end_date):
         return None
 
-    # BIS series can be local currency or %GDP depending on the configured endpoint.
-    # We include only if the values are in plausible local-currency scale (>1000).
-    if current_obs[1] < 1000 or offset_obs[1] < 1000:
-        return None
+    return current_obs, offset_obs, unit_measure, cadence
 
-    return current_obs, offset_obs
+
+def _china_gdp_usd_for_year(api_key: str, year: int, end_date: date) -> Optional[float]:
+    """
+    Return latest available China GDP (current USD) for a given year bound.
+    Uses annual World Bank series mirrored in FRED.
+    """
+    start = date(max(1960, year - 20), 1, 1)
+    gdp_obs = _fred_observations(api_key, 'MKTGDPCNA646NWDB', start, end_date)
+    if not gdp_obs:
+        return None
+    target = date(year, 12, 31)
+    latest = _latest_on_or_before(gdp_obs, target)
+    return latest[1] if latest else None
 
 
 def _try_fred_composite(offset_days: int) -> Optional[GLIData]:
@@ -362,23 +388,38 @@ def _try_fred_composite(offset_days: int) -> Optional[GLIData]:
             if not pbc_pair:
                 missing_components.append('pbc:missing_or_invalid_bis')
             else:
-                current_obs, offset_obs = pbc_pair
+                current_obs, offset_obs, unit_measure, cadence = pbc_pair
 
-                # Convert CNY to USD using FRED daily CNYUSD quote (DEXCHUS: CNY per USD).
-                fx_cny = _fred_observations(api_key, 'DEXCHUS', start_date, end_date)
-                fx_current = _latest_on_or_before(fx_cny, current_obs[0])
-                fx_offset = _latest_on_or_before(fx_cny, offset_obs[0])
-                if not fx_current or not fx_offset or fx_current[1] == 0 or fx_offset[1] == 0:
-                    missing_components.append('pbc:missing_fx')
+                if unit_measure == 'XDF_R_B1GQ':
+                    # BIS series is % of GDP; convert to approximate USD level using
+                    # latest annual GDP in current USD for each observation year.
+                    gdp_current = _china_gdp_usd_for_year(api_key, current_obs[0].year, end_date)
+                    gdp_offset = _china_gdp_usd_for_year(api_key, offset_obs[0].year, end_date)
+                    if not gdp_current or not gdp_offset:
+                        missing_components.append('pbc:missing_gdp_for_ratio')
+                    else:
+                        current_usd_million = (current_obs[1] / 100.0) * (gdp_current / 1_000_000.0)
+                        offset_usd_million = (offset_obs[1] / 100.0) * (gdp_offset / 1_000_000.0)
+                        current_sum += current_usd_million
+                        offset_sum += offset_usd_million
+                        current_dates.append(current_obs[0])
+                        offset_dates.append(offset_obs[0])
+                        used_components.append(f'pbc_{cadence}')
                 else:
-                    # BIS/PBOC values expected in 100 million CNY.
-                    current_usd_million = (current_obs[1] * 100.0) / fx_current[1]
-                    offset_usd_million = (offset_obs[1] * 100.0) / fx_offset[1]
-                    current_sum += current_usd_million
-                    offset_sum += offset_usd_million
-                    current_dates.append(current_obs[0])
-                    offset_dates.append(offset_obs[0])
-                    used_components.append('pbc')
+                    # Assume local-currency levels (100M CNY) and convert via DEXCHUS.
+                    fx_cny = _fred_observations(api_key, 'DEXCHUS', start_date, end_date)
+                    fx_current = _latest_on_or_before(fx_cny, current_obs[0])
+                    fx_offset = _latest_on_or_before(fx_cny, offset_obs[0])
+                    if not fx_current or not fx_offset or fx_current[1] == 0 or fx_offset[1] == 0:
+                        missing_components.append('pbc:missing_fx')
+                    else:
+                        current_usd_million = (current_obs[1] * 100.0) / fx_current[1]
+                        offset_usd_million = (offset_obs[1] * 100.0) / fx_offset[1]
+                        current_sum += current_usd_million
+                        offset_sum += offset_usd_million
+                        current_dates.append(current_obs[0])
+                        offset_dates.append(offset_obs[0])
+                        used_components.append(f'pbc_{cadence}')
 
         if bool(getattr(cfg, 'smaller_cb', False)):
             enabled_count += 1
