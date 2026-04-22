@@ -27,6 +27,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import logging
 import os
+import sqlite3
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -455,7 +456,9 @@ def _get_max_workers(default_workers: int = 4) -> int:
 
 def _build_asset_worker(entry: dict, gli_downtrend: bool, fg_greedy: bool) -> dict:
     symbol = entry.get("symbol", "unknown")
-    conn = migrations.init_db(DB_PATH)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA busy_timeout = 60000')
     try:
         asset = build_asset(entry, conn, gli_downtrend=gli_downtrend, fg_greedy=fg_greedy)
         return {"symbol": symbol, "asset": asset, "error": None}
@@ -944,10 +947,12 @@ def main():
 
     # Persist cache writes and snapshots in the master process only.
     for asset in processed_assets:
-        for symbol, score_type, score, rationale in asset.get("cache_writes", []):
-            migrations.save_qualitative_score(conn, symbol, score_type, score, rationale)
+        if not args.dry_run:
+            for symbol, score_type, score, rationale in asset.get("cache_writes", []):
+                migrations.save_qualitative_score(conn, symbol, score_type, score, rationale)
+            migrations.save_snapshot(conn, asset, today)
+
         asset.pop("cache_writes", None)
-        migrations.save_snapshot(conn, asset, today)
         output["assets"].append(asset)
         logger.info(
             f"  {asset['symbol']} ({asset['tier']}): composite={asset['composite']}, action={asset['action']}"
@@ -957,8 +962,9 @@ def main():
     tier_order = {"leader": 0, "runner-up": 1, "observation": 2}
     output["assets"].sort(key=lambda a: (tier_order.get(a["tier"], 3), -a["composite"]))
 
-    # Commit database changes
-    conn.commit()
+    # Commit database changes only when writes are enabled.
+    if not args.dry_run:
+        conn.commit()
     conn.close()
 
     # Write output

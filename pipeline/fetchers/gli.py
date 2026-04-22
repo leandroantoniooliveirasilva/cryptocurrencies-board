@@ -43,10 +43,14 @@ CACHE_TTL_SECONDS = 3600
 
 # In-memory cache for FRED series observations (per series_id)
 _fred_series_cache: dict[str, list[tuple[date, float]]] = {}
+_fred_series_cache_time: dict[str, float] = {}
 _bis_csv_cache: dict[str, list[tuple[date, float]]] = {}
+_bis_csv_cache_time: dict[str, float] = {}
+SERIES_CACHE_TTL_SECONDS = 6 * 3600
+EMPTY_CACHE_TTL_SECONDS = 300
 
 
-def get_gli_trend_label(data: GLIData, epsilon: float = 1e-6) -> str:
+def get_gli_trend_label(data: GLIData) -> str:
     """Return human-friendly GLI trend label."""
     current = data.get('current')
     offset_value = data.get('offset_value')
@@ -55,7 +59,7 @@ def get_gli_trend_label(data: GLIData, epsilon: float = 1e-6) -> str:
         return 'unknown'
 
     delta = current - offset_value
-    if abs(delta) <= epsilon:
+    if delta == 0:
         return 'flat'
     if delta < 0:
         return 'contracting'
@@ -149,8 +153,11 @@ def _try_manual_override(offset_days: int) -> Optional[GLIData]:
 
 def _fred_observations(api_key: str, series_id: str, start: date, end: date) -> list[tuple[date, float]]:
     cached = _fred_series_cache.get(series_id)
-    if cached:
-        return cached
+    cache_time = _fred_series_cache_time.get(series_id)
+    if cached is not None and cache_time is not None:
+        ttl = SERIES_CACHE_TTL_SECONDS if cached else EMPTY_CACHE_TTL_SECONDS
+        if (time.time() - cache_time) < ttl:
+            return cached
 
     url = (
         'https://api.stlouisfed.org/fred/series/observations'
@@ -179,6 +186,7 @@ def _fred_observations(api_key: str, series_id: str, start: date, end: date) -> 
 
     values.sort(key=lambda t: t[0])
     _fred_series_cache[series_id] = values
+    _fred_series_cache_time[series_id] = time.time()
     return values
 
 
@@ -201,7 +209,7 @@ def _max_staleness_days(frequency: str) -> int:
     if frequency == 'weekly':
         return int(getattr(staleness_cfg, 'weekly_max_days', 21))
     if frequency == 'quarterly':
-        return int(getattr(staleness_cfg, 'quarterly_max_days', 130))
+        return int(getattr(staleness_cfg, 'quarterly_max_days', 200))
     return int(getattr(staleness_cfg, 'monthly_max_days', 62))
 
 
@@ -211,13 +219,17 @@ def _is_stale(obs_date: date, frequency: str, now_date: date) -> bool:
 
 def _bis_observations_csv(url: str) -> list[tuple[date, float]]:
     cached = _bis_csv_cache.get(url)
-    if cached is not None:
-        return cached
+    cache_time = _bis_csv_cache_time.get(url)
+    if cached is not None and cache_time is not None:
+        ttl = SERIES_CACHE_TTL_SECONDS if cached else EMPTY_CACHE_TTL_SECONDS
+        if (time.time() - cache_time) < ttl:
+            return cached
 
     try:
         resp = requests.get(url, timeout=20)
         if resp.status_code != 200:
             _bis_csv_cache[url] = []
+            _bis_csv_cache_time[url] = time.time()
             return []
 
         reader = csv.DictReader(io.StringIO(resp.text))
@@ -243,9 +255,11 @@ def _bis_observations_csv(url: str) -> list[tuple[date, float]]:
 
         out.sort(key=lambda t: t[0])
         _bis_csv_cache[url] = out
+        _bis_csv_cache_time[url] = time.time()
         return out
     except Exception:
         _bis_csv_cache[url] = []
+        _bis_csv_cache_time[url] = time.time()
         return []
 
 
@@ -437,12 +451,14 @@ def _try_fred_composite(offset_days: int) -> Optional[GLIData]:
         # Inputs are in USD millions at this point; convert to trillions.
         current_trillion = current_sum / 1_000_000.0
         offset_trillion = offset_sum / 1_000_000.0
+        rounded_current = round(current_trillion, 3)
+        rounded_offset = round(offset_trillion, 3)
 
         data = GLIData(
-            current=round(current_trillion, 3),
-            offset_value=round(offset_trillion, 3),
+            current=rounded_current,
+            offset_value=rounded_offset,
             offset_days=offset_days,
-            downtrend=current_trillion < offset_trillion,
+            downtrend=rounded_current < rounded_offset,
             source='fred_composite',
             fetched_at=datetime.now(timezone.utc).isoformat(),
             current_obs_date=max(current_dates).isoformat() if current_dates else None,

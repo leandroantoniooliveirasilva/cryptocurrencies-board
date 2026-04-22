@@ -14,6 +14,7 @@ import logging
 import os
 import subprocess
 import time
+import threading
 from typing import Optional
 
 import requests
@@ -29,6 +30,7 @@ TIMEOUT = 30
 RATE_LIMIT_DELAY = 3.0  # seconds between requests
 MAX_RETRIES = 3
 _last_request_time = 0.0
+_rate_limit_lock = threading.Lock()
 
 # Claude model for qualitative scoring (configurable via env)
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
@@ -37,13 +39,14 @@ CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
 def _rate_limit():
     """Enforce rate limiting between requests."""
     global _last_request_time
-    now = time.time()
-    elapsed = now - _last_request_time
-    if elapsed < RATE_LIMIT_DELAY:
-        sleep_time = RATE_LIMIT_DELAY - elapsed
-        logger.debug(f"Rate limiting: sleeping {sleep_time:.1f}s")
-        time.sleep(sleep_time)
-    _last_request_time = time.time()
+    with _rate_limit_lock:
+        now = time.time()
+        elapsed = now - _last_request_time
+        if elapsed < RATE_LIMIT_DELAY:
+            sleep_time = RATE_LIMIT_DELAY - elapsed
+            logger.debug(f"Rate limiting: sleeping {sleep_time:.1f}s")
+            time.sleep(sleep_time)
+        _last_request_time = time.time()
 
 
 def _get_headers() -> dict:

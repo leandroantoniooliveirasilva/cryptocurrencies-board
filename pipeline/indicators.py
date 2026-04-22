@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import logging
 import os
+import sqlite3
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -185,7 +186,9 @@ def _update_asset_worker(
     fg_greedy: bool,
 ) -> dict:
     symbol = asset.get("symbol", "unknown")
-    conn = migrations.init_db(DB_PATH)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA busy_timeout = 60000')
     try:
         local_asset = dict(asset)
         local_asset["coingecko_id"] = coingecko_id
