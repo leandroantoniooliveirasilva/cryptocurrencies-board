@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T06:41:43.320992+00:00",
+  "generated_at": "2026-04-22T11:00:34.498539+00:00",
   "snapshot_date": "2026-04-22",
   "framework_version": "3.0",
   "weight_profiles": {
@@ -82,10 +82,24 @@
   "gli": {
     "enabled": true,
     "downtrend": false,
-    "current": 22667.3,
-    "offset_value": 22667.3,
+    "trend": "expanding",
+    "current": 17.535,
+    "offset_value": 17.514,
     "offset_days": 75,
-    "source": "fred_m2"
+    "source": "fred_composite",
+    "current_obs_date": "2026-04-21",
+    "offset_obs_date": "2026-02-06",
+    "component_coverage": 0.83,
+    "components_used": [
+      "fed",
+      "tga",
+      "rrp",
+      "ecb",
+      "boj"
+    ],
+    "components_missing": [
+      "pbc:missing_or_invalid_bis"
+    ]
   },
   "rs": {
     "enabled": true,
@@ -144,8 +158,8 @@
         85,
         89
       ],
-      "rsi_daily": 61.9,
-      "rsi_weekly": 46.8,
+      "rsi_daily": 64.9,
+      "rsi_weekly": 47.8,
       "action": "accumulate",
       "decision_trace": {
         "path": "leader_wyckoff_accumulate",
@@ -170,8 +184,8 @@
           "macro_downgrade_active": false,
           "macro_reasons": [],
           "stand_aside_delta_threshold": -5,
-          "rsi_daily": 61.9,
-          "rsi_weekly": 46.8,
+          "rsi_daily": 64.9,
+          "rsi_weekly": 47.8,
           "rsi_weekly_4w_ago": 33.3,
           "weekly_capitulation": false,
           "daily_capitulation": false,
@@ -191,7 +205,7 @@
         "change_pct": 0.0
       },
       "note": "Strong institutional adoption. Regulatory clarity. Wyckoff spring zone",
-      "note_detailed": "BTC holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: monetary store of value \u2014 institutional + supply/security + regulatory; no separate value-capture dimension.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (92/100, 40% weight): Excellent institutional presence. ETF flows, corporate treasuries, major custody support\n\u2022 Regulatory (88/100, 25% weight): Clear regulatory standing. ETF approved, commodity classification in most jurisdictions\n\u2022 Supply/On-Chain (85/100, 35% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\u2022 Wyckoff (70/100, global filter): Currently in Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 61.9 sits in neutral range.\n\u2022 Weekly RSI at 46.8 remains in healthy range.\n\nCURRENT ACTION:\nBase signal: accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). No accumulation downgrades applied.\n\nDECISION TRACE:\n\u2022 path: leader_wyckoff_accumulate\n\u2022 base_action: accumulate\n\u2022 final_action: accumulate\n\u2022 downgrades: levels_applied=0, macro_levels=0, wyckoff_levels=0\n\nCOMPOSITE SCORE: 89/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
+      "note_detailed": "BTC holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: monetary store of value \u2014 institutional + supply/security + regulatory; no separate value-capture dimension.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (92/100, 40% weight): Excellent institutional presence. ETF flows, corporate treasuries, major custody support\n\u2022 Regulatory (88/100, 25% weight): Clear regulatory standing. ETF approved, commodity classification in most jurisdictions\n\u2022 Supply/On-Chain (85/100, 35% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\u2022 Wyckoff (70/100, global filter): Currently in Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 64.9 sits in neutral range.\n\u2022 Weekly RSI at 47.8 remains in healthy range.\n\nCURRENT ACTION:\nBase signal: accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). No accumulation downgrades applied.\n\nDECISION TRACE:\n\u2022 path: leader_wyckoff_accumulate\n\u2022 base_action: accumulate\n\u2022 final_action: accumulate\n\u2022 downgrades: levels_applied=0, macro_levels=0, wyckoff_levels=0\n\nCOMPOSITE SCORE: 89/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
     },
     {
       "symbol": "CANTON",
@@ -205,13 +219,13 @@
         "value_capture": null,
         "regulatory": 88,
         "supply": 75,
-        "wyckoff": 75
+        "wyckoff": 60
       },
       "score_rationales": {
         "institutional": "Canton has exceptional institutional backing with DTCC tokenizing $100T+ in U.S. Treasuries, Northern Trust custody integration, and major participants including Goldman Sachs, BNP Paribas, Bank of America, Citadel Securities, and J.P. Morgan planning JPM Coin native issuance; BitGo custody is live and the network processes $350B daily in repo transactions via Broadridge.",
         "regulatory": "Canton has SEC no-action letter, compliance-first architecture with native KYC/AML, DTCC tokenized Treasuries partnership, and top-tier institutional validators (Visa, JPMorgan, Goldman Sachs). Purpose-built for regulated financial markets with explicit regulatory approval.",
         "supply": "Data-driven score. 90%+ circulating, minimal inflation.",
-        "wyckoff": "Position 31% in 90d range, 7d trend +5.3%, 30d trend +6.8%, volatility ratio 1.25x, 19.1% from high, 12.1% from low",
+        "wyckoff": "Position 20% in 90d range, 7d trend -0.5%, 30d trend +2.3%, volatility ratio 1.12x, 22.5% from high, 8.0% from low",
         "adoption_activity": "Canton Network demonstrates exceptional enterprise adoption with 700K+ daily transactions, 45+ Super Validators including Visa and major banks, $9T monthly transaction volume, $6T in tokenized assets, and DTCC partnership for Treasury tokenization launching H1 2026\u2014genuine institutional-grade activity rather than speculative usage.",
         "value_capture": "Value capture not in this category's weighted dimensions; weight redistributes."
       },
@@ -223,7 +237,7 @@
       },
       "composite": 82,
       "composite_last_week": 82,
-      "wyckoff_phase": "Accumulation Phase C",
+      "wyckoff_phase": "Accumulation Phase B",
       "trend": [
         81,
         83,
@@ -234,40 +248,32 @@
         83,
         82
       ],
-      "rsi_daily": 56.9,
-      "rsi_weekly": 62.7,
-      "action": "accumulate",
+      "rsi_daily": 50.6,
+      "rsi_weekly": 61.4,
+      "action": "hold",
       "decision_trace": {
-        "path": "leader_wyckoff_accumulate",
-        "final_action": "accumulate",
-        "summary": "Base signal: accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). No accumulation downgrades applied.",
-        "base_action": "accumulate",
-        "downgrades": {
-          "base_action": "accumulate",
-          "levels_applied": 0,
-          "macro_levels": 0,
-          "wyckoff_levels": 0,
-          "reasons": []
-        },
+        "path": "leader_hold_default",
+        "final_action": "hold",
+        "summary": "Hold: leader tier but no capitulation or Wyckoff accumulation regime active.",
         "inputs": {
           "tier": "leader",
           "composite": 82,
           "composite_last_week": 82,
           "delta_7d": 1,
           "delta_30d": 1,
-          "wyckoff_phase": "Accumulation Phase C",
+          "wyckoff_phase": "Accumulation Phase B",
           "is_distribution": false,
           "macro_downgrade_active": false,
           "macro_reasons": [],
           "stand_aside_delta_threshold": -5,
-          "rsi_daily": 56.9,
-          "rsi_weekly": 62.7,
-          "rsi_weekly_4w_ago": 64.2,
+          "rsi_daily": 50.6,
+          "rsi_weekly": 61.4,
+          "rsi_weekly_4w_ago": 64.1,
           "weekly_capitulation": false,
           "daily_capitulation": false,
-          "wyckoff_ready": true,
+          "wyckoff_ready": false,
           "overbought_weekly": false,
-          "accumulate_regime": true,
+          "accumulate_regime": false,
           "accumulate_threshold": 75
         }
       },
@@ -278,10 +284,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": 0.2466046510614791
+        "change_pct": 0.28643912631949575
       },
-      "note": "Strong institutional adoption. Regulatory clarity. Wyckoff spring zone",
-      "note_detailed": "CANTON holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (85/100, 30% weight): Excellent institutional presence. Canton has exceptional institutional backing with DTCC tokenizing $100T+ in U.S. Treasuries, Northern Trust custody integration, and major participants including Goldman Sachs, BNP Paribas, Bank of America, Citadel Securities, and J.P. Morgan planning JPM Coin native issuance; BitGo custody is live and the network processes $350B daily in repo transactions via Broadridge.\n\u2022 Regulatory (88/100, 25% weight): Clear regulatory standing. Canton has SEC no-action letter, compliance-first architecture with native KYC/AML, DTCC tokenized Treasuries partnership, and top-tier institutional validators (Visa, JPMorgan, Goldman Sachs). Purpose-built for regulated financial markets with explicit regulatory approval.\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (75/100, global filter): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 56.9 sits in neutral range.\n\u2022 Weekly RSI at 62.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 24.7% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nBase signal: accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). No accumulation downgrades applied.\n\nDECISION TRACE:\n\u2022 path: leader_wyckoff_accumulate\n\u2022 base_action: accumulate\n\u2022 final_action: accumulate\n\u2022 downgrades: levels_applied=0, macro_levels=0, wyckoff_levels=0\n\nCOMPOSITE SCORE: 82/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
+      "note": "Strong institutional adoption. Regulatory clarity",
+      "note_detailed": "CANTON holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (85/100, 30% weight): Excellent institutional presence. Canton has exceptional institutional backing with DTCC tokenizing $100T+ in U.S. Treasuries, Northern Trust custody integration, and major participants including Goldman Sachs, BNP Paribas, Bank of America, Citadel Securities, and J.P. Morgan planning JPM Coin native issuance; BitGo custody is live and the network processes $350B daily in repo transactions via Broadridge.\n\u2022 Regulatory (88/100, 25% weight): Clear regulatory standing. Canton has SEC no-action letter, compliance-first architecture with native KYC/AML, DTCC tokenized Treasuries partnership, and top-tier institutional validators (Visa, JPMorgan, Goldman Sachs). Purpose-built for regulated financial markets with explicit regulatory approval.\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (60/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 50.6 sits in neutral range.\n\u2022 Weekly RSI at 61.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 28.6% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nHold: leader tier but no capitulation or Wyckoff accumulation regime active.\n\nDECISION TRACE:\n\u2022 path: leader_hold_default\n\u2022 final_action: hold\n\nCOMPOSITE SCORE: 82/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
     },
     {
       "symbol": "LINK",
@@ -301,7 +307,7 @@
         "institutional": "Enterprise integrations, oracle standard",
         "regulatory": "Enterprise partnerships signal regulatory comfort",
         "supply": "Limited supply data available.",
-        "wyckoff": "Position 28% in 90d range, 7d trend +3.6%, 30d trend +8.2%, volatility ratio 0.76x, 24.7% from high, 14.7% from low",
+        "wyckoff": "Position 30% in 90d range, 7d trend +4.3%, 30d trend +9.5%, volatility ratio 0.70x, 23.9% from high, 15.7% from low",
         "adoption_activity": "Chainlink dominates the oracle market with ~70% market share and $100B+ TVS (2x YoY growth). CCIP cross-chain transfers surged 1,972% to $7.77B in 2025, securing $33.6B in cross-chain tokens across 60+ chains, with major institutional adoption from Coinbase ($7B wrapped assets), Amundi, and 24 leading financial institutions including Swift, Euroclear, and UBS.",
         "value_capture": "Daily revenue: $10K (~$3.8M/year). No TVL (oracle/infra model, scored on absolute revenue)."
       },
@@ -325,8 +331,8 @@
         73,
         76
       ],
-      "rsi_daily": 55.3,
-      "rsi_weekly": 40.4,
+      "rsi_daily": 56.9,
+      "rsi_weekly": 40.6,
       "action": "hold",
       "decision_trace": {
         "path": "leader_wyckoff_accumulate",
@@ -355,9 +361,9 @@
             "macro:rs_underperforming_btc"
           ],
           "stand_aside_delta_threshold": -5,
-          "rsi_daily": 55.3,
-          "rsi_weekly": 40.4,
-          "rsi_weekly_4w_ago": 33.5,
+          "rsi_daily": 56.9,
+          "rsi_weekly": 40.6,
+          "rsi_weekly_4w_ago": 32.1,
           "weekly_capitulation": false,
           "daily_capitulation": false,
           "wyckoff_ready": true,
@@ -373,10 +379,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.10926454219448033
+        "change_pct": -0.10405793089929795
       },
       "note": "Strong institutional adoption. Wyckoff spring zone",
-      "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: oracle/data \u2014 adoption (e.g. TVS) and institutions weighted with value capture and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (88/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (55/100, 15% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 55.3 sits in neutral range.\n\u2022 Weekly RSI at 40.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 10.9% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nBase signal: accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). After 1 downgrade level(s) (macro:rs_underperforming_btc): hold.\n\nDECISION TRACE:\n\u2022 path: leader_wyckoff_accumulate\n\u2022 base_action: accumulate\n\u2022 final_action: hold\n\u2022 downgrades: levels_applied=1, macro_levels=1, wyckoff_levels=0\n\u2022 downgrade_reasons: macro:rs_underperforming_btc\n\nCOMPOSITE SCORE: 76/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
+      "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: oracle/data \u2014 adoption (e.g. TVS) and institutions weighted with value capture and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (88/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (55/100, 15% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 56.9 sits in neutral range.\n\u2022 Weekly RSI at 40.6 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 10.4% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nBase signal: accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). After 1 downgrade level(s) (macro:rs_underperforming_btc): hold.\n\nDECISION TRACE:\n\u2022 path: leader_wyckoff_accumulate\n\u2022 base_action: accumulate\n\u2022 final_action: hold\n\u2022 downgrades: levels_applied=1, macro_levels=1, wyckoff_levels=0\n\u2022 downgrade_reasons: macro:rs_underperforming_btc\n\nCOMPOSITE SCORE: 76/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
     },
     {
       "symbol": "SOL",
@@ -387,7 +393,7 @@
       "scores": {
         "institutional": 84,
         "adoption_activity": 88,
-        "value_capture": 59,
+        "value_capture": 58,
         "regulatory": 78,
         "supply": 65,
         "wyckoff": 58
@@ -396,9 +402,9 @@
         "institutional": "Growing fund holdings, major VC backing",
         "regulatory": "Growing institutional interest, no adverse rulings",
         "supply": "Data-driven score. 90%+ circulating.",
-        "wyckoff": "Position 17% in 90d range, 7d trend +3.3%, 30d trend -0.4%, volatility ratio 0.65x, 34.0% from high, 11.7% from low",
+        "wyckoff": "Position 18% in 90d range, 7d trend +3.4%, 30d trend +0.2%, volatility ratio 0.62x, 33.7% from high, 12.4% from low",
         "adoption_activity": "Solana dominates L1 activity with 27.1M active addresses (vs Ethereum's 410K), 515M weekly transactions at ~5,500 TPS production load, 17,700+ active developers growing 83% YoY, $2B+ tokenized RWAs, and $650B monthly stablecoin volume \u2014 exceptional network adoption metrics across all dimensions.",
-        "value_capture": "Daily revenue: $518K (~$188.9M/year). TVL: $5.63B. Revenue/TVL ratio: 3.36%."
+        "value_capture": "Daily revenue: $518K (~$188.9M/year). TVL: $5.67B. Revenue/TVL ratio: 3.33%."
       },
       "weights": {
         "institutional": 0.25,
@@ -420,8 +426,8 @@
         72,
         75
       ],
-      "rsi_daily": 51.9,
-      "rsi_weekly": 34.2,
+      "rsi_daily": 53.0,
+      "rsi_weekly": 33.8,
       "action": "hold",
       "decision_trace": {
         "path": "leader_hold_default",
@@ -440,9 +446,9 @@
             "macro:rs_underperforming_btc"
           ],
           "stand_aside_delta_threshold": -5,
-          "rsi_daily": 51.9,
-          "rsi_weekly": 34.2,
-          "rsi_weekly_4w_ago": 29.9,
+          "rsi_daily": 53.0,
+          "rsi_weekly": 33.8,
+          "rsi_weekly_4w_ago": 28.7,
           "weekly_capitulation": false,
           "daily_capitulation": false,
           "wyckoff_ready": false,
@@ -458,10 +464,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.21839011547421217
+        "change_pct": -0.21592911513352891
       },
       "note": "High-throughput L1, DeFi ecosystem",
-      "note_detailed": "SOL holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (84/100, 25% weight): Strong institutional presence. Growing fund holdings, major VC backing\n\u2022 Regulatory (78/100, 15% weight): Favorable regulatory standing. Growing institutional interest, no adverse rulings\n\u2022 Supply/On-Chain (65/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (88/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (59/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.9 sits in neutral range.\n\u2022 Weekly RSI at 34.2 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 21.8% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nHold: leader tier but no capitulation or Wyckoff accumulation regime active.\n\nDECISION TRACE:\n\u2022 path: leader_hold_default\n\u2022 final_action: hold\n\nCOMPOSITE SCORE: 75/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
+      "note_detailed": "SOL holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (84/100, 25% weight): Strong institutional presence. Growing fund holdings, major VC backing\n\u2022 Regulatory (78/100, 15% weight): Favorable regulatory standing. Growing institutional interest, no adverse rulings\n\u2022 Supply/On-Chain (65/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (88/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (58/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.0 sits in neutral range.\n\u2022 Weekly RSI at 33.8 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 21.6% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nHold: leader tier but no capitulation or Wyckoff accumulation regime active.\n\nDECISION TRACE:\n\u2022 path: leader_hold_default\n\u2022 final_action: hold\n\nCOMPOSITE SCORE: 75/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
     },
     {
       "symbol": "HYPE",
@@ -481,9 +487,9 @@
         "institutional": "Revenue leader, growing institutional interest",
         "regulatory": "Newer protocol, regulatory status evolving",
         "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
-        "wyckoff": "Position 81% in 90d range, 7d trend -5.7%, 30d trend +8.8%, volatility ratio 0.84x, 9.9% from high, 89.9% from low",
+        "wyckoff": "Position 82% in 90d range, 7d trend -6.3%, 30d trend +11.3%, volatility ratio 0.88x, 9.4% from high, 95.7% from low",
         "adoption_activity": "Hyperliquid dominates DeFi perps with 66-73% market share, $50B weekly volume, $1.6B TVL, 100K+ weekly active users, and $726M annual fees \u2014 exceptional adoption metrics for a specialized DEX with strong growth trajectory.",
-        "value_capture": "Daily revenue: $2.1M (~$784.7M/year). TVL: $4.76B. Revenue/TVL ratio: 16.50%. Daily fees: $2.4M."
+        "value_capture": "Daily revenue: $2.1M (~$784.7M/year). TVL: $4.76B. Revenue/TVL ratio: 16.47%. Daily fees: $2.4M."
       },
       "weights": {
         "value_capture": 0.3,
@@ -505,8 +511,8 @@
         73,
         75
       ],
-      "rsi_daily": 51.8,
-      "rsi_weekly": 59.1,
+      "rsi_daily": 52.2,
+      "rsi_weekly": 59.9,
       "action": "hold",
       "decision_trace": {
         "path": "leader_hold_default",
@@ -523,9 +529,9 @@
           "macro_downgrade_active": false,
           "macro_reasons": [],
           "stand_aside_delta_threshold": -5,
-          "rsi_daily": 51.8,
-          "rsi_weekly": 59.1,
-          "rsi_weekly_4w_ago": 61.6,
+          "rsi_daily": 52.2,
+          "rsi_weekly": 59.9,
+          "rsi_weekly_4w_ago": 61.1,
           "weekly_capitulation": false,
           "daily_capitulation": false,
           "wyckoff_ready": false,
@@ -541,10 +547,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": 1.2323420663254465
+        "change_pct": 1.311427860102425
       },
       "note": "Revenue-per-user sector leader",
-      "note_detailed": "HYPE holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. Revenue leader, growing institutional interest\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. Newer protocol, regulatory status evolving\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (88/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 30% weight): Strong holder-accruing economics.\n\u2022 Wyckoff (65/100, global filter): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.8 sits in neutral range.\n\u2022 Weekly RSI at 59.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 123.2% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nHold: leader tier but no capitulation or Wyckoff accumulation regime active.\n\nDECISION TRACE:\n\u2022 path: leader_hold_default\n\u2022 final_action: hold\n\nCOMPOSITE SCORE: 75/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
+      "note_detailed": "HYPE holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. Revenue leader, growing institutional interest\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. Newer protocol, regulatory status evolving\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (88/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 30% weight): Strong holder-accruing economics.\n\u2022 Wyckoff (65/100, global filter): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.2 sits in neutral range.\n\u2022 Weekly RSI at 59.9 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 131.1% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nHold: leader tier but no capitulation or Wyckoff accumulation regime active.\n\nDECISION TRACE:\n\u2022 path: leader_hold_default\n\u2022 final_action: hold\n\nCOMPOSITE SCORE: 75/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions."
     },
     {
       "symbol": "XRP",
@@ -564,7 +570,7 @@
         "institutional": "Banking partnerships, ETF inflows",
         "regulatory": "SEC lawsuit settled favorably",
         "supply": "Data-driven score. Fixed supply cap, high inflation.",
-        "wyckoff": "Position 21% in 90d range, 7d trend +6.0%, 30d trend +4.7%, volatility ratio 0.81x, 26.3% from high, 10.6% from low",
+        "wyckoff": "Position 24% in 90d range, 7d trend +6.5%, 30d trend +5.4%, volatility ratio 0.69x, 26.0% from high, 12.1% from low",
         "adoption_activity": "ODL corridors processed $14.2B in Q1 2026 (38% QoQ growth), RLUSD hit $1.56B market cap with 84% XRPL stablecoin dominance, and daily transactions reached 2-3M (up from 800K in May 2025); however, daily active accounts remain modest at 15K-47K versus 7.6M total accounts, indicating institutional/automated usage rather than broad retail adoption.",
         "value_capture": "Fees minimal by design. Value capture excluded for this asset."
       },
@@ -587,8 +593,8 @@
         66,
         74
       ],
-      "rsi_daily": 57.3,
-      "rsi_weekly": 37.6,
+      "rsi_daily": 59.3,
+      "rsi_weekly": 38.0,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -616,10 +622,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.1281029274351485
+        "change_pct": -0.11766126179553821
       },
       "note": "Wyckoff spring zone",
-      "note_detailed": "XRP is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 35% weight): Strong institutional presence. Banking partnerships, ETF inflows\n\u2022 Regulatory (82/100, 30% weight): Favorable regulatory standing. SEC lawsuit settled favorably\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 57.3 sits in neutral range.\n\u2022 Weekly RSI at 37.6 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 12.8% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 74/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "XRP is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 35% weight): Strong institutional presence. Banking partnerships, ETF inflows\n\u2022 Regulatory (82/100, 30% weight): Favorable regulatory standing. SEC lawsuit settled favorably\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 59.3 sits in neutral range.\n\u2022 Weekly RSI at 38.0 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 11.8% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 74/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "ETH",
@@ -630,7 +636,7 @@
       "scores": {
         "institutional": 85,
         "adoption_activity": 82,
-        "value_capture": 39,
+        "value_capture": 41,
         "regulatory": 82,
         "supply": 75,
         "wyckoff": 62
@@ -639,9 +645,9 @@
         "institutional": "ETF products, DeFi infrastructure for institutions",
         "regulatory": "ETF approved, regulatory clarity improving",
         "supply": "Data-driven score. 90%+ circulating, minimal inflation.",
-        "wyckoff": "Position 42% in 90d range, 7d trend +0.2%, 30d trend +13.7%, volatility ratio 0.83x, 23.0% from high, 27.1% from low",
+        "wyckoff": "Position 42% in 90d range, 7d trend +0.4%, 30d trend +13.8%, volatility ratio 0.77x, 22.8% from high, 27.7% from low",
         "adoption_activity": "Ethereum leads with $55-57B TVL (68% DeFi dominance), ~2M daily active addresses (exceeding 2021 peaks), record 2.2M daily transactions, 2,800+ weekly developers (largest ecosystem despite industry-wide decline), and 37.25M ETH staked. Strong on-chain activity despite price disconnect due to L2 migration.",
-        "value_capture": "Daily revenue: $1.2M (~$431.6M/year). TVL: $46.28B. Revenue/TVL ratio: 0.93%."
+        "value_capture": "Daily revenue: $1.5M (~$546.3M/year). TVL: $46.75B. Revenue/TVL ratio: 1.17%."
       },
       "weights": {
         "institutional": 0.25,
@@ -663,8 +669,8 @@
         71,
         73
       ],
-      "rsi_daily": 56.8,
-      "rsi_weekly": 45.1,
+      "rsi_daily": 59.0,
+      "rsi_weekly": 45.4,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -690,10 +696,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": -0.08845502680548786
+        "change_pct": -0.08520439324044267
       },
       "note": "Strong institutional adoption",
-      "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (85/100, 25% weight): Excellent institutional presence. ETF products, DeFi infrastructure for institutions\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. ETF approved, regulatory clarity improving\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (82/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (39/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 56.8 sits in neutral range.\n\u2022 Weekly RSI at 45.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-8.8% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 73/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (85/100, 25% weight): Excellent institutional presence. ETF products, DeFi infrastructure for institutions\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. ETF approved, regulatory clarity improving\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (82/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (41/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 59.0 sits in neutral range.\n\u2022 Weekly RSI at 45.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-8.5% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 73/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "QNT",
@@ -713,7 +719,7 @@
         "institutional": "Enterprise interoperability focus",
         "regulatory": "Enterprise-focused, regulatory engagement",
         "supply": "Limited supply data available.",
-        "wyckoff": "Position 70% in 90d range, 7d trend +0.3%, 30d trend +7.8%, volatility ratio 0.77x, 7.0% from high, 21.2% from low",
+        "wyckoff": "Position 71% in 90d range, 7d trend +2.7%, 30d trend +8.4%, volatility ratio 0.67x, 7.0% from high, 22.8% from low",
         "adoption_activity": "Strong enterprise adoption with 1,000+ enterprise clients, active partnerships with major UK banks (HSBC, Barclays, Lloyds, NatWest) via GBTD project, SWIFT ISO 20022 integration as primary interoperability layer, central bank engagements (BoE, ECB, BoJ), and QuantNet mainnet launched Feb 2026. However, actual on-chain transaction metrics remain limited as adoption is enterprise-license based rather than public chain activity.",
         "value_capture": "Value capture not in this category's weighted dimensions; weight redistributes."
       },
@@ -736,8 +742,8 @@
         65,
         68
       ],
-      "rsi_daily": 52.1,
-      "rsi_weekly": 50.4,
+      "rsi_daily": 52.7,
+      "rsi_weekly": 50.7,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -763,10 +769,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": 0.11698349041765307
+        "change_pct": 0.11404393552585286
       },
       "note": "Enterprise interoperability",
-      "note_detailed": "QNT is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 30% weight): Strong institutional presence. Enterprise interoperability focus\n\u2022 Regulatory (75/100, 25% weight): Favorable regulatory standing. Enterprise-focused, regulatory engagement\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (65/100, global filter): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.1 sits in neutral range.\n\u2022 Weekly RSI at 50.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 11.7% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 68/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "QNT is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 30% weight): Strong institutional presence. Enterprise interoperability focus\n\u2022 Regulatory (75/100, 25% weight): Favorable regulatory standing. Enterprise-focused, regulatory engagement\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (65/100, global filter): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.7 sits in neutral range.\n\u2022 Weekly RSI at 50.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 11.4% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 68/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "HBAR",
@@ -786,7 +792,7 @@
         "institutional": "Enterprise council, limited retail-focused",
         "regulatory": "Enterprise governance structure helps compliance",
         "supply": "Data-driven score. Fixed supply cap, 70%+ circulating, high inflation.",
-        "wyckoff": "Position 29% in 90d range, 7d trend +6.1%, 30d trend +0.9%, volatility ratio 0.70x, 18.2% from high, 9.8% from low",
+        "wyckoff": "Position 25% in 90d range, 7d trend +6.5%, 30d trend +1.6%, volatility ratio 0.70x, 17.8% from high, 7.6% from low",
         "adoption_activity": "Hedera shows modest but growing adoption: 708,500 daily transactions (+25.8% QoQ), $72.6M stablecoin market cap (+91.7% QoQ), and $67.1M TVL. While enterprise partnerships (FedEx, McLaren, 31 council members) and cross-border pilots with banks like Shinhan are promising, actual payment corridor volume remains limited compared to XRP's ODL, and the network processes only ~3 TPS currently despite 10,000 TPS capacity.",
         "value_capture": "Fees minimal by design. Value capture excluded for this asset."
       },
@@ -809,8 +815,8 @@
         64,
         68
       ],
-      "rsi_daily": 51.7,
-      "rsi_weekly": 33.2,
+      "rsi_daily": 53.6,
+      "rsi_weekly": 31.3,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -836,10 +842,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": -0.031596567595215334
+        "change_pct": -0.02967517058452279
       },
       "note": "Wyckoff spring zone",
-      "note_detailed": "HBAR is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (68/100, 35% weight): Moderate institutional presence. Enterprise council, limited retail-focused\n\u2022 Regulatory (78/100, 30% weight): Favorable regulatory standing. Enterprise governance structure helps compliance\n\u2022 Supply/On-Chain (58/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (58/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.7 sits in neutral range.\n\u2022 Weekly RSI at 33.2 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-3.2% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 68/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "HBAR is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (68/100, 35% weight): Moderate institutional presence. Enterprise council, limited retail-focused\n\u2022 Regulatory (78/100, 30% weight): Favorable regulatory standing. Enterprise governance structure helps compliance\n\u2022 Supply/On-Chain (58/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (58/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.6 sits in neutral range.\n\u2022 Weekly RSI at 31.3 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-3.0% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 68/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "XLM",
@@ -853,13 +859,13 @@
         "value_capture": null,
         "regulatory": 75,
         "supply": 40,
-        "wyckoff": 62
+        "wyckoff": 82
       },
       "score_rationales": {
         "institutional": "Payments infrastructure, enterprise partnerships",
         "regulatory": "Payments focus, regulatory partnerships",
         "supply": "Data-driven score. High inflation.",
-        "wyckoff": "Position 43% in 90d range, 7d trend +13.7%, 30d trend +12.4%, volatility ratio 0.87x, 17.5% from high, 18.6% from low",
+        "wyckoff": "Position 52% in 90d range, 7d trend +17.1%, 30d trend +17.3%, volatility ratio 0.85x, 14.7% from high, 23.3% from low",
         "adoption_activity": "Stellar ranks #4 globally for network usage with 1B+ quarterly operations, $500M monthly USDC volume, $2B+ RWA tokenization, 9.75M accounts, and major institutional partnerships (U.S. Bank pilot, Franklin Templeton, MoneyGram), though its payment corridor dominance is narrower than Ripple's ODL reach.",
         "value_capture": "Fees minimal by design. Value capture excluded for this asset."
       },
@@ -871,7 +877,7 @@
       },
       "composite": 67,
       "composite_last_week": 67,
-      "wyckoff_phase": "Uptrend",
+      "wyckoff_phase": "Accumulation Phase D",
       "trend": [
         63,
         59,
@@ -882,8 +888,8 @@
         59,
         67
       ],
-      "rsi_daily": 62.2,
-      "rsi_weekly": 42.1,
+      "rsi_daily": 66.9,
+      "rsi_weekly": 44.3,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -895,7 +901,7 @@
           "composite_last_week": 67,
           "delta_7d": 4,
           "delta_30d": 4,
-          "wyckoff_phase": "Uptrend",
+          "wyckoff_phase": "Accumulation Phase D",
           "is_distribution": false,
           "macro_downgrade_active": false,
           "macro_reasons": [],
@@ -909,10 +915,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": -0.023435110894854057
+        "change_pct": 0.0035694466576921186
       },
       "note": "Infrastructure/enterprise",
-      "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 35% weight): Strong institutional presence. Payments infrastructure, enterprise partnerships\n\u2022 Regulatory (75/100, 30% weight): Favorable regulatory standing. Payments focus, regulatory partnerships\n\u2022 Supply/On-Chain (40/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 62.2 sits in neutral range.\n\u2022 Weekly RSI at 42.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-2.3% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 67/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 35% weight): Strong institutional presence. Payments infrastructure, enterprise partnerships\n\u2022 Regulatory (75/100, 30% weight): Favorable regulatory standing. Payments focus, regulatory partnerships\n\u2022 Supply/On-Chain (40/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Wyckoff (82/100, global filter): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 66.9 sits in neutral range.\n\u2022 Weekly RSI at 44.3 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 0.4% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 67/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "AVAX",
@@ -932,9 +938,9 @@
         "institutional": "RWA TVL, VanEck ETF, BlackRock fund",
         "regulatory": "No major regulatory issues, moderate clarity",
         "supply": "Data-driven score. Fixed supply cap, 90%+ circulating.",
-        "wyckoff": "Position 26% in 90d range, 7d trend +0.4%, 30d trend +3.0%, volatility ratio 0.62x, 25.1% from high, 13.1% from low",
+        "wyckoff": "Position 27% in 90d range, 7d trend +0.5%, 30d trend +4.6%, volatility ratio 0.52x, 24.3% from high, 13.8% from low",
         "adoption_activity": "Strong adoption surge in 2026: active addresses hit ATH of 600K+ (up 242% since Jan), daily transactions reached 3.5M yearly high, TVL grew 41.9% QoQ to 102.8M AVAX, and C-Chain activity shows sustained usage floor of 500-700K addresses \u2014 robust L1 activity metrics though still behind top chains in absolute scale.",
-        "value_capture": "Daily revenue: $6K (~$2.3M/year). TVL: $664.5M. Revenue/TVL ratio: 0.35%."
+        "value_capture": "Daily revenue: $6K (~$2.4M/year). TVL: $666.7M. Revenue/TVL ratio: 0.35%."
       },
       "weights": {
         "institutional": 0.25,
@@ -956,8 +962,8 @@
         63,
         66
       ],
-      "rsi_daily": 51.1,
-      "rsi_weekly": 36.8,
+      "rsi_daily": 53.0,
+      "rsi_weekly": 37.3,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -985,10 +991,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.11285996029615447
+        "change_pct": -0.10281535613047084
       },
       "note": "Wyckoff spring zone",
-      "note_detailed": "AVAX is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. RWA TVL, VanEck ETF, BlackRock fund\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. No major regulatory issues, moderate clarity\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (33/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.1 sits in neutral range.\n\u2022 Weekly RSI at 36.8 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 11.3% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "AVAX is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. RWA TVL, VanEck ETF, BlackRock fund\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. No major regulatory issues, moderate clarity\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (33/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.0 sits in neutral range.\n\u2022 Weekly RSI at 37.3 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 10.3% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "KAS",
@@ -1008,7 +1014,7 @@
         "institutional": "Retail-driven, limited institutional adoption",
         "regulatory": "Newer PoW chain, limited regulatory clarity",
         "supply": "Data-driven score. Fixed supply cap, 90%+ circulating, minimal inflation.",
-        "wyckoff": "Position 52% in 90d range, 7d trend +9.3%, 30d trend -0.6%, volatility ratio 0.78x, 14.5% from high, 23.0% from low",
+        "wyckoff": "Position 53% in 90d range, 7d trend +9.2%, 30d trend +4.0%, volatility ratio 0.61x, 14.2% from high, 23.3% from low",
         "value_capture": "Fee model routes fees to miners/validators without holder accrual. Value capture excluded; security budget read under Supply."
       },
       "weights": {
@@ -1029,8 +1035,8 @@
         61,
         65
       ],
-      "rsi_daily": 57.6,
-      "rsi_weekly": 49.1,
+      "rsi_daily": 58.6,
+      "rsi_weekly": 49.3,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -1056,10 +1062,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": 0.024766363089747223
+        "change_pct": -0.002992954779407478
       },
       "note": "Store of value, supply-focused",
-      "note_detailed": "KAS is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: monetary store of value \u2014 institutional + supply/security + regulatory; no separate value-capture dimension.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (50/100, 40% weight): Moderate institutional presence. Retail-driven, limited institutional adoption\n\u2022 Regulatory (60/100, 25% weight): Uncertain regulatory standing. Newer PoW chain, limited regulatory clarity\n\u2022 Supply/On-Chain (85/100, 35% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\u2022 Wyckoff (65/100, global filter): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 57.6 sits in neutral range.\n\u2022 Weekly RSI at 49.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 2.5% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "KAS is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: monetary store of value \u2014 institutional + supply/security + regulatory; no separate value-capture dimension.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (50/100, 40% weight): Moderate institutional presence. Retail-driven, limited institutional adoption\n\u2022 Regulatory (60/100, 25% weight): Uncertain regulatory standing. Newer PoW chain, limited regulatory clarity\n\u2022 Supply/On-Chain (85/100, 35% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\u2022 Wyckoff (65/100, global filter): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 58.6 sits in neutral range.\n\u2022 Weekly RSI at 49.3 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-0.3% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "MORPHO",
@@ -1079,9 +1085,9 @@
         "institutional": "Apollo investment, institutional curator standard",
         "regulatory": "DeFi lending, institutional backing signals compliance",
         "supply": "Data-driven score. Fixed supply cap, high inflation.",
-        "wyckoff": "Position 97% in 90d range, 7d trend +11.6%, 30d trend +17.5%, volatility ratio 0.77x, 1.2% from high, 77.6% from low",
+        "wyckoff": "Position 99% in 90d range, 7d trend +13.2%, 30d trend +20.5%, volatility ratio 0.70x, 0.7% from high, 81.4% from low",
         "adoption_activity": "Morpho shows exceptional adoption with TVL growing from $5B to $13B deposits, 2.9M ETH record TVL (3x YoY), user base expanding from 67K to 1.4M, 180+ deployed markets, and major institutional integrations (Apollo, Coinbase, Soci\u00e9t\u00e9 G\u00e9n\u00e9rale). Fastest-growing major lending protocol by fee velocity despite recent KelpDAO exploit impact.",
-        "value_capture": "Daily revenue: $534K (~$194.9M/year). TVL: $6.64B. Revenue/TVL ratio: 2.94%."
+        "value_capture": "Daily revenue: $534K (~$194.9M/year). TVL: $6.67B. Revenue/TVL ratio: 2.92%."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1103,8 +1109,8 @@
         67,
         65
       ],
-      "rsi_daily": 64.2,
-      "rsi_weekly": 60.1,
+      "rsi_daily": 63.4,
+      "rsi_weekly": 61.1,
       "action": "await",
       "decision_trace": {
         "path": "runner_up_await",
@@ -1130,10 +1136,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": 0.9038763256435942
+        "change_pct": 0.9957087851697388
       },
       "note": "Distribution risk",
-      "note_detailed": "MORPHO is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 20% weight): Strong institutional presence. Apollo investment, institutional curator standard\n\u2022 Regulatory (70/100, 15% weight): Favorable regulatory standing. DeFi lending, institutional backing signals compliance\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (56/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (40/100, global filter): Currently in Distribution Phase A\u2014caution warranted as price structure suggests potential markdown phase ahead.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 64.2 sits in neutral range.\n\u2022 Weekly RSI at 60.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 90.4% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "MORPHO is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 20% weight): Strong institutional presence. Apollo investment, institutional curator standard\n\u2022 Regulatory (70/100, 15% weight): Favorable regulatory standing. DeFi lending, institutional backing signals compliance\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (56/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (40/100, global filter): Currently in Distribution Phase A\u2014caution warranted as price structure suggests potential markdown phase ahead.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 63.4 sits in neutral range.\n\u2022 Weekly RSI at 61.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 99.6% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up; promotion thresholds not met.\n\nDECISION TRACE:\n\u2022 path: runner_up_await\n\u2022 final_action: await\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "AAVE",
@@ -1144,7 +1150,7 @@
       "scores": {
         "institutional": 75,
         "adoption_activity": 78,
-        "value_capture": 42,
+        "value_capture": 41,
         "regulatory": 72,
         "supply": 75,
         "wyckoff": 25
@@ -1153,9 +1159,9 @@
         "institutional": "SOC 2 compliance, Horizon RWA platform",
         "regulatory": "Established DeFi, some regulatory engagement",
         "supply": "Data-driven score. Fixed supply cap, 90%+ circulating.",
-        "wyckoff": "Position 5% in 90d range, 7d trend -7.1%, 30d trend -12.5%, volatility ratio 1.92x, 41.8% from high, 3.7% from low",
+        "wyckoff": "Position 7% in 90d range, 7d trend -7.1%, 30d trend -11.5%, volatility ratio 1.65x, 41.7% from high, 5.4% from low",
         "adoption_activity": "Aave remains DeFi's dominant lending protocol with ~$18B TVL (down from $26B due to Kelp hack), $1T+ cumulative loans, 20+ chain deployments, V4 launch with unified liquidity architecture, and 61%+ active DeFi loan market share\u2014though recent $6.6B TVL drop and bad debt event temporarily dampens the score.",
-        "value_capture": "Daily revenue: $520K (~$189.7M/year). TVL: $15.77B. Revenue/TVL ratio: 1.20%. Daily fees: $4.0M."
+        "value_capture": "Daily revenue: $520K (~$189.7M/year). TVL: $15.93B. Revenue/TVL ratio: 1.19%. Daily fees: $4.0M."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1177,8 +1183,8 @@
         63,
         65
       ],
-      "rsi_daily": 43.4,
-      "rsi_weekly": 33.5,
+      "rsi_daily": 45.0,
+      "rsi_weekly": 33.6,
       "action": "stand-aside",
       "decision_trace": {
         "path": "stand_aside_sharp_decline",
@@ -1207,10 +1213,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.31101205260503106
+        "change_pct": -0.30906937426503284
       },
       "note": "Distribution risk",
-      "note_detailed": "AAVE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. SOC 2 compliance, Horizon RWA platform\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. Established DeFi, some regulatory engagement\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (42/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (25/100, global filter): Currently in Distribution Phase D\u2014caution warranted as price structure suggests potential markdown phase ahead.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 43.4 sits in neutral range.\n\u2022 Weekly RSI at 33.5 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 31.1% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nStand-aside: 7d composite delta (-14) <= threshold (-5); treat as structural break.\n\nDECISION TRACE:\n\u2022 path: stand_aside_sharp_decline\n\u2022 final_action: stand-aside\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "AAVE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. SOC 2 compliance, Horizon RWA platform\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. Established DeFi, some regulatory engagement\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (41/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (25/100, global filter): Currently in Distribution Phase D\u2014caution warranted as price structure suggests potential markdown phase ahead.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 45.0 sits in neutral range.\n\u2022 Weekly RSI at 33.6 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 30.9% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nStand-aside: 7d composite delta (-14) <= threshold (-5); treat as structural break.\n\nDECISION TRACE:\n\u2022 path: stand_aside_sharp_decline\n\u2022 final_action: stand-aside\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "ONDO",
@@ -1224,13 +1230,13 @@
         "value_capture": 48,
         "regulatory": 75,
         "supply": 40,
-        "wyckoff": 58
+        "wyckoff": 70
       },
       "score_rationales": {
         "institutional": "RWA focus, BlackRock BUIDL integration",
         "regulatory": "RWA focus, BlackRock partnership signals compliance",
         "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
-        "wyckoff": "Position 19% in 90d range, 7d trend +2.9%, 30d trend +5.1%, volatility ratio 0.80x, 26.4% from high, 9.4% from low",
+        "wyckoff": "Position 20% in 90d range, 7d trend +3.6%, 30d trend +6.8%, volatility ratio 0.69x, 25.6% from high, 9.7% from low",
         "adoption_activity": "Ondo Finance has achieved $3.5-3.6B TVL with strong adoption across OUSG ($692M-1.1B) and USDY products, major institutional partnerships (Franklin Templeton, State Street, Clearstream), Binance tokenized equities listing, and multi-chain expansion to Ethereum and Solana\u2014positioning it as the RWA tokenization leader.",
         "value_capture": "Daily revenue: $178K (~$65.0M/year). TVL: $3.54B. Revenue/TVL ratio: 1.84%."
       },
@@ -1243,7 +1249,7 @@
       },
       "composite": 60,
       "composite_last_week": 60,
-      "wyckoff_phase": "Accumulation Phase B",
+      "wyckoff_phase": "Accumulation Phase B\u2192C",
       "trend": [
         58,
         59,
@@ -1254,8 +1260,8 @@
         59,
         60
       ],
-      "rsi_daily": 49.3,
-      "rsi_weekly": 31.7,
+      "rsi_daily": 51.6,
+      "rsi_weekly": 32.2,
       "action": "observe",
       "decision_trace": {
         "path": "observe_default",
@@ -1267,83 +1273,7 @@
           "composite_last_week": 60,
           "delta_7d": 2,
           "delta_30d": 2,
-          "wyckoff_phase": "Accumulation Phase B",
-          "is_distribution": false,
-          "macro_downgrade_active": true,
-          "macro_reasons": [
-            "macro:rs_underperforming_btc"
-          ],
-          "stand_aside_delta_threshold": -5
-        }
-      },
-      "strong_accumulate_days_active": 0,
-      "label_changed_days_ago": 2,
-      "missing_dimensions": 0,
-      "value_capture_estimated": false,
-      "revenue_estimated": false,
-      "rs_vs_btc": {
-        "underperforming": true,
-        "change_pct": -0.1098312538829858
-      },
-      "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "ONDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 20% weight): Strong institutional presence. RWA focus, BlackRock BUIDL integration\n\u2022 Regulatory (75/100, 15% weight): Favorable regulatory standing. RWA focus, BlackRock partnership signals compliance\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (48/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 49.3 sits in neutral range.\n\u2022 Weekly RSI at 31.7 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 11.0% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 60/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
-    },
-    {
-      "symbol": "JUP",
-      "name": "Jupiter",
-      "tier": "observation",
-      "asset_type": "defi",
-      "asset_category": "defi-protocol",
-      "scores": {
-        "institutional": 55,
-        "adoption_activity": 82,
-        "value_capture": 52,
-        "regulatory": 65,
-        "supply": 50,
-        "wyckoff": 58
-      },
-      "score_rationales": {
-        "institutional": "Limited institutional presence",
-        "regulatory": "Limited regulatory clarity",
-        "supply": "Data-driven score. Fixed supply cap, high inflation.",
-        "wyckoff": "Position 43% in 90d range, 7d trend +2.7%, 30d trend +9.0%, volatility ratio 0.78x, 19.1% from high, 21.3% from low",
-        "adoption_activity": "Jupiter dominates Solana DeFi with ~$3.5B TVL (21% of Solana's DeFi TVL), 95% aggregator market share, $2-4B daily volume, 150-200K DAUs, and rapid product expansion (Lend hit $1.5B TVL, JupUSD stablecoin, perps, Polymarket integration) \u2014 exceptional adoption metrics for a DEX aggregator.",
-        "value_capture": "Daily revenue: $114K (~$41.5M/year). TVL: $1.77B. Revenue/TVL ratio: 2.35%. Daily fees: $468K."
-      },
-      "weights": {
-        "value_capture": 0.3,
-        "adoption_activity": 0.15,
-        "institutional": 0.2,
-        "regulatory": 0.15,
-        "supply": 0.2
-      },
-      "composite": 59,
-      "composite_last_week": 59,
-      "wyckoff_phase": "Accumulation Phase B",
-      "trend": [
-        57,
-        56,
-        59
-      ],
-      "trend_30d": [
-        57,
-        56,
-        59
-      ],
-      "rsi_daily": 52.3,
-      "rsi_weekly": 40.7,
-      "action": "observe",
-      "decision_trace": {
-        "path": "observe_default",
-        "final_action": "observe",
-        "summary": "Observe: observation tier default (no accumulation signals).",
-        "inputs": {
-          "tier": "observation",
-          "composite": 59,
-          "composite_last_week": 59,
-          "delta_7d": 2,
-          "delta_30d": 2,
-          "wyckoff_phase": "Accumulation Phase B",
+          "wyckoff_phase": "Accumulation Phase B\u2192C",
           "is_distribution": false,
           "macro_downgrade_active": false,
           "macro_reasons": [],
@@ -1357,10 +1287,84 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": 0.030199109396680766
+        "change_pct": -0.09153231027813476
+      },
+      "note": "Wyckoff spring zone",
+      "note_detailed": "ONDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 20% weight): Strong institutional presence. RWA focus, BlackRock BUIDL integration\n\u2022 Regulatory (75/100, 15% weight): Favorable regulatory standing. RWA focus, BlackRock partnership signals compliance\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (48/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (70/100, global filter): Currently in Accumulation Phase B\u2192C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.6 sits in neutral range.\n\u2022 Weekly RSI at 32.2 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-9.2% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 60/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+    },
+    {
+      "symbol": "JUP",
+      "name": "Jupiter",
+      "tier": "observation",
+      "asset_type": "defi",
+      "asset_category": "defi-protocol",
+      "scores": {
+        "institutional": 55,
+        "adoption_activity": 82,
+        "value_capture": 52,
+        "regulatory": 65,
+        "supply": 50,
+        "wyckoff": 62
+      },
+      "score_rationales": {
+        "institutional": "Limited institutional presence",
+        "regulatory": "Limited regulatory clarity",
+        "supply": "Data-driven score. Fixed supply cap, high inflation.",
+        "wyckoff": "Position 43% in 90d range, 7d trend +3.2%, 30d trend +12.8%, volatility ratio 0.66x, 20.4% from high, 24.1% from low",
+        "adoption_activity": "Jupiter dominates Solana DeFi with ~$3.5B TVL (21% of Solana's DeFi TVL), 95% aggregator market share, $2-4B daily volume, 150-200K DAUs, and rapid product expansion (Lend hit $1.5B TVL, JupUSD stablecoin, perps, Polymarket integration) \u2014 exceptional adoption metrics for a DEX aggregator.",
+        "value_capture": "Daily revenue: $114K (~$41.5M/year). TVL: $1.79B. Revenue/TVL ratio: 2.33%. Daily fees: $468K."
+      },
+      "weights": {
+        "value_capture": 0.3,
+        "adoption_activity": 0.15,
+        "institutional": 0.2,
+        "regulatory": 0.15,
+        "supply": 0.2
+      },
+      "composite": 59,
+      "composite_last_week": 59,
+      "wyckoff_phase": "Uptrend",
+      "trend": [
+        57,
+        56,
+        59
+      ],
+      "trend_30d": [
+        57,
+        56,
+        59
+      ],
+      "rsi_daily": 53.5,
+      "rsi_weekly": 40.2,
+      "action": "observe",
+      "decision_trace": {
+        "path": "observe_default",
+        "final_action": "observe",
+        "summary": "Observe: observation tier default (no accumulation signals).",
+        "inputs": {
+          "tier": "observation",
+          "composite": 59,
+          "composite_last_week": 59,
+          "delta_7d": 2,
+          "delta_30d": 2,
+          "wyckoff_phase": "Uptrend",
+          "is_distribution": false,
+          "macro_downgrade_active": false,
+          "macro_reasons": [],
+          "stand_aside_delta_threshold": -5
+        }
+      },
+      "strong_accumulate_days_active": 0,
+      "label_changed_days_ago": 2,
+      "missing_dimensions": 0,
+      "value_capture_estimated": false,
+      "revenue_estimated": false,
+      "rs_vs_btc": {
+        "underperforming": false,
+        "change_pct": 0.02627734766721264
       },
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "JUP sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (52/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.3 sits in neutral range.\n\u2022 Weekly RSI at 40.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 3.0% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 59/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "JUP sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (52/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.5 sits in neutral range.\n\u2022 Weekly RSI at 40.2 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 2.6% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 59/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "UNI",
@@ -1380,9 +1384,9 @@
         "institutional": "Limited institutional presence",
         "regulatory": "SEC dropped Wells notice investigation in Feb 2025 with no enforcement action; Bitwise filed spot UNI ETF in Feb 2026; BlackRock partnership signals institutional comfort; class action dismissed in federal court. However, broader DeFi regulatory framework remains unsettled and ETF approval is uncertain.",
         "supply": "UNI has a fixed 1B max supply with 70.7% circulating, and the UNIfication proposal burned 100M tokens (~10% of supply), transforming it into a deflationary asset with ongoing fee burns. However, high whale concentration (top 10 addresses hold ~50% of supply) and recent whale selling ahead of macro events partially offset these positives. The completed vesting schedule (2024) eliminates unlock pressure, and the new UNIVesting contract releases only 5M UNI quarterly for ecosystem growth.",
-        "wyckoff": "Position 11% in 90d range, 7d trend +3.7%, 30d trend -6.8%, volatility ratio 0.76x, 34.0% from high, 6.5% from low",
+        "wyckoff": "Position 14% in 90d range, 7d trend +4.4%, 30d trend -5.5%, volatility ratio 0.74x, 33.5% from high, 9.1% from low",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $171K (~$62.6M/year). TVL: $3.35B. Revenue/TVL ratio: 1.86%. Daily fees: $2.1M."
+        "value_capture": "Daily revenue: $171K (~$62.6M/year). TVL: $3.38B. Revenue/TVL ratio: 1.85%. Daily fees: $2.1M."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1404,8 +1408,8 @@
         60,
         58
       ],
-      "rsi_daily": 47.3,
-      "rsi_weekly": 27.5,
+      "rsi_daily": 49.1,
+      "rsi_weekly": 27.6,
       "action": "stand-aside",
       "decision_trace": {
         "path": "stand_aside_sharp_decline",
@@ -1434,10 +1438,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.21888506219851805
+        "change_pct": -0.21874652191880214
       },
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "UNI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. SEC dropped Wells notice investigation in Feb 2025 with no enforcement action; Bitwise filed spot UNI ETF in Feb 2026; BlackRock partnership signals institutional comfort; class action dismissed in federal court. However, broader DeFi regulatory framework remains unsettled and ETF approval is uncertain.\n\u2022 Supply/On-Chain (68/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (48/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 47.3 sits in neutral range.\n\u2022 Weekly RSI at 27.5 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 21.9% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nStand-aside: 7d composite delta (-16) <= threshold (-5); treat as structural break.\n\nDECISION TRACE:\n\u2022 path: stand_aside_sharp_decline\n\u2022 final_action: stand-aside\n\nCOMPOSITE SCORE: 58/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "UNI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. SEC dropped Wells notice investigation in Feb 2025 with no enforcement action; Bitwise filed spot UNI ETF in Feb 2026; BlackRock partnership signals institutional comfort; class action dismissed in federal court. However, broader DeFi regulatory framework remains unsettled and ETF approval is uncertain.\n\u2022 Supply/On-Chain (68/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (48/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 49.1 sits in neutral range.\n\u2022 Weekly RSI at 27.6 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 21.9% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nStand-aside: 7d composite delta (-16) <= threshold (-5); treat as structural break.\n\nDECISION TRACE:\n\u2022 path: stand_aside_sharp_decline\n\u2022 final_action: stand-aside\n\nCOMPOSITE SCORE: 58/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "SUI",
@@ -1457,9 +1461,9 @@
         "institutional": "CME futures, multiple ETF filings",
         "regulatory": "VC-backed L1, growing institutional presence",
         "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
-        "wyckoff": "Position 14% in 90d range, 7d trend +1.9%, 30d trend +4.8%, volatility ratio 0.78x, 37.7% from high, 11.0% from low",
+        "wyckoff": "Position 18% in 90d range, 7d trend +2.0%, 30d trend +6.3%, volatility ratio 0.63x, 37.1% from high, 15.2% from low",
         "adoption_activity": "Sui shows strong adoption metrics with 895K daily active addresses, 4.7M daily transactions, proven 866 TPS throughput, and TVL between $570M-$2B (sources vary), placing it among top L1s; however, Q3 2025 showed slight quarter-over-quarter declines in activity (-9.5% addresses, -4.7% transactions), and TVL remains modest compared to Ethereum ($57B) and Solana ($6B).",
-        "value_capture": "Daily revenue: $7K (~$2.4M/year). TVL: $563.4M. Revenue/TVL ratio: 0.42%."
+        "value_capture": "Daily revenue: $7K (~$2.4M/year). TVL: $565.2M. Revenue/TVL ratio: 0.42%."
       },
       "weights": {
         "institutional": 0.25,
@@ -1481,8 +1485,8 @@
         53,
         57
       ],
-      "rsi_daily": 52.2,
-      "rsi_weekly": 41.2,
+      "rsi_daily": 53.7,
+      "rsi_weekly": 41.4,
       "action": "observe",
       "decision_trace": {
         "path": "observe_default",
@@ -1510,10 +1514,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.26314242589004755
+        "change_pct": -0.2553135453251179
       },
       "note": "Smart contract platform",
-      "note_detailed": "SUI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 25% weight): Strong institutional presence. CME futures, multiple ETF filings\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. VC-backed L1, growing institutional presence\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.2 sits in neutral range.\n\u2022 Weekly RSI at 41.2 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 26.3% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 57/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "SUI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 25% weight): Strong institutional presence. CME futures, multiple ETF filings\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. VC-backed L1, growing institutional presence\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.7 sits in neutral range.\n\u2022 Weekly RSI at 41.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 25.5% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 57/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "EIGEN",
@@ -1527,15 +1531,15 @@
         "value_capture": 32,
         "regulatory": 65,
         "supply": 50,
-        "wyckoff": 75
+        "wyckoff": 48
       },
       "score_rationales": {
         "institutional": "Limited institutional presence",
         "regulatory": "Limited regulatory clarity",
         "supply": "Limited supply data available.",
-        "wyckoff": "Position 15% in 90d range, 7d trend +12.3%, 30d trend -3.1%, volatility ratio 1.30x, 47.4% from high, 19.2% from low",
+        "wyckoff": "Position 16% in 90d range, 7d trend +11.0%, 30d trend -3.3%, volatility ratio 1.14x, 47.0% from high, 20.3% from low",
         "adoption_activity": "EigenLayer leads restaking with ~$18B restaked ETH, 1,900+ operators, 20+ AVSs (including EigenDA with 97k stakers), and 93.9% market share; strong adoption but still maturing AVS ecosystem with AI verification emerging as key growth vector.",
-        "value_capture": "Daily revenue: $72K (~$26.3M/year). TVL: $10.00B. Revenue/TVL ratio: 0.26%."
+        "value_capture": "Daily revenue: $79K (~$28.7M/year). TVL: $10.12B. Revenue/TVL ratio: 0.28%."
       },
       "weights": {
         "adoption_activity": 0.25,
@@ -1546,7 +1550,7 @@
       },
       "composite": 56,
       "composite_last_week": 56,
-      "wyckoff_phase": "Accumulation Phase C",
+      "wyckoff_phase": "Range (lower)",
       "trend": [
         56,
         54,
@@ -1557,8 +1561,8 @@
         54,
         56
       ],
-      "rsi_daily": 52.9,
-      "rsi_weekly": 22.4,
+      "rsi_daily": 53.1,
+      "rsi_weekly": 22.1,
       "action": "observe",
       "decision_trace": {
         "path": "observe_default",
@@ -1570,7 +1574,7 @@
           "composite_last_week": 56,
           "delta_7d": 0,
           "delta_30d": 0,
-          "wyckoff_phase": "Accumulation Phase C",
+          "wyckoff_phase": "Range (lower)",
           "is_distribution": false,
           "macro_downgrade_active": true,
           "macro_reasons": [
@@ -1586,10 +1590,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.37733432792252236
+        "change_pct": -0.3693187145108072
       },
-      "note": "Wyckoff spring zone",
-      "note_detailed": "EIGEN sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: shared security / restaking \u2014 adoption and value capture central.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (78/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 25% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (75/100, global filter): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 52.9 sits in neutral range.\n\u2022 Weekly RSI at 22.4 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 37.7% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 56/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note": "Infrastructure/enterprise",
+      "note_detailed": "EIGEN sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: shared security / restaking \u2014 adoption and value capture central.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (78/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 25% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (48/100, global filter): Currently in Range (lower). Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.1 sits in neutral range.\n\u2022 Weekly RSI at 22.1 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 36.9% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 56/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "PENDLE",
@@ -1609,9 +1613,9 @@
         "institutional": "Institutional Citadels product",
         "regulatory": "Yield trading, DeFi regulatory uncertainty",
         "supply": "Data-driven score. High inflation.",
-        "wyckoff": "Position 32% in 90d range, 7d trend +30.3%, 30d trend +17.0%, volatility ratio 1.86x, 36.0% from high, 35.9% from low",
+        "wyckoff": "Position 34% in 90d range, 7d trend +32.6%, 30d trend +22.1%, volatility ratio 1.36x, 35.8% from high, 41.0% from low",
         "adoption_activity": "Pendle demonstrates exceptional adoption with $8.7B+ TVL (118% growth), $233.9B quarterly trading volume (236% growth), 29.2K monthly active users across 8 chains, and $40M annualized protocol revenue. As the dominant on-chain yield trading platform bridging traditional fixed income with DeFi, its metrics show category leadership.",
-        "value_capture": "Daily revenue: $19K (~$6.9M/year). TVL: $1.42B. Revenue/TVL ratio: 0.49%. Daily fees: $19K."
+        "value_capture": "Daily revenue: $17K (~$6.1M/year). TVL: $1.41B. Revenue/TVL ratio: 0.43%. Daily fees: $17K."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1633,8 +1637,8 @@
         48,
         53
       ],
-      "rsi_daily": 61.9,
-      "rsi_weekly": 41.4,
+      "rsi_daily": 64.5,
+      "rsi_weekly": 42.3,
       "action": "stand-aside",
       "decision_trace": {
         "path": "stand_aside_sharp_decline",
@@ -1663,10 +1667,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.24248341295161466
+        "change_pct": -0.16429996717476436
       },
       "note": "Wyckoff spring zone",
-      "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Institutional Citadels product\n\u2022 Regulatory (60/100, 15% weight): Uncertain regulatory standing. Yield trading, DeFi regulatory uncertainty\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (88/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (75/100, global filter): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 61.9 sits in neutral range.\n\u2022 Weekly RSI at 41.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 24.2% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nStand-aside: 7d composite delta (-9) <= threshold (-5); treat as structural break.\n\nDECISION TRACE:\n\u2022 path: stand_aside_sharp_decline\n\u2022 final_action: stand-aside\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Institutional Citadels product\n\u2022 Regulatory (60/100, 15% weight): Uncertain regulatory standing. Yield trading, DeFi regulatory uncertainty\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (88/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (75/100, global filter): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 64.5 sits in neutral range.\n\u2022 Weekly RSI at 42.3 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 16.4% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nStand-aside: 7d composite delta (-9) <= threshold (-5); treat as structural break.\n\nDECISION TRACE:\n\u2022 path: stand_aside_sharp_decline\n\u2022 final_action: stand-aside\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "LDO",
@@ -1686,9 +1690,9 @@
         "institutional": "Lido has meaningful institutional infrastructure including Grayscale LDO Trust (~$164k AUM), WisdomTree stETH ETP ($36M AUM in Europe), and VanEck's pending staked ETH ETF filing, but adoption remains nascent compared to BTC/ETH with small fund sizes and no major corporate treasury holdings.",
         "regulatory": "LDO faces mixed regulatory signals: the December 2024 Samuels v. Lido DAO ruling established DAO members may face personal liability as a general partnership, creating ongoing legal risk. However, the SEC's 2025 shift away from enforcement-driven regulation, Lido Labs' proactive SEC engagement, pending VanEck stETH ETF filing, and WisdomTree's European ETP launch indicate improving trajectory for liquid staking protocols.",
         "supply": "Fixed 1B supply cap with 84.9% already circulating is moderately bullish. Exchange reserves declining (down ~3% weekly) with active whale accumulation (top 100 addresses hold 792.77M tokens, ~79% of supply) shows accumulation, but this concentration raises centralization risk. The $20M treasury buyback program (potentially absorbing 8% of circulating supply) creates sustained buy pressure, though thin on-chain liquidity ($90K at \u00b12% depth) reveals structural fragility.",
-        "wyckoff": "Position 40% in 90d range, 7d trend +8.0%, 30d trend +34.0%, volatility ratio 2.02x, 29.1% from high, 37.3% from low",
+        "wyckoff": "Position 44% in 90d range, 7d trend +9.8%, 30d trend +39.9%, volatility ratio 1.73x, 26.7% from high, 41.1% from low",
         "adoption_activity": "Lido dominates liquid staking with ~$19-38B TVL (largest DeFi protocol), 9.17M ETH staked (~23-28% of all staked ETH), 800+ node operators, and deep integrations across Aave, Curve, Balancer, EigenLayer. V3 stVaults expansion (Linea, Nansen) and institutional adoption (WisdomTree ETP) show continued growth despite market share compression from new entrants.",
-        "value_capture": "Daily revenue: $170K (~$62.0M/year). TVL: $22.15B. Revenue/TVL ratio: 0.28%. Daily fees: $1.7M."
+        "value_capture": "Daily revenue: $170K (~$62.0M/year). TVL: $22.41B. Revenue/TVL ratio: 0.28%. Daily fees: $1.7M."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1710,8 +1714,8 @@
         48,
         53
       ],
-      "rsi_daily": 57.0,
-      "rsi_weekly": 36.8,
+      "rsi_daily": 60.4,
+      "rsi_weekly": 39.7,
       "action": "observe",
       "decision_trace": {
         "path": "observe_default",
@@ -1739,10 +1743,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.16047643325748973
+        "change_pct": -0.14563429664116842
       },
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "LDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Lido has meaningful institutional infrastructure including Grayscale LDO Trust (~$164k AUM), WisdomTree stETH ETP ($36M AUM in Europe), and VanEck's pending staked ETH ETF filing, but adoption remains nascent compared to BTC/ETH with small fund sizes and no major corporate treasury holdings.\n\u2022 Regulatory (55/100, 15% weight): Uncertain regulatory standing. LDO faces mixed regulatory signals: the December 2024 Samuels v. Lido DAO ruling established DAO members may face personal liability as a general partnership, creating ongoing legal risk. However, the SEC's 2025 shift away from enforcement-driven regulation, Lido Labs' proactive SEC engagement, pending VanEck stETH ETF filing, and WisdomTree's European ETP launch indicate improving trajectory for liquid staking protocols.\n\u2022 Supply/On-Chain (58/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 57.0 sits in neutral range.\n\u2022 Weekly RSI at 36.8 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 16.0% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "LDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Lido has meaningful institutional infrastructure including Grayscale LDO Trust (~$164k AUM), WisdomTree stETH ETP ($36M AUM in Europe), and VanEck's pending staked ETH ETF filing, but adoption remains nascent compared to BTC/ETH with small fund sizes and no major corporate treasury holdings.\n\u2022 Regulatory (55/100, 15% weight): Uncertain regulatory standing. LDO faces mixed regulatory signals: the December 2024 Samuels v. Lido DAO ruling established DAO members may face personal liability as a general partnership, creating ongoing legal risk. However, the SEC's 2025 shift away from enforcement-driven regulation, Lido Labs' proactive SEC engagement, pending VanEck stETH ETF filing, and WisdomTree's European ETP launch indicate improving trajectory for liquid staking protocols.\n\u2022 Supply/On-Chain (58/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 60.4 sits in neutral range.\n\u2022 Weekly RSI at 39.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 14.6% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "TAO",
@@ -1756,13 +1760,13 @@
         "value_capture": 35,
         "regulatory": 55,
         "supply": 40,
-        "wyckoff": 65
+        "wyckoff": 58
       },
       "score_rationales": {
         "institutional": "Grayscale ETF filing, DCG backing",
         "regulatory": "AI-crypto, limited regulatory framework",
         "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
-        "wyckoff": "Position 51% in 90d range, 7d trend +0.8%, 30d trend -9.0%, volatility ratio 0.99x, 28.1% from high, 67.0% from low",
+        "wyckoff": "Position 49% in 90d range, 7d trend +0.2%, 30d trend -7.9%, volatility ratio 0.83x, 30.5% from high, 71.8% from low",
         "adoption_activity": "Bittensor shows meaningful activity with 128 active subnets, Chutes processing 5M+ daily requests serving 400K+ users, and 70% staking participation, but network economics remain subsidy-dependent ($43M revenue vs $148M emissions) and Covenant AI's April 2026 exit exposed centralization risks.",
         "value_capture": "TAO uses a purely inflationary emission model with no burns, buybacks, or protocol-level fee accrual to holders. Staking yields (~5-17% nominal APY) are diluted by ~13% annual inflation post-halving, leaving minimal real yield; registration fees are recycled into future emissions rather than burned or distributed, making value capture weak compared to deflationary L1s or fee-burning protocols."
       },
@@ -1775,7 +1779,7 @@
       },
       "composite": 52,
       "composite_last_week": 52,
-      "wyckoff_phase": "Re-accumulation",
+      "wyckoff_phase": "Accumulation Phase B",
       "trend": [
         52,
         53,
@@ -1786,8 +1790,8 @@
         53,
         52
       ],
-      "rsi_daily": 41.1,
-      "rsi_weekly": 47.0,
+      "rsi_daily": 42.9,
+      "rsi_weekly": 46.9,
       "action": "observe",
       "decision_trace": {
         "path": "observe_default",
@@ -1799,7 +1803,7 @@
           "composite_last_week": 52,
           "delta_7d": 0,
           "delta_30d": 0,
-          "wyckoff_phase": "Re-accumulation",
+          "wyckoff_phase": "Accumulation Phase B",
           "is_distribution": false,
           "macro_downgrade_active": false,
           "macro_reasons": [],
@@ -1813,10 +1817,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": 0.1859851426760646
+        "change_pct": 0.22844980340767793
       },
       "note": "Infrastructure/enterprise",
-      "note_detailed": "TAO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: AI / DePIN \u2014 adoption and value capture with supply and regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Grayscale ETF filing, DCG backing\n\u2022 Regulatory (55/100, 15% weight): Uncertain regulatory standing. AI-crypto, limited regulatory framework\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (35/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (65/100, global filter): Currently in Re-accumulation\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 41.1 sits in neutral range.\n\u2022 Weekly RSI at 47.0 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 18.6% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "TAO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: AI / DePIN \u2014 adoption and value capture with supply and regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Grayscale ETF filing, DCG backing\n\u2022 Regulatory (55/100, 15% weight): Uncertain regulatory standing. AI-crypto, limited regulatory framework\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (35/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (58/100, global filter): Currently in Accumulation Phase B\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 42.9 sits in neutral range.\n\u2022 Weekly RSI at 46.9 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 22.8% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "TIA",
@@ -1830,13 +1834,13 @@
         "value_capture": 30,
         "regulatory": 65,
         "supply": 48,
-        "wyckoff": 82
+        "wyckoff": 62
       },
       "score_rationales": {
         "institutional": "Limited institutional presence",
         "regulatory": "Limited regulatory clarity",
         "supply": "Data-driven score. 70%+ circulating, high inflation.",
-        "wyckoff": "Position 51% in 90d range, 7d trend +22.0%, 30d trend +20.8%, volatility ratio 1.64x, 19.6% from high, 33.9% from low",
+        "wyckoff": "Position 50% in 90d range, 7d trend +19.7%, 30d trend +20.5%, volatility ratio 1.25x, 20.1% from high, 33.3% from low",
         "adoption_activity": "Celestia holds ~50% DA market share with 160+ GB posted data and 30+ rollups integrated across Arbitrum Orbit, OP Stack, and Polygon CDK, but daily blob fees remain modest ($67-100/day) and Ethereum's Fusaka upgrade poses competitive pressure on the DA layer thesis.",
         "value_capture": "TIA has minimal holder value accrual\u2014staking yields ~8-15% but inflation was recently ~5-7.2% (now cut to ~2.5% via CIP-41), leaving thin real yield; fee burn mechanism is planned but not fully implemented, and current fee revenue is negligible (~$59/day) relative to network scale, making holder returns largely dependent on future adoption rather than current economics."
       },
@@ -1849,7 +1853,7 @@
       },
       "composite": 52,
       "composite_last_week": 52,
-      "wyckoff_phase": "Accumulation Phase D",
+      "wyckoff_phase": "Uptrend",
       "trend": [
         56,
         54,
@@ -1860,7 +1864,7 @@
         54,
         52
       ],
-      "rsi_daily": 60.8,
+      "rsi_daily": 62.2,
       "rsi_weekly": 39.7,
       "action": "observe",
       "decision_trace": {
@@ -1873,7 +1877,7 @@
           "composite_last_week": 52,
           "delta_7d": -4,
           "delta_30d": -4,
-          "wyckoff_phase": "Accumulation Phase D",
+          "wyckoff_phase": "Uptrend",
           "is_distribution": false,
           "macro_downgrade_active": false,
           "macro_reasons": [],
@@ -1887,10 +1891,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": false,
-        "change_pct": -0.04807057553932817
+        "change_pct": -0.06947117424546488
       },
       "note": "Infrastructure/enterprise",
-      "note_detailed": "TIA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: modular data availability \u2014 adoption and value capture with supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (48/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (82/100, global filter): Currently in Accumulation Phase D\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 60.8 sits in neutral range.\n\u2022 Weekly RSI at 39.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-4.8% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "TIA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: modular data availability \u2014 adoption and value capture with supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (48/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 62.2 sits in neutral range.\n\u2022 Weekly RSI at 39.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-6.9% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "ENA",
@@ -1904,15 +1908,15 @@
         "value_capture": 30,
         "regulatory": 50,
         "supply": 50,
-        "wyckoff": 75
+        "wyckoff": 62
       },
       "score_rationales": {
         "institutional": "Large USDe supply, institutional iUSDe",
         "regulatory": "Synthetic dollar, MiCA concerns",
         "supply": "Limited supply data available.",
-        "wyckoff": "Position 34% in 90d range, 7d trend +16.5%, 30d trend +16.8%, volatility ratio 1.41x, 37.7% from high, 44.2% from low",
+        "wyckoff": "Position 36% in 90d range, 7d trend +17.9%, 30d trend +21.7%, volatility ratio 0.99x, 36.3% from high, 46.8% from low",
         "adoption_activity": "TVL declined from $16B peak (Sep 2025) to ~$6.66B (Mar 2026), a 58% drop; Q1 2026 revenue fell 32% to $65M; daily active users hit 1,200 (lowest since Dec 2025). Despite Aave/Pendle integrations and Hyperliquid expansion, declining usage metrics and user activity signal weakening adoption momentum.",
-        "value_capture": "Daily revenue: $11K (~$4.1M/year). TVL: $5.49B. Revenue/TVL ratio: 0.07%."
+        "value_capture": "Daily revenue: $11K (~$4.1M/year). TVL: $5.46B. Revenue/TVL ratio: 0.07%."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1923,7 +1927,7 @@
       },
       "composite": 47,
       "composite_last_week": 47,
-      "wyckoff_phase": "Accumulation Phase C",
+      "wyckoff_phase": "Uptrend",
       "trend": [
         46,
         46,
@@ -1934,8 +1938,8 @@
         46,
         47
       ],
-      "rsi_daily": 57.9,
-      "rsi_weekly": 37.5,
+      "rsi_daily": 62.7,
+      "rsi_weekly": 36.7,
       "action": "observe",
       "decision_trace": {
         "path": "observe_default",
@@ -1947,7 +1951,7 @@
           "composite_last_week": 47,
           "delta_7d": 1,
           "delta_30d": 1,
-          "wyckoff_phase": "Accumulation Phase C",
+          "wyckoff_phase": "Uptrend",
           "is_distribution": false,
           "macro_downgrade_active": true,
           "macro_reasons": [
@@ -1963,10 +1967,10 @@
       "revenue_estimated": false,
       "rs_vs_btc": {
         "underperforming": true,
-        "change_pct": -0.2609058012867661
+        "change_pct": -0.26613312632089414
       },
-      "note": "Wyckoff spring zone",
-      "note_detailed": "ENA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (60/100, 20% weight): Moderate institutional presence. Large USDe supply, institutional iUSDe\n\u2022 Regulatory (50/100, 15% weight): Uncertain regulatory standing. Synthetic dollar, MiCA concerns\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (58/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (75/100, global filter): Currently in Accumulation Phase C\u2014historically favorable for position building as price structure suggests markup potential.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 57.9 sits in neutral range.\n\u2022 Weekly RSI at 37.5 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 26.1% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 47/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note": "DeFi protocol, revenue-focused",
+      "note_detailed": "ENA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (60/100, 20% weight): Moderate institutional presence. Large USDe supply, institutional iUSDe\n\u2022 Regulatory (50/100, 15% weight): Uncertain regulatory standing. Synthetic dollar, MiCA concerns\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (58/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\u2022 Wyckoff (62/100, global filter): Currently in Uptrend. Technical structure is being monitored for clearer phase identification.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 62.7 sits in neutral range.\n\u2022 Weekly RSI at 36.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 26.6% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: observation tier default (no accumulation signals).\n\nDECISION TRACE:\n\u2022 path: observe_default\n\u2022 final_action: observe\n\nCOMPOSITE SCORE: 47/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     }
   ]
 }

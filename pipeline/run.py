@@ -23,8 +23,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import logging
+import os
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -211,6 +213,11 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         wyckoff_score = None  # Insufficient data - exclude from composite
         wyckoff_rationale = "Insufficient price data"
 
+    cache_writes: list[tuple[str, str, int, str]] = []
+
+    def record_cache_write(asset_symbol: str, score_type: str, score: int, rationale: str) -> None:
+        cache_writes.append((asset_symbol, score_type, score, rationale))
+
     # Get qualitative scores (cached or fresh)
     cached_regulatory = migrations.get_cached_qualitative_score(conn, symbol, "regulatory")
     cached_institutional = migrations.get_cached_qualitative_score(conn, symbol, "institutional")
@@ -218,20 +225,14 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     if cached_regulatory:
         regulatory_data = cached_regulatory
     else:
-        regulatory_data = qualitative.score_regulatory(symbol, name)
-        migrations.save_qualitative_score(
-            conn, symbol, "regulatory",
-            regulatory_data["score"], regulatory_data["rationale"]
-        )
+        regulatory_data = qualitative.score_regulatory(symbol, name, use_cache=False)
+        record_cache_write(symbol, "regulatory", regulatory_data["score"], regulatory_data["rationale"])
 
     if cached_institutional:
         institutional_data = cached_institutional
     else:
-        institutional_data = qualitative.score_institutional(symbol, name)
-        migrations.save_qualitative_score(
-            conn, symbol, "institutional",
-            institutional_data["score"], institutional_data["rationale"]
-        )
+        institutional_data = qualitative.score_institutional(symbol, name, use_cache=False)
+        record_cache_write(symbol, "institutional", institutional_data["score"], institutional_data["rationale"])
 
     # Value capture (category + fee_model gated)
     value_capture_score = None
@@ -263,10 +264,10 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
             vc_result = cached_vc
             value_capture_estimated = False
         else:
-            vc_result = qualitative.score_value_capture(symbol, name)
-            migrations.save_qualitative_score(
-                conn, symbol, "value_capture",
-                vc_result["score"], vc_result.get("rationale", ""),
+            vc_result = qualitative.score_value_capture(symbol, name, use_cache=False)
+            record_cache_write(
+                symbol, "value_capture",
+                vc_result["score"], vc_result.get("rationale", "")
             )
             value_capture_estimated = vc_result.get("estimated", True)
         value_capture_score = vc_result.get("score")
@@ -283,10 +284,12 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
             adoption_data = cached_ad
         else:
             hint = adoption_hint_for_category(asset_category)
-            adoption_data = qualitative.score_adoption_activity(symbol, name, hint)
-            migrations.save_qualitative_score(
-                conn, symbol, "adoption_activity",
-                adoption_data["score"], adoption_data.get("rationale", ""),
+            adoption_data = qualitative.score_adoption_activity(
+                symbol, name, hint, use_cache=False
+            )
+            record_cache_write(
+                symbol, "adoption_activity",
+                adoption_data["score"], adoption_data.get("rationale", "")
             )
         adoption_score = adoption_data["score"]
         adoption_rationale = adoption_data.get("rationale", "")
@@ -297,6 +300,8 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         name=name,
         coingecko_id=coingecko_id,
         conn=conn,
+        cache_writes=cache_writes,
+        use_in_memory_cache=False,
     )
     supply_score = supply_data["score"]
     supply_rationale = supply_data["rationale"]
@@ -432,7 +437,32 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         },
         "note": note,
         "note_detailed": note_detailed,
+        "cache_writes": cache_writes,
     }
+
+
+def _get_max_workers(default_workers: int = 4) -> int:
+    raw_value = os.environ.get("PIPELINE_MAX_WORKERS")
+    if not raw_value:
+        return default_workers
+    try:
+        parsed = int(raw_value)
+        return max(1, parsed)
+    except ValueError:
+        logger.warning(f"Invalid PIPELINE_MAX_WORKERS={raw_value!r}, using {default_workers}")
+        return default_workers
+
+
+def _build_asset_worker(entry: dict, gli_downtrend: bool, fg_greedy: bool) -> dict:
+    symbol = entry.get("symbol", "unknown")
+    conn = migrations.init_db(DB_PATH)
+    try:
+        asset = build_asset(entry, conn, gli_downtrend=gli_downtrend, fg_greedy=fg_greedy)
+        return {"symbol": symbol, "asset": asset, "error": None}
+    except Exception as e:
+        return {"symbol": symbol, "asset": None, "error": str(e)}
+    finally:
+        conn.close()
 
 
 
@@ -808,7 +838,8 @@ def main():
     gli_data = gli.fetch_gli_data()
     gli_downtrend = gli_data["downtrend"]
     if gli_data["source"] != "fallback":
-        logger.info(f"GLI status: {'contracting' if gli_downtrend else 'expanding'} (source: {gli_data['source']})")
+        gli_trend = gli.get_gli_trend_label(gli_data)
+        logger.info(f"GLI status: {gli_trend} (source: {gli_data['source']})")
     else:
         logger.info("GLI data unavailable - macro filter disabled")
 
@@ -854,10 +885,16 @@ def main():
         "gli": {
             "enabled": config.gli.enabled,
             "downtrend": gli_downtrend,
+            "trend": gli_data.get("trend", gli.get_gli_trend_label(gli_data)),
             "current": gli_data["current"],
             "offset_value": gli_data["offset_value"],
             "offset_days": gli_data["offset_days"],
             "source": gli_data["source"],
+            "current_obs_date": gli_data.get("current_obs_date"),
+            "offset_obs_date": gli_data.get("offset_obs_date"),
+            "component_coverage": gli_data.get("component_coverage"),
+            "components_used": gli_data.get("components_used", []),
+            "components_missing": gli_data.get("components_missing", []),
         },
         "rs": {
             "enabled": config.rs.enabled,
@@ -881,19 +918,40 @@ def main():
 
     # Process all assets (tiers computed dynamically from composite scores)
     logger.info(f"\nProcessing {len(assets_list)} assets...")
-    for entry in assets_list:
-        try:
-            asset = build_asset(entry, conn, gli_downtrend=gli_downtrend, fg_greedy=fg_greedy)
+    worker_count = min(_get_max_workers(), max(1, len(assets_list)))
+    logger.info(f"Parallel workers: {worker_count}")
 
-            # Save to database
-            migrations.save_snapshot(conn, asset, today)
+    processed_assets: list[dict] = []
+    if worker_count == 1:
+        for entry in assets_list:
+            result = _build_asset_worker(entry, gli_downtrend=gli_downtrend, fg_greedy=fg_greedy)
+            if result["error"]:
+                logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
+                continue
+            processed_assets.append(result["asset"])
+    else:
+        with ThreadPoolExecutor(max_workers=worker_count) as executor:
+            futures = {
+                executor.submit(_build_asset_worker, entry, gli_downtrend, fg_greedy): entry
+                for entry in assets_list
+            }
+            for future in as_completed(futures):
+                result = future.result()
+                if result["error"]:
+                    logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
+                    continue
+                processed_assets.append(result["asset"])
 
-            output["assets"].append(asset)
-            logger.info(f"  {asset['symbol']} ({asset['tier']}): composite={asset['composite']}, action={asset['action']}")
-
-        except Exception as e:
-            logger.error(f"  Failed to process {entry.get('symbol', 'unknown')}: {e}")
-            continue
+    # Persist cache writes and snapshots in the master process only.
+    for asset in processed_assets:
+        for symbol, score_type, score, rationale in asset.get("cache_writes", []):
+            migrations.save_qualitative_score(conn, symbol, score_type, score, rationale)
+        asset.pop("cache_writes", None)
+        migrations.save_snapshot(conn, asset, today)
+        output["assets"].append(asset)
+        logger.info(
+            f"  {asset['symbol']} ({asset['tier']}): composite={asset['composite']}, action={asset['action']}"
+        )
 
     # Sort assets by tier priority then composite score
     tier_order = {"leader": 0, "runner-up": 1, "observation": 2}

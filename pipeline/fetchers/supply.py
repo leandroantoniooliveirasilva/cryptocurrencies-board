@@ -303,6 +303,8 @@ def compute_supply_score(
     name: str = None,
     coingecko_id: str = None,
     conn = None,
+    cache_writes: Optional[list[tuple[str, str, int, str]]] = None,
+    use_in_memory_cache: bool = True,
 ) -> dict:
     """
     Compute supply/on-chain score (0-100) with rationale.
@@ -327,7 +329,7 @@ def compute_supply_score(
 
     # Compute fresh score
     name = name or symbol
-    result = score_supply(symbol, name, coingecko_id)
+    result = score_supply(symbol, name, coingecko_id, use_cache=use_in_memory_cache)
 
     # Handle case where result is None (shouldn't happen but defensive)
     if not result:
@@ -337,10 +339,13 @@ def compute_supply_score(
     # Cache to database
     if conn:
         from pipeline.storage import migrations
-        migrations.save_qualitative_score(
-            conn, symbol, "supply",
-            result["score"], result["rationale"]
-        )
+        if cache_writes is not None:
+            cache_writes.append((symbol, 'supply', result['score'], result['rationale']))
+        else:
+            migrations.save_qualitative_score(
+                conn, symbol, 'supply',
+                result['score'], result['rationale']
+            )
 
     return {"score": result["score"], "rationale": result["rationale"]}
 

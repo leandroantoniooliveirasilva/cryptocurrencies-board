@@ -1092,8 +1092,14 @@ function GliSection({ gli, isMobile }) {
     return null;
   }
 
-  const statusColor = gli.downtrend ? '#d49a6a' : '#6a9a90';
-  const statusText = gli.downtrend ? '▼ Contracting' : '▲ Expanding';
+  const offsetDays = gli.offset_days || 75;
+  const trend = gli.trend || (gli.downtrend ? 'contracting' : 'expanding');
+  const statusColor = trend === 'contracting' ? '#d49a6a' : '#6a9a90';
+  const statusText = trend === 'contracting'
+    ? '▼ Contracting'
+    : trend === 'flat'
+      ? '• Flat'
+      : '▲ Expanding';
 
   return (
     <div>
@@ -1123,7 +1129,7 @@ function GliSection({ gli, isMobile }) {
           transform: expanded ? 'rotate(90deg)' : 'none',
         }}>▸</span>
         <span>GLI {statusText}</span>
-        <span style={{ color: PALETTE.textMuted }}>({gli.offset_days}d offset)</span>
+        <span style={{ color: PALETTE.textMuted }}>({offsetDays}d offset)</span>
       </button>
 
       {expanded && (
@@ -1137,12 +1143,27 @@ function GliSection({ gli, isMobile }) {
           lineHeight: TYPE.relaxed,
         }}>
           <p style={{ margin: 0 }}>
-            <strong style={{ color: PALETTE.textPrimary }}>Global Liquidity Index</strong> tracks aggregate central bank liquidity with a 75-day offset.
-            When liquidity is contracting (current GLI &lt; 75 days ago), accumulation signals are downgraded because even quality assets tend to fall further during liquidity withdrawal.
+            <strong style={{ color: PALETTE.textPrimary }}>Global Liquidity Index</strong> tracks aggregate central bank liquidity with a {offsetDays}-day offset.
+            When liquidity is contracting (current GLI &lt; {offsetDays} days ago), accumulation signals are downgraded because even quality assets tend to fall further during liquidity withdrawal.
           </p>
           <p style={{ margin: `${SPACE.sm}px 0 0`, fontSize: TYPE.caption, color: PALETTE.textMuted }}>
-            Current: {gli.current?.toLocaleString() ?? 'N/A'} | 75d ago: {gli.offset_value?.toLocaleString() ?? 'N/A'} | Source: {gli.source}
+            Current: {gli.current?.toLocaleString() ?? 'N/A'} | {offsetDays}d ago: {gli.offset_value?.toLocaleString() ?? 'N/A'} | Source: {gli.source}
           </p>
+          {(gli.current_obs_date || gli.offset_obs_date) && (
+            <p style={{ margin: `${SPACE.xs}px 0 0`, fontSize: TYPE.caption, color: PALETTE.textMuted }}>
+              Obs dates: now {gli.current_obs_date || 'N/A'} | offset {gli.offset_obs_date || 'N/A'}
+            </p>
+          )}
+          {(gli.component_coverage !== undefined || (gli.components_used && gli.components_used.length > 0)) && (
+            <p style={{ margin: `${SPACE.xs}px 0 0`, fontSize: TYPE.caption, color: PALETTE.textMuted }}>
+              Coverage: {Math.round((gli.component_coverage || 0) * 100)}% | Used: {(gli.components_used || []).join(', ') || 'N/A'}
+            </p>
+          )}
+          {gli.components_missing && gli.components_missing.length > 0 && (
+            <p style={{ margin: `${SPACE.xs}px 0 0`, fontSize: TYPE.caption, color: '#d49a6a' }}>
+              Missing: {gli.components_missing.join(', ')}
+            </p>
+          )}
         </div>
       )}
     </div>

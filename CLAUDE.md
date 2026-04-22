@@ -182,6 +182,29 @@ FRED_API_KEY=xxx               # Optional (GLI filter)
 # ANTHROPIC_API_KEY=xxx        # Only when USE_CLAUDE_CLI=false (HTTP API)
 ```
 
+## Parallel Workers
+
+Weekly scoring (`pipeline.run`) and daily indicators (`pipeline.indicators`) support parallel asset processing.
+
+Safety model:
+- Worker threads only compute asset results.
+- SQLite cache writes, snapshot writes, and final output writes are done by the master process.
+- This avoids write conflicts and keeps output deterministic.
+
+Configuration (optional):
+```bash
+# Weekly run workers (default: 4)
+PIPELINE_MAX_WORKERS=4
+
+# Daily indicators workers (default: INDICATORS_MAX_WORKERS, then PIPELINE_MAX_WORKERS, else 4)
+INDICATORS_MAX_WORKERS=4
+```
+
+Practical defaults:
+- 2 for quieter laptop runs
+- 4 as balanced default
+- 6 on stronger machines with stable network/API behavior
+
 ## Key Files
 
 ```

@@ -96,13 +96,13 @@ def compute_relative_strength(
 
     # Get dates that exist in both
     common_dates = sorted(set(btc_by_date.keys()) & set(asset_by_date.keys()))
-    if len(common_dates) < rs_cfg.lookback_days:
+    if len(common_dates) <= rs_cfg.lookback_days:
         logger.debug(f"Insufficient overlapping data for {symbol} RS calculation ({len(common_dates)} days)")
         return result
 
     # Calculate RS at current and lookback points
     current_date = common_dates[-1]
-    lookback_date = common_dates[-rs_cfg.lookback_days]
+    lookback_date = common_dates[-(rs_cfg.lookback_days + 1)]
 
     current_asset = asset_by_date[current_date]
     current_btc = btc_by_date[current_date]

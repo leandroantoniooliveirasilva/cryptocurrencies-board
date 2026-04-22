@@ -15,8 +15,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import logging
+import os
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -116,7 +118,9 @@ def update_asset_indicators(
 
     # Get trend data for action derivation
     trend_7d = migrations.get_trend_data(conn, symbol, 7)
-    trend_30d = migrations.get_trend_data(conn, symbol, 30)
+    # Keep daily indicator action derivation aligned with weekly pipeline.
+    # This represents ~12 weekly snapshots (quarterly context), not literal 30 days.
+    trend_30d = migrations.get_trend_data(conn, symbol, 12)
     composite_last_week = migrations.get_composite_last_week(conn, symbol)
 
     composite_score = asset["composite"]
@@ -162,6 +166,38 @@ def update_asset_indicators(
     return asset
 
 
+def _get_max_workers(default_workers: int = 4) -> int:
+    raw_value = os.environ.get("INDICATORS_MAX_WORKERS") or os.environ.get("PIPELINE_MAX_WORKERS")
+    if not raw_value:
+        return default_workers
+    try:
+        parsed = int(raw_value)
+        return max(1, parsed)
+    except ValueError:
+        logger.warning(f"Invalid worker count {raw_value!r}, using {default_workers}")
+        return default_workers
+
+
+def _update_asset_worker(
+    asset: dict,
+    coingecko_id: str,
+    gli_downtrend: bool,
+    fg_greedy: bool,
+) -> dict:
+    symbol = asset.get("symbol", "unknown")
+    conn = migrations.init_db(DB_PATH)
+    try:
+        local_asset = dict(asset)
+        local_asset["coingecko_id"] = coingecko_id
+        updated = update_asset_indicators(local_asset, conn, gli_downtrend, fg_greedy)
+        updated.pop("coingecko_id", None)
+        return {"symbol": symbol, "asset": updated, "error": None}
+    except Exception as e:
+        return {"symbol": symbol, "asset": asset, "error": str(e)}
+    finally:
+        conn.close()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Update daily indicators (RSI, GLI, RS, F&G)")
     parser.add_argument("--dry-run", action="store_true", help="Don't write output files")
@@ -184,7 +220,8 @@ def main():
     gli_data = gli.fetch_gli_data()
     gli_downtrend = gli_data["downtrend"]
     if gli_data["source"] != "fallback":
-        logger.info(f"GLI status: {'contracting' if gli_downtrend else 'expanding'} (source: {gli_data['source']})")
+        gli_trend = gli.get_gli_trend_label(gli_data)
+        logger.info(f"GLI status: {gli_trend} (source: {gli_data['source']})")
     else:
         logger.info("GLI data unavailable - macro filter disabled")
 
@@ -197,9 +234,6 @@ def main():
 
     # Clear RS cache
     relative_strength.clear_cache()
-
-    # Initialize database (read-only for trends)
-    conn = migrations.init_db(DB_PATH)
 
     # Update GLI and F&G in output
     data["gli"] = {
@@ -230,22 +264,51 @@ def main():
 
     # Update each asset's indicators
     logger.info(f"\nUpdating indicators for {len(data['assets'])} assets...")
-    for asset in data["assets"]:
-        symbol = asset["symbol"]
-        asset["coingecko_id"] = coingecko_lookup.get(symbol)
+    worker_count = min(_get_max_workers(), max(1, len(data["assets"])))
+    logger.info(f"Parallel workers: {worker_count}")
+    updated_assets: list[dict] = [dict(asset) for asset in data["assets"]]
 
-        try:
-            update_asset_indicators(asset, conn, gli_downtrend, fg_greedy)
-            # Remove temporary coingecko_id from output
-            del asset["coingecko_id"]
-            rsi_d_str = f"{asset['rsi_daily']:.1f}" if asset['rsi_daily'] else 'N/A'
-            logger.info(f"  {symbol}: rsi_d={rsi_d_str}, action={asset['action']}")
-        except Exception as e:
-            logger.error(f"  Failed to update {symbol}: {e}")
-            if "coingecko_id" in asset:
-                del asset["coingecko_id"]
+    if worker_count == 1:
+        for i, asset in enumerate(updated_assets):
+            symbol = asset["symbol"]
+            result = _update_asset_worker(
+                asset,
+                coingecko_lookup.get(symbol),
+                gli_downtrend,
+                fg_greedy,
+            )
+            if result["error"]:
+                logger.error(f"  Failed to update {symbol}: {result['error']}")
+                continue
+            updated_assets[i] = result["asset"]
+            rsi_d_str = f"{result['asset']['rsi_daily']:.1f}" if result["asset"]["rsi_daily"] else 'N/A'
+            logger.info(f"  {symbol}: rsi_d={rsi_d_str}, action={result['asset']['action']}")
+    else:
+        with ThreadPoolExecutor(max_workers=worker_count) as executor:
+            futures = {}
+            for i, asset in enumerate(updated_assets):
+                symbol = asset["symbol"]
+                future = executor.submit(
+                    _update_asset_worker,
+                    asset,
+                    coingecko_lookup.get(symbol),
+                    gli_downtrend,
+                    fg_greedy,
+                )
+                futures[future] = i
 
-    conn.close()
+            for future in as_completed(futures):
+                i = futures[future]
+                result = future.result()
+                symbol = result["symbol"]
+                if result["error"]:
+                    logger.error(f"  Failed to update {symbol}: {result['error']}")
+                    continue
+                updated_assets[i] = result["asset"]
+                rsi_d_str = f"{result['asset']['rsi_daily']:.1f}" if result["asset"]["rsi_daily"] else 'N/A'
+                logger.info(f"  {symbol}: rsi_d={rsi_d_str}, action={result['asset']['action']}")
+
+    data["assets"] = updated_assets
 
     # Update timestamp
     data["generated_at"] = datetime.now(timezone.utc).isoformat()

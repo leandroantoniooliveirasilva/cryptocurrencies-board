@@ -96,6 +96,28 @@ npm run build
 git add . && git commit -m "update" && git push
 ```
 
+## Parallel Workers
+
+Asset scoring in `pipeline.run` and indicator updates in `pipeline.indicators` can run in parallel.
+All database/output writes are still done by the master process at the end to avoid conflicts.
+
+Configure worker counts with environment variables:
+
+```bash
+# Weekly pipeline workers (default: 4)
+export PIPELINE_MAX_WORKERS=4
+
+# Daily indicators workers (default: uses INDICATORS_MAX_WORKERS, then PIPELINE_MAX_WORKERS, else 4)
+export INDICATORS_MAX_WORKERS=4
+```
+
+Recommended starting points:
+- `2` on laptops when you want lower heat/fan usage
+- `4` as a balanced default for most machines
+- `6` for higher-end CPUs with good network stability
+
+If APIs start rate-limiting or Claude CLI becomes unstable, reduce workers and retry.
+
 ## Project Structure
 
 ```
