@@ -622,7 +622,8 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
     return () => { document.body.style.overflow = ''; };
   }, []);
 
-  const config = TIER_CONFIG[asset.tier];
+  const tier = asset.tier || 'observation';
+  const config = TIER_CONFIG[tier];
   const TierIcon = config?.icon || Eye;
   const assetType = asset.asset_type || 'smart-contract';
   const catLabel = asset.asset_category
