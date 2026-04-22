@@ -455,7 +455,7 @@ function DecisionTraceSection({ trace, isMobile }) {
   const pathLabel = DECISION_REASON_LABELS[trace.path] || String(trace.path).replace(/_/g, ' ');
 
   return (
-    <div style={{ marginBottom: SPACE.lg }}>
+    <div style={{ marginBottom: isMobile ? SPACE.xl : SPACE.lg }}>
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
@@ -464,7 +464,7 @@ function DecisionTraceSection({ trace, isMobile }) {
           background: 'transparent',
           border: `1px solid ${PALETTE.border}`,
           color: PALETTE.textMuted,
-          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          padding: isMobile ? `${SPACE.md}px ${SPACE.base}px` : `${SPACE.sm}px ${SPACE.md}px`,
           fontSize: TYPE.caption,
           letterSpacing: '0.06em',
           textTransform: 'uppercase',
@@ -488,7 +488,7 @@ function DecisionTraceSection({ trace, isMobile }) {
       {expanded && (
         <div style={{
           marginTop: `${SPACE.sm}px`,
-          padding: `${SPACE.md}px`,
+          padding: isMobile ? SPACE.base : SPACE.md,
           background: PALETTE.cardInset,
           border: `1px solid ${PALETTE.border}`,
         }}>
@@ -499,6 +499,7 @@ function DecisionTraceSection({ trace, isMobile }) {
             color: PALETTE.textMuted,
             letterSpacing: '0.04em',
             lineHeight: TYPE.relaxed,
+            maxWidth: '50ch',
           }}>
             Path: {pathLabel}
           </p>
@@ -540,12 +541,13 @@ function DecisionTraceSection({ trace, isMobile }) {
           )}
           {trace.summary && (
             <p style={{
-              margin: `${SPACE.sm}px 0 0`,
+              margin: `${SPACE.base}px 0 0`,
               fontSize: TYPE.small,
               color: PALETTE.textSecondary,
               fontFamily: 'Georgia, serif',
               fontStyle: 'italic',
               lineHeight: TYPE.relaxed,
+              maxWidth: '55ch',
             }}>
               {trace.summary}
             </p>
@@ -557,6 +559,10 @@ function DecisionTraceSection({ trace, isMobile }) {
 }
 
 function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
+  // Collapsible section state
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [technicalExpanded, setTechnicalExpanded] = useState(false);
+
   // Handle ESC key to close
   useEffect(() => {
     const handleEsc = (e) => {
@@ -683,13 +689,13 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
         </div>
 
         {/* Content */}
-        <div style={{ padding: isMobile ? SPACE.base : SPACE.lg }}>
+        <div style={{ padding: isMobile ? `${SPACE.lg}px ${SPACE.base}px` : SPACE.lg }}>
           {/* Action banner */}
           <div style={{
             background: cfg?.bg || 'transparent',
             border: cfg?.border ? `1px solid ${cfg.dot}` : 'none',
             padding: `${SPACE.md}px ${SPACE.base}px`,
-            marginBottom: SPACE.lg,
+            marginBottom: isMobile ? SPACE.base : SPACE.lg,
             display: 'flex',
             alignItems: 'center',
             gap: SPACE.sm,
@@ -716,48 +722,57 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
             fontFamily: 'Georgia, serif',
             fontStyle: 'italic',
             lineHeight: TYPE.relaxed,
-            marginBottom: SPACE.lg,
+            marginBottom: isMobile ? SPACE.lg : SPACE.xl,
+            maxWidth: '55ch',
           }}>
             {asset.decision_trace?.summary || getActionReasoning(asset)}
           </div>
 
           <DecisionTraceSection trace={asset.decision_trace} isMobile={isMobile} />
 
-          {/* Score section */}
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: SPACE.md, marginBottom: SPACE.xs }}>
-            <div style={{ fontFamily: 'Georgia, serif', fontSize: TYPE.display, fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
-              {asset.composite}
+          {/* Score section - increased spacing for emphasis */}
+          <div style={{
+            marginTop: isMobile ? SPACE['2xl'] : SPACE.xl,
+            marginBottom: isMobile ? SPACE.lg : SPACE.base,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: SPACE.md, marginBottom: SPACE.xs }}>
+              <div style={{ fontFamily: 'Georgia, serif', fontSize: TYPE.display, fontWeight: 300, color: PALETTE.textPrimary, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                {asset.composite}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: TYPE.small, fontFamily: 'ui-monospace, monospace' }}>
+                <DeltaIcon size={12} strokeWidth={2} />
+                <span>{delta > 0 ? '+' : ''}{delta}</span>
+              </div>
+              <div style={{ marginLeft: 'auto' }}>
+                <Sparkline data={asset.trend} accent={config?.accent} />
+              </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: deltaColor, fontSize: TYPE.small, fontFamily: 'ui-monospace, monospace' }}>
-              <DeltaIcon size={12} strokeWidth={2} />
-              <span>{delta > 0 ? '+' : ''}{delta}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: SPACE.sm, fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: isMobile ? SPACE.base : SPACE.lg, fontFamily: 'ui-monospace, monospace' }}>
+              <span>Composite · 7d trend</span>
+              {hasIncompleteData && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  padding: '2px 6px',
+                  background: '#3d2a1a',
+                  border: '1px solid #d49a6a',
+                  color: '#d49a6a',
+                  fontSize: TYPE.caption,
+                }}>
+                  <AlertCircle size={10} color="#d49a6a" strokeWidth={2} />
+                  {missingDimensions} missing
+                </span>
+              )}
             </div>
-            <div style={{ marginLeft: 'auto' }}>
-              <Sparkline data={asset.trend} accent={config?.accent} />
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: SPACE.sm, fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.lg, fontFamily: 'ui-monospace, monospace' }}>
-            <span>Composite · 7d trend</span>
-            {hasIncompleteData && (
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '3px',
-                padding: '2px 6px',
-                background: '#3d2a1a',
-                border: '1px solid #d49a6a',
-                color: '#d49a6a',
-                fontSize: TYPE.caption,
-              }}>
-                <AlertCircle size={10} color="#d49a6a" strokeWidth={2} />
-                {missingDimensions} missing
-              </span>
-            )}
           </div>
 
-          {/* Weighted dimensions */}
-          <div style={{ marginBottom: SPACE.lg }}>
-            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.sm, fontFamily: 'ui-monospace, monospace' }}>
+          {/* Weighted dimensions - increased spacing before */}
+          <div style={{
+            marginTop: isMobile ? SPACE['2xl'] : SPACE.xl,
+            marginBottom: isMobile ? SPACE['2xl'] : SPACE.lg,
+          }}>
+            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.base, fontFamily: 'ui-monospace, monospace' }}>
               Weighted dimensions
             </div>
             {weightedDimensions.map(dim => (
@@ -771,71 +786,118 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
             ))}
           </div>
 
-          {/* Global filters */}
-          <div style={{ marginTop: SPACE.lg, paddingTop: SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
-            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
-              Global filters
-            </div>
-            <div style={{ fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, marginBottom: SPACE.sm }}>
-              These filters can reduce action aggressiveness even when core dimensions are strong.
-            </div>
-            <div style={{ display: 'grid', rowGap: SPACE.xs, marginTop: SPACE.sm }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-                <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Wyckoff (global filter, not weighted)</span>
-                <span style={{ color: PALETTE.textPrimary }}>{asset.wyckoff_phase || 'Unknown'}</span>
+          {/* Global filters - collapsible on mobile */}
+          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.lg, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+            <button
+              onClick={() => setFiltersExpanded(!filtersExpanded)}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                width: '100%',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: filtersExpanded ? SPACE.base : 0,
+              }}
+            >
+              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
+                Global filters {isMobile && !filtersExpanded ? '· Tap to expand' : ''}
               </div>
-              {typeof macroDowngrades === 'number' || typeof wyckoffDowngrades === 'number' ? (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Applied downgrades</span>
-                  <span>Macro {macroDowngrades} · Wyckoff {wyckoffDowngrades}</span>
-                </div>
-              ) : null}
-              {showRsContext ? (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
-                  <span>
-                    {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding / outperforming'}
-                    {typeof asset.rs_vs_btc.change_pct === 'number' ? ` (${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%)` : ''}
-                  </span>
-                </div>
-              ) : null}
-              {gli?.enabled ? (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
-                  <span>{gliTrendLabel} ({gli.source || 'unknown source'})</span>
-                </div>
-              ) : null}
-              {fearGreed?.enabled ? (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
-                  <span>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
-                </div>
-              ) : null}
-            </div>
-            {(wyckoffRationale || asset.note) && (
+              <span style={{
+                display: 'inline-block',
+                transform: filtersExpanded ? 'rotate(90deg)' : 'none',
+                transition: 'transform 0.2s ease',
+                color: PALETTE.textMuted,
+              }}>▸</span>
+            </button>
+
+            {filtersExpanded && (
               <>
-                <div style={{ marginTop: SPACE.sm, fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                  Wyckoff rationale provenance
+                <div style={{ fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, marginBottom: SPACE.base, maxWidth: '50ch' }}>
+                  These filters can reduce action aggressiveness even when core dimensions are strong.
                 </div>
-                <div style={{ marginTop: SPACE.xs, fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed }}>
-                  {wyckoffRationale || asset.note}
+                <div style={{ display: 'grid', rowGap: SPACE.sm, marginTop: SPACE.base }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                    <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Wyckoff</span>
+                    <span style={{ color: PALETTE.textPrimary, textAlign: 'right' }}>{asset.wyckoff_phase || 'Unknown'}</span>
+                  </div>
+                  {typeof macroDowngrades === 'number' || typeof wyckoffDowngrades === 'number' ? (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Downgrades</span>
+                      <span style={{ textAlign: 'right' }}>Macro {macroDowngrades} · Wyckoff {wyckoffDowngrades}</span>
+                    </div>
+                  ) : null}
+                  {showRsContext ? (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
+                      <span style={{ textAlign: 'right' }}>
+                        {asset.rs_vs_btc.underperforming ? 'Under' : 'Hold/out'}
+                        {typeof asset.rs_vs_btc.change_pct === 'number' ? ` ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%` : ''}
+                      </span>
+                    </div>
+                  ) : null}
+                  {gli?.enabled ? (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
+                      <span style={{ textAlign: 'right' }}>{gliTrendLabel}</span>
+                    </div>
+                  ) : null}
+                  {fearGreed?.enabled ? (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small, color: PALETTE.textSecondary }}>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
+                      <span style={{ textAlign: 'right' }}>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
+                    </div>
+                  ) : null}
                 </div>
+                {(wyckoffRationale || asset.note) && (
+                  <>
+                    <div style={{ marginTop: SPACE.base, fontSize: TYPE.caption, color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                      Wyckoff rationale
+                    </div>
+                    <div style={{ marginTop: SPACE.xs, fontSize: TYPE.small, color: PALETTE.textSecondary, fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: TYPE.relaxed, maxWidth: '55ch' }}>
+                      {wyckoffRationale || asset.note}
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
 
-          {/* Technical context */}
-          <div style={{ marginTop: SPACE.lg, paddingTop: SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
-            <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.sm, fontFamily: 'ui-monospace, monospace' }}>
-              Technical context
-            </div>
-            <RsiRow asset={asset} />
+          {/* Technical context - collapsible on mobile */}
+          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.lg, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+            <button
+              onClick={() => setTechnicalExpanded(!technicalExpanded)}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                width: '100%',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: technicalExpanded ? SPACE.base : 0,
+              }}
+            >
+              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
+                Technical context {isMobile && !technicalExpanded ? '· Tap to expand' : ''}
+              </div>
+              <span style={{
+                display: 'inline-block',
+                transform: technicalExpanded ? 'rotate(90deg)' : 'none',
+                transition: 'transform 0.2s ease',
+                color: PALETTE.textMuted,
+              }}>▸</span>
+            </button>
+            {technicalExpanded && <RsiRow asset={asset} />}
           </div>
 
           {/* Detailed analysis if available */}
           {asset.note_detailed && (
-            <div style={{ marginTop: SPACE.lg, paddingTop: SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
-              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.sm, fontFamily: 'ui-monospace, monospace' }}>
+            <div style={{ marginTop: isMobile ? SPACE['3xl'] : SPACE.xl, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.base, fontFamily: 'ui-monospace, monospace' }}>
                 Analysis
               </div>
               <div style={{
@@ -844,6 +906,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                 lineHeight: TYPE.relaxed,
                 color: PALETTE.textSecondary,
                 whiteSpace: 'pre-wrap',
+                maxWidth: '55ch',
               }}>
                 {asset.note_detailed}
               </div>
