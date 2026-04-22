@@ -558,6 +558,15 @@ function DecisionTraceSection({ trace, isMobile }) {
   );
 }
 
+// Human-readable labels for downgrade reasons (matches backend _DOWNGRADE_REASON_COPY)
+const DOWNGRADE_REASON_LABELS = {
+  'macro:gli_contracting': 'global liquidity is contracting',
+  'macro:rs_underperforming_btc': 'relative strength vs BTC is weak',
+  'macro:fear_greed_euphoria': 'market sentiment is euphoric',
+  'wyckoff:markup': 'Wyckoff structure is already in markup',
+  'wyckoff:distribution_or_markdown': 'Wyckoff structure is distribution/markdown',
+};
+
 // Build concise decision logic explanation
 function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
   if (!trace) return null;
@@ -579,13 +588,15 @@ function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
     if (macroDowngrades > 0) {
       const macroReasons = reasons.filter(r => r.startsWith('macro:'));
       if (macroReasons.length > 0) {
-        downgradeDesc.push(`macro (${macroReasons.map(r => r.replace('macro:', '')).join(', ')})`);
+        const readableReasons = macroReasons.map(r => DOWNGRADE_REASON_LABELS[r] || r.replace('macro:', ''));
+        downgradeDesc.push(`macro (${readableReasons.join(', ')})`);
       }
     }
     if (wyckoffDowngrades > 0) {
       const wyckReasons = reasons.filter(r => r.startsWith('wyckoff:'));
       if (wyckReasons.length > 0) {
-        downgradeDesc.push(`Wyckoff (${wyckReasons.map(r => r.replace('wyckoff:', '')).join(', ')})`);
+        const readableReasons = wyckReasons.map(r => DOWNGRADE_REASON_LABELS[r] || r.replace('wyckoff:', ''));
+        downgradeDesc.push(`Wyckoff (${readableReasons.join(', ')})`);
       }
     }
     if (trace.base_action && trace.final_action && trace.base_action !== trace.final_action) {
@@ -876,7 +887,8 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                   const rationale = asset.score_rationales?.[dim];
                   const score = asset.scores?.[dim];
                   const weight = weights[dim];
-                  if (!rationale) return null;
+                  // Skip dimensions with missing rationale or null/undefined scores
+                  if (!rationale || score === null || score === undefined) return null;
 
                   return (
                     <div key={dim}>
