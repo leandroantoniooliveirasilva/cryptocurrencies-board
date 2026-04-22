@@ -99,30 +99,38 @@ class Config:
         """Reload configuration from disk (useful for testing)."""
         self._load()
 
-    def get_weights(self, asset_type: str) -> Dict[str, float]:
+    def get_weights_for_category(self, asset_category: str) -> Dict[str, float]:
         """
-        Get weight profile for an asset type.
+        Get weight profile for an asset category (9-category taxonomy).
 
         Args:
-            asset_type: One of 'store-of-value', 'smart-contract', 'defi', 'infrastructure'
+            asset_category: e.g. 'monetary-store-of-value', 'defi-protocol'
 
         Returns:
             Dict of dimension -> weight (0.0-1.0)
         """
-        weights_data = self._config_data.get('weights', {})
-        if asset_type in weights_data:
-            return weights_data[asset_type]
+        weights_data = self._config_data.get('weights_by_category', {})
+        if asset_category in weights_data:
+            return weights_data[asset_category]
         return weights_data.get('default', {
-            'institutional': 0.30,
-            'revenue': 0.20,
-            'regulatory': 0.20,
+            'institutional': 0.25,
+            'adoption_activity': 0.20,
+            'value_capture': 0.20,
             'supply': 0.20,
-            'wyckoff': 0.10,
+            'regulatory': 0.15,
         })
 
+    def get_all_category_weights(self) -> Dict[str, Dict[str, float]]:
+        """Get all category weight profiles for dashboard export."""
+        return self._config_data.get('weights_by_category', {})
+
+    def get_weights(self, asset_type: str) -> Dict[str, float]:
+        """Backward-compatible alias: treat key as asset_category."""
+        return self.get_weights_for_category(asset_type)
+
     def get_all_weights(self) -> Dict[str, Dict[str, float]]:
-        """Get all weight profiles for dashboard export."""
-        return self._config_data.get('weights', {})
+        """Backward-compatible alias for dashboard bundle."""
+        return self.get_all_category_weights()
 
     def to_dict(self) -> dict:
         """Return the raw config dict."""

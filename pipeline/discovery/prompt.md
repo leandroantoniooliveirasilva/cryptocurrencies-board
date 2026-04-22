@@ -16,16 +16,11 @@ Your role is to be an unbiased analyst. If a project meets the criteria, it belo
 - Buying weakness in leaders = mean reversion opportunity (they recover)
 - Buying weakness in non-leaders = momentum trap (they continue down)
 
-## Asset Types & Weight Profiles
+## Asset categories & weight profiles
 
-Different asset types have different weight profiles reflecting their value drivers:
+Composite weights are **per `asset_category`** (9 categories). See `pipeline/config.yaml` (`weights_by_category`). Typical dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply** — omit dimensions that are N/A (weights renormalise). **Wyckoff** is a post-score filter, not weighted.
 
-| Asset Type | Institutional | Revenue | Regulatory | Supply | Wyckoff |
-|------------|--------------|---------|------------|--------|---------|
-| store-of-value | 40% | 5% | 15% | 25% | 15% |
-| smart-contract | 30% | 25% | 15% | 20% | 10% |
-| defi | 25% | 35% | 20% | 15% | 5% |
-| infrastructure | 35% | 10% | 25% | 20% | 10% |
+Assign each watchlist asset one `asset_category` (e.g. `defi-protocol`, `oracle-data`, `payments-rail`, `enterprise-settlement`, `monetary-store-of-value`, `smart-contract-platform`, `shared-security`, `data-availability-modular`, `ai-compute-depin`). Keep legacy `asset_type` only as a coarse label if useful for discovery notes.
 
 ## Evaluation Dimensions (0-100 each)
 
@@ -35,11 +30,12 @@ Different asset types have different weight profiles reflecting their value driv
 - Institutional custody availability (Coinbase Custody, Fireblocks)
 - Corporate treasury adoption
 
-### 2. Revenue (Protocol Sustainability)
-- Annualized protocol revenue
-- Revenue-to-TVL ratio (for DeFi)
-- Revenue trend (growing/stable/declining)
-- Fee sustainability without token inflation
+### 2. Value capture & adoption (category-specific)
+
+- **Value capture**: holder-accruing fees, burns to holders, real yield vs issuance — when the category weights it and `fee_model` is not `miner` / `minimal` / `equity`.
+- **Adoption / activity**: TVL, TPS, TVS (oracles), validators, ODL volume, etc. — when the category weights `adoption_activity`.
+
+Use `fee_model` in `assets.yaml` per `.docs/research/asset-category-taxonomy.md` (Section 5).
 
 ### 3. Regulatory (Jurisdictional Clarity)
 - SEC/CFTC classification clarity
@@ -53,12 +49,11 @@ Different asset types have different weight profiles reflecting their value driv
 - Token distribution (avoid concentrated holdings)
 - Inflation/emission schedule
 
-### 5. Wyckoff (Technical Phase)
-- Current accumulation/distribution phase
-- Volume confirmation
-- Price structure relative to composite man theory
+### 5. Wyckoff (technical filter)
 
-### 6. Value Accrual (Token Economics) — CRITICAL FILTER
+Phase informs **timing and action downgrades**, not composite weights.
+
+### 6. Value accrual (discovery filter) — CRITICAL
 
 **A successful project does not guarantee token appreciation.** Evaluate how protocol success translates to token value:
 

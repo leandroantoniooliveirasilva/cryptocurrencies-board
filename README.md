@@ -9,7 +9,7 @@ A personal cryptocurrency scoring system for long-term accumulation. Scores asse
 ```
 Weekly Pipeline (Sundays)
 ├── Fetch prices (DefiLlama)
-├── Score qualitative dimensions (Claude API)
+├── Score qualitative dimensions (Claude CLI by default; optional API)
 ├── Compute RSI(14) from daily + weekly prices
 ├── Compute Wyckoff phase from price structure
 ├── Check macro filters (GLI, RS vs BTC, Fear & Greed)
@@ -83,11 +83,11 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 # Configure (create .env)
-ANTHROPIC_API_KEY=your_key_here
+# ANTHROPIC_API_KEY=...  # Only if USE_CLAUDE_CLI=false (HTTP API instead of subscription CLI)
 FRED_API_KEY=your_fred_key_here  # Optional, for GLI filter
 
-# Run weekly scoring
-python -m pipeline.run
+# Run weekly scoring (CLI default; see scripts/run-scoring.sh)
+./scripts/run-scoring.sh
 
 # Build dashboard
 npm run build

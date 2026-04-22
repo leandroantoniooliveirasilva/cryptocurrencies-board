@@ -1,4 +1,4 @@
-"""Qualitative scoring via Claude CLI for regulatory and institutional metrics."""
+"""Qualitative scoring via Claude CLI (default) or Anthropic HTTP API when USE_CLAUDE_CLI=false."""
 
 import json
 import logging
@@ -16,6 +16,11 @@ USE_CLI = os.environ.get("USE_CLAUDE_CLI", "true").lower() == "true"
 
 # Model to use for API calls (configurable via env var)
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
+
+# Per-invocation CLI timeout (seconds). Default 5m; adoption prompts are heavier.
+CLAUDE_CLI_TIMEOUT = int(os.environ.get('CLAUDE_CLI_TIMEOUT', '300'))
+# Adoption prompts are heavier; cap separately (default 5m; raise if CLI consistently times out).
+CLAUDE_ADOPTION_TIMEOUT = int(os.environ.get('CLAUDE_ADOPTION_TIMEOUT', '300'))
 
 
 REGULATORY_PROMPT = """Score the regulatory trajectory for {symbol} ({name}) on a 0-100 scale.
@@ -43,20 +48,29 @@ Consider:
 Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences>"}}
 No other text."""
 
-REVENUE_PROMPT = """Score the revenue/fee generation for {symbol} ({name}) on a 0-100 scale.
+VALUE_CAPTURE_PROMPT = """Score value capture for {symbol} ({name}) on a 0-100 scale.
+
+Focus on fees and economics that accrue to token holders (burns, staking yield net of inflation, treasury take rate, buybacks)—not supply-side fees that only go to miners/LPs with zero holder accrual.
 
 Research and consider:
-- Protocol fees (transaction fees, trading fees, service fees)
-- Revenue model sustainability
-- For oracles: data feed fees, CCIP fees, node operator payments
-- For L1/L2: transaction fees, MEV revenue
-- For DeFi: trading fees, interest spreads, liquidation fees
-- Recent revenue trends and growth
-- Revenue relative to competitors in the same category
+- Holder-accruing protocol revenue, burns, and real yield vs issuance
+- For oracles: fee streams to the protocol/token, staking, reserves
+- For L1/L2: base-fee burn, tips to stakers, net issuance after burn
+- For DeFi: trading fees to treasury, Rev/TVL, earnings after incentives
+- Recent trends vs peers in the same category
 
-Use your knowledge of recent reports, documentation, and public data. If exact figures aren't available, estimate based on protocol activity and adoption.
+Use your knowledge of recent reports and public data. If exact figures aren't available, estimate from documented activity.
 
-Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences explaining the revenue model and estimated strength>"}}
+Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences>"}}
+No other text."""
+
+ADOPTION_ACTIVITY_PROMPT = """Score network adoption and usage for {symbol} ({name}) on a 0-100 scale.
+
+Context: {hint}
+
+Consider the metrics that matter for this asset class (e.g. TVL, active users, TPS, TVS for oracles, validators, ODL volume, AVS count, rollups on DA, subnet activity).
+
+Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<1-2 sentences>"}}
 No other text."""
 
 
@@ -118,23 +132,32 @@ def score_institutional(symbol: str, name: str, use_cache: bool = True) -> dict:
     return _get_fallback_institutional(symbol)
 
 
-def _query_claude(prompt: str, cache_key: str) -> Optional[dict]:
+def _query_claude(
+    prompt: str,
+    cache_key: str,
+    cli_timeout: Optional[int] = None,
+) -> Optional[dict]:
     """Query Claude via CLI or API and parse JSON response."""
     if USE_CLI:
-        return _query_claude_cli(prompt, cache_key)
+        return _query_claude_cli(prompt, cache_key, timeout_sec=cli_timeout)
     else:
         return _query_claude_api(prompt, cache_key)
 
 
-def _query_claude_cli(prompt: str, cache_key: str) -> Optional[dict]:
+def _query_claude_cli(
+    prompt: str,
+    cache_key: str,
+    timeout_sec: Optional[int] = None,
+) -> Optional[dict]:
     """Query Claude using the CLI (subscription-based)."""
+    limit = timeout_sec if timeout_sec is not None else CLAUDE_CLI_TIMEOUT
     try:
         # Use claude CLI with --print flag for non-interactive output
         result = subprocess.run(
-            ["claude", "--print", "--model", CLAUDE_MODEL, prompt],
+            ['claude', '--print', '--model', CLAUDE_MODEL, prompt],
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=limit,
         )
 
         if result.returncode != 0:
@@ -260,43 +283,67 @@ def _get_fallback_institutional(symbol: str) -> dict:
     return fallbacks.get(symbol, {"score": 55, "rationale": "Limited institutional presence"})
 
 
-def score_revenue(symbol: str, name: str, use_cache: bool = True) -> dict:
+def score_value_capture(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
-    Score revenue/fees using Claude when API data is unavailable.
-
-    This is a fallback for when DefiLlama doesn't have revenue data.
-    The score is marked as 'estimated' to indicate it's LLM-derived.
-
-    Args:
-        symbol: Asset symbol (e.g., 'LINK')
-        name: Asset name (e.g., 'Chainlink')
-        use_cache: Whether to use cached scores
+    Score value capture using Claude when API data is unavailable.
 
     Returns:
         Dict with 'score' (int), 'rationale' (str), and 'estimated' (bool)
     """
-    cache_key = f"revenue_{symbol}"
+    cache_key = f"value_capture_{symbol}"
 
     if use_cache and cache_key in _score_cache:
         return _score_cache[cache_key]
 
     result = _query_claude(
-        REVENUE_PROMPT.format(symbol=symbol, name=name), cache_key
+        VALUE_CAPTURE_PROMPT.format(symbol=symbol, name=name), cache_key
     )
 
     if result:
-        result["estimated"] = True
+        result['estimated'] = True
         _score_cache[cache_key] = result
         return result
 
-    # Fallback scores based on known assets
-    fallback = _get_fallback_revenue(symbol)
-    fallback["estimated"] = True
+    fallback = _get_fallback_value_capture(symbol)
+    fallback['estimated'] = True
     return fallback
 
 
-def _get_fallback_revenue(symbol: str) -> dict:
-    """Fallback revenue scores for known assets."""
+def score_revenue(symbol: str, name: str, use_cache: bool = True) -> dict:
+    """Backward-compatible alias for score_value_capture."""
+    return score_value_capture(symbol, name, use_cache)
+
+
+def score_adoption_activity(
+    symbol: str,
+    name: str,
+    hint: str,
+    use_cache: bool = True,
+) -> dict:
+    """
+    Score adoption / network activity (LLM) when the category weights this dimension.
+    """
+    cache_key = f"adoption_activity_{symbol}"
+
+    if use_cache and cache_key in _score_cache:
+        return _score_cache[cache_key]
+
+    result = _query_claude(
+        ADOPTION_ACTIVITY_PROMPT.format(symbol=symbol, name=name, hint=hint),
+        cache_key,
+        cli_timeout=CLAUDE_ADOPTION_TIMEOUT,
+    )
+
+    if result:
+        _score_cache[cache_key] = result
+        return result
+
+    fallback = _get_fallback_adoption(symbol)
+    return fallback
+
+
+def _get_fallback_value_capture(symbol: str) -> dict:
+    """Fallback value-capture scores for known assets."""
     fallbacks = {
         "BTC": {"score": 75, "rationale": "Mining fees, ordinals revenue, strong network activity"},
         "ETH": {"score": 85, "rationale": "Transaction fees, MEV, blob fees, high network utilization"},
@@ -317,7 +364,18 @@ def _get_fallback_revenue(symbol: str) -> dict:
         "PENDLE": {"score": 70, "rationale": "Yield trading fees, PT/YT swap fees"},
         "ENA": {"score": 65, "rationale": "Yield generation from staked assets, sUSDe fees"},
     }
-    return fallbacks.get(symbol, {"score": 50, "rationale": "Limited revenue data available"})
+    return fallbacks.get(symbol, {'score': 50, 'rationale': 'Limited value-capture data available'})
+
+
+def _get_fallback_adoption(symbol: str) -> dict:
+    """Fallback adoption scores when LLM unavailable."""
+    fallbacks = {
+        'ETH': {'score': 88, 'rationale': 'Deep DeFi ecosystem, high transaction and staking activity.'},
+        'SOL': {'score': 85, 'rationale': 'High throughput usage and growing DeFi/NFT activity.'},
+        'LINK': {'score': 90, 'rationale': 'Broad oracle integrations and enterprise TVS.'},
+        'BTC': {'score': 72, 'rationale': 'Largest network; adoption as reserve and settlement.'},
+    }
+    return fallbacks.get(symbol, {'score': 55, 'rationale': 'Moderate usage signal; verify with on-chain data.'})
 
 
 def clear_cache():

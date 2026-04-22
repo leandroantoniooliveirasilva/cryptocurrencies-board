@@ -36,9 +36,13 @@ Invoke this skill when:
 - Buying weakness in leaders = mean reversion (they recover)
 - Buying weakness in non-leaders = momentum trap (they continue down)
 
-## Evaluation Dimensions
+## Evaluation dimensions (aligned with pipeline)
 
-Score each dimension 0-100:
+The pipeline uses **`asset_category`** (9 categories) and optional **`fee_model`**. Weights are in `pipeline/config.yaml` (`weights_by_category`). Typical scored dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply**. **Wyckoff** is a filter on actions, not a composite weight.
+
+When adding an asset to `pipeline/assets.yaml`, set:
+- `asset_category` (required for correct weights), e.g. `defi-protocol`, `oracle-data`, `payments-rail`, `enterprise-settlement`, `monetary-store-of-value`, `smart-contract-platform`, `shared-security`, `data-availability-modular`, `ai-compute-depin`
+- `fee_model` when relevant: `revenue`, `burn`, `staking_share`, `miner`, `minimal`, `equity` (see `.docs/research/asset-category-taxonomy.md` Section 5)
 
 ### 1. Institutional (ETF/Fund Adoption)
 - ETF approval status or pipeline
@@ -46,31 +50,21 @@ Score each dimension 0-100:
 - Institutional custody availability (Coinbase Custody, Fireblocks)
 - Corporate treasury adoption
 
-### 2. Revenue (Protocol Income)
+### 2. Adoption / network activity (when category weights it)
 
-**IMPORTANT**: This dimension scores actual protocol revenue, not fee burns.
+- Category-specific: TVL, active users, TPS, TVS (oracles), validators, ODL volume, AVS count, rollups on DA, subnet usage, etc.
 
-| Fee Model | Scoring Approach |
-|-----------|------------------|
-| **Revenue** (fees → treasury/validators) | Score on this dimension |
-| **Burn** (fees → destroyed) | Skip this dimension, set `fee_model: burn` in assets.yaml |
-| **Hybrid** (ETH: burns + tips) | Score based on revenue portion only |
+### 3. Value capture (when category weights it)
 
-**Burn-model assets**: When a protocol burns fees instead of collecting revenue (e.g., Canton), do NOT score them on Revenue. Add `fee_model: burn` to their assets.yaml entry. Burns are evaluated as a tokenomics benefit under the Supply dimension instead.
+Holder-accruing economics: fees to treasury, burns, staking real yield vs issuance — **not** raw fees that only go to miners with no holder accrual (`fee_model: miner`). Minimal-fee rails (`payments-rail`) typically exclude value capture by design (`fee_model: minimal`).
 
-**Key metrics (for revenue-model assets):**
-- Annualized protocol revenue
-- Revenue-to-TVL ratio (for DeFi)
-- Revenue trend (growing/stable/declining)
-- Fee sustainability without token inflation
-
-### 3. Regulatory (Jurisdictional Clarity)
+### 4. Regulatory (Jurisdictional Clarity)
 - SEC/CFTC classification clarity
 - Global regulatory stance (EU MiCA, etc.)
 - Exchange listing breadth (major regulated exchanges)
 - Compliance infrastructure
 
-### 4. Supply (On-Chain Health & Tokenomics)
+### 5. Supply (On-Chain Health & Tokenomics)
 - Exchange reserve trends (declining = bullish)
 - Long-term holder percentage
 - Token distribution (avoid concentrated holdings)
@@ -79,18 +73,17 @@ Score each dimension 0-100:
   - For burn-mint equilibrium (Canton): burns should exceed or match mints for net deflation
   - Burns from fee activity indicate real usage and demand
 
-### 5. Wyckoff (Technical Phase)
-- Current accumulation/distribution phase
-- Volume confirmation
-- Price structure relative to composite man theory
+### 6. Wyckoff (technical filter)
 
-### 6. Value Accrual (Token Economics) — CRITICAL FILTER
+Phase informs **timing and action downgrades**, not composite weights.
+
+### 7. Value accrual (discovery filter) — CRITICAL
 
 **A successful project does not guarantee token appreciation.** Evaluate how protocol success translates to token value:
 
 **Strong Value Accrual:**
 - Fee burns (deflationary pressure from usage) — set `fee_model: burn` in assets.yaml, evaluated under Supply
-- Revenue sharing / staking yields (direct value to holders) — scored under Revenue
+- Revenue sharing / staking yields (direct value to holders) — scored under **value_capture** when weighted
 - Required token staking for network participation
 - Governance rights over meaningful treasury/protocol parameters
 
@@ -102,14 +95,9 @@ Score each dimension 0-100:
 
 **Key Question:** "If this protocol 10x's in usage, does the token benefit?"
 
-## Weight Profiles by Asset Type
+## Weight profiles
 
-| Asset Type | Institutional | Revenue | Regulatory | Supply | Wyckoff |
-|------------|--------------|---------|------------|--------|---------|
-| store-of-value | 40% | 5% | 15% | 25% | 15% |
-| smart-contract | 30% | 25% | 15% | 20% | 10% |
-| defi | 25% | 35% | 20% | 15% | 5% |
-| infrastructure | 35% | 10% | 25% | 20% | 10% |
+Composite weights are **per `asset_category`** in `pipeline/config.yaml` (`weights_by_category`). Do not copy a static table here — use the YAML as source of truth.
 
 ## Tier Definitions (Dynamic)
 

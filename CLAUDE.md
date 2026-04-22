@@ -26,35 +26,27 @@ This is a decision support system for patient accumulation:
 
 ## Signal Framework
 
-### Dimensions (5 scored + 1 filter)
+### Dimensions (composite vs filter)
 
-Each scored 0-100, weighted by asset type:
+Composite uses **only the dimensions listed for that asset’s `asset_category`** in `pipeline/config.yaml` (`weights_by_category`). Typical dimensions:
 
-| Dimension | What It Measures |
+| Dimension | What it measures |
 |-----------|------------------|
 | Institutional | ETF flows, fund holdings, custody adoption |
-| Revenue | Protocol income (actual revenue, not burns) |
+| Adoption / activity | Category-specific usage (TVL, TPS, TVS, validators, ODL, etc.) |
+| Value capture | Holder-accruing economics (treasury fees, burns to holders, real yield vs issuance) — skipped when N/A |
 | Regulatory | Jurisdictional clarity, compliance |
 | Supply | Exchange reserves, holder distribution, inflation, burn rate |
-| Wyckoff | Technical phase (accumulation/distribution) |
 
-**Fee Models**: Not all protocol fees are "revenue":
-- **Revenue**: Fees → treasury/validators → scored under Revenue dimension
-- **Burn**: Fees → destroyed → set `fee_model: burn` in assets.yaml, skip Revenue, evaluate under Supply
-- **Hybrid**: Burns + revenue combined (most L1s) → score revenue portion only
+**Wyckoff** (phase score in `scores`) is **not** weighted into the composite; it drives phase display, Wyckoff-dip logic, and works with **GLI / RS / Fear–Greed** as **post-score downgrades**.
 
-Burn-model assets have weight redistributed to other dimensions. Burns are evaluated as tokenomics benefit under Supply.
+**Fee models** (`fee_model` in `assets.yaml`): e.g. `burn`, `miner`, `minimal`, `revenue`, `staking_share`, `equity` — used to decide when value capture is skipped or how to read fees (see `.docs/research/asset-category-taxonomy.md` Section 5).
 
-**Value Accrual (Discovery Filter)**: How protocol success translates to token appreciation. A project may succeed but if success doesn't flow to token holders (fee burns, revenue sharing, staking requirements), it's not a strong candidate. Evaluated during discovery, not scored numerically.
+**Value accrual (discovery filter)**: Whether protocol success flows to token holders — still evaluated at discovery when vetting the watchlist.
 
-### Weight Profiles
+### Weight profiles
 
-```
-store-of-value (BTC):     Inst 40%, Supply 25%, Reg 15%, Wyck 15%, Rev 5%
-smart-contract (SOL):     Inst 30%, Rev 25%, Supply 20%, Reg 15%, Wyck 10%
-defi (LINK, HYPE):        Rev 35%, Inst 25%, Reg 20%, Supply 15%, Wyck 5%
-infrastructure (QNT):     Inst 35%, Reg 25%, Supply 20%, Rev 10%, Wyck 10%
-```
+**Per `asset_category`**, not a single global table. Source of truth: `pipeline/config.yaml` → `weights_by_category` (nine categories + `default`).
 
 ### Action States
 
@@ -132,9 +124,9 @@ Assets with composite score below 50 are hidden from the dashboard.
 ```
 Weekly (Sundays via cron)
 ├── Fetch: DefiLlama (TVL, revenue)
-├── Score: Claude API for regulatory, institutional, supply
+├── Score: Claude CLI (default) for qualitative dimensions; optional HTTP API via env
 ├── Detect: Wyckoff phase from price structure
-├── Composite: Weighted score by asset type
+├── Composite: Weighted score by asset_category
 └── Store: Append snapshot to history.sqlite
 
 Output: Write latest.json, commit, push
@@ -145,8 +137,13 @@ GitHub Actions → Deploy /public to GitHub Pages
 
 ## Commands
 
+Session prompts for Claude Code (copy-paste blocks): `.docs/claude-code-prompts.md`.
+
 ```bash
-# Weekly scoring (all dimensions + indicators)
+# Weekly scoring — use the wrapper (wall-clock cap + logs under logs/scoring_*.log):
+./scripts/run-scoring.sh
+
+# Equivalent manual run (Discovery is fewer big LLM calls; scoring fires many per asset — see scripts/run-scoring.sh header):
 python -m pipeline.run
 python -m pipeline.run --dry-run
 
@@ -182,6 +179,7 @@ Store in `.env` (auto-loaded):
 
 ```bash
 FRED_API_KEY=xxx               # Optional (GLI filter)
+# ANTHROPIC_API_KEY=xxx        # Only when USE_CLAUDE_CLI=false (HTTP API)
 ```
 
 ## Key Files
@@ -234,7 +232,7 @@ All dimension scores and Wyckoff phase identifications must include supporting e
 **Required for each dimension:**
 - **Wyckoff**: Price metrics that led to phase classification (position in 90d range, 7d/30d trends, volatility)
 - **Institutional**: Specific ETF products, fund holdings, custody availability cited
-- **Revenue**: Actual fee/revenue data from DefiLlama or research sources
+- **Value capture / adoption**: Evidence appropriate to the category (DefiLlama, metrics APIs, or research)
 - **Regulatory**: Specific regulatory actions, classifications, or compliance status
 - **Supply**: Exchange reserve data, holder distribution, inflation metrics
 
@@ -274,5 +272,6 @@ Track changes in `.docs/decisions.md`. Monitor:
 When framework changes occur (new dimensions, thresholds, action states), update:
 1. README.md
 2. CLAUDE.md
-3. .agents/skills/ instructions
-4. pipeline/discovery/prompt.md (if scoring logic changes)
+3. `.docs/claude-code-prompts.md` (if workflow prompts change)
+4. .agents/skills/ instructions
+5. pipeline/discovery/prompt.md (if scoring logic changes)

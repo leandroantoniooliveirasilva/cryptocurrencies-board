@@ -49,17 +49,25 @@ const Loader2 = (props) => <Icon {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56
 const X = (props) => <Icon {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
 const Info = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></Icon>;
 
-// Default weights by asset type (fallback for backward compatibility)
-// NOTE: These are overridden by weight_profiles from latest.json
+// Default category weights — mirrors pipeline/config.yaml weights_by_category; overridden by latest.json
 const DEFAULT_WEIGHTS_BY_TYPE = {
-  'store-of-value': { institutional: 0.40, supply: 0.25, regulatory: 0.15, wyckoff: 0.15, revenue: 0.05 },
-  'smart-contract': { institutional: 0.30, revenue: 0.25, supply: 0.20, regulatory: 0.15, wyckoff: 0.10 },
-  'defi': { revenue: 0.35, institutional: 0.25, regulatory: 0.20, supply: 0.15, wyckoff: 0.05 },
-  'infrastructure': { institutional: 0.35, regulatory: 0.25, supply: 0.20, revenue: 0.10, wyckoff: 0.10 },
-  'default': { institutional: 0.30, revenue: 0.20, regulatory: 0.20, supply: 0.20, wyckoff: 0.10 },
+  'monetary-store-of-value': { institutional: 0.40, supply: 0.35, regulatory: 0.25 },
+  'smart-contract-platform': { institutional: 0.25, adoption_activity: 0.20, value_capture: 0.20, supply: 0.20, regulatory: 0.15 },
+  'defi-protocol': { value_capture: 0.30, adoption_activity: 0.15, institutional: 0.20, regulatory: 0.15, supply: 0.20 },
+  'oracle-data': { institutional: 0.25, adoption_activity: 0.25, regulatory: 0.20, value_capture: 0.15, supply: 0.15 },
+  'enterprise-settlement': { institutional: 0.30, adoption_activity: 0.25, regulatory: 0.25, supply: 0.20 },
+  'payments-rail': { institutional: 0.35, adoption_activity: 0.20, regulatory: 0.30, supply: 0.15 },
+  'shared-security': { adoption_activity: 0.25, value_capture: 0.25, institutional: 0.20, regulatory: 0.15, supply: 0.15 },
+  'data-availability-modular': { adoption_activity: 0.25, value_capture: 0.20, institutional: 0.20, regulatory: 0.15, supply: 0.20 },
+  'ai-compute-depin': { adoption_activity: 0.25, value_capture: 0.20, institutional: 0.20, supply: 0.20, regulatory: 0.15 },
+  'default': { institutional: 0.25, adoption_activity: 0.20, value_capture: 0.20, supply: 0.20, regulatory: 0.15 },
+  // Legacy asset_type keys (pre–asset_category JSON)
+  'store-of-value': { institutional: 0.40, supply: 0.35, regulatory: 0.25 },
+  'smart-contract': { institutional: 0.25, adoption_activity: 0.20, value_capture: 0.20, supply: 0.20, regulatory: 0.15 },
+  'defi': { value_capture: 0.30, adoption_activity: 0.15, institutional: 0.20, regulatory: 0.15, supply: 0.20 },
+  'infrastructure': { institutional: 0.25, adoption_activity: 0.20, value_capture: 0.20, supply: 0.20, regulatory: 0.15 },
 };
 
-// Global weight profiles (populated from latest.json or defaults)
 let WEIGHTS_BY_TYPE = DEFAULT_WEIGHTS_BY_TYPE;
 
 function setWeightProfiles(profiles) {
@@ -68,8 +76,28 @@ function setWeightProfiles(profiles) {
   }
 }
 
-function getWeights(assetType) {
-  return WEIGHTS_BY_TYPE[assetType] || WEIGHTS_BY_TYPE['default'];
+const LEGACY_ASSET_TYPE_TO_CATEGORY = {
+  'store-of-value': 'monetary-store-of-value',
+  'smart-contract': 'smart-contract-platform',
+  'defi': 'defi-protocol',
+};
+
+function resolveWeightKey(assetOrKey) {
+  if (typeof assetOrKey === 'string') {
+    if (WEIGHTS_BY_TYPE[assetOrKey]) return assetOrKey;
+    return LEGACY_ASSET_TYPE_TO_CATEGORY[assetOrKey] || 'default';
+  }
+  const a = assetOrKey || {};
+  if (a.asset_category && WEIGHTS_BY_TYPE[a.asset_category]) return a.asset_category;
+  const mapped = a.asset_type && LEGACY_ASSET_TYPE_TO_CATEGORY[a.asset_type];
+  if (mapped && WEIGHTS_BY_TYPE[mapped]) return mapped;
+  if (a.asset_type && WEIGHTS_BY_TYPE[a.asset_type]) return a.asset_type;
+  return 'default';
+}
+
+function getWeights(assetOrKey) {
+  const key = resolveWeightKey(assetOrKey);
+  return WEIGHTS_BY_TYPE[key] || WEIGHTS_BY_TYPE['default'];
 }
 
 const PALETTE = {
@@ -122,10 +150,21 @@ const TYPE = {
 
 const DIMENSION_LABELS = {
   institutional: 'Institutional',
-  revenue: 'Revenue/Fees',
+  adoption_activity: 'Adoption / Activity',
+  value_capture: 'Value capture',
+  revenue: 'Revenue/Fees (legacy)',
   regulatory: 'Regulatory',
-  supply: 'Supply/On-Chain',
-  wyckoff: 'Wyckoff',
+  supply: 'Supply / On-chain',
+  wyckoff: 'Wyckoff (filter)',
+};
+
+/** Short labels for decision_trace.downgrades.reasons (backend codes). */
+const DECISION_REASON_LABELS = {
+  'macro:gli_contracting': 'GLI contracting',
+  'macro:rs_underperforming_btc': 'RS vs BTC weak',
+  'macro:fear_greed_euphoria': 'Fear & Greed euphoria',
+  'wyckoff:markup': 'Wyckoff markup',
+  'wyckoff:distribution_or_markdown': 'Wyckoff distribution / markdown',
 };
 
 const ASSET_TYPE_LABELS = {
@@ -133,6 +172,19 @@ const ASSET_TYPE_LABELS = {
   'smart-contract': 'Smart Contract',
   'defi': 'DeFi',
   'infrastructure': 'Infrastructure',
+};
+
+const ASSET_CATEGORY_LABELS = {
+  'monetary-store-of-value': 'Monetary (SoV)',
+  'smart-contract-platform': 'Smart contract L1',
+  'defi-protocol': 'DeFi',
+  'oracle-data': 'Oracle / data',
+  'enterprise-settlement': 'Enterprise settlement',
+  'payments-rail': 'Payments rail',
+  'shared-security': 'Shared security',
+  'data-availability-modular': 'Modular DA',
+  'ai-compute-depin': 'AI / DePIN',
+  'default': 'Default',
 };
 
 // Tier accents: blue for leaders (positive), teal for runner-ups, gray for observation
@@ -153,8 +205,8 @@ const ACTION_CONFIG = {
   'stand-aside': { label: 'Stand Aside', desc: 'Do not engage', bg: 'transparent', fg: '#d06868', dot: '#d06868', border: true },
 };
 
-function computeComposite(scores, assetType) {
-  const weights = getWeights(assetType);
+function computeComposite(scores, assetOrKey) {
+  const weights = getWeights(assetOrKey);
   let total = 0;
   let totalWeight = 0;
   let missingCount = 0;
@@ -381,6 +433,107 @@ function getActionReasoning(asset) {
   }
 }
 
+function DecisionTraceSection({ trace, isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!trace || typeof trace !== 'object' || !trace.path) {
+    return null;
+  }
+
+  const dg = trace.downgrades || {};
+  const levels = typeof dg.levels_applied === 'number' ? dg.levels_applied : 0;
+  const reasons = Array.isArray(dg.reasons) ? dg.reasons : [];
+  const pathReadable = String(trace.path).replace(/_/g, ' ');
+
+  return (
+    <div style={{ marginBottom: SPACE.lg }}>
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: `1px solid ${PALETTE.border}`,
+          color: PALETTE.textMuted,
+          padding: `${SPACE.sm}px ${SPACE.md}px`,
+          fontSize: TYPE.caption,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.sm}px`,
+          minHeight: isMobile ? '44px' : 'auto',
+          width: '100%',
+        }}
+      >
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+        }}>▸</span>
+        <span>Decision rationale</span>
+      </button>
+
+      {expanded && (
+        <div style={{
+          marginTop: `${SPACE.sm}px`,
+          padding: `${SPACE.md}px`,
+          background: PALETTE.cardInset,
+          border: `1px solid ${PALETTE.border}`,
+        }}>
+          <p style={{
+            margin: 0,
+            fontSize: TYPE.caption,
+            fontFamily: 'ui-monospace, monospace',
+            color: PALETTE.textMuted,
+            letterSpacing: '0.04em',
+            lineHeight: TYPE.relaxed,
+          }}>
+            {pathReadable}
+          </p>
+          {trace.base_action && trace.final_action && trace.base_action !== trace.final_action && (
+            <p style={{
+              margin: `${SPACE.sm}px 0 0`,
+              fontFamily: 'ui-monospace, monospace',
+              fontSize: TYPE.small,
+              color: PALETTE.textSecondary,
+            }}>
+              {trace.base_action} → {trace.final_action}
+            </p>
+          )}
+          {levels > 0 && (
+            <p style={{
+              margin: `${SPACE.sm}px 0 0`,
+              fontSize: TYPE.caption,
+              color: PALETTE.textMuted,
+              fontFamily: 'ui-monospace, monospace',
+            }}>
+              Downgrade levels: {levels} (macro {dg.macro_levels ?? 0}, Wyckoff {dg.wyckoff_levels ?? 0})
+            </p>
+          )}
+          {reasons.length > 0 && (
+            <ul style={{
+              margin: `${SPACE.sm}px 0 0`,
+              paddingLeft: `${SPACE.lg}px`,
+              fontFamily: 'Georgia, serif',
+              fontSize: TYPE.small,
+              color: PALETTE.textSecondary,
+              lineHeight: TYPE.relaxed,
+            }}>
+              {reasons.map((r, i) => (
+                <li key={i} style={{ marginBottom: `${SPACE.xs}px` }}>
+                  {DECISION_REASON_LABELS[r] || r}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DetailModal({ asset, onClose, isMobile }) {
   // Handle ESC key to close
   useEffect(() => {
@@ -400,7 +553,10 @@ function DetailModal({ asset, onClose, isMobile }) {
   const config = TIER_CONFIG[asset.tier];
   const TierIcon = config?.icon || Eye;
   const assetType = asset.asset_type || 'smart-contract';
-  const weights = asset.weights || getWeights(assetType);
+  const catLabel = asset.asset_category
+    ? (ASSET_CATEGORY_LABELS[asset.asset_category] || asset.asset_category)
+    : null;
+  const weights = asset.weights || getWeights(asset);
   const action = asset.action || 'observe';
   const cfg = ACTION_CONFIG[action];
   const delta = weeklyDelta(asset.trend);
@@ -468,7 +624,9 @@ function DetailModal({ asset, onClose, isMobile }) {
               <TierIcon size={14} color={config?.accent || PALETTE.textMuted} strokeWidth={1.5} />
             </div>
             <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginTop: SPACE.xs, fontFamily: 'ui-monospace, monospace' }}>
-              {asset.name} · {ASSET_TYPE_LABELS[assetType] || assetType}
+              {asset.name}
+              {catLabel ? ` · ${catLabel}` : ''}
+              {' · '}{ASSET_TYPE_LABELS[assetType] || assetType}
             </div>
           </div>
           <button
@@ -520,17 +678,19 @@ function DetailModal({ asset, onClose, isMobile }) {
             </div>
           </div>
 
-          {/* Action reasoning */}
+          {/* Action reasoning — backend summary when available, else heuristic copy */}
           <div style={{
             fontSize: TYPE.small,
             color: PALETTE.textSecondary,
             fontFamily: 'Georgia, serif',
             fontStyle: 'italic',
             lineHeight: TYPE.relaxed,
-            marginBottom: SPACE.xl,
+            marginBottom: SPACE.lg,
           }}>
-            {getActionReasoning(asset)}
+            {asset.decision_trace?.summary || getActionReasoning(asset)}
           </div>
+
+          <DecisionTraceSection trace={asset.decision_trace} isMobile={isMobile} />
 
           {/* Score section */}
           <div style={{ display: 'flex', alignItems: 'baseline', gap: SPACE.md, marginBottom: SPACE.xs }}>
@@ -569,7 +729,7 @@ function DetailModal({ asset, onClose, isMobile }) {
             {sortedDimensions.map(dim => (
               <DimensionBar
                 key={dim}
-                label={DIMENSION_LABELS[dim]}
+                label={DIMENSION_LABELS[dim] || dim}
                 value={asset.scores?.[dim]}
                 accent={config?.accent}
                 weight={weights[dim]}
@@ -687,7 +847,7 @@ function ScoreCard({ asset, isMobile }) {
   if (asset.composite !== undefined) {
     composite = asset.composite;
   } else {
-    const computed = computeComposite(asset.scores, assetType);
+    const computed = computeComposite(asset.scores, asset);
     composite = computed.composite;
   }
 
@@ -1155,7 +1315,7 @@ function StrategySection({ isMobile }) {
               <div><span style={{ color: PALETTE.textSecondary }}>Revenue</span> — Protocol fees, sustainability</div>
               <div><span style={{ color: PALETTE.textSecondary }}>Regulatory</span> — Jurisdictional clarity</div>
               <div><span style={{ color: PALETTE.textSecondary }}>Supply</span> — Exchange reserves, distribution</div>
-              <div><span style={{ color: PALETTE.textSecondary }}>Wyckoff</span> — Technical phase analysis</div>
+              <div><span style={{ color: PALETTE.textSecondary }}>Wyckoff</span> — Phase filter (not in composite weight)</div>
             </div>
           </div>
 

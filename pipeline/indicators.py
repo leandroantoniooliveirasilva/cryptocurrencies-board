@@ -132,7 +132,7 @@ def update_asset_indicators(
     effective_last_week = composite_last_week if composite_last_week is not None else composite_score
 
     # Re-derive action with updated indicators
-    action = actions.derive_action(
+    action, decision_trace = actions.derive_action(
         composite=composite_score,
         composite_last_week=effective_last_week,
         tier=asset["tier"],
@@ -151,6 +151,7 @@ def update_asset_indicators(
     asset["rsi_daily"] = rsi_daily
     asset["rsi_weekly"] = rsi_weekly
     asset["action"] = action
+    asset["decision_trace"] = decision_trace
     asset["rs_vs_btc"] = {
         "underperforming": rs_data["underperforming"],
         "change_pct": rs_data["rs_change_pct"],

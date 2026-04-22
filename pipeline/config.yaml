@@ -106,44 +106,77 @@ promotion:
   delta_7d: 2                   # 7-day trend must be >= this
 
 # =============================================================================
-# WEIGHT PROFILES BY ASSET TYPE
+# WEIGHT PROFILES BY ASSET CATEGORY (9-category taxonomy)
+# Dimensions: institutional, adoption_activity, value_capture, regulatory, supply
+# Omitted dimensions are excluded; composite renormalises. Wyckoff is never weighted.
 # =============================================================================
-weights:
-  store-of-value:
+weights_by_category:
+  monetary-store-of-value:
     institutional: 0.40
-    supply: 0.25
-    regulatory: 0.15
-    wyckoff: 0.15
-    revenue: 0.05
+    supply: 0.35
+    regulatory: 0.25
 
-  smart-contract:
-    institutional: 0.30
-    revenue: 0.25
+  smart-contract-platform:
+    institutional: 0.25
+    adoption_activity: 0.20
+    value_capture: 0.20
     supply: 0.20
     regulatory: 0.15
-    wyckoff: 0.10
 
-  defi:
-    revenue: 0.35
+  defi-protocol:
+    value_capture: 0.30
+    adoption_activity: 0.15
+    institutional: 0.20
+    regulatory: 0.15
+    supply: 0.20
+
+  oracle-data:
     institutional: 0.25
+    adoption_activity: 0.25
     regulatory: 0.20
+    value_capture: 0.15
     supply: 0.15
-    wyckoff: 0.05
 
-  infrastructure:
-    institutional: 0.35
+  enterprise-settlement:
+    institutional: 0.30
+    adoption_activity: 0.25
     regulatory: 0.25
     supply: 0.20
-    revenue: 0.10
-    wyckoff: 0.10
 
-  # Fallback for unknown asset types
-  default:
-    institutional: 0.30
-    revenue: 0.20
-    regulatory: 0.20
+  payments-rail:
+    institutional: 0.35
+    adoption_activity: 0.20
+    regulatory: 0.30
+    supply: 0.15
+
+  shared-security:
+    adoption_activity: 0.25
+    value_capture: 0.25
+    institutional: 0.20
+    regulatory: 0.15
+    supply: 0.15
+
+  data-availability-modular:
+    adoption_activity: 0.25
+    value_capture: 0.20
+    institutional: 0.20
+    regulatory: 0.15
     supply: 0.20
-    wyckoff: 0.10
+
+  ai-compute-depin:
+    adoption_activity: 0.25
+    value_capture: 0.20
+    institutional: 0.20
+    supply: 0.20
+    regulatory: 0.15
+
+  # Fallback when category missing or unknown
+  default:
+    institutional: 0.25
+    adoption_activity: 0.20
+    value_capture: 0.20
+    supply: 0.20
+    regulatory: 0.15
 
 # =============================================================================
 # WYCKOFF PHASE DETECTION THRESHOLDS

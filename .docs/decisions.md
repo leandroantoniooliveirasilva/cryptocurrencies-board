@@ -4,6 +4,30 @@ Track all changes to weights, thresholds, and rationale. This file prevents fram
 
 ---
 
+## 2026-04-21 — Framework v3: nine `asset_category` profiles + value capture / adoption
+
+### What changed
+
+- Replaced flat `asset_type` weight profiles with **`weights_by_category`** in `pipeline/config.yaml` (nine categories + `default`).
+- Each watchlist asset has **`asset_category`** (and optional **`fee_model`**) in `pipeline/assets.yaml`.
+- **Value capture** and **adoption_activity** replace a single **revenue** dimension where the taxonomy calls for it; dimensions omitted for a category are excluded and weights renormalise.
+- **Wyckoff** stays in `scores` for display and phase logic but is **not** part of composite weights; it remains a **post-score filter** with GLI / RS / Fear–Greed.
+- SQLite column **`snapshots.revenue`** still stores the value-capture score for backward compatibility.
+- **`framework_version`**: `3.0`.
+
+### Why
+
+Align weights with materially different value theses (oracles vs payments vs SoV vs DeFi) and stop forcing a single “revenue” definition where it does not apply. See `.docs/research/asset-category-taxonomy.md`.
+
+### Config / code
+
+- `pipeline/category.py` — category resolution and skip rules.
+- `pipeline/config.yaml` — `weights_by_category`.
+- `pipeline/scoring/composite.py` — composite keyed by `asset_category`.
+- `pipeline/run.py`, `pipeline/fetchers/qualitative.py` — scoring and rationales.
+
+---
+
 ## 2026-04-19 — Strong Accumulate Slope Check
 
 ### What Changed

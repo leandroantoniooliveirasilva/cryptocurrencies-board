@@ -31,6 +31,13 @@ from pathlib import Path
 
 import yaml
 
+from pipeline.category import (
+    adoption_hint_for_category,
+    resolve_asset_category,
+    should_score_adoption_activity,
+    should_score_value_capture,
+    value_capture_skip_rationale,
+)
 from pipeline.config import config
 from pipeline.fetchers import coingecko, defillama, fear_greed, gli, qualitative, relative_strength, supply
 from pipeline.scoring import actions, composite, rsi, wyckoff
@@ -144,11 +151,13 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     """
     symbol = entry["symbol"]
     name = entry["name"]
-    asset_type = entry.get("asset_type", "smart-contract")  # Default to balanced
+    asset_type = entry.get("asset_type", "smart-contract")  # Legacy label for discovery / display
+    asset_category = resolve_asset_category(entry)
+    weights_profile = composite.get_weights(asset_category)
     coingecko_id = entry.get("coingecko_id")
     defillama_slug = entry.get("defillama_slug")
     wyckoff_override = entry.get("wyckoff_override")
-    fee_model = entry.get("fee_model")  # burn, hybrid, or null (normal revenue)
+    fee_model = entry.get("fee_model")
 
     logger.info(f"Processing {symbol}...")
 
@@ -224,28 +233,63 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
             institutional_data["score"], institutional_data["rationale"]
         )
 
-    # Compute revenue score - skip for burn-model assets (weight redistributes)
-    revenue_score = None
-    revenue_estimated = False
-    revenue_rationale = None
-    if fee_model == "burn":
-        logger.info(f"Skipping revenue scoring for {symbol} (fee_model=burn, weight redistributes)")
-        revenue_rationale = "Fee model uses token burns (not protocol revenue). Dimension excluded, weight redistributed."
+    # Value capture (category + fee_model gated)
+    value_capture_score = None
+    value_capture_estimated = False
+    value_capture_rationale = None
+    if not should_score_value_capture(weights_profile, fee_model):
+        skip = value_capture_skip_rationale(fee_model)
+        if skip:
+            value_capture_rationale = skip
+        else:
+            value_capture_rationale = (
+                "Value capture not in this category's weighted dimensions; weight redistributes."
+            )
+        logger.info(f"Skipping value capture for {symbol} (category/fee_model)")
     elif defi_data and defi_data.get("revenue_24h") is not None:
-        # Factual data from DefiLlama API (includes fees fallback for oracles)
         revenue_24h = defi_data.get("revenue_24h")
         tvl = defi_data.get("tvl")
         fees_24h = defi_data.get("fees_24h")
-        revenue_score = defillama.compute_revenue_score(revenue_24h, tvl)
-        # Build evidence-backed rationale from actual data
-        revenue_rationale = _build_revenue_rationale(revenue_24h, tvl, fees_24h, revenue_score)
+        value_capture_score = defillama.compute_revenue_score(revenue_24h, tvl)
+        value_capture_rationale = _build_revenue_rationale(
+            revenue_24h, tvl, fees_24h, value_capture_score
+        )
     else:
-        # LLM fallback only when API has no data at all
-        logger.info(f"No API revenue data for {symbol}, using LLM estimation")
-        revenue_result = qualitative.score_revenue(symbol, name)
-        revenue_score = revenue_result.get("score")
-        revenue_rationale = revenue_result.get("rationale", "LLM-estimated score (no API data available)")
-        revenue_estimated = True
+        logger.info(f"No API fee/revenue data for {symbol}, using LLM for value capture")
+        cached_vc = migrations.get_cached_qualitative_score(conn, symbol, "value_capture")
+        if not cached_vc:
+            cached_vc = migrations.get_cached_qualitative_score(conn, symbol, "revenue")
+        if cached_vc:
+            vc_result = cached_vc
+            value_capture_estimated = False
+        else:
+            vc_result = qualitative.score_value_capture(symbol, name)
+            migrations.save_qualitative_score(
+                conn, symbol, "value_capture",
+                vc_result["score"], vc_result.get("rationale", ""),
+            )
+            value_capture_estimated = vc_result.get("estimated", True)
+        value_capture_score = vc_result.get("score")
+        value_capture_rationale = vc_result.get(
+            "rationale", "LLM-estimated value capture (no API data available)"
+        )
+
+    # Adoption / network activity (LLM, cached weekly)
+    adoption_score = None
+    adoption_rationale = None
+    if should_score_adoption_activity(weights_profile):
+        cached_ad = migrations.get_cached_qualitative_score(conn, symbol, "adoption_activity")
+        if cached_ad:
+            adoption_data = cached_ad
+        else:
+            hint = adoption_hint_for_category(asset_category)
+            adoption_data = qualitative.score_adoption_activity(symbol, name, hint)
+            migrations.save_qualitative_score(
+                conn, symbol, "adoption_activity",
+                adoption_data["score"], adoption_data.get("rationale", ""),
+            )
+        adoption_score = adoption_data["score"]
+        adoption_rationale = adoption_data.get("rationale", "")
 
     # Compute supply/on-chain score (AI-powered with data from CoinGecko)
     supply_data = supply.compute_supply_score(
@@ -259,18 +303,18 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
 
     # Wyckoff score already computed above from price data or manual override
 
-    # Build scores dict with all 5 dimensions
     scores = {
         "institutional": institutional_data["score"],
-        "revenue": revenue_score,
+        "adoption_activity": adoption_score,
+        "value_capture": value_capture_score,
         "regulatory": regulatory_data["score"],
         "supply": supply_score,
         "wyckoff": wyckoff_score,
     }
 
-    # Compute composite with asset-type-specific weights
-    # Returns (score, missing_count) - missing dimensions are excluded from calculation
-    composite_score, missing_dimensions = composite.compute_composite(scores, asset_type=asset_type)
+    composite_score, missing_dimensions = composite.compute_composite(
+        scores, asset_category=asset_category
+    )
 
     # Compute tier dynamically from composite score
     tier = compute_tier(composite_score)
@@ -304,7 +348,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     effective_last_week = (
         composite_last_week if composite_last_week is not None else composite_score
     )
-    action = actions.derive_action(
+    action, decision_trace = actions.derive_action(
         composite=composite_score,
         composite_last_week=effective_last_week,
         tier=tier,
@@ -326,15 +370,14 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     # Build note
     note = _build_note(symbol, asset_type, regulatory_data, institutional_data, wyckoff_phase)
 
-    # Get weight profile for this asset type
-    weights = composite.get_weights(asset_type)
+    weights = composite.get_weights(asset_category)
 
-    # Build detailed reasoning for modal view
     note_detailed = _build_detailed_reasoning(
         symbol=symbol,
         name=name,
         tier=tier,
         asset_type=asset_type,
+        asset_category=asset_category,
         scores=scores,
         weights=weights,
         composite=composite_score,
@@ -345,22 +388,29 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         rsi_daily=rsi_daily,
         rsi_weekly=rsi_weekly,
         rs_data=rs_data,
-        revenue_estimated=revenue_estimated,
+        value_capture_estimated=value_capture_estimated,
+        decision_trace=decision_trace,
     )
+
+    score_rationales = {
+        "institutional": institutional_data["rationale"],
+        "regulatory": regulatory_data["rationale"],
+        "supply": supply_rationale,
+        "wyckoff": wyckoff_rationale,
+    }
+    if adoption_rationale is not None:
+        score_rationales["adoption_activity"] = adoption_rationale
+    if value_capture_rationale is not None:
+        score_rationales["value_capture"] = value_capture_rationale
 
     return {
         "symbol": symbol,
         "name": name,
         "tier": tier,
         "asset_type": asset_type,
+        "asset_category": asset_category,
         "scores": scores,
-        "score_rationales": {
-            "institutional": institutional_data["rationale"],
-            "regulatory": regulatory_data["rationale"],
-            "revenue": revenue_rationale,
-            "supply": supply_rationale,
-            "wyckoff": wyckoff_rationale,
-        },
+        "score_rationales": score_rationales,
         "weights": weights,
         "composite": composite_score,
         "composite_last_week": effective_last_week,
@@ -370,10 +420,12 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         "rsi_daily": rsi_daily,
         "rsi_weekly": rsi_weekly,
         "action": action,
+        "decision_trace": decision_trace,
         "strong_accumulate_days_active": strong_accumulate_days + (1 if action == "strong-accumulate" else 0),
         "label_changed_days_ago": label_changed_days_ago,
         "missing_dimensions": missing_dimensions,
-        "revenue_estimated": revenue_estimated,
+        "value_capture_estimated": value_capture_estimated,
+        "revenue_estimated": value_capture_estimated,
         "rs_vs_btc": {
             "underperforming": rs_data["underperforming"],
             "change_pct": rs_data["rs_change_pct"],
@@ -490,6 +542,7 @@ def _build_detailed_reasoning(
     name: str,
     tier: str,
     asset_type: str,
+    asset_category: str,
     scores: dict,
     weights: dict,
     composite: int,
@@ -500,7 +553,8 @@ def _build_detailed_reasoning(
     rsi_daily,  # float or None
     rsi_weekly,  # float or None
     rs_data: dict = None,  # Relative strength vs BTC data
-    revenue_estimated: bool = False,  # True if revenue was LLM-estimated
+    value_capture_estimated: bool = False,
+    decision_trace: dict = None,
 ) -> str:
     """
     Build detailed reasoning explaining why this asset is on the list,
@@ -516,14 +570,19 @@ def _build_detailed_reasoning(
     }
     lines.append(tier_explanations.get(tier, f"{symbol} is tracked in the {tier} tier."))
 
-    # 2. Asset type context
-    type_context = {
-        "store-of-value": "As a store-of-value asset, the scoring heavily weights institutional adoption (40%) and supply dynamics (25%), with less emphasis on protocol revenue.",
-        "smart-contract": "As a smart-contract platform, the scoring balances institutional backing (30%), revenue generation (25%), and supply health (20%) to capture both adoption and sustainability.",
-        "defi": "As a DeFi protocol, revenue and fee generation dominates the scoring (35%), reflecting the importance of sustainable tokenomics in this sector.",
-        "infrastructure": "As an infrastructure asset, institutional adoption (35%) and regulatory clarity (25%) are prioritized, reflecting enterprise deployment requirements.",
+    category_context = {
+        "monetary-store-of-value": "Category: monetary store of value — institutional + supply/security + regulatory; no separate value-capture dimension.",
+        "smart-contract-platform": "Category: smart-contract platform — balanced institutional, adoption, value capture, supply, regulatory.",
+        "defi-protocol": "Category: DeFi protocol — value capture and adoption weighted alongside institutions and supply.",
+        "oracle-data": "Category: oracle/data — adoption (e.g. TVS) and institutions weighted with value capture and supply.",
+        "enterprise-settlement": "Category: enterprise settlement — adoption and regulatory emphasis; burn/mint in supply.",
+        "payments-rail": "Category: payments rail — institutions and regulatory; no value capture by design.",
+        "shared-security": "Category: shared security / restaking — adoption and value capture central.",
+        "data-availability-modular": "Category: modular data availability — adoption and value capture with supply.",
+        "ai-compute-depin": "Category: AI / DePIN — adoption and value capture with supply and regulatory.",
+        "default": f"Asset category: {asset_category}.",
     }
-    lines.append(type_context.get(asset_type, ""))
+    lines.append(category_context.get(asset_category, category_context["default"]))
 
     # 3. Dimension breakdown
     lines.append("")
@@ -568,26 +627,35 @@ def _build_detailed_reasoning(
         supply_desc = "Supply metrics warrant caution—potential concentration or unfavorable distribution."
     lines.append(f"• Supply/On-Chain ({supply_score}/100, {int(supply_weight*100)}% weight): {supply_desc}")
 
-    # Revenue
-    rev_score = scores.get("revenue")
-    rev_weight = weights.get("revenue", 0)
-    if rev_score is not None:
-        if rev_score >= 80:
-            rev_desc = "Strong fee generation indicating sustainable protocol economics."
-        elif rev_score >= 50:
-            rev_desc = "Moderate revenue, typical for growth-phase protocols."
+    # Adoption / value capture (only when weighted)
+    ad_score = scores.get("adoption_activity")
+    ad_weight = weights.get("adoption_activity", 0)
+    if ad_weight and ad_score is not None:
+        lines.append(
+            f"• Adoption / activity ({ad_score}/100, {int(ad_weight * 100)}% weight): "
+            f"Network usage and growth signals for this category."
+        )
+
+    vc_score = scores.get("value_capture")
+    vc_weight = weights.get("value_capture", 0)
+    if vc_weight and vc_score is not None:
+        if vc_score >= 80:
+            vc_desc = "Strong holder-accruing economics."
+        elif vc_score >= 50:
+            vc_desc = "Moderate value capture; typical for growth-phase protocols."
         else:
-            rev_desc = "Limited fee revenue—protocol may rely on token incentives or is early-stage."
-        estimated_tag = " ⚠️ ESTIMATED" if revenue_estimated else ""
-        lines.append(f"• Revenue/Fees ({rev_score}/100, {int(rev_weight*100)}% weight{estimated_tag}): {rev_desc}")
-        if revenue_estimated:
+            vc_desc = "Limited value capture—may rely on incentives or early-stage economics."
+        est_tag = " ⚠️ ESTIMATED" if value_capture_estimated else ""
+        lines.append(
+            f"• Value capture ({vc_score}/100, {int(vc_weight * 100)}% weight{est_tag}): {vc_desc}"
+        )
+        if value_capture_estimated:
             lines.append("  (Score derived from LLM research — API data unavailable)")
-    else:
-        lines.append(f"• Revenue/Fees (N/A, excluded): No protocol revenue data available for this asset type.")
+    elif vc_weight and vc_score is None:
+        lines.append("• Value capture (N/A, excluded): Not scored for this category or fee model.")
 
     # Wyckoff
     wyck_score = scores.get("wyckoff")
-    wyck_weight = weights.get("wyckoff", 0)
     phase_lower = wyckoff_phase.lower() if wyckoff_phase else ""
     is_distribution = "distribution" in phase_lower
     is_bullish_phase = (not is_distribution) and (
@@ -605,7 +673,7 @@ def _build_detailed_reasoning(
             wyck_desc = f"Currently in {wyckoff_phase}—trend is favorable but entries should be measured as some move has already occurred."
         else:
             wyck_desc = f"Currently in {wyckoff_phase}. Technical structure is being monitored for clearer phase identification."
-        lines.append(f"• Wyckoff ({wyck_score}/100, {int(wyck_weight*100)}% weight): {wyck_desc}")
+        lines.append(f"• Wyckoff ({wyck_score}/100, global filter): {wyck_desc}")
     else:
         lines.append(f"• Wyckoff (N/A, excluded): Insufficient price data for Wyckoff phase detection.")
 
@@ -663,7 +731,27 @@ def _build_detailed_reasoning(
         "observe": f"OBSERVE status reflects Observation-tier placement—tracked for research, not positioned. No action required.",
         "stand-aside": stand_aside_reason,
     }
-    lines.append(action_reasoning.get(action, f"Current action: {action}"))
+    if decision_trace and decision_trace.get("summary"):
+        lines.append(decision_trace["summary"])
+    else:
+        lines.append(action_reasoning.get(action, f"Current action: {action}"))
+
+    if decision_trace:
+        lines.append("")
+        lines.append("DECISION TRACE:")
+        lines.append(f"• path: {decision_trace.get('path', '')}")
+        if decision_trace.get("base_action") is not None:
+            lines.append(f"• base_action: {decision_trace['base_action']}")
+        lines.append(f"• final_action: {decision_trace.get('final_action', action)}")
+        dg = decision_trace.get("downgrades") or {}
+        if dg:
+            reasons = dg.get("reasons") or []
+            lines.append(
+                f"• downgrades: levels_applied={dg.get('levels_applied')}, "
+                f"macro_levels={dg.get('macro_levels')}, wyckoff_levels={dg.get('wyckoff_levels')}"
+            )
+            if reasons:
+                lines.append(f"• downgrade_reasons: {', '.join(reasons)}")
 
     # 7. Composite summary
     lines.append("")
@@ -752,7 +840,7 @@ def main():
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "snapshot_date": today,
-        "framework_version": "2.0",
+        "framework_version": "3.0",
         "weight_profiles": composite.WEIGHTS_BY_TYPE,
         "thresholds": {
             "min_display_score": config.composite.min_display_score,

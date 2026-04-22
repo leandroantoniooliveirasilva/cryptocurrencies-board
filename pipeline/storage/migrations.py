@@ -59,6 +59,7 @@ def init_db(db_path: Path) -> sqlite3.Connection:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA busy_timeout = 60000')
     conn.executescript(SCHEMA)
     conn.executescript(QUALITATIVE_CACHE_SCHEMA)
 
@@ -103,7 +104,7 @@ def save_snapshot(conn: sqlite3.Connection, asset: dict, snapshot_date: str) -> 
             snapshot_date,
             asset.get("composite"),
             scores.get("institutional"),
-            scores.get("revenue"),
+            scores.get("value_capture", scores.get("revenue")),
             scores.get("regulatory"),
             scores.get("supply"),
             scores.get("wyckoff"),

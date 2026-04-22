@@ -4,37 +4,36 @@
 #   - Runner-up:   composite >= 65
 #   - Observation: composite < 65
 #
-# Asset Types (for weight calculation):
-#   - store-of-value: BTC and similar (institutional/supply focused)
-#   - smart-contract: L1 platforms like SOL, ETH, AVAX (balanced)
-#   - defi: DeFi protocols like LINK, AAVE (revenue focused)
-#   - infrastructure: Enterprise/infra like QNT, HBAR (institutional focused)
+# asset_category: drives weights (see pipeline/config.yaml weights_by_category).
+# asset_type: legacy coarse label for discovery docs (optional).
 #
-# Fee Models (optional, defaults to null = normal revenue):
-#   - null: Normal revenue model, score on Revenue dimension
-#   - burn: Fees are burned, skip Revenue dimension (weight redistributes)
+# fee_model (optional): how fees map to token value capture — see .docs/research/asset-category-taxonomy.md
+#   - revenue, burn, staking_share, miner, minimal, equity
 #
 # Discovery adds/removes assets from this list. Tiers are NOT hardcoded.
 
 assets:
-  # Store of Value
   - symbol: BTC
     name: Bitcoin
+    asset_category: monetary-store-of-value
     asset_type: store-of-value
+    fee_model: miner
     coingecko_id: bitcoin
     defillama_slug: null
-    wyckoff_override: "Phase B→C"
+    wyckoff_override: 'Phase B→C'
 
   - symbol: KAS
     name: Kaspa
+    asset_category: monetary-store-of-value
     asset_type: store-of-value
+    fee_model: miner
     coingecko_id: kaspa
     defillama_slug: null
     wyckoff_override: null
 
-  # Smart Contract Platforms
   - symbol: ETH
     name: Ethereum
+    asset_category: smart-contract-platform
     asset_type: smart-contract
     coingecko_id: ethereum
     defillama_slug: ethereum
@@ -42,6 +41,7 @@ assets:
 
   - symbol: SOL
     name: Solana
+    asset_category: smart-contract-platform
     asset_type: smart-contract
     coingecko_id: solana
     defillama_slug: solana
@@ -49,6 +49,7 @@ assets:
 
   - symbol: AVAX
     name: Avalanche
+    asset_category: smart-contract-platform
     asset_type: smart-contract
     coingecko_id: avalanche-2
     defillama_slug: avalanche
@@ -56,14 +57,15 @@ assets:
 
   - symbol: SUI
     name: Sui
+    asset_category: smart-contract-platform
     asset_type: smart-contract
     coingecko_id: sui
     defillama_slug: sui
     wyckoff_override: null
 
-  # Oracle / Infrastructure
   - symbol: LINK
     name: Chainlink
+    asset_category: oracle-data
     asset_type: infrastructure
     coingecko_id: chainlink
     defillama_slug: chainlink
@@ -71,6 +73,7 @@ assets:
 
   - symbol: HYPE
     name: Hyperliquid
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: hyperliquid
     defillama_slug: hyperliquid
@@ -78,6 +81,7 @@ assets:
 
   - symbol: MORPHO
     name: Morpho
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: morpho
     defillama_slug: morpho
@@ -85,6 +89,7 @@ assets:
 
   - symbol: AAVE
     name: Aave
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: aave
     defillama_slug: aave
@@ -92,6 +97,7 @@ assets:
 
   - symbol: ONDO
     name: Ondo
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: ondo-finance
     defillama_slug: ondo-finance
@@ -99,6 +105,7 @@ assets:
 
   - symbol: PENDLE
     name: Pendle
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: pendle
     defillama_slug: pendle
@@ -106,6 +113,7 @@ assets:
 
   - symbol: JUP
     name: Jupiter
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: jupiter-exchange-solana
     defillama_slug: jupiter
@@ -113,14 +121,15 @@ assets:
 
   - symbol: ENA
     name: Ethena
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: ethena
     defillama_slug: ethena
     wyckoff_override: null
 
-  # Infrastructure
   - symbol: QNT
     name: Quant
+    asset_category: enterprise-settlement
     asset_type: infrastructure
     coingecko_id: quant-network
     defillama_slug: null
@@ -128,27 +137,34 @@ assets:
 
   - symbol: XLM
     name: Stellar
+    asset_category: payments-rail
     asset_type: infrastructure
+    fee_model: minimal
     coingecko_id: stellar
     defillama_slug: null
     wyckoff_override: null
 
   - symbol: XRP
     name: Ripple
+    asset_category: payments-rail
     asset_type: infrastructure
+    fee_model: minimal
     coingecko_id: ripple
     defillama_slug: null
     wyckoff_override: null
 
   - symbol: HBAR
     name: Hedera
+    asset_category: payments-rail
     asset_type: infrastructure
+    fee_model: minimal
     coingecko_id: hedera-hashgraph
     defillama_slug: null
     wyckoff_override: null
 
   - symbol: TAO
     name: Bittensor
+    asset_category: ai-compute-depin
     asset_type: infrastructure
     coingecko_id: bittensor
     defillama_slug: null
@@ -156,6 +172,7 @@ assets:
 
   - symbol: TIA
     name: Celestia
+    asset_category: data-availability-modular
     asset_type: infrastructure
     coingecko_id: celestia
     defillama_slug: null
@@ -163,6 +180,7 @@ assets:
 
   - symbol: EIGEN
     name: EigenLayer
+    asset_category: shared-security
     asset_type: infrastructure
     coingecko_id: eigenlayer
     defillama_slug: eigenlayer
@@ -170,15 +188,16 @@ assets:
 
   - symbol: CANTON
     name: Canton Network
+    asset_category: enterprise-settlement
     asset_type: infrastructure
+    fee_model: burn
     coingecko_id: canton-network
     defillama_slug: canton
     wyckoff_override: null
-    fee_model: burn  # Fees are burned, not revenue — skip Revenue dimension
 
-  # Additional DeFi Protocols (Discovery April 2026)
   - symbol: UNI
     name: Uniswap
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: uniswap
     defillama_slug: uniswap
@@ -186,6 +205,7 @@ assets:
 
   - symbol: LDO
     name: Lido DAO
+    asset_category: defi-protocol
     asset_type: defi
     coingecko_id: lido-dao
     defillama_slug: lido

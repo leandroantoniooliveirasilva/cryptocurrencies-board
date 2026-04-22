@@ -6,14 +6,14 @@ Asset types and their weight profiles:
 - defi: Revenue-heavy (LINK, AAVE, MORPHO, HYPE)
 - infrastructure: Institutional + Regulatory (QNT, XLM, XRP, HBAR)
 
-Dimensions:
+Weighted dimensions (subset per asset category):
 - institutional: ETF flows, fund holdings, custody adoption
-- revenue: Protocol fees, sustainable revenue
+- adoption_activity: Network usage (TVL, TPS, TVS, etc. — category-specific)
+- value_capture: Holder-accruing fees / real yield (replaces flat “revenue”)
 - regulatory: Jurisdictional clarity, ETF approval status
-- supply: Exchange reserves, holder distribution, inflation
-- wyckoff: Technical phase (accumulation/distribution)
+- supply: Exchange reserves, holder distribution, inflation, security budget
 
-All weight profiles are configured in config.yaml.
+All weight profiles are configured in config.yaml under weights_by_category.
 """
 
 from typing import Optional
@@ -21,26 +21,26 @@ from typing import Optional
 from pipeline.config import config
 
 
-def get_weights(asset_type: Optional[str] = None) -> dict:
+def get_weights(asset_category: Optional[str] = None) -> dict:
     """
-    Get weight profile for an asset type from config.
+    Get weight profile for an asset category from config.
 
     Args:
-        asset_type: One of 'store-of-value', 'smart-contract', 'defi', 'infrastructure'
+        asset_category: One of weights_by_category keys (e.g. defi-protocol)
 
     Returns:
         Dict of dimension weights summing to 1.0
     """
-    return config.get_weights(asset_type or 'default')
+    return config.get_weights_for_category(asset_category or 'default')
 
 
-# Export for backward compatibility (used in run.py output)
-WEIGHTS_BY_TYPE = config.get_all_weights()
+# Export for dashboard (category → weights)
+WEIGHTS_BY_TYPE = config.get_all_category_weights()
 
 
 def compute_composite(
     scores: dict,
-    asset_type: Optional[str] = None,
+    asset_category: Optional[str] = None,
 ) -> tuple[int, int]:
     """
     Compute weighted composite score from dimension scores.
@@ -50,14 +50,13 @@ def compute_composite(
     assuming neutral (50) for unavailable dimensions.
 
     Args:
-        scores: Dict with keys 'institutional', 'revenue', 'regulatory', 'supply', 'wyckoff'
-                Each value should be 0-100 or None for missing data.
-        asset_type: Asset type for weight selection
+        scores: Dict with weighted dimension keys; each value 0-100 or None if excluded.
+        asset_category: Category for weight profile selection
 
     Returns:
         Tuple of (rounded composite score 0-100, count of missing dimensions)
     """
-    weights = get_weights(asset_type)
+    weights = get_weights(asset_category)
 
     total = 0.0
     total_weight = 0.0
@@ -120,18 +119,18 @@ def compute_composite_legacy(scores: dict) -> tuple[int, int]:
     return composite, missing_count
 
 
-def explain_weights(asset_type: Optional[str] = None) -> str:
+def explain_weights(asset_category: Optional[str] = None) -> str:
     """
-    Return human-readable explanation of weights for an asset type.
+    Return human-readable explanation of weights for an asset category.
 
     Args:
-        asset_type: Asset type
+        asset_category: Asset category
 
     Returns:
         Formatted string explaining the weight profile
     """
-    weights = get_weights(asset_type)
-    type_name = asset_type or "default"
+    weights = get_weights(asset_category)
+    type_name = asset_category or 'default'
 
     lines = [f"Weight profile for {type_name}:"]
     for dim, weight in sorted(weights.items(), key=lambda x: -x[1]):
