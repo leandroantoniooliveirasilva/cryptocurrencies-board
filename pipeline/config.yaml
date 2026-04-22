@@ -51,8 +51,9 @@ gli:
     boj: true
     smaller_cb: false
 
-  # Optional BIS CBTA endpoint for PBOC total assets (China, monthly, local currency).
-  # Keep configurable because BIS SDMX keys can evolve.
+  # Optional BIS CBTA endpoint for PBOC total assets.
+  # Current default returns quarterly BIS-spliced %GDP for China and is converted
+  # to an approximate USD level in the fetcher.
   bis:
     cbta_china_csv_url: "https://stats.bis.org/api/v1/data/WS_CBTA/Q.CN.B.XDF_R_B1GQ._Z.B?format=csv"
 
