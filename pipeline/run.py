@@ -689,43 +689,6 @@ def _build_detailed_reasoning(
     elif vc_weight and vc_score is None:
         lines.append("• Value capture (N/A, excluded): Not scored for this category or fee model.")
 
-    # Wyckoff
-    wyck_score = scores.get("wyckoff")
-    phase_lower = wyckoff_phase.lower() if wyckoff_phase else ""
-    is_distribution = "distribution" in phase_lower
-    is_bullish_phase = (not is_distribution) and (
-        "accumulation" in phase_lower
-        or "phase c" in phase_lower
-        or "b→c" in phase_lower
-        or "b->c" in phase_lower
-    )
-    if wyck_score is not None:
-        if is_bullish_phase:
-            wyck_desc = (
-                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
-                f"(not part of the weighted composite)."
-            )
-        elif is_distribution:
-            wyck_desc = (
-                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
-                f"(not part of the weighted composite). Current structure is risk-off."
-            )
-        elif "markup" in phase_lower:
-            wyck_desc = (
-                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
-                f"(not part of the weighted composite). Trend is constructive but may be extended."
-            )
-        else:
-            wyck_desc = (
-                f"Phase signal: {wyckoff_phase}. This is treated as a global market-structure filter "
-                f"(not part of the weighted composite)."
-            )
-        lines.append(f"• Wyckoff ({wyck_score}/100, global filter): {wyck_desc}")
-        if wyckoff_rationale:
-            lines.append(f"  Evidence: {wyckoff_rationale}")
-    else:
-        lines.append(f"• Wyckoff (N/A, excluded): Insufficient price data for Wyckoff phase detection.")
-
     # 4. RSI context
     if rsi_daily is not None or rsi_weekly is not None:
         lines.append("")
