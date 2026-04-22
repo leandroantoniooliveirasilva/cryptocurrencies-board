@@ -648,7 +648,11 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
     .sort(([, a], [, b]) => b - a)
     .map(([key]) => key);
   const weightedDimensions = sortedDimensions.filter(dim => dim !== 'wyckoff');
-  const wyckoffRationale = asset.score_rationales?.wyckoff;
+  // Clean up Wyckoff rationale - remove implementation details
+  const rawWyckoffRationale = asset.score_rationales?.wyckoff;
+  const wyckoffRationale = rawWyckoffRationale
+    ? rawWyckoffRationale.replace(/^Manual override:\s*/i, '')
+    : null;
   const decisionDowngrades = asset.decision_trace?.downgrades || {};
   const macroDowngrades = decisionDowngrades.macro_levels ?? 0;
   const wyckoffDowngrades = decisionDowngrades.wyckoff_levels ?? 0;
@@ -919,30 +923,38 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                   {asset.wyckoff_phase || 'Unknown'}
                 </span>
               </div>
-              {/* RS vs BTC */}
-              {showRsContext && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
+              {/* RS vs BTC - show for all assets */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
+                {asset.symbol === 'BTC' ? (
+                  <span style={{ textAlign: 'right', color: PALETTE.textMuted }}>N/A (self)</span>
+                ) : showRsContext ? (
                   <span style={{ textAlign: 'right', color: rsNeutral ? '#7aa872' : '#c27878' }}>
                     {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding'}
                     {typeof asset.rs_vs_btc.change_pct === 'number' ? ` ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%` : ''}
                   </span>
-                </div>
-              )}
-              {/* GLI */}
-              {gli?.enabled && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
+                ) : (
+                  <span style={{ textAlign: 'right', color: PALETTE.textMuted }}>N/A</span>
+                )}
+              </div>
+              {/* GLI - show always */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>GLI</span>
+                {gli?.enabled ? (
                   <span style={{ textAlign: 'right', color: gliNeutral ? '#7aa872' : '#c27878' }}>{gliTrendLabel}</span>
-                </div>
-              )}
-              {/* Fear & Greed */}
-              {fearGreed?.enabled && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
+                ) : (
+                  <span style={{ textAlign: 'right', color: PALETTE.textMuted }}>Disabled</span>
+                )}
+              </div>
+              {/* Fear & Greed - show always */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>Fear & Greed</span>
+                {fearGreed?.enabled ? (
                   <span style={{ textAlign: 'right', color: fgNeutral ? '#7aa872' : '#c27878' }}>{fgClassification}{fgValue !== null ? ` (${fgValue})` : ''}</span>
-                </div>
-              )}
+                ) : (
+                  <span style={{ textAlign: 'right', color: PALETTE.textMuted }}>Disabled</span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1021,78 +1033,96 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                   </div>
                 )}
 
-                {/* GLI Analysis */}
-                {gli?.enabled && (
-                  <div>
-                    <div style={{
-                      fontSize: TYPE.small,
-                      fontFamily: 'ui-monospace, monospace',
-                      color: PALETTE.textMuted,
-                      marginBottom: SPACE.xs,
-                    }}>
-                      Global Liquidity Index
-                    </div>
-                    <div style={{
-                      fontSize: TYPE.small,
-                      color: PALETTE.textSecondary,
-                      fontFamily: 'Georgia, serif',
-                      lineHeight: TYPE.relaxed,
-                      maxWidth: '60ch',
-                    }}>
-                      {gliTrendLabel.charAt(0).toUpperCase() + gliTrendLabel.slice(1)}
-                      {gli.current && gli.offset_value && ` (current: $${(gli.current / 1000).toFixed(1)}T vs ${gli.offset_days}d ago: $${(gli.offset_value / 1000).toFixed(1)}T)`}
-                      {gli.source && ` · Source: ${gli.source}`}
-                    </div>
+                {/* GLI Analysis - show always */}
+                <div>
+                  <div style={{
+                    fontSize: TYPE.small,
+                    fontFamily: 'ui-monospace, monospace',
+                    color: PALETTE.textMuted,
+                    marginBottom: SPACE.xs,
+                  }}>
+                    Global Liquidity Index
                   </div>
-                )}
+                  <div style={{
+                    fontSize: TYPE.small,
+                    color: PALETTE.textSecondary,
+                    fontFamily: 'Georgia, serif',
+                    lineHeight: TYPE.relaxed,
+                    maxWidth: '60ch',
+                  }}>
+                    {gli?.enabled ? (
+                      <>
+                        {gliTrendLabel.charAt(0).toUpperCase() + gliTrendLabel.slice(1)}
+                        {gli.current && gli.offset_value && ` (current: $${(gli.current / 1000).toFixed(1)}T vs ${gli.offset_days}d ago: $${(gli.offset_value / 1000).toFixed(1)}T)`}
+                        {'. '}
+                        {gli.downtrend ? 'Filter active: liquidity contracting, downgrades accumulate signals.' : 'Filter neutral: liquidity expanding, no downgrade.'}
+                        {gli.source && ` Source: ${gli.source}.`}
+                      </>
+                    ) : (
+                      'Filter disabled in configuration.'
+                    )}
+                  </div>
+                </div>
 
-                {/* RS vs BTC Analysis */}
-                {showRsContext && (
-                  <div>
-                    <div style={{
-                      fontSize: TYPE.small,
-                      fontFamily: 'ui-monospace, monospace',
-                      color: PALETTE.textMuted,
-                      marginBottom: SPACE.xs,
-                    }}>
-                      Relative Strength vs BTC
-                    </div>
-                    <div style={{
-                      fontSize: TYPE.small,
-                      color: PALETTE.textSecondary,
-                      fontFamily: 'Georgia, serif',
-                      lineHeight: TYPE.relaxed,
-                    }}>
-                      {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding or outperforming'} BTC
-                      {typeof asset.rs_vs_btc.change_pct === 'number' && ` by ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%`}
-                      {` over ${rs?.lookback_days || 90} days`}
-                    </div>
+                {/* RS vs BTC Analysis - show for all assets */}
+                <div>
+                  <div style={{
+                    fontSize: TYPE.small,
+                    fontFamily: 'ui-monospace, monospace',
+                    color: PALETTE.textMuted,
+                    marginBottom: SPACE.xs,
+                  }}>
+                    Relative Strength vs BTC
                   </div>
-                )}
+                  <div style={{
+                    fontSize: TYPE.small,
+                    color: PALETTE.textSecondary,
+                    fontFamily: 'Georgia, serif',
+                    lineHeight: TYPE.relaxed,
+                  }}>
+                    {asset.symbol === 'BTC' ? (
+                      'Not applicable — cannot compare BTC to itself.'
+                    ) : showRsContext ? (
+                      <>
+                        {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding or outperforming'} BTC
+                        {typeof asset.rs_vs_btc.change_pct === 'number' && ` by ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%`}
+                        {` over ${rs?.lookback_days || 90} days`}
+                        {asset.rs_vs_btc.underperforming && '. Filter active: downgrades accumulate signals.'}
+                        {!asset.rs_vs_btc.underperforming && '. Filter neutral: no downgrade.'}
+                      </>
+                    ) : (
+                      'Data not available.'
+                    )}
+                  </div>
+                </div>
 
-                {/* Fear & Greed Analysis */}
-                {fearGreed?.enabled && (
-                  <div>
-                    <div style={{
-                      fontSize: TYPE.small,
-                      fontFamily: 'ui-monospace, monospace',
-                      color: PALETTE.textMuted,
-                      marginBottom: SPACE.xs,
-                    }}>
-                      Fear & Greed Index
-                    </div>
-                    <div style={{
-                      fontSize: TYPE.small,
-                      color: PALETTE.textSecondary,
-                      fontFamily: 'Georgia, serif',
-                      lineHeight: TYPE.relaxed,
-                    }}>
-                      {fgClassification}{fgValue !== null && ` (${fgValue}/100)`}
-                      {fgValue !== null && fgValue >= 70 && ' — signals extreme greed, downgrade active'}
-                      {fgValue !== null && fgValue < 70 && ' — neutral, no downgrade'}
-                    </div>
+                {/* Fear & Greed Analysis - show always */}
+                <div>
+                  <div style={{
+                    fontSize: TYPE.small,
+                    fontFamily: 'ui-monospace, monospace',
+                    color: PALETTE.textMuted,
+                    marginBottom: SPACE.xs,
+                  }}>
+                    Fear & Greed Index
                   </div>
-                )}
+                  <div style={{
+                    fontSize: TYPE.small,
+                    color: PALETTE.textSecondary,
+                    fontFamily: 'Georgia, serif',
+                    lineHeight: TYPE.relaxed,
+                  }}>
+                    {fearGreed?.enabled ? (
+                      <>
+                        {fgClassification}{fgValue !== null && ` (${fgValue}/100)`}
+                        {fgValue !== null && fgValue >= 70 && '. Filter active: extreme greed detected, downgrades accumulate signals.'}
+                        {fgValue !== null && fgValue < 70 && '. Filter neutral: sentiment not extreme, no downgrade.'}
+                      </>
+                    ) : (
+                      'Filter disabled in configuration.'
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>
