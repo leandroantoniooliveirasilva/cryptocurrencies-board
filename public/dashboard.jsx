@@ -598,6 +598,35 @@ function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
 
   let parts = [];
 
+  const getLeaderHoldMissingTriggers = () => {
+    if (trace.path !== 'leader_hold_default') return [];
+
+    const inputs = trace.inputs || {};
+    const missing = [];
+
+    if (!inputs.weekly_capitulation) {
+      missing.push('no weekly RSI capitulation');
+    }
+    if (!inputs.daily_capitulation) {
+      missing.push('no daily RSI capitulation');
+    }
+    if (!inputs.wyckoff_ready) {
+      const phase = inputs.wyckoff_phase || 'current phase';
+      missing.push(`Wyckoff setup not ready (${phase})`);
+    }
+    if (inputs.overbought_weekly) {
+      missing.push('weekly RSI is overbought');
+    }
+    if (typeof inputs.composite === 'number' && typeof inputs.accumulate_threshold === 'number' && inputs.composite < inputs.accumulate_threshold) {
+      missing.push(`composite below accumulate threshold (${inputs.composite} < ${inputs.accumulate_threshold})`);
+    }
+    if (typeof inputs.delta_7d === 'number' && inputs.delta_7d < 0) {
+      missing.push(`7d trend is negative (${inputs.delta_7d})`);
+    }
+
+    return missing;
+  };
+
   // Tier
   parts.push(`${tier.charAt(0).toUpperCase() + tier.slice(1)} tier`);
 
@@ -633,6 +662,13 @@ function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
       parts.push(`macro filters active (${downgradeDesc.join(' and ')})`);
     } else if (downgradeDesc.length > 0) {
       parts.push(`${downgradeDesc.join(' and ')} filters active`);
+    }
+  }
+
+  if (tier === 'leader' && trace.final_action === 'hold') {
+    const missingTriggers = getLeaderHoldMissingTriggers();
+    if (missingTriggers.length > 0) {
+      parts.push(`hold because accumulation triggers are not active (${missingTriggers.join(', ')})`);
     }
   }
 
