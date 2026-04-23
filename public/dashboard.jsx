@@ -1065,7 +1065,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                     {gli?.enabled ? (
                       <>
                         {gliTrendLabel.charAt(0).toUpperCase() + gliTrendLabel.slice(1)}
-                        {gli.current && gli.offset_value && ` (current: $${(gli.current / 1000).toFixed(1)}T vs ${gli.offset_days}d ago: $${(gli.offset_value / 1000).toFixed(1)}T)`}
+                        {gli.current && gli.offset_value && ` (current: $${gli.current.toFixed(1)}T vs ${gli.offset_days}d ago: $${gli.offset_value.toFixed(1)}T)`}
                         {'. '}
                         {gli.downtrend ? 'Filter active: liquidity contracting, downgrades accumulate signals.' : 'Filter neutral: liquidity expanding, no downgrade.'}
                         {gli.source && ` Source: ${gli.source}.`}
