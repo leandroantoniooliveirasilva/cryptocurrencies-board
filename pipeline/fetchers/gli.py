@@ -498,15 +498,57 @@ def _try_tradingview(offset_days: int) -> Optional[GLIData]:
         }
 
         resp = requests.post(url, json=payload, headers=headers, timeout=10)
-        if resp.status_code == 200:
-            data = resp.json()
-            if data.get('data'):
-                row = data['data'][0]
-                if row.get('d'):
-                    current = row['d'][0]
-                    logger.info(f'GLI from TradingView: current={current}')
+        if resp.status_code != 200:
+            return None
 
-        return None
+        data = resp.json()
+        if not data.get('data'):
+            return None
+
+        row = data['data'][0]
+        values = row.get('d') or []
+        if not values:
+            return None
+
+        current = values[0]
+        if not isinstance(current, (int, float)):
+            return None
+
+        # TradingView scanner also returns percent change in the selected timeframe.
+        # Reconstruct an offset value so the filter can compare today vs offset window.
+        # If change is unavailable, we cannot derive an offset safely.
+        change_pct = values[1] if len(values) > 1 else None
+        offset_value = None
+        if isinstance(change_pct, (int, float)) and change_pct > -100:
+            denominator = 1 + (change_pct / 100.0)
+            if denominator != 0:
+                offset_value = current / denominator
+        if offset_value is None:
+            return None
+
+        rounded_current = round(float(current), 3)
+        rounded_offset = round(float(offset_value), 3)
+
+        result = GLIData(
+            current=rounded_current,
+            offset_value=rounded_offset,
+            offset_days=offset_days,
+            downtrend=rounded_current < rounded_offset,
+            source='tradingview',
+            fetched_at=datetime.now(timezone.utc).isoformat(),
+            current_obs_date=None,
+            offset_obs_date=None,
+            trend='unknown',
+            component_coverage=1.0,
+            components_used=['tradingview_global_liquidity'],
+            components_missing=[],
+        )
+        result['trend'] = get_gli_trend_label(result)
+        logger.info(
+            f"GLI from TradingView: current={result['current']}, "
+            f"offset={result['offset_value']} ({offset_days}d inferred)"
+        )
+        return result
 
     except Exception as e:
         logger.debug(f'TradingView GLI fetch failed: {e}')

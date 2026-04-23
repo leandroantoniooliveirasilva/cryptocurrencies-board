@@ -13,6 +13,7 @@ dependencies = [
     "pyyaml>=6.0",
     "numpy>=1.26",
     "python-dateutil>=2.8",
+    "python-dotenv",
 ]
 
 [tool.setuptools.packages.find]

@@ -571,9 +571,29 @@ const DOWNGRADE_REASON_LABELS = {
 function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
   if (!trace) return null;
 
-  const hasDowngrades = (macroDowngrades > 0) || (wyckoffDowngrades > 0);
   const downgrades = trace.downgrades || {};
-  const reasons = downgrades.reasons || [];
+  const downgradeReasons = Array.isArray(downgrades.reasons) ? downgrades.reasons : [];
+  const inputMacroReasons = Array.isArray(trace.inputs?.macro_reasons) ? trace.inputs.macro_reasons : [];
+  const inputWyckoffReasons = Array.isArray(trace.inputs?.wyckoff_reasons) ? trace.inputs.wyckoff_reasons : [];
+  const reasons = [...downgradeReasons, ...inputMacroReasons, ...inputWyckoffReasons];
+
+  const inferredBaseAction =
+    (!trace.base_action && trace.final_action === 'hold' && tier === 'leader' && trace.inputs?.macro_downgrade_active)
+      ? 'accumulate'
+      : null;
+  const baseAction = trace.base_action || inferredBaseAction;
+
+  const hasActionDowngrade = Boolean(
+    baseAction &&
+    trace.final_action &&
+    baseAction !== trace.final_action
+  );
+  const hasReasonDowngrade = reasons.length > 0 || trace.inputs?.macro_downgrade_active;
+  const hasDowngrades =
+    (macroDowngrades > 0) ||
+    (wyckoffDowngrades > 0) ||
+    hasActionDowngrade ||
+    hasReasonDowngrade;
 
   let parts = [];
 
@@ -585,25 +605,31 @@ function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
     parts.push('no downgrades active');
   } else {
     const downgradeDesc = [];
-    if (macroDowngrades > 0) {
-      const macroReasons = reasons.filter(r => r.startsWith('macro:'));
-      if (macroReasons.length > 0) {
-        const readableReasons = macroReasons.map(r => DOWNGRADE_REASON_LABELS[r] || r.replace('macro:', ''));
+    const macroReasons = reasons.filter(r => r.startsWith('macro:'));
+    if (macroDowngrades > 0 || macroReasons.length > 0) {
+      const readableReasons = macroReasons.map(r => DOWNGRADE_REASON_LABELS[r] || r.replace('macro:', ''));
+      if (readableReasons.length > 0) {
         downgradeDesc.push(`macro (${readableReasons.join(', ')})`);
+      } else if (macroDowngrades > 0) {
+        downgradeDesc.push('macro');
       }
     }
-    if (wyckoffDowngrades > 0) {
-      const wyckReasons = reasons.filter(r => r.startsWith('wyckoff:'));
-      if (wyckReasons.length > 0) {
-        const readableReasons = wyckReasons.map(r => DOWNGRADE_REASON_LABELS[r] || r.replace('wyckoff:', ''));
+    const wyckReasons = reasons.filter(r => r.startsWith('wyckoff:'));
+    if (wyckoffDowngrades > 0 || wyckReasons.length > 0) {
+      const readableReasons = wyckReasons.map(r => DOWNGRADE_REASON_LABELS[r] || r.replace('wyckoff:', ''));
+      if (readableReasons.length > 0) {
         downgradeDesc.push(`Wyckoff (${readableReasons.join(', ')})`);
+      } else if (wyckoffDowngrades > 0) {
+        downgradeDesc.push('Wyckoff');
       }
     }
-    if (trace.base_action && trace.final_action && trace.base_action !== trace.final_action) {
-      parts.push(`downgraded from ${trace.base_action} to ${trace.final_action}`);
+    if (hasActionDowngrade) {
+      parts.push(`downgraded from ${baseAction} to ${trace.final_action}`);
       if (downgradeDesc.length > 0) {
         parts.push(`due to ${downgradeDesc.join(' and ')}`);
       }
+    } else if (trace.inputs?.macro_downgrade_active && downgradeDesc.length > 0) {
+      parts.push(`macro filters active (${downgradeDesc.join(' and ')})`);
     } else if (downgradeDesc.length > 0) {
       parts.push(`${downgradeDesc.join(' and ')} filters active`);
     }
@@ -1022,7 +1048,10 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                 )}
 
                 {/* RSI Analysis */}
-                {(asset.rsi_daily !== undefined || asset.rsi_weekly !== undefined) && (
+                {(
+                  (typeof asset.rsi_daily === 'number' && !isNaN(asset.rsi_daily)) ||
+                  (typeof asset.rsi_weekly === 'number' && !isNaN(asset.rsi_weekly))
+                ) && (
                   <div>
                     <div style={{
                       fontSize: TYPE.small,
@@ -1038,9 +1067,9 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                       fontFamily: 'Georgia, serif',
                       lineHeight: TYPE.relaxed,
                     }}>
-                      {asset.rsi_daily !== undefined && `Daily: ${asset.rsi_daily.toFixed(1)}`}
-                      {asset.rsi_daily !== undefined && asset.rsi_weekly !== undefined && ' · '}
-                      {asset.rsi_weekly !== undefined && `Weekly: ${asset.rsi_weekly.toFixed(1)}`}
+                      {(typeof asset.rsi_daily === 'number' && !isNaN(asset.rsi_daily)) && `Daily: ${asset.rsi_daily.toFixed(1)}`}
+                      {(typeof asset.rsi_daily === 'number' && !isNaN(asset.rsi_daily)) && (typeof asset.rsi_weekly === 'number' && !isNaN(asset.rsi_weekly)) && ' · '}
+                      {(typeof asset.rsi_weekly === 'number' && !isNaN(asset.rsi_weekly)) && `Weekly: ${asset.rsi_weekly.toFixed(1)}`}
                     </div>
                   </div>
                 )}
