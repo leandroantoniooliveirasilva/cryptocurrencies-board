@@ -575,7 +575,8 @@ function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
   const downgradeReasons = Array.isArray(downgrades.reasons) ? downgrades.reasons : [];
   const inputMacroReasons = Array.isArray(trace.inputs?.macro_reasons) ? trace.inputs.macro_reasons : [];
   const inputWyckoffReasons = Array.isArray(trace.inputs?.wyckoff_reasons) ? trace.inputs.wyckoff_reasons : [];
-  const reasons = [...downgradeReasons, ...inputMacroReasons, ...inputWyckoffReasons];
+  // Combine + de-duplicate while preserving order to avoid repeated copy in UI.
+  const reasons = [...new Set([...downgradeReasons, ...inputMacroReasons, ...inputWyckoffReasons])];
 
   const inferredBaseAction =
     (!trace.base_action && trace.final_action === 'hold' && tier === 'leader' && trace.inputs?.macro_downgrade_active)
