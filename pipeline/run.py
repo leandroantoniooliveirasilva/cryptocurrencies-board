@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """
-Weekly full scoring pipeline - all dimensions + Wyckoff phase detection.
+Weekly full scoring pipeline — qualitative dimensions, composite, and tiers.
 
 This runs the complete scoring pipeline including:
 - Qualitative scores (regulatory, institutional) via Claude API
 - Revenue scores from DefiLlama
 - Supply/on-chain analysis
-- Wyckoff phase detection from price structure
 - RSI calculation (daily/weekly)
 - Macro filters (GLI, RS vs BTC, Fear & Greed)
 
-Run weekly (Sunday 00:00 UTC) via cron.
-For daily indicator updates, use: python -m pipeline.indicators
+Wyckoff phase is not a weighted dimension; it is refreshed on the daily
+indicators job (``python -m pipeline.indicators``) and used only for action filters.
+
+Scheduled via launchd: weekly dimension pass (Sunday 12:00 UTC, ``--dimensions-only``),
+daily technicals via ``python -m pipeline.indicators`` (12:00 UTC).
 
 Usage:
     python -m pipeline.run
+    python -m pipeline.run --dimensions-only
     python -m pipeline.run --dry-run
 """
 
@@ -31,6 +34,7 @@ import sqlite3
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 import yaml
 
@@ -43,7 +47,7 @@ from pipeline.category import (
 )
 from pipeline.config import config
 from pipeline.fetchers import coingecko, defillama, fear_greed, gli, qualitative, relative_strength, supply
-from pipeline.scoring import actions, composite, rsi, wyckoff
+from pipeline.scoring import actions, composite, rsi
 from pipeline.storage import migrations
 
 # Setup logging
@@ -58,6 +62,73 @@ REPO_ROOT = Path(__file__).parent.parent
 ASSETS_FILE = REPO_ROOT / "pipeline" / "assets.yaml"
 DB_PATH = REPO_ROOT / "pipeline" / "storage" / "history.sqlite"
 PUBLIC_DIR = REPO_ROOT / "public"
+LATEST_JSON = PUBLIC_DIR / "latest.json"
+
+
+class DimensionScoringError(Exception):
+    """Raised when a required weighted dimension is missing (strict scoring, no renormalisation)."""
+
+    def __init__(self, errors: list[str]):
+        self.errors = errors
+        super().__init__(', '.join(errors))
+
+
+def _collect_dimension_errors(
+    scores: dict,
+    asset_category: str,
+    fee_model: Optional[str],
+    weights_profile: dict[str, float],
+) -> list[str]:
+    """Return human-readable errors for any required weighted dimension that is missing."""
+    errors: list[str] = []
+    for dim, weight in weights_profile.items():
+        if weight is None or float(weight) <= 0:
+            continue
+        if dim == 'value_capture' and not should_score_value_capture(weights_profile, fee_model):
+            continue
+        if dim == 'adoption_activity' and not should_score_adoption_activity(weights_profile):
+            continue
+        val = scores.get(dim)
+        if val is None or (isinstance(val, float) and val != val):
+            errors.append(f'{dim}:missing')
+    return errors
+
+
+def _load_macro_from_latest_json() -> tuple[dict, dict, dict]:
+    """Reuse GLI / Fear&Greed / market_context from last published snapshot when running dimensions-only."""
+    defaults_gli = {
+        'enabled': config.gli.enabled,
+        'downtrend': False,
+        'trend': 'unknown',
+        'current': None,
+        'offset_value': None,
+        'offset_days': config.gli.offset_days,
+        'source': 'unchanged',
+        'current_obs_date': None,
+        'offset_obs_date': None,
+        'component_coverage': None,
+        'components_used': [],
+        'components_missing': [],
+    }
+    defaults_fg = {
+        'enabled': config.fear_greed.enabled,
+        'value': None,
+        'classification': None,
+        'threshold': config.fear_greed.threshold,
+        'greedy': False,
+    }
+    defaults_mc: dict = {'btc_dominance': None, 'stablecoin_mcap_billions': None, 'total_mcap_trillions': None}
+    if not LATEST_JSON.exists():
+        return defaults_gli, defaults_fg, defaults_mc
+    try:
+        with open(LATEST_JSON) as f:
+            prev = json.load(f)
+        gli = prev.get('gli') or defaults_gli
+        fg = prev.get('fear_greed') or defaults_fg
+        mc = prev.get('market_context') or defaults_mc
+        return gli, fg, mc
+    except (json.JSONDecodeError, OSError):
+        return defaults_gli, defaults_fg, defaults_mc
 
 
 def _aggregate_weekly_prices(
@@ -138,7 +209,14 @@ def compute_tier(composite_score: int) -> str:
         return "observation"
 
 
-def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool = False) -> dict:
+def build_asset(
+    entry: dict,
+    conn,
+    gli_downtrend: bool = False,
+    fg_greedy: bool = False,
+    *,
+    dimensions_only: bool = False,
+) -> dict:
     """
     Build complete asset data from config entry.
     Tier is computed dynamically from composite score.
@@ -148,6 +226,7 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         conn: Database connection
         gli_downtrend: True if Global Liquidity Index is contracting
         fg_greedy: True if Fear & Greed Index >= threshold (market greed)
+        dimensions_only: Weekly dimension pass — no price/RSI/RS/action; action left null for the daily job.
 
     Returns:
         Complete asset dict for dashboard
@@ -167,52 +246,54 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     # Fetch market data
     defi_data = defillama.fetch_defillama_data(defillama_slug)
 
-    # Fetch daily prices for RSI from DefiLlama (free, no rate limits)
-    # Days configured in config.yaml to ensure enough weekly data points
     data_cfg = config.data
-    dated_prices = (
-        defillama.fetch_daily_prices_with_timestamps(
-            coingecko_id, days=data_cfg.price_history_days
+    if dimensions_only:
+        dated_prices = None
+        dated_daily: list[tuple[date, float]] = []
+        daily_prices: list[float] = []
+        weekly_prices: list[float] = []
+        rsi_daily = None
+        rsi_weekly = None
+        rsi_weekly_4w_ago = None
+    else:
+        # Fetch daily prices for RSI from DefiLlama (free, no rate limits)
+        dated_prices = (
+            defillama.fetch_daily_prices_with_timestamps(
+                coingecko_id, days=data_cfg.price_history_days
+            )
+            if coingecko_id
+            else None
         )
-        if coingecko_id
-        else None
-    )
-    # Convert to [(date, price)] using the real UTC timestamp from the API
-    # so that ISO-week bucketing stays accurate even if the feed lags a day.
-    dated_daily: list[tuple[date, float]] = []
-    if dated_prices:
-        for ts, price in dated_prices:
-            price_date = datetime.fromtimestamp(ts, tz=timezone.utc).date()
-            dated_daily.append((price_date, price))
-    daily_prices = [price for _d, price in dated_daily]
+        dated_daily = []
+        if dated_prices:
+            for ts, price in dated_prices:
+                price_date = datetime.fromtimestamp(ts, tz=timezone.utc).date()
+                dated_daily.append((price_date, price))
+        daily_prices = [price for _d, price in dated_daily]
+        weekly_prices = _aggregate_weekly_prices(dated_daily)
 
-    # For weekly RSI, group by ISO week and take last price of each week
-    # This handles missing days and data gaps correctly
-    weekly_prices = _aggregate_weekly_prices(dated_daily)
+        rsi_period = config.rsi.period
+        rsi_daily = rsi.compute_rsi(daily_prices, rsi_period) if len(daily_prices) >= data_cfg.min_daily_points else None
+        rsi_weekly = rsi.compute_rsi(weekly_prices, rsi_period) if len(weekly_prices) >= data_cfg.min_weekly_points else None
 
-    rsi_period = config.rsi.period
-    rsi_daily = rsi.compute_rsi(daily_prices, rsi_period) if len(daily_prices) >= data_cfg.min_daily_points else None
-    rsi_weekly = rsi.compute_rsi(weekly_prices, rsi_period) if len(weekly_prices) >= data_cfg.min_weekly_points else None
+        rsi_weekly_4w_ago = None
+        if len(weekly_prices) >= data_cfg.min_weekly_points + 4:
+            weekly_prices_4w_ago = weekly_prices[:-4]
+            rsi_weekly_4w_ago = rsi.compute_rsi(weekly_prices_4w_ago, rsi_period)
 
-    # Calculate weekly RSI from 4 weeks ago for slope check
-    # This helps detect "first leg down" scenarios where weekly RSI is falling from elevated levels
-    rsi_weekly_4w_ago = None
-    if len(weekly_prices) >= data_cfg.min_weekly_points + 4:
-        # Exclude the last 4 weekly prices to get RSI from ~4 weeks ago
-        weekly_prices_4w_ago = weekly_prices[:-4]
-        rsi_weekly_4w_ago = rsi.compute_rsi(weekly_prices_4w_ago, rsi_period)
-
-    # Detect Wyckoff phase from price structure (or use manual override)
+    # Wyckoff: not part of composite weights; daily job updates phase from price structure.
+    # Weekly run carries forward last persisted phase (or YAML override) so actions stay coherent.
     if wyckoff_override:
         wyckoff_phase = wyckoff_override
-        wyckoff_score = wyckoff.get_wyckoff_score(wyckoff_phase)
-        wyckoff_rationale = f"Manual override: {wyckoff_override}"
-    elif len(daily_prices) >= data_cfg.min_wyckoff_days:
-        wyckoff_phase, wyckoff_score, wyckoff_rationale = wyckoff.detect_wyckoff_phase(daily_prices)
+        wyckoff_rationale = f'Manual override: {wyckoff_override}'
     else:
-        wyckoff_phase = "Unknown"
-        wyckoff_score = None  # Insufficient data - exclude from composite
-        wyckoff_rationale = "Insufficient price data"
+        persisted = migrations.get_last_wyckoff_phase(conn, symbol)
+        wyckoff_phase = persisted if persisted else 'Unknown'
+        wyckoff_rationale = (
+            'Wyckoff phase is updated on the daily indicators run (price structure).'
+            if wyckoff_phase == 'Unknown'
+            else 'Wyckoff phase carried from last snapshot until the next daily indicators refresh.'
+        )
 
     cache_writes: list[tuple[str, str, int, str]] = []
 
@@ -307,16 +388,17 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     supply_score = supply_data["score"]
     supply_rationale = supply_data["rationale"]
 
-    # Wyckoff score already computed above from price data or manual override
-
     scores = {
         "institutional": institutional_data["score"],
         "adoption_activity": adoption_score,
         "value_capture": value_capture_score,
         "regulatory": regulatory_data["score"],
         "supply": supply_score,
-        "wyckoff": wyckoff_score,
     }
+
+    dim_errors = _collect_dimension_errors(scores, asset_category, fee_model, weights_profile)
+    if dim_errors:
+        raise DimensionScoringError(dim_errors)
 
     composite_score, missing_dimensions = composite.compute_composite(
         scores, asset_category=asset_category
@@ -348,31 +430,37 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
     else:
         trend_30d = [composite_score]
 
-    # Calculate Relative Strength vs BTC
-    rs_data = relative_strength.compute_relative_strength(dated_prices, symbol)
-    rs_underperforming = rs_data["underperforming"]
-
-    # Derive action (with GLI macro filter, RS filter, and weekly RSI slope check)
-    # Use explicit None check: composite can legitimately be 0 for an asset
-    # whose every dimension collapses, and `or` would silently replace it.
     effective_last_week = (
         composite_last_week if composite_last_week is not None else composite_score
     )
-    action, decision_trace = actions.derive_action(
-        composite=composite_score,
-        composite_last_week=effective_last_week,
-        tier=tier,
-        wyckoff_phase=wyckoff_phase,
-        trend_7d=trend_7d,
-        trend_30d=trend_30d,
-        rsi_daily=rsi_daily,
-        rsi_weekly=rsi_weekly,
-        rsi_weekly_4w_ago=rsi_weekly_4w_ago,
-        gli_downtrend=gli_downtrend,
-        rs_underperforming=rs_underperforming,
-        fg_greedy=fg_greedy,
-        weekly_averages=weekly_averages,
-    )
+
+    if dimensions_only:
+        rs_data = {
+            'underperforming': False,
+            'rs_change_pct': None,
+            'current_rs': None,
+            'lookback_rs': None,
+        }
+        action = None
+        decision_trace = None
+    else:
+        rs_data = relative_strength.compute_relative_strength(dated_prices, symbol)
+        rs_underperforming = rs_data["underperforming"]
+        action, decision_trace = actions.derive_action(
+            composite=composite_score,
+            composite_last_week=effective_last_week,
+            tier=tier,
+            wyckoff_phase=wyckoff_phase,
+            trend_7d=trend_7d,
+            trend_30d=trend_30d,
+            rsi_daily=rsi_daily,
+            rsi_weekly=rsi_weekly,
+            rsi_weekly_4w_ago=rsi_weekly_4w_ago,
+            gli_downtrend=gli_downtrend,
+            rs_underperforming=rs_underperforming,
+            fg_greedy=fg_greedy,
+            weekly_averages=weekly_averages,
+        )
 
     # Get action metadata
     label_changed_days_ago = migrations.get_label_changed_days_ago(conn, symbol)
@@ -427,6 +515,8 @@ def build_asset(entry: dict, conn, gli_downtrend: bool = False, fg_greedy: bool 
         "composite": composite_score,
         "composite_last_week": effective_last_week,
         "wyckoff_phase": wyckoff_phase,
+        "wyckoff_position_score": None,
+        "wyckoff_signal": None,
         "trend": trend_7d[-7:],  # Last 7 days
         "trend_30d": trend_30d[-30:],  # Last 30 days
         "rsi_daily": rsi_daily,
@@ -460,16 +550,49 @@ def _get_max_workers(default_workers: int = 4) -> int:
         return default_workers
 
 
-def _build_asset_worker(entry: dict, gli_downtrend: bool, fg_greedy: bool) -> dict:
-    symbol = entry.get("symbol", "unknown")
+def _build_asset_worker(
+    entry: dict,
+    gli_downtrend: bool,
+    fg_greedy: bool,
+    *,
+    dimensions_only: bool = False,
+) -> dict:
+    symbol = entry.get('symbol', 'unknown')
+    name = entry.get('name', '')
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute('PRAGMA busy_timeout = 60000')
     try:
-        asset = build_asset(entry, conn, gli_downtrend=gli_downtrend, fg_greedy=fg_greedy)
-        return {"symbol": symbol, "asset": asset, "error": None}
+        asset = build_asset(
+            entry,
+            conn,
+            gli_downtrend=gli_downtrend,
+            fg_greedy=fg_greedy,
+            dimensions_only=dimensions_only,
+        )
+        return {
+            'symbol': symbol,
+            'name': name,
+            'asset': asset,
+            'error': None,
+            'dimension_errors': None,
+        }
+    except DimensionScoringError as e:
+        return {
+            'symbol': symbol,
+            'name': name,
+            'asset': None,
+            'error': None,
+            'dimension_errors': e.errors,
+        }
     except Exception as e:
-        return {"symbol": symbol, "asset": None, "error": str(e)}
+        return {
+            'symbol': symbol,
+            'name': name,
+            'asset': None,
+            'error': str(e),
+            'dimension_errors': None,
+        }
     finally:
         conn.close()
 
@@ -588,7 +711,7 @@ def _build_detailed_reasoning(
     regulatory: dict,
     institutional: dict,
     wyckoff_phase: str,
-    action: str,
+    action: Optional[str],
     rsi_daily,  # float or None
     rsi_weekly,  # float or None
     rs_data: dict = None,  # Relative strength vs BTC data
@@ -737,25 +860,29 @@ def _build_detailed_reasoning(
     # 8. Action reasoning
     lines.append("")
     lines.append("CURRENT ACTION:")
-    # Build stand-aside reason based on actual trigger (distribution vs sharp decline)
-    if action == 'stand-aside' and is_distribution:
-        stand_aside_reason = "STAND ASIDE is active due to distribution phase detection. Capital preservation takes priority."
+    if action is None:
+        lines.append(
+            "Pending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action."
+        )
     else:
-        stand_aside_reason = "STAND ASIDE is active due to sharp composite decline. This may be a temporary pullback, but capital preservation takes priority until structure stabilizes."
+        if action == 'stand-aside' and is_distribution:
+            stand_aside_reason = "STAND ASIDE is active due to distribution phase detection. Capital preservation takes priority."
+        else:
+            stand_aside_reason = "STAND ASIDE is active due to sharp composite decline. This may be a temporary pullback, but capital preservation takes priority until structure stabilizes."
 
-    action_reasoning = {
-        "strong-accumulate": f"STRONG ACCUMULATE is firing because daily RSI shows a short-term oversold flush while weekly RSI and composite score remain healthy. This dislocation within an otherwise solid structure represents a high-conviction entry window.",
-        "accumulate": f"ACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.",
-        "promote": f"PROMOTE CANDIDATE status signals this Runner-up is demonstrating Leader-quality metrics. Manual review recommended for potential tier promotion.",
-        "hold": f"HOLD status indicates the position is active with no current add or trim signals. Current allocation is appropriate—patience is the strategy.",
-        "await": f"AWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.",
-        "observe": f"OBSERVE status reflects Observation-tier placement—tracked for research, not positioned. No action required.",
-        "stand-aside": stand_aside_reason,
-    }
-    if decision_trace and decision_trace.get("summary"):
-        lines.append(decision_trace["summary"])
-    else:
-        lines.append(action_reasoning.get(action, f"Current action: {action}"))
+        action_reasoning = {
+            "strong-accumulate": f"STRONG ACCUMULATE is firing because daily RSI shows a short-term oversold flush while weekly RSI and composite score remain healthy. This dislocation within an otherwise solid structure represents a high-conviction entry window.",
+            "accumulate": f"ACCUMULATE status indicates this Leader-tier asset meets tranche-building criteria: composite above threshold, favorable Wyckoff phase, and RSI not overbought. Systematic position building is appropriate.",
+            "promote": f"PROMOTE CANDIDATE status signals this Runner-up is demonstrating Leader-quality metrics. Manual review recommended for potential tier promotion.",
+            "hold": f"HOLD status indicates the position is active with no current add or trim signals. Current allocation is appropriate—patience is the strategy.",
+            "await": f"AWAIT status means signals are building but not yet confirmed. The asset shows promise but hasn't crossed activation thresholds.",
+            "observe": f"OBSERVE status reflects Observation-tier placement—tracked for research, not positioned. No action required.",
+            "stand-aside": stand_aside_reason,
+        }
+        if decision_trace and decision_trace.get("summary"):
+            lines.append(decision_trace["summary"])
+        else:
+            lines.append(action_reasoning.get(action, f"Current action: {action}"))
 
     if decision_trace:
         lines.append("")
@@ -851,13 +978,21 @@ def write_output(output: dict, dry_run: bool = False) -> None:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run weekly scoring pipeline")
-    parser.add_argument("--dry-run", action="store_true", help="Don't write output files")
+    parser = argparse.ArgumentParser(description='Run weekly scoring pipeline')
+    parser.add_argument('--dry-run', action='store_true', help="Don't write output files")
+    parser.add_argument(
+        '--dimensions-only',
+        action='store_true',
+        help='Weighted dimensions + composite/tier only; skip RSI/RS/action; reuse macro from last latest.json.',
+    )
     args = parser.parse_args()
 
-    logger.info("=" * 60)
-    logger.info("Weekly full scoring pipeline")
-    logger.info("=" * 60)
+    logger.info('=' * 60)
+    if args.dimensions_only:
+        logger.info('Weekly dimension scoring (strict dimensions, composite/tier)')
+    else:
+        logger.info('Weekly full scoring pipeline')
+    logger.info('=' * 60)
 
     # Load asset definitions (flat list - tiers computed dynamically)
     assets_config = load_config()
@@ -871,35 +1006,48 @@ def main():
         )
     logger.info(f"Loaded {len(assets_list)} assets from config")
 
-    # Fetch Global Liquidity Index status (macro filter)
-    gli_data = gli.fetch_gli_data()
-    gli_downtrend = gli_data["downtrend"]
-    if gli_data["source"] != "fallback":
-        gli_trend = gli.get_gli_trend_label(gli_data)
-        logger.info(f"GLI status: {gli_trend} (source: {gli_data['source']})")
+    if args.dimensions_only:
+        gli_data, fg_data, mc = _load_macro_from_latest_json()
+        gli_downtrend = bool(gli_data.get('downtrend'))
+        fg_greedy = bool(fg_data.get('greedy'))
+        logger.info('Reused GLI / Fear & Greed / market_context from previous latest.json')
+        stablecoin_mcap = None
+        global_market = {
+            'btc_dominance': mc.get('btc_dominance'),
+            'total_mcap': (mc.get('total_mcap_trillions') or 0) * 1e12,
+        }
     else:
-        logger.info("GLI data unavailable - macro filter disabled")
+        gli_data = gli.fetch_gli_data()
+        gli_downtrend = gli_data['downtrend']
+        if gli_data['source'] != 'fallback':
+            gli_trend = gli.get_gli_trend_label(gli_data)
+            logger.info(f"GLI status: {gli_trend} (source: {gli_data['source']})")
+        else:
+            logger.info('GLI data unavailable - macro filter disabled')
 
-    # Fetch Fear & Greed Index (sentiment filter)
-    fg_data = fear_greed.fetch_fear_greed()
-    fg_greedy = fg_data.get("greedy", False)
-    if fg_data.get("enabled") and fg_data.get("value") is not None:
-        logger.info(f"Fear & Greed: {fg_data['value']} ({fg_data['classification']}) - {'GREEDY' if fg_greedy else 'neutral'}")
-    else:
-        logger.info("Fear & Greed data unavailable - sentiment filter disabled")
+        fg_data = fear_greed.fetch_fear_greed()
+        fg_greedy = fg_data.get('greedy', False)
+        if fg_data.get('enabled') and fg_data.get('value') is not None:
+            logger.info(
+                f"Fear & Greed: {fg_data['value']} ({fg_data['classification']}) - "
+                f"{'GREEDY' if fg_greedy else 'neutral'}"
+            )
+        else:
+            logger.info('Fear & Greed data unavailable - sentiment filter disabled')
 
-    # Fetch global market data (BTC dominance, stablecoin supply)
-    global_market = coingecko.fetch_global_market_data()
-    stablecoin_mcap = coingecko.fetch_stablecoin_mcap()
-    if global_market.get("btc_dominance"):
-        logger.info(f"BTC dominance: {global_market['btc_dominance']}%")
-    if stablecoin_mcap:
-        logger.info(f"Stablecoin market cap: ${stablecoin_mcap/1e9:.1f}B")
+        global_market = coingecko.fetch_global_market_data()
+        stablecoin_mcap = coingecko.fetch_stablecoin_mcap()
+        if global_market.get('btc_dominance'):
+            logger.info(f"BTC dominance: {global_market['btc_dominance']}%")
+        if stablecoin_mcap:
+            logger.info(f"Stablecoin market cap: ${stablecoin_mcap/1e9:.1f}B")
 
-    # Clear RS cache for fresh BTC price data
-    relative_strength.clear_cache()
-    if config.rs.enabled:
-        logger.info(f"RS filter enabled: {config.rs.lookback_days}d lookback, {config.rs.underperformance_threshold*100:.0f}% threshold")
+        relative_strength.clear_cache()
+        if config.rs.enabled:
+            logger.info(
+                f"RS filter enabled: {config.rs.lookback_days}d lookback, "
+                f'{config.rs.underperformance_threshold*100:.0f}% threshold'
+            )
 
     # Initialize database
     conn = migrations.init_db(DB_PATH)
@@ -945,12 +1093,20 @@ def main():
             "threshold": fg_data.get("threshold", 70),
             "greedy": fg_greedy,
         },
-        "market_context": {
-            "btc_dominance": global_market.get("btc_dominance"),
-            "stablecoin_mcap_billions": round(stablecoin_mcap / 1e9, 1) if stablecoin_mcap else None,
-            "total_mcap_trillions": round(global_market.get("total_mcap", 0) / 1e12, 2) if global_market.get("total_mcap") else None,
-        },
-        "assets": [],
+        "market_context": (
+            mc
+            if args.dimensions_only
+            else {
+                'btc_dominance': global_market.get('btc_dominance'),
+                'stablecoin_mcap_billions': round(stablecoin_mcap / 1e9, 1) if stablecoin_mcap else None,
+                'total_mcap_trillions': round(global_market.get('total_mcap', 0) / 1e12, 2)
+                if global_market.get('total_mcap')
+                else None,
+            }
+        ),
+        'run_mode': 'dimensions_only' if args.dimensions_only else 'full',
+        'assets': [],
+        'scoring_errors': [],
     }
 
     # Process all assets (tiers computed dynamically from composite scores)
@@ -959,42 +1115,81 @@ def main():
     logger.info(f"Parallel workers: {worker_count}")
 
     processed_assets: list[dict] = []
+    scoring_errors: list[dict] = []
     if worker_count == 1:
         for entry in assets_list:
-            result = _build_asset_worker(entry, gli_downtrend=gli_downtrend, fg_greedy=fg_greedy)
-            if result["error"]:
+            result = _build_asset_worker(
+                entry,
+                gli_downtrend=gli_downtrend,
+                fg_greedy=fg_greedy,
+                dimensions_only=args.dimensions_only,
+            )
+            if result.get('dimension_errors'):
+                scoring_errors.append({
+                    'symbol': result['symbol'],
+                    'name': result.get('name', ''),
+                    'errors': result['dimension_errors'],
+                })
+                logger.error(
+                    f"  Dimension scoring failed for {result['symbol']}: {result['dimension_errors']}"
+                )
+                continue
+            if result['error']:
                 logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
                 continue
-            processed_assets.append(result["asset"])
+            processed_assets.append(result['asset'])
     else:
         with ThreadPoolExecutor(max_workers=worker_count) as executor:
             futures = {
-                executor.submit(_build_asset_worker, entry, gli_downtrend, fg_greedy): entry
+                executor.submit(
+                    _build_asset_worker,
+                    entry,
+                    gli_downtrend,
+                    fg_greedy,
+                    dimensions_only=args.dimensions_only,
+                ): entry
                 for entry in assets_list
             }
             for future in as_completed(futures):
                 result = future.result()
-                if result["error"]:
+                if result.get('dimension_errors'):
+                    scoring_errors.append({
+                        'symbol': result['symbol'],
+                        'name': result.get('name', ''),
+                        'errors': result['dimension_errors'],
+                    })
+                    logger.error(
+                        f"  Dimension scoring failed for {result['symbol']}: {result['dimension_errors']}"
+                    )
+                    continue
+                if result['error']:
                     logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
                     continue
-                processed_assets.append(result["asset"])
+                processed_assets.append(result['asset'])
 
     # Persist cache writes and snapshots in the master process only.
     for asset in processed_assets:
         if not args.dry_run:
-            for symbol, score_type, score, rationale in asset.get("cache_writes", []):
+            for symbol, score_type, score, rationale in asset.get('cache_writes', []):
                 migrations.save_qualitative_score(conn, symbol, score_type, score, rationale)
-            migrations.save_snapshot(conn, asset, today)
+            migrations.save_snapshot(
+                conn,
+                asset,
+                today,
+                preserve_null_technicals=args.dimensions_only,
+            )
 
-        asset.pop("cache_writes", None)
-        output["assets"].append(asset)
+        asset.pop('cache_writes', None)
+        output['assets'].append(asset)
         logger.info(
             f"  {asset['symbol']} ({asset['tier']}): composite={asset['composite']}, action={asset['action']}"
         )
 
+    output['scoring_errors'] = scoring_errors
+
     # Sort assets by tier priority then composite score
-    tier_order = {"leader": 0, "runner-up": 1, "observation": 2}
-    output["assets"].sort(key=lambda a: (tier_order.get(a["tier"], 3), -a["composite"]))
+    tier_order = {'leader': 0, 'runner-up': 1, 'observation': 2}
+    output['assets'].sort(key=lambda a: (tier_order.get(a['tier'], 3), -a['composite']))
 
     # Commit database changes only when writes are enabled.
     if not args.dry_run:
@@ -1004,9 +1199,11 @@ def main():
     # Write output
     write_output(output, dry_run=args.dry_run)
 
-    logger.info("\n" + "=" * 60)
+    logger.info('\n' + '=' * 60)
     logger.info(f"Pipeline complete. Processed {len(output['assets'])} assets.")
-    logger.info("=" * 60)
+    if scoring_errors:
+        logger.info(f"Scoring errors (excluded from tiers): {len(scoring_errors)}")
+    logger.info('=' * 60)
 
     return 0
 

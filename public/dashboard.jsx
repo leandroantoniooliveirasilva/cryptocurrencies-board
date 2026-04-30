@@ -155,7 +155,6 @@ const DIMENSION_LABELS = {
   revenue: 'Revenue/Fees (legacy)',
   regulatory: 'Regulatory',
   supply: 'Supply / On-chain',
-  wyckoff: 'Wyckoff (filter)',
 };
 
 /** Short labels for decision_trace.downgrades.reasons (backend codes). */
@@ -721,7 +720,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
   const sortedDimensions = Object.entries(weights)
     .sort(([, a], [, b]) => b - a)
     .map(([key]) => key);
-  const weightedDimensions = sortedDimensions.filter(dim => dim !== 'wyckoff');
+  const weightedDimensions = sortedDimensions;
   // Clean up Wyckoff rationale - remove implementation details
   const rawWyckoffRationale = asset.score_rationales?.wyckoff;
   const wyckoffRationale = rawWyckoffRationale
@@ -998,6 +997,24 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                   {asset.wyckoff_phase || 'Unknown'}
                 </span>
               </div>
+              {asset.wyckoff_signal && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: SPACE.base,
+                  fontSize: TYPE.caption,
+                  color: PALETTE.textMuted,
+                  fontFamily: 'ui-monospace, monospace',
+                  paddingLeft: SPACE.xs,
+                }}>
+                  <span>Wyckoff signal</span>
+                  <span style={{ textAlign: 'right', maxWidth: '70%' }}>
+                    {asset.wyckoff_signal.descriptor}
+                    {asset.wyckoff_signal.kind && asset.wyckoff_signal.kind !== 'unchanged' ? ` · ${asset.wyckoff_signal.kind}` : ''}
+                    {asset.wyckoff_signal.tone ? ` · ${asset.wyckoff_signal.tone}` : ''}
+                  </span>
+                </div>
+              )}
               {/* RS vs BTC - show for all assets */}
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: SPACE.base, fontSize: TYPE.small }}>
                 <span style={{ fontFamily: 'ui-monospace, monospace', color: PALETTE.textMuted }}>RS vs BTC</span>
@@ -2115,6 +2132,77 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
   );
 }
 
+function ScoringErrorsSection({ errors, isMobile }) {
+  const [expanded, setExpanded] = useState(true);
+  const accent = '#c27878';
+  if (!errors || errors.length === 0) return null;
+
+  return (
+    <div style={{ marginBottom: `${SPACE.xl}px` }}>
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: accent,
+          padding: 0,
+          fontSize: TYPE.small,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          fontWeight: 500,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.md}px`,
+          width: '100%',
+          textAlign: 'left',
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <div style={{ width: `${SPACE.xl}px`, height: '1px', background: accent }} />
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+          fontSize: TYPE.caption,
+        }}>▸</span>
+        <span>Scoring errors — {errors.length}</span>
+      </button>
+      {expanded && (
+        <div style={{ marginTop: `${SPACE.lg}px`, display: 'flex', flexDirection: 'column', gap: `${SPACE.md}px` }}>
+          {errors.map((row) => (
+            <div
+              key={row.symbol}
+              style={{
+                padding: `${SPACE.md}px ${SPACE.lg}px`,
+                background: PALETTE.cardBg,
+                border: `1px solid ${accent}`,
+                borderRadius: '2px',
+                fontSize: TYPE.small,
+                color: PALETTE.textPrimary,
+                fontFamily: 'Georgia, serif',
+              }}
+            >
+              <div style={{ fontFamily: 'ui-monospace, monospace', color: accent, marginBottom: `${SPACE.xs}px` }}>
+                {row.symbol}{row.name ? ` — ${row.name}` : ''}
+              </div>
+              <div style={{ color: PALETTE.textSecondary, lineHeight: TYPE.relaxed }}>
+                {(row.errors || []).join(', ')}
+              </div>
+              <div style={{ marginTop: `${SPACE.sm}px`, fontSize: TYPE.caption, color: PALETTE.textMuted, fontStyle: 'italic' }}>
+                Required weighted dimension missing — fix data or scoring before this asset is tiered.
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TierSection({ tier, assets, isMobile, defaultExpanded = false, gli, rs, fearGreed }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const config = TIER_CONFIG[tier];
@@ -2236,6 +2324,7 @@ function Dashboard() {
   const [gli, setGli] = useState(null); // Global Liquidity Index status
   const [rs, setRs] = useState(null); // Relative Strength vs BTC status
   const [fearGreed, setFearGreed] = useState(null); // Fear & Greed Index status
+  const [scoringErrors, setScoringErrors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const isMobile = useIsMobile();
@@ -2272,6 +2361,7 @@ function Dashboard() {
         if (data.fear_greed) {
           setFearGreed(data.fear_greed);
         }
+        setScoringErrors(Array.isArray(data.scoring_errors) ? data.scoring_errors : []);
         setLoading(false);
       })
       .catch(err => {
@@ -2388,6 +2478,7 @@ function Dashboard() {
             />
           );
         })}
+        <ScoringErrorsSection errors={scoringErrors} isMobile={isMobile} />
       </div>
 
       {/* Footer with reference info */}

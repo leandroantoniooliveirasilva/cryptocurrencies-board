@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Daily indicators update - RSI, GLI, RS vs BTC, Fear & Greed.
+Daily indicators update - Wyckoff structure, RSI, GLI, RS vs BTC, Fear & Greed.
 
 This lightweight script runs daily to update technical indicators without
-re-running the full scoring pipeline. Full scoring (qualitative dimensions,
-Wyckoff) runs weekly via run.py.
+re-running the full scoring pipeline. Qualitative dimensions run weekly via run.py;
+Wyckoff phase is refreshed here from price data (filter signal, not a composite dimension).
 
 Usage:
     python -m pipeline.indicators
@@ -22,10 +22,11 @@ import os
 import sqlite3
 from datetime import date, datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 from pipeline.config import config
 from pipeline.fetchers import defillama, fear_greed, gli, relative_strength
-from pipeline.scoring import actions, rsi
+from pipeline.scoring import actions, rsi, wyckoff
 from pipeline.storage import migrations
 
 logging.basicConfig(
@@ -74,12 +75,13 @@ def update_asset_indicators(
     conn,
     gli_downtrend: bool,
     fg_greedy: bool,
+    wyckoff_override: Optional[str] = None,
 ) -> dict:
     """
     Update indicators for a single asset without re-scoring dimensions.
 
-    Updates: RSI (daily/weekly), RS vs BTC, action state.
-    Preserves: All qualitative scores, Wyckoff phase, composite.
+    Updates: Wyckoff phase (price structure), RSI (daily/weekly), RS vs BTC, action state.
+    Preserves: All qualitative dimension scores, composite, tier.
     """
     symbol = asset["symbol"]
     coingecko_id = asset.get("coingecko_id")
@@ -101,6 +103,26 @@ def update_asset_indicators(
             dated_daily.append((price_date, price))
     daily_prices = [price for _d, price in dated_daily]
     weekly_prices = _aggregate_weekly_prices(dated_daily)
+
+    prev_phase = asset.get('wyckoff_phase')
+    if wyckoff_override:
+        new_phase = wyckoff_override
+        wy_rationale = f'Manual override: {wyckoff_override}'
+        position_score = wyckoff.get_wyckoff_score(new_phase)
+    elif len(daily_prices) >= data_cfg.min_wyckoff_days:
+        new_phase, position_score, wy_rationale = wyckoff.detect_wyckoff_phase(daily_prices)
+    else:
+        new_phase = 'Unknown'
+        position_score = None
+        wy_rationale = 'Insufficient price data for Wyckoff structure'
+
+    wy_sig = wyckoff.filter_signal_from_phase_transition(prev_phase, new_phase, wy_rationale)
+    asset['wyckoff_phase'] = new_phase
+    asset['wyckoff_position_score'] = position_score
+    asset['wyckoff_signal'] = wy_sig
+    sr = dict(asset.get('score_rationales') or {})
+    sr['wyckoff'] = wy_rationale
+    asset['score_rationales'] = sr
 
     # Compute RSI
     rsi_period = config.rsi.period
@@ -141,7 +163,7 @@ def update_asset_indicators(
         composite=composite_score,
         composite_last_week=effective_last_week,
         tier=asset["tier"],
-        wyckoff_phase=asset["wyckoff_phase"],
+        wyckoff_phase=new_phase,
         trend_7d=trend_7d,
         trend_30d=trend_30d,
         rsi_daily=rsi_daily,
@@ -184,6 +206,7 @@ def _update_asset_worker(
     coingecko_id: str,
     gli_downtrend: bool,
     fg_greedy: bool,
+    wyckoff_override: Optional[str],
 ) -> dict:
     symbol = asset.get("symbol", "unknown")
     conn = sqlite3.connect(DB_PATH)
@@ -192,7 +215,9 @@ def _update_asset_worker(
     try:
         local_asset = dict(asset)
         local_asset["coingecko_id"] = coingecko_id
-        updated = update_asset_indicators(local_asset, conn, gli_downtrend, fg_greedy)
+        updated = update_asset_indicators(
+            local_asset, conn, gli_downtrend, fg_greedy, wyckoff_override=wyckoff_override
+        )
         updated.pop("coingecko_id", None)
         return {"symbol": symbol, "asset": updated, "error": None}
     except Exception as e:
@@ -262,8 +287,11 @@ def main():
         assets_config = yaml.safe_load(f)
     assets_list = assets_config.get("assets", [])
 
+    migrations.init_db(DB_PATH).close()
+
     # Build lookup for coingecko_id
     coingecko_lookup = {a["symbol"]: a.get("coingecko_id") for a in assets_list}
+    wyckoff_lookup = {a["symbol"]: a.get("wyckoff_override") for a in assets_list}
 
     # Update each asset's indicators
     logger.info(f"\nUpdating indicators for {len(data['assets'])} assets...")
@@ -279,6 +307,7 @@ def main():
                 coingecko_lookup.get(symbol),
                 gli_downtrend,
                 fg_greedy,
+                wyckoff_lookup.get(symbol),
             )
             if result["error"]:
                 logger.error(f"  Failed to update {symbol}: {result['error']}")
@@ -297,6 +326,7 @@ def main():
                     coingecko_lookup.get(symbol),
                     gli_downtrend,
                     fg_greedy,
+                    wyckoff_lookup.get(symbol),
                 )
                 futures[future] = i
 
@@ -321,6 +351,19 @@ def main():
         logger.info("DRY RUN - would update latest.json")
         logger.info(f"GLI downtrend: {gli_downtrend}, F&G greedy: {fg_greedy}")
         return 0
+
+    st_conn = migrations.init_db(DB_PATH)
+    try:
+        for asset in updated_assets:
+            migrations.save_wyckoff_state(
+                st_conn,
+                asset['symbol'],
+                asset.get('wyckoff_phase') or 'Unknown',
+                asset.get('wyckoff_position_score'),
+            )
+        st_conn.commit()
+    finally:
+        st_conn.close()
 
     with open(LATEST_JSON, "w") as f:
         json.dump(data, f, indent=2)

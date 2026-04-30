@@ -1,14 +1,19 @@
 #!/bin/bash
-# Install/uninstall launchd jobs for crypto scoring and discovery pipelines
+# Install/uninstall launchd jobs for weekly dimension scoring, daily indicators, and discovery
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Daily scoring job
+# Weekly dimension scoring (Sunday 12:00 UTC)
 SCORING_PLIST_SRC="$SCRIPT_DIR/com.crypto.scoring.plist"
 SCORING_PLIST_DST="$HOME/Library/LaunchAgents/com.crypto.scoring.plist"
 SCORING_LABEL="com.crypto.scoring"
+
+# Daily indicators (every day 12:00 UTC)
+INDICATORS_PLIST_SRC="$SCRIPT_DIR/com.crypto.indicators.plist"
+INDICATORS_PLIST_DST="$HOME/Library/LaunchAgents/com.crypto.indicators.plist"
+INDICATORS_LABEL="com.crypto.indicators"
 
 # Monthly discovery job
 DISCOVERY_PLIST_SRC="$SCRIPT_DIR/com.crypto.discovery.plist"
@@ -19,20 +24,21 @@ usage() {
     echo "Usage: $0 [command] [job]"
     echo ""
     echo "Commands:"
-    echo "  install [all|scoring|discovery]  - Install and load launchd job(s)"
-    echo "  uninstall [all|scoring|discovery] - Unload and remove launchd job(s)"
+    echo "  install [all|scoring|indicators|discovery]  - Install and load launchd job(s)"
+    echo "  uninstall [all|scoring|indicators|discovery] - Unload and remove launchd job(s)"
     echo "  status                            - Check if jobs are loaded"
-    echo "  run [scoring|discovery]           - Manually trigger a job now"
+    echo "  run [scoring|indicators|discovery] - Manually trigger a job now"
     echo ""
     echo "Jobs:"
-    echo "  scoring   - Daily conviction scoring (runs at noon UTC)"
-    echo "  discovery - Monthly watchlist discovery (runs day 1 at 18:00 UTC)"
-    echo "  all       - Both jobs (default)"
+    echo "  scoring    - Weekly dimension scoring (Sunday 12:00 UTC, TZ=UTC)"
+    echo "  indicators - Daily technicals (12:00 UTC, TZ=UTC)"
+    echo "  discovery  - Monthly watchlist discovery (day 1 at 18:00 UTC)"
+    echo "  all        - scoring + indicators + discovery (default)"
     echo ""
     echo "Examples:"
-    echo "  $0 install           # Install both jobs"
-    echo "  $0 install scoring   # Install only daily scoring"
-    echo "  $0 run discovery     # Manually run discovery now"
+    echo "  $0 install              # Install all three jobs"
+    echo "  $0 install indicators    # Install only daily indicators"
+    echo "  $0 run discovery        # Manually run discovery now"
     exit 1
 }
 
@@ -45,17 +51,13 @@ install_job() {
 
     echo "Installing $name job..."
 
-    # Create LaunchAgents directory if needed
     mkdir -p "$HOME/Library/LaunchAgents"
 
-    # Copy plist
     cp "$src" "$dst"
     echo "  Copied plist to $dst"
 
-    # Make runner script executable
     chmod +x "$script"
 
-    # Load the job
     launchctl load "$dst"
     echo "  Job loaded: $label"
 }
@@ -82,16 +84,23 @@ install() {
     case "$target" in
         all)
             install_job "scoring" "$SCORING_PLIST_SRC" "$SCORING_PLIST_DST" "$SCORING_LABEL" "$SCRIPT_DIR/run-local.sh"
+            install_job "indicators" "$INDICATORS_PLIST_SRC" "$INDICATORS_PLIST_DST" "$INDICATORS_LABEL" "$SCRIPT_DIR/run-daily-indicators.sh"
             install_job "discovery" "$DISCOVERY_PLIST_SRC" "$DISCOVERY_PLIST_DST" "$DISCOVERY_LABEL" "$SCRIPT_DIR/run-discovery.sh"
             echo ""
-            echo "Both jobs installed:"
-            echo "  - Daily scoring runs at 12:00 UTC"
-            echo "  - Monthly discovery runs on day 1 at 18:00 UTC"
+            echo "All jobs installed:"
+            echo "  - Weekly dimension scoring: Sunday 12:00 UTC"
+            echo "  - Daily indicators: every day 12:00 UTC"
+            echo "  - Monthly discovery: day 1 at 18:00 UTC"
             ;;
         scoring)
             install_job "scoring" "$SCORING_PLIST_SRC" "$SCORING_PLIST_DST" "$SCORING_LABEL" "$SCRIPT_DIR/run-local.sh"
             echo ""
-            echo "Daily scoring job installed (runs at 12:00 UTC)"
+            echo "Weekly dimension scoring installed (Sunday 12:00 UTC)"
+            ;;
+        indicators)
+            install_job "indicators" "$INDICATORS_PLIST_SRC" "$INDICATORS_PLIST_DST" "$INDICATORS_LABEL" "$SCRIPT_DIR/run-daily-indicators.sh"
+            echo ""
+            echo "Daily indicators job installed (12:00 UTC)"
             ;;
         discovery)
             install_job "discovery" "$DISCOVERY_PLIST_SRC" "$DISCOVERY_PLIST_DST" "$DISCOVERY_LABEL" "$SCRIPT_DIR/run-discovery.sh"
@@ -105,7 +114,7 @@ install() {
     esac
 
     echo ""
-    echo "To run manually: $0 run [scoring|discovery]"
+    echo "To run manually: $0 run [scoring|indicators|discovery]"
     echo "To check status: $0 status"
 }
 
@@ -115,10 +124,14 @@ uninstall() {
     case "$target" in
         all)
             uninstall_job "scoring" "$SCORING_PLIST_DST" "$SCORING_LABEL"
+            uninstall_job "indicators" "$INDICATORS_PLIST_DST" "$INDICATORS_LABEL"
             uninstall_job "discovery" "$DISCOVERY_PLIST_DST" "$DISCOVERY_LABEL"
             ;;
         scoring)
             uninstall_job "scoring" "$SCORING_PLIST_DST" "$SCORING_LABEL"
+            ;;
+        indicators)
+            uninstall_job "indicators" "$INDICATORS_PLIST_DST" "$INDICATORS_LABEL"
             ;;
         discovery)
             uninstall_job "discovery" "$DISCOVERY_PLIST_DST" "$DISCOVERY_LABEL"
@@ -134,10 +147,19 @@ status() {
     echo "Launchd Job Status:"
     echo ""
 
-    echo "Daily Scoring ($SCORING_LABEL):"
+    echo "Weekly dimension scoring ($SCORING_LABEL):"
     if launchctl list 2>/dev/null | grep -q "$SCORING_LABEL"; then
         echo "  Status: LOADED"
         launchctl list "$SCORING_LABEL" 2>/dev/null | sed 's/^/  /'
+    else
+        echo "  Status: NOT LOADED"
+    fi
+
+    echo ""
+    echo "Daily indicators ($INDICATORS_LABEL):"
+    if launchctl list 2>/dev/null | grep -q "$INDICATORS_LABEL"; then
+        echo "  Status: LOADED"
+        launchctl list "$INDICATORS_LABEL" 2>/dev/null | sed 's/^/  /'
     else
         echo "  Status: NOT LOADED"
     fi
@@ -157,8 +179,13 @@ run_now() {
 
     case "$target" in
         scoring)
-            echo "Running daily scoring pipeline..."
+            echo "Running weekly dimension scoring..."
             launchctl start "$SCORING_LABEL"
+            echo "Started. Check logs at: $SCRIPT_DIR/../logs/"
+            ;;
+        indicators)
+            echo "Running daily indicators pipeline..."
+            launchctl start "$INDICATORS_LABEL"
             echo "Started. Check logs at: $SCRIPT_DIR/../logs/"
             ;;
         discovery)
@@ -169,7 +196,7 @@ run_now() {
             ;;
         *)
             echo "Unknown job: $target"
-            echo "Use: $0 run [scoring|discovery]"
+            echo "Use: $0 run [scoring|indicators|discovery]"
             exit 1
             ;;
     esac

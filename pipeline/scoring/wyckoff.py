@@ -23,7 +23,7 @@ This module uses heuristics based on:
 All thresholds are configured in config.yaml.
 """
 
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 import statistics
 
 from pipeline.config import config
@@ -349,3 +349,53 @@ def get_wyckoff_score(phase: str) -> Optional[int]:
         return None
 
     return scores_cfg.default  # Recognized but uncategorized phase
+
+
+def filter_signal_from_phase_transition(
+    previous_phase: Optional[str],
+    phase: str,
+    rationale: str,
+) -> dict[str, Any]:
+    """
+    Daily filter signal from Wyckoff phase and/or phase change (not a composite dimension).
+
+    ``tone`` is a coarse hint for UI / auditing; action rules still use ``phase`` strings.
+    """
+    prev_n = (previous_phase or '').strip()
+    new_n = (phase or '').strip()
+    if not prev_n:
+        kind = 'initial'
+    elif prev_n.lower() == new_n.lower():
+        kind = 'unchanged'
+    else:
+        kind = 'changed'
+
+    phase_lower = new_n.lower()
+    if 'distribution' in phase_lower or 'markdown' in phase_lower:
+        tone = 'risk_off'
+    elif 'accumulation' in phase_lower:
+        tone = 'accumulation'
+    elif 'markup' in phase_lower:
+        tone = 'markup'
+    elif 'range' in phase_lower:
+        tone = 'range'
+    else:
+        tone = 'neutral'
+
+    if kind == 'changed':
+        descriptor = f'{prev_n} → {new_n}'
+    elif kind == 'initial':
+        descriptor = new_n or 'Unknown'
+    else:
+        descriptor = new_n or 'Unknown'
+
+    excerpt = rationale if len(rationale) <= 220 else rationale[:217] + '...'
+
+    return {
+        'kind': kind,
+        'tone': tone,
+        'descriptor': descriptor,
+        'previous_phase': previous_phase,
+        'phase': phase,
+        'rationale_excerpt': excerpt,
+    }

@@ -20,7 +20,7 @@ log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-log "Starting daily scoring pipeline"
+log "Starting weekly dimension scoring pipeline (UTC calendar via launchd TZ)"
 log "Project: $PROJECT_DIR"
 
 # Activate virtual environment
@@ -45,7 +45,7 @@ export USE_CLAUDE_CLI=true
 cd "$PROJECT_DIR"
 log "Running pipeline..."
 
-if python -m pipeline.run 2>&1 | tee -a "$LOG_FILE"; then
+if python -m pipeline.run --dimensions-only 2>&1 | tee -a "$LOG_FILE"; then
     log "Pipeline completed successfully"
 
     # Auto-commit and push to GitHub (enabled by default for dashboard updates)
@@ -57,7 +57,7 @@ if python -m pipeline.run 2>&1 | tee -a "$LOG_FILE"; then
     if git diff --staged --quiet; then
         log "No changes to commit"
     else
-        git commit -m "chore: daily snapshot $(date -u +%Y-%m-%d)"
+        git commit -m "chore: weekly dimension snapshot $(date -u +%Y-%m-%d)"
         log "Changes committed"
 
         if git push origin main 2>&1 | tee -a "$LOG_FILE"; then

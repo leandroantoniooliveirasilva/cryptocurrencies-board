@@ -13,6 +13,8 @@ Weighted dimensions (subset per asset category):
 - regulatory: Jurisdictional clarity, ETF approval status
 - supply: Exchange reserves, holder distribution, inflation, security budget
 
+Wyckoff is not a weighted dimension; it is a daily-updated filter signal (see ``pipeline.indicators``).
+
 All weight profiles are configured in config.yaml under weights_by_category.
 """
 
@@ -87,7 +89,7 @@ def compute_composite_legacy(scores: dict) -> tuple[int, int]:
     For backward compatibility only.
 
     Args:
-        scores: Dict with 'institutional', 'revenue', 'regulatory', 'wyckoff'
+        scores: Dict with legacy keys 'institutional', 'revenue', 'regulatory' (Wyckoff excluded)
 
     Returns:
         Tuple of (rounded composite score 0-100, count of missing dimensions)

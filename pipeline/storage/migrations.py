@@ -33,6 +33,15 @@ CREATE INDEX IF NOT EXISTS idx_asset_date ON snapshots(asset_symbol, snapshot_da
 CREATE INDEX IF NOT EXISTS idx_date ON snapshots(snapshot_date DESC);
 """
 
+WYCKOFF_STATE_SCHEMA = """
+CREATE TABLE IF NOT EXISTS wyckoff_state (
+    asset_symbol TEXT PRIMARY KEY,
+    wyckoff_phase TEXT,
+    position_score INTEGER,
+    updated_at TEXT NOT NULL
+);
+"""
+
 QUALITATIVE_CACHE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS qualitative_cache (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,14 +70,27 @@ def init_db(db_path: Path) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute('PRAGMA busy_timeout = 60000')
     conn.executescript(SCHEMA)
+    conn.executescript(WYCKOFF_STATE_SCHEMA)
     conn.executescript(QUALITATIVE_CACHE_SCHEMA)
 
     # Migration: add supply column if missing (for existing databases)
     _migrate_add_supply_column(conn)
+    _migrate_add_wyckoff_state_table(conn)
 
     conn.commit()
     logger.info(f"Database initialized at {db_path}")
     return conn
+
+
+def _migrate_add_wyckoff_state_table(conn: sqlite3.Connection) -> None:
+    """Create wyckoff_state table if missing (daily indicators persist phase here)."""
+    cur = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='wyckoff_state'"
+    )
+    if cur.fetchone() is None:
+        logger.info("Migrating: creating wyckoff_state table")
+        conn.executescript(WYCKOFF_STATE_SCHEMA)
+        conn.commit()
 
 
 def _migrate_add_supply_column(conn: sqlite3.Connection) -> None:
@@ -82,7 +104,13 @@ def _migrate_add_supply_column(conn: sqlite3.Connection) -> None:
         conn.commit()
 
 
-def save_snapshot(conn: sqlite3.Connection, asset: dict, snapshot_date: str) -> None:
+def save_snapshot(
+    conn: sqlite3.Connection,
+    asset: dict,
+    snapshot_date: str,
+    *,
+    preserve_null_technicals: bool = False,
+) -> None:
     """
     Save daily snapshot for an asset.
 
@@ -90,8 +118,30 @@ def save_snapshot(conn: sqlite3.Connection, asset: dict, snapshot_date: str) -> 
         conn: Database connection
         asset: Asset data dict
         snapshot_date: ISO date string (YYYY-MM-DD)
+        preserve_null_technicals: When True, RSI and action nulls are filled from the
+            latest prior snapshot so dimension-only weekly runs do not erase technicals.
     """
     scores = asset.get("scores", {})
+    rsi_d = asset.get("rsi_daily")
+    rsi_w = asset.get("rsi_weekly")
+    action = asset.get("action")
+    if preserve_null_technicals and (rsi_d is None or rsi_w is None or action is None):
+        prev = conn.execute(
+            """
+            SELECT rsi_daily, rsi_weekly, action FROM snapshots
+            WHERE asset_symbol = ? AND snapshot_date < ?
+            ORDER BY snapshot_date DESC
+            LIMIT 1
+            """,
+            (asset["symbol"], snapshot_date),
+        ).fetchone()
+        if prev:
+            if rsi_d is None:
+                rsi_d = prev["rsi_daily"]
+            if rsi_w is None:
+                rsi_w = prev["rsi_weekly"]
+            if action is None:
+                action = prev["action"]
     conn.execute(
         """
         INSERT OR REPLACE INTO snapshots
@@ -107,11 +157,11 @@ def save_snapshot(conn: sqlite3.Connection, asset: dict, snapshot_date: str) -> 
             scores.get("value_capture", scores.get("revenue")),
             scores.get("regulatory"),
             scores.get("supply"),
-            scores.get("wyckoff"),
-            asset.get("rsi_daily"),
-            asset.get("rsi_weekly"),
+            asset.get("wyckoff_position_score", scores.get("wyckoff")),
+            rsi_d,
+            rsi_w,
             asset.get("wyckoff_phase"),
-            asset.get("action"),
+            action,
             asset.get("note"),
         ),
     )
@@ -151,6 +201,63 @@ def get_trend_data(
     rows = cursor.fetchall()
     # Reverse to get oldest first
     return [row["composite"] for row in reversed(rows)]
+
+
+def save_wyckoff_state(
+    conn: sqlite3.Connection,
+    symbol: str,
+    phase: str,
+    position_score: Optional[int],
+) -> None:
+    """Persist latest Wyckoff phase from daily indicators (not tied to snapshot rows)."""
+    now = datetime.now(timezone.utc).isoformat()
+    conn.execute(
+        """
+        INSERT INTO wyckoff_state (asset_symbol, wyckoff_phase, position_score, updated_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(asset_symbol) DO UPDATE SET
+            wyckoff_phase = excluded.wyckoff_phase,
+            position_score = excluded.position_score,
+            updated_at = excluded.updated_at
+        """,
+        (symbol, phase, position_score, now),
+    )
+
+
+def get_last_wyckoff_phase(conn: sqlite3.Connection, symbol: str) -> Optional[str]:
+    """
+    Latest Wyckoff phase: prefer daily ``wyckoff_state``, else historical snapshots.
+
+    Used by weekly dimension scoring so action logic can reference structure
+    until the next daily indicators refresh.
+    """
+    row = conn.execute(
+        """
+        SELECT wyckoff_phase FROM wyckoff_state
+        WHERE asset_symbol = ?
+          AND wyckoff_phase IS NOT NULL
+          AND TRIM(wyckoff_phase) != ''
+        """,
+        (symbol,),
+    ).fetchone()
+    if row and row["wyckoff_phase"]:
+        return row["wyckoff_phase"]
+
+    today = date.today().isoformat()
+    cursor = conn.execute(
+        """
+        SELECT wyckoff_phase FROM snapshots
+        WHERE asset_symbol = ?
+          AND wyckoff_phase IS NOT NULL
+          AND TRIM(wyckoff_phase) != ''
+          AND snapshot_date < ?
+        ORDER BY snapshot_date DESC
+        LIMIT 1
+        """,
+        (symbol, today),
+    )
+    row2 = cursor.fetchone()
+    return row2["wyckoff_phase"] if row2 else None
 
 
 def get_composite_last_week(conn: sqlite3.Connection, symbol: str) -> Optional[int]:
