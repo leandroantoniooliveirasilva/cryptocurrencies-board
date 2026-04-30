@@ -445,7 +445,12 @@ def _try_fred_composite(offset_days: int) -> Optional[GLIData]:
         coverage = len(used_components) / enabled_count
         min_coverage = float(getattr(config.gli, 'min_component_coverage', 0.6))
         if coverage < min_coverage:
-            logger.warning(f'GLI composite coverage too low ({coverage:.2f} < {min_coverage:.2f})')
+            logger.warning(
+                'GLI composite coverage too low '
+                f'({coverage:.2f} < {min_coverage:.2f}); '
+                f'enabled={enabled_count}, used={used_components}, missing={missing_components}, '
+                f'target_dates={current_target.isoformat()}/{offset_target.isoformat()}'
+            )
             return None
 
         # Inputs are in USD millions at this point; convert to trillions.
