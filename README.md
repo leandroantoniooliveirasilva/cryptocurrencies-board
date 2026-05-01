@@ -1,43 +1,44 @@
 # Conviction Board
 
-A personal cryptocurrency scoring system for long-term accumulation. Scores assets across five dimensions, derives action signals, and displays results on a dashboard.
+A personal cryptocurrency scoring system for long-term accumulation. Scores assets across category-weighted dimensions, derives action signals, and displays results on a dashboard.
 
 **Key property**: No server, no hosted database. The repo is the database.
 
 ## How It Works
 
+Scheduling is **macOS launchd** (`scripts/install-launchd.sh`), with **`TZ=UTC`** in the plists. Typical flow:
+
 ```
-Weekly Pipeline (Sundays)
-├── Fetch prices (DefiLlama)
-├── Score qualitative dimensions (Claude CLI by default; optional API)
-├── Compute RSI(14) from daily + weekly prices
-├── Compute Wyckoff phase from price structure
-├── Check macro filters (GLI, RS vs BTC, Fear & Greed)
-├── Calculate weighted composite by asset type
-├── Derive action signal from composite + indicators
-├── Append snapshot to history.sqlite
-└── Write latest.json → commit → push
-         │
-         ▼
-GitHub Actions deploys /public to GitHub Pages
-         │
-         ▼
-Dashboard reads latest.json
+Sunday 12:00 UTC — weekly dimensions (pipeline.run --dimensions-only)
+├── Qualitative dimensions, DefiLlama where needed, composite + tiers
+├── Snapshots → history.sqlite; latest.json (macro reused from prior publish)
+└── commit / push
+
+Every day 12:00 UTC — daily indicators (pipeline.indicators)
+├── RSI, Wyckoff from prices, GLI, Fear & Greed, RS vs BTC
+├── Re-derive action on existing composites → latest.json
+└── commit / push
+
+GitHub Actions → deploy /public to GitHub Pages → dashboard reads latest.json
 ```
+
+Optional: run a **full** `pipeline.run` (no `--dimensions-only`) locally for RSI/action in one shot; see `scripts/run-scoring.sh` for a wall-clock cap.
 
 ## Signal Framework
 
 ### Dimensions
 
-Assets are scored 0-100 across five dimensions, weighted by asset type:
+Assets are scored 0-100 on the dimensions that apply to each `asset_category` (see `pipeline/config.yaml`), weighted by asset type:
 
 | Dimension | What It Measures |
 |-----------|------------------|
 | Institutional | ETF flows, fund holdings, custody adoption |
-| Revenue | Protocol fees, sustainable revenue |
+| Value capture | Holder-accruing fees / real yield (category-dependent) |
 | Regulatory | Jurisdictional clarity, compliance |
 | Supply | Exchange reserves, holder distribution |
-| Wyckoff | Technical phase (accumulation/distribution) |
+| Adoption / activity | Category-specific usage (where weighted) |
+
+Wyckoff phase is **not** part of the composite score; it is updated on the **daily indicators** run and used for action filters.
 
 ### Action States
 
@@ -86,7 +87,13 @@ pip install -r requirements.txt
 # ANTHROPIC_API_KEY=...  # Only if USE_CLAUDE_CLI=false (HTTP API instead of subscription CLI)
 FRED_API_KEY=your_fred_key_here  # Optional, for GLI filter
 
-# Run weekly scoring (CLI default; see scripts/run-scoring.sh)
+# Scheduled: install launchd agents (Sunday dimensions, daily indicators, monthly discovery)
+./scripts/install-launchd.sh install
+
+# Weekly dimension pass (matches launchd job; or use ./scripts/run-local.sh)
+python -m pipeline.run --dimensions-only
+
+# Optional full local run with wall-clock cap (see scripts/run-scoring.sh)
 ./scripts/run-scoring.sh
 
 # Build dashboard

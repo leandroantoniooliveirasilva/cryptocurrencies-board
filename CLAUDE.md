@@ -38,7 +38,7 @@ Composite uses **only the dimensions listed for that asset’s `asset_category`*
 | Regulatory | Jurisdictional clarity, compliance |
 | Supply | Exchange reserves, holder distribution, inflation, burn rate |
 
-**Wyckoff** (phase score in `scores`) is **not** weighted into the composite; it drives phase display, Wyckoff-dip logic, and works with **GLI / RS / Fear–Greed** as **post-score downgrades**.
+**Wyckoff** is **not** a composite dimension (it is not in weekly `scores`); phase is refreshed on the **daily indicators** job and used with **GLI / RS / Fear–Greed** as **post-score downgrades** (Wyckoff-dip logic, phase display).
 
 **Fee models** (`fee_model` in `assets.yaml`): e.g. `burn`, `miner`, `minimal`, `revenue`, `staking_share`, `equity` — used to decide when value capture is skipped or how to read fees (see `.docs/research/asset-category-taxonomy.md` Section 5).
 
@@ -121,17 +121,24 @@ Assets with composite score below 50 are hidden from the dashboard.
 
 ## Pipeline
 
-```
-Weekly (Sundays via cron)
-├── Fetch: DefiLlama (TVL, revenue)
-├── Score: Claude CLI (default) for qualitative dimensions; optional HTTP API via env
-├── Detect: Wyckoff phase from price structure
-├── Composite: Weighted score by asset_category
-└── Store: Append snapshot to history.sqlite
+Automation is **macOS launchd** (see `scripts/install-launchd.sh`), not cron. All calendar triggers use **`TZ=UTC`** in the plist so **Hour/Minute are UTC**.
 
-Output: Write latest.json, commit, push
-         │
-         ▼
+```
+Weekly dimension job (Sunday 12:00 UTC) — scripts/run-local.sh
+├── Fetch: DefiLlama (TVL, revenue) where needed for dimensions
+├── Score: Claude CLI (default) for qualitative dimensions; optional HTTP API via env
+├── Composite: Weighted score by asset_category (strict required dimensions → scoring_errors if missing)
+├── Store: Append snapshot to history.sqlite; GLI/F&G/market_context reused from prior latest.json
+└── Output: latest.json (action null until daily job), commit, push
+
+Daily indicators job (every day 12:00 UTC) — scripts/run-daily-indicators.sh
+├── Fetch: prices (RSI), GLI, Fear & Greed; Wyckoff from price structure
+├── Derive: action + decision_trace on existing composites
+└── Output: latest.json + wyckoff_state in SQLite, commit, push
+
+Monthly discovery (day 1, 18:00 UTC) — scripts/run-discovery.sh
+└── Writes discovery/report_YYYY-MM.md (watchlist edits are manual)
+
 GitHub Actions → Deploy /public to GitHub Pages
 ```
 
@@ -140,38 +147,45 @@ GitHub Actions → Deploy /public to GitHub Pages
 Session prompts for Claude Code (copy-paste blocks): `.docs/claude-code-prompts.md`.
 
 ```bash
-# Weekly scoring — use the wrapper (wall-clock cap + logs under logs/scoring_*.log):
-./scripts/run-scoring.sh
+# Scheduled jobs (install once): copies plists to ~/Library/LaunchAgents
+./scripts/install-launchd.sh install
 
-# Equivalent manual run (Discovery is fewer big LLM calls; scoring fires many per asset — see scripts/run-scoring.sh header):
+# Weekly dimension pass (same as launchd job com.crypto.scoring; also used by run-local.sh)
+python -m pipeline.run --dimensions-only
+
+# Full weekly-style run (RSI, RS, action in one process — optional; wall-clock cap):
+./scripts/run-scoring.sh
 python -m pipeline.run
 python -m pipeline.run --dry-run
+
+# Daily indicators (same as launchd job com.crypto.indicators)
+python -m pipeline.indicators
+
+# Discovery (monthly; same entry point as launchd com.crypto.discovery)
+./scripts/run-discovery.sh
+./scripts/run-discovery-ensemble.sh
 
 # Frontend
 npm run build
 npm run watch
 
-# Discovery (monthly)
-./scripts/run-discovery-ensemble.sh
-
 # Local dev
 cd public && python -m http.server 8000
 ```
 
-## Local Cron Setup (macOS)
+## Local launchd (macOS)
 
-The pipeline runs locally via cron, not GitHub Actions:
+Use **`./scripts/install-launchd.sh`** — not `crontab`. Installs three agents (see `scripts/com.crypto.*.plist`):
 
-```bash
-# Edit crontab
-crontab -e
+| Label | Schedule (UTC) | Script |
+|-------|----------------|--------|
+| `com.crypto.scoring` | Sunday 12:00 | `run-local.sh` → `pipeline.run --dimensions-only` |
+| `com.crypto.indicators` | Daily 12:00 | `run-daily-indicators.sh` → `pipeline.indicators` |
+| `com.crypto.discovery` | Monthly day 1, 18:00 | `run-discovery.sh` |
 
-# Add this entry (adjust paths as needed):
-# Weekly scoring - Sunday 00:00 UTC
-0 0 * * 0 cd ~/Projects/personal/cryptocurrencies-board && source .venv/bin/activate && python -m pipeline.run && git add -A && git commit -m "chore: weekly scoring" && git push
-```
+**Manual trigger:** `./scripts/install-launchd.sh run scoring` | `indicators` | `discovery` — does not change plist schedules.
 
-**Note**: Adjust for your timezone. UTC 00:00 = PT 17:00 (previous day). Discovery runs monthly (manual).
+**Status:** `./scripts/install-launchd.sh status`
 
 ## Environment
 

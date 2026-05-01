@@ -32,6 +32,8 @@
     <!-- Environment variables -->
     <key>EnvironmentVariables</key>
     <dict>
+        <key>TZ</key>
+        <string>UTC</string>
         <key>PATH</key>
         <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
     </dict>
