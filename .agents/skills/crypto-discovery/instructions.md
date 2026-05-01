@@ -2,7 +2,7 @@
 
 Monthly watchlist discovery and vetting for the conviction scoring framework.
 
-> **Auto-Apply Mode**: Discovery recommendations are automatically applied to `pipeline/assets.yaml`. Tiers are computed dynamically from composite scores — no manual tier assignment.
+> **Auto-Apply Mode**: Discovery recommendations are automatically applied to `src/pipeline/assets.yaml`. Tiers are computed dynamically from composite scores — no manual tier assignment.
 
 ## CRITICAL: Objective Analysis Only
 
@@ -14,8 +14,8 @@ Your role is to be an unbiased analyst. If a project meets the criteria, it belo
 
 After discovery analysis completes:
 
-1. **Add recommended assets** directly to `pipeline/assets.yaml` (flat list)
-2. **Remove flagged assets** from `pipeline/assets.yaml`
+1. **Add recommended assets** directly to `src/pipeline/assets.yaml` (flat list)
+2. **Remove flagged assets** from `src/pipeline/assets.yaml`
 3. **No tier assignment** — tiers are computed from composite scores at runtime:
   - Composite ≥75 → Leader
   - Composite ≥65 → Runner-up
@@ -40,9 +40,9 @@ Invoke this skill when:
 
 ## Evaluation dimensions (aligned with pipeline)
 
-The pipeline uses `**asset_category`** (9 categories) and optional `**fee_model**`. Weights are in `pipeline/config.yaml` (`weights_by_category`). Typical scored dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply**. **Wyckoff** is a filter on actions, not a composite weight.
+The pipeline uses `**asset_category`** (9 categories) and optional `**fee_model**`. Weights are in `src/pipeline/config.yaml` (`weights_by_category`). Typical scored dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply**. **Wyckoff** is a filter on actions, not a composite weight.
 
-When adding an asset to `pipeline/assets.yaml`, set:
+When adding an asset to `src/pipeline/assets.yaml`, set:
 
 - `asset_category` (required for correct weights), e.g. `defi-protocol`, `oracle-data`, `payments-rail`, `enterprise-settlement`, `monetary-store-of-value`, `smart-contract-platform`, `shared-security`, `data-availability-modular`, `ai-compute-depin`
 - `fee_model` when relevant: `revenue`, `burn`, `staking_share`, `miner`, `minimal`, `equity` (see `.docs/research/asset-category-taxonomy.md` Section 5)
@@ -105,7 +105,7 @@ Phase informs **timing and action downgrades**, not composite weights.
 
 ## Weight profiles
 
-Composite weights are **per `asset_category`** in `pipeline/config.yaml` (`weights_by_category`). Do not copy a static table here — use the YAML as source of truth.
+Composite weights are **per `asset_category`** in `src/pipeline/config.yaml` (`weights_by_category`). Do not copy a static table here — use the YAML as source of truth.
 
 ## Tier Definitions (Dynamic)
 
@@ -126,7 +126,7 @@ Tiers are computed automatically from composite scores:
 ### Step 1: Read Current Watchlist
 
 ```bash
-cat pipeline/assets.yaml
+cat src/pipeline/assets.yaml
 ```
 
 Understand the current state before making changes.
@@ -294,7 +294,7 @@ Output a markdown report following this structure:
 
 ## Auto-Applied Changes
 
-After the report is generated, **automatically apply changes** to `pipeline/assets.yaml`:
+After the report is generated, **automatically apply changes** to `src/pipeline/assets.yaml`:
 
 ```yaml
 # Add new assets to the flat list (tier computed at runtime)
@@ -326,7 +326,7 @@ To **remove** an asset, delete its entry from the list.
 Write the report to:
 ```
 
-discovery/report_YYYY-MM.md
+out/discovery/report_YYYY-MM.md
 
 ```
 

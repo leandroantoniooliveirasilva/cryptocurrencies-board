@@ -4,7 +4,7 @@
 #   - Runner-up:   composite >= 65
 #   - Observation: composite < 65
 #
-# asset_category: drives weights (see pipeline/config.yaml weights_by_category).
+# asset_category: drives weights (see config.yaml weights_by_category).
 # asset_type: legacy coarse label for discovery docs (optional).
 #
 # fee_model (optional): how fees map to token value capture — see .docs/research/asset-category-taxonomy.md

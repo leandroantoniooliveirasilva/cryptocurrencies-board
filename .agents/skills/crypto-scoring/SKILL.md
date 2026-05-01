@@ -17,6 +17,10 @@ Use this skill for weekly scan interpretation and signal-quality validation.
 
 Follow the full procedure in `instructions.md`.
 
+## How results are produced (repo contract)
+
+Weekly scoring runs up to **`PIPELINE_MAX_WORKERS`** assets in parallel (default **10**): each slot uses **one isolated Python child process** per asset. Inside each child, qualitative dimensions call **`cursor-agent`** (see `src/pipeline/fetchers/qualitative.py`). Workers write **`out/reports/scoring/assets/<YYYY-MM-DD>/<SYMBOL>.json`** per asset; the main process **merges** successful assets into **`public/latest.json`** and SQLite in watchlist order. Use per-asset JSON for debugging; **`latest.json`** is the merged dashboard snapshot.
+
 ## Output expectations
 
 - Report inconsistency count first
@@ -26,6 +30,6 @@ Follow the full procedure in `instructions.md`.
 
 # crypto-scoring
 
-Asset-by-asset conviction scoring for the weekly pipeline.
+Asset-by-asset conviction scoring for the weekly pipeline: **cursor-agent** inside each asset subprocess → **`out/reports/scoring/assets/…/<SYMBOL>.json`** → merged **`public/latest.json`**.
 
-Use this skill when running or debugging scoring quality, with strict evidence-backed rationales for each weighted dimension (institutional, adoption_activity, value_capture, regulatory, supply). Prefer focused single-asset analysis when quality is low or rationales are vague.
+Use this skill when running or debugging scoring quality, with strict evidence-backed rationales for each weighted dimension (institutional, adoption_activity, value_capture, regulatory, supply). Prefer focused single-asset analysis when quality is low or rationales vague — inspect that asset’s file under `out/reports/scoring/assets/<date>/`.

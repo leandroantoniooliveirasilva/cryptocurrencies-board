@@ -8,8 +8,8 @@ Track all changes to weights, thresholds, and rationale. This file prevents fram
 
 ### What changed
 
-- Replaced flat `asset_type` weight profiles with **`weights_by_category`** in `pipeline/config.yaml` (nine categories + `default`).
-- Each watchlist asset has **`asset_category`** (and optional **`fee_model`**) in `pipeline/assets.yaml`.
+- Replaced flat `asset_type` weight profiles with **`weights_by_category`** in `src/pipeline/config.yaml` (nine categories + `default`).
+- Each watchlist asset has **`asset_category`** (and optional **`fee_model`**) in `src/pipeline/assets.yaml`.
 - **Value capture** and **adoption_activity** replace a single **revenue** dimension where the taxonomy calls for it; dimensions omitted for a category are excluded and weights renormalise.
 - **Wyckoff** stays in `scores` for display and phase logic but is **not** part of composite weights; it remains a **post-score filter** with GLI / RS / Fear–Greed.
 - SQLite column **`snapshots.revenue`** still stores the value-capture score for backward compatibility.
@@ -21,10 +21,10 @@ Align weights with materially different value theses (oracles vs payments vs SoV
 
 ### Config / code
 
-- `pipeline/category.py` — category resolution and skip rules.
-- `pipeline/config.yaml` — `weights_by_category`.
-- `pipeline/scoring/composite.py` — composite keyed by `asset_category`.
-- `pipeline/run.py`, `pipeline/fetchers/qualitative.py` — scoring and rationales.
+- `src/pipeline/category.py` — category resolution and skip rules.
+- `src/pipeline/config.yaml` — `weights_by_category`.
+- `src/pipeline/scoring/composite.py` — composite keyed by `asset_category`.
+- `src/pipeline/run.py`, `src/pipeline/fetchers/qualitative.py` — scoring and rationales.
 
 ---
 
@@ -79,8 +79,8 @@ See `.docs/research/strong-accumulate-refinement.md` for full backtest.
 ### Implementation
 
 - `scripts/run-discovery-ensemble.sh`
-- `pipeline/discovery/prompt.md`
-- `discovery/report_YYYY-MM.md`
+- `src/pipeline/discovery/prompt.md`
+- `out/discovery/report_YYYY-MM.md`
 
 ---
 

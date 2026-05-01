@@ -12,13 +12,14 @@ Combines actual supply data from CoinGecko with AI-based qualitative assessment.
 import json
 import logging
 import os
-from pathlib import Path
 import subprocess
 import time
 import threading
 from typing import Optional
 
 import requests
+
+from pipeline.repo_paths import repo_root
 
 logger = logging.getLogger(__name__)
 
@@ -40,8 +41,8 @@ CURSOR_AGENT_SUPPLY_TIMEOUT = int(
     os.environ.get('CURSOR_AGENT_SUPPLY_TIMEOUT', '60')
 )
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-SCORING_SKILL_FILE = REPO_ROOT / '.agents' / 'skills' / 'scoring' / 'instructions.md'
+REPO_ROOT = repo_root()
+SCORING_SKILL_FILE = REPO_ROOT / '.agents' / 'skills' / 'crypto-scoring' / 'instructions.md'
 
 
 def _load_scoring_skill_excerpt(max_chars: int = 2400) -> str:

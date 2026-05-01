@@ -6,6 +6,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+export PYTHONPATH="${PROJECT_DIR}/src${PYTHONPATH:+:$PYTHONPATH}"
 LOG_DIR="$PROJECT_DIR/logs"
 VENV_DIR="$PROJECT_DIR/.venv"
 
@@ -32,7 +33,7 @@ cd "$PROJECT_DIR"
 
 if python -m pipeline.indicators 2>&1 | tee -a "$LOG_FILE"; then
     log "Indicators completed successfully"
-    git add public/latest.json pipeline/storage/history.sqlite
+    git add public/latest.json src/pipeline/storage/history.sqlite
     if git diff --staged --quiet; then
         log "No changes to commit"
     else

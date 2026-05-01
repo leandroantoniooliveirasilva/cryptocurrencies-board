@@ -6,6 +6,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+export PYTHONPATH="${PROJECT_DIR}/src${PYTHONPATH:+:$PYTHONPATH}"
 LOG_DIR="$PROJECT_DIR/logs"
 VENV_DIR="$PROJECT_DIR/.venv"
 
@@ -37,7 +38,7 @@ if ! command -v cursor-agent &> /dev/null; then
     log "WARNING: Cursor Agent CLI not found — qualitative calls will fail until installed and authenticated"
 fi
 
-# Run the pipeline
+# Run the pipeline (per-asset subprocesses → out/reports/scoring/assets/<date>/*.json → public/latest.json)
 cd "$PROJECT_DIR"
 log "Running pipeline..."
 
@@ -48,7 +49,7 @@ if python -m pipeline.run --dimensions-only 2>&1 | tee -a "$LOG_FILE"; then
     log "Committing and pushing to GitHub..."
     cd "$PROJECT_DIR"
 
-    git add public/latest.json pipeline/storage/history.sqlite
+    git add public/latest.json src/pipeline/storage/history.sqlite
 
     if git diff --staged --quiet; then
         log "No changes to commit"

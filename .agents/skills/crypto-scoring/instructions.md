@@ -2,6 +2,17 @@
 
 Interpret weekly scan results and provide actionable insights.
 
+## Pipeline architecture (cursor-agent → per-asset JSON → latest.json)
+
+When you run `**python -m pipeline.run**` or `**./scripts/run-scoring.sh**` (`--dimensions-only` or full):
+
+1. **Orchestrator** (`src/pipeline/run.py`) schedules every `src/pipeline/assets.yaml` entry. Up to `**PIPELINE_MAX_WORKERS`** assets run **at once** (default **10**) via a thread pool; each slot runs **one isolated Python subprocess** per asset (`pipeline.run --score-asset-input … --score-asset-output …`). Set `PIPELINE_MAX_WORKERS=1` to force strictly sequential subprocesses.
+2. Inside each child, dimension scoring runs; **qualitative dimensions** invoke the **Cursor Agent CLI** (`cursor-agent --print`, etc.) — see `src/pipeline/fetchers/qualitative.py` and `supply.py`.
+3. When each child exits, the worker writes `**out/reports/scoring/assets/<snapshot-date>/<SYMBOL>.json`** (full subprocess result: `asset`, `dimension_errors`, or `error`).
+4. The main process **merges** successful asset payloads in watchlist order, persists `**src/pipeline/storage/history.sqlite`**, strips internal fields (e.g. `cache_writes`), sorts assets, and writes `**public/latest.json**`. Failures are listed under `**scoring_errors**` in `latest.json`.
+
+**Interpretation work** usually starts from `**public/latest.json`** (portfolio snapshot). Use `**out/reports/scoring/assets/…**` when you need evidence for a single asset’s scoring pass.
+
 ## When to Use
 
 - After running `python -m pipeline.run` (weekly scoring)
@@ -18,26 +29,30 @@ cat public/latest.json
 
 ### Step 2: Identify Action Items
 
-| Action | Meaning | Response |
-|--------|---------|----------|
+
+| Action            | Meaning                          | Response                  |
+| ----------------- | -------------------------------- | ------------------------- |
 | strong-accumulate | Rare dislocation or capitulation | Act now — high conviction |
-| accumulate | Tranche-eligible | Add measured size |
-| promote | Runner-up earning activation | Review for tier change |
-| stand-aside | Distribution risk | Do not engage |
-| hold | No signal | Do nothing |
-| await | Building | Monitor |
-| observe | Watching | No position |
+| accumulate        | Tranche-eligible                 | Add measured size         |
+| promote           | Runner-up earning activation     | Review for tier change    |
+| stand-aside       | Distribution risk                | Do not engage             |
+| hold              | No signal                        | Do nothing                |
+| await             | Building                         | Monitor                   |
+| observe           | Watching                         | No position               |
+
 
 ### Step 3: Consistency Check (MANDATORY)
 
 Before generating the summary, scan for logical inconsistencies:
 
-| Check | Inconsistency | Fix |
-|-------|---------------|-----|
-| Wyckoff vs Action | Distribution phase + Await/Observe (no Stand Aside) | Distribution = risk, should flag or Stand Aside |
-| RSI vs Action | Oversold RSI + stand-aside | If composite declined sharply, stand-aside is correct; note the conflict |
-| Composite vs Tier | Leader with composite <65 | Flag for potential demotion review |
-| Action vs Description | Action text contradicts Wyckoff phase | Rewrite description to match actual trigger |
+
+| Check                 | Inconsistency                                       | Fix                                                                      |
+| --------------------- | --------------------------------------------------- | ------------------------------------------------------------------------ |
+| Wyckoff vs Action     | Distribution phase + Await/Observe (no Stand Aside) | Distribution = risk, should flag or Stand Aside                          |
+| RSI vs Action         | Oversold RSI + stand-aside                          | If composite declined sharply, stand-aside is correct; note the conflict |
+| Composite vs Tier     | Leader with composite <65                           | Flag for potential demotion review                                       |
+| Action vs Description | Action text contradicts Wyckoff phase               | Rewrite description to match actual trigger                              |
+
 
 **You MUST count inconsistencies and report at the top level.**
 
@@ -78,15 +93,18 @@ Before generating the summary, scan for logical inconsistencies:
 Fires ~5-15 times per year. Two paths:
 
 **Capitulation** (RSI-based):
+
 - Weekly RSI <30 AND daily RSI <30
 - 82.9% hit rate — act decisively
 
 **Wyckoff dip** (structural):
+
 - Daily RSI ≤32 while weekly RSI ≥42 (stable/rising)
 - Composite stable week-over-week
 - Phase C spring zone
 
 **Downgrade Filters** (OR logic — any one downgrades one level: strong-acc→acc, acc→hold):
+
 - GLI contracting (liquidity withdrawal)
 - RS underperforming BTC by ≥10% over 90 days
 - Fear & Greed ≥70 (market greed/euphoria)
@@ -95,14 +113,17 @@ Fires ~5-15 times per year. Two paths:
 ### Accumulate
 
 **Capitulation** (RSI-based):
+
 - Weekly RSI <30 alone
 
 **Wyckoff** (structural):
+
 - Composite ≥75, Phase C or B→C
 - Non-negative 7-day trend
 - Weekly RSI <70
 
 **Downgrades one level when any filter active** (strong-acc→acc, acc→hold):
+
 - GLI contracting
 - RS underperforming BTC
 - Fear & Greed ≥70
@@ -111,6 +132,7 @@ Fires ~5-15 times per year. Two paths:
 ### Stand Aside
 
 Triggers for ANY tier (not just leaders):
+
 - Distribution phase (A, B, C, D, E) + negative trend
 - Weekly delta ≤-5 points
 
@@ -119,6 +141,7 @@ Triggers for ANY tier (not just leaders):
 ### Promote
 
 Runner-up showing leader metrics:
+
 - Composite ≥75
 - 30-day trend ≥+8
 - 7-day trend ≥+2
@@ -127,13 +150,15 @@ Requires manual decision to promote in `assets.yaml`.
 
 ## RSI Context
 
-| Range | Daily | Weekly | Interpretation |
-|-------|-------|--------|----------------|
-| <30 | Oversold | Capitulation | Strong buy zone for leaders |
-| 30-40 | Weak | Building | Watch for confirmation |
-| 40-60 | Neutral | Healthy | Normal range |
-| 60-70 | Strong | Extended | Momentum intact |
-| ≥70 | Overbought | Euphoric | Accumulation paused |
+
+| Range | Daily      | Weekly       | Interpretation              |
+| ----- | ---------- | ------------ | --------------------------- |
+| <30   | Oversold   | Capitulation | Strong buy zone for leaders |
+| 30-40 | Weak       | Building     | Watch for confirmation      |
+| 40-60 | Neutral    | Healthy      | Normal range                |
+| 60-70 | Strong     | Extended     | Momentum intact             |
+| ≥70   | Overbought | Euphoric     | Accumulation paused         |
+
 
 ## Score Rationales (Evidence-Backed Claims)
 
@@ -150,17 +175,20 @@ Each dimension score includes a rationale explaining the data behind it:
 ```
 
 **Use rationales for validation:**
+
 - When Wyckoff phase seems wrong, check `wyckoff` rationale for underlying metrics
 - When revenue score seems off, verify the actual fee data in rationale
 - Cross-reference supply rationale with tokenomics claims
 
 **Include in summary when relevant:**
+
 - Quote key metrics from rationales to support your analysis
 - Flag rationales that contradict expected behavior
 
 ## Historical Context
 
 Check in the JSON:
+
 - `trend` and `trend_30d`: Score trajectory (requires 4+ weeks of data)
 - `label_changed_days_ago`: Signal freshness
 - `strong_accumulate_days_active`: Continuation vs new
@@ -180,3 +208,4 @@ Check in the JSON:
 - Don't recommend action on assets below 50 composite (hidden from dashboard)
 - Don't treat this as trading advice — it's accumulation guidance
 - Don't ignore distribution phases in non-leaders — they still indicate risk
+

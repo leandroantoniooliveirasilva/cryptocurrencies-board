@@ -21,9 +21,9 @@ import logging
 import os
 import sqlite3
 from datetime import date, datetime, timezone
-from pathlib import Path
 from typing import Optional
 
+from pipeline.repo_paths import pipeline_root, repo_root
 from pipeline.config import config
 from pipeline.fetchers import defillama, fear_greed, gli, relative_strength
 from pipeline.scoring import actions, rsi, wyckoff
@@ -36,9 +36,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-REPO_ROOT = Path(__file__).parent.parent
-DB_PATH = REPO_ROOT / "pipeline" / "storage" / "history.sqlite"
-PUBLIC_DIR = REPO_ROOT / "public"
+REPO_ROOT = repo_root()
+_DB_ROOT = pipeline_root()
+DB_PATH = _DB_ROOT / 'storage' / 'history.sqlite'
+PUBLIC_DIR = REPO_ROOT / 'public'
 LATEST_JSON = PUBLIC_DIR / "latest.json"
 
 
@@ -290,7 +291,7 @@ def main():
 
     # We need coingecko_id for price fetching, load from assets.yaml
     import yaml
-    assets_file = REPO_ROOT / "pipeline" / "assets.yaml"
+    assets_file = pipeline_root() / 'assets.yaml'
     with open(assets_file) as f:
         assets_config = yaml.safe_load(f)
     assets_list = assets_config.get("assets", [])

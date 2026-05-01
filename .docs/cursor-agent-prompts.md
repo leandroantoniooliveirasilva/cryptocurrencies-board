@@ -2,7 +2,7 @@
 
 **To use this file in one step:** open it in the project, then ask Cursor Agent: *'Read `.docs/cursor-agent-prompts.md` and run the prompt in section N (or the one I name). Follow `Agents.md` and use the real shell — do not only suggest commands.'*
 
-Copy one block below when you want a self-contained message without opening the file. Ground rules live in `Agents.md`; scoring logic in `pipeline/config.yaml` and `pipeline/assets.yaml`.
+Copy one block below when you want a self-contained message without opening the file. Ground rules live in `Agents.md`; scoring logic in `src/pipeline/config.yaml` and `src/pipeline/assets.yaml`.
 
 **Defaults for this project:** qualitative scores use the **Cursor Agent CLI** (`cursor-agent --print --model auto`). A full scoring run can take a long time (many per-asset calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
 
@@ -10,14 +10,14 @@ Copy one block below when you want a self-contained message without opening the 
 
 ## 1. Full weekly scoring (snapshot + optional publish)
 
-Use when you want a fresh `public/latest.json` and updated `pipeline/storage/history.sqlite`.
+Use when you want a fresh `public/latest.json` and updated `src/pipeline/storage/history.sqlite`.
 
 ```
 In cryptocurrencies-board: run the weekly scoring pipeline end-to-end using my local setup.
 
 - Activate `.venv`; scoring invokes Cursor Agent for qualitative dimensions.
 - Run `./scripts/run-scoring.sh` from the repo root (or document why you use `python -m pipeline.run` instead). If it fails, read the latest `logs/scoring_*.log`, fix env/locks, retry once.
-- Confirm `public/latest.json` and `pipeline/storage/history.sqlite` updated and `framework_version` / asset outputs look sane.
+- Confirm `public/latest.json` and `src/pipeline/storage/history.sqlite` updated and `framework_version` / asset outputs look sane.
 - If I asked to publish: `npm run build`, bump `public/index.html` dashboard.js cache query if the bundle changed, then `git add` only the relevant paths and commit with a conventional subject under 100 characters (no footer signature).
 
 Do not refactor unrelated code. Follow Agents.md for framework behavior.
@@ -37,7 +37,7 @@ Run weekly scoring only: `./scripts/run-scoring.sh` from repo root with venv act
 
 ## 3. Dry run (smoke test)
 
-`--dry-run` **does not write** `public/latest.json` but still runs the full pipeline (network, APIs, **SQLite snapshots may still be written** — see `pipeline/run.py` `write_output`).
+`--dry-run` **does not write** `public/latest.json` but still runs the full pipeline (network, APIs, **SQLite snapshots may still be written** — see `src/pipeline/run.py` `write_output`).
 
 ```
 Activate `.venv`, run `python -m pipeline.run --dry-run`. Confirm it finishes; summarize any failures. Note: dry-run skips writing latest.json; database writes may still occur — tell me if that matters for my intent.
@@ -58,7 +58,7 @@ From cryptocurrencies-board repo root: run `npm run build`. If `public/index.htm
 ## 5. Monthly discovery (ensemble)
 
 ```
-Run `./scripts/run-discovery-ensemble.sh` from repo root. Ensure `cursor-agent` is on PATH and authenticated. When it finishes, point me to the new report path under `discovery/` and summarize additions/removals vs `pipeline/assets.yaml` (do not auto-edit assets unless I ask).
+Run `./scripts/run-discovery-ensemble.sh` from repo root. Ensure `cursor-agent` is on PATH and authenticated. When it finishes, point me to the new report path under `out/discovery/` and summarize additions/removals vs `src/pipeline/assets.yaml` (do not auto-edit assets unless I ask).
 ```
 
 ---

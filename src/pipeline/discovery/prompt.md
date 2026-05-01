@@ -18,7 +18,7 @@ Your role is to be an unbiased analyst. If a project meets the criteria, it belo
 
 ## Asset categories & weight profiles
 
-Composite weights are **per `asset_category`** (9 categories). See `pipeline/config.yaml` (`weights_by_category`). Typical dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply** — omit dimensions that are N/A (weights renormalise). **Wyckoff** is a post-score filter, not weighted.
+Composite weights are **per `asset_category`** (9 categories). See `src/pipeline/config.yaml` (`weights_by_category`). Typical dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply** — omit dimensions that are N/A (weights renormalise). **Wyckoff** is a post-score filter, not weighted.
 
 Assign each watchlist asset one `asset_category` (e.g. `defi-protocol`, `oracle-data`, `payments-rail`, `enterprise-settlement`, `monetary-store-of-value`, `smart-contract-platform`, `shared-security`, `data-availability-modular`, `ai-compute-depin`). Keep legacy `asset_type` only as a coarse label if useful for discovery notes.
 

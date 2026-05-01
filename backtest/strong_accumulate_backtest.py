@@ -24,8 +24,8 @@ from typing import Optional
 import numpy as np
 import requests
 
-# Add parent to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add repo src/ for ``pipeline`` package imports
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
 from pipeline.scoring.rsi import compute_rsi
 

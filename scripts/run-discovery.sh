@@ -8,8 +8,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 LOG_DIR="$PROJECT_DIR/logs"
-DISCOVERY_DIR="$PROJECT_DIR/discovery"
-PROMPT_FILE="$PROJECT_DIR/pipeline/discovery/prompt.md"
+DISCOVERY_DIR="$PROJECT_DIR/out/discovery"
+PROMPT_FILE="$PROJECT_DIR/src/pipeline/discovery/prompt.md"
 
 # Create directories
 mkdir -p "$LOG_DIR"
@@ -61,7 +61,7 @@ if [ ! -f "$PROMPT_FILE" ]; then
 fi
 
 # Read current assets for context
-CURRENT_ASSETS=$(cat "$PROJECT_DIR/pipeline/assets.yaml")
+CURRENT_ASSETS=$(cat "$PROJECT_DIR/src/pipeline/assets.yaml")
 
 # Build the discovery prompt with current state
 DISCOVERY_PROMPT="$(cat "$PROMPT_FILE")
@@ -124,4 +124,4 @@ find "$LOG_DIR" -name "discovery_*.log" -mtime +365 -delete 2>/dev/null || true
 
 log_progress 100 "discovery pipeline complete"
 log "Review the report at: $REPORT_FILE"
-log "To apply changes, manually edit pipeline/assets.yaml"
+log "To apply changes, manually edit src/pipeline/assets.yaml"

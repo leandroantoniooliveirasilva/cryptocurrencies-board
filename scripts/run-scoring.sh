@@ -1,6 +1,12 @@
 #!/bin/bash
 # Weekly scoring pipeline with a hard wall-clock cap (default 2h).
 #
+# Flow (matches crypto-scoring skill):
+# - One isolated Python child process per watchlist asset; qualitative dimensions use
+#   cursor-agent inside that child (see src/pipeline/fetchers/qualitative.py).
+# - After each child: out/reports/scoring/assets/<YYYY-MM-DD>/<SYMBOL>.json (raw envelope).
+# - Orchestrator merges successful assets into public/latest.json + SQLite.
+#
 # Why this feels slower than discovery:
 # - Discovery is usually a few large Cursor Agent prompts (one report per phase).
 # - Scoring runs up to several Cursor Agent calls *per watchlist asset* (regulatory,
@@ -41,6 +47,7 @@ fi
 source "$VENV_DIR/bin/activate"
 
 cd "$PROJECT_DIR"
+export PYTHONPATH="${PROJECT_DIR}/src${PYTHONPATH:+:$PYTHONPATH}"
 
 run_inner() {
   python -m pipeline.run "$@"

@@ -1,8 +1,8 @@
 # Asset Category Taxonomy — Research & Proposal
 
 Date: 2026-04-21
-Status: Implemented — weights in `pipeline/config.yaml` (`weights_by_category`), assignments in `pipeline/assets.yaml`.
-Related: `.docs/decisions.md`, `pipeline/config.yaml`, `pipeline/assets.yaml`, `pipeline/run.py`, `.agents/skills/crypto-discovery/instructions.md`.
+Status: Implemented — weights in `src/pipeline/config.yaml` (`weights_by_category`), assignments in `src/pipeline/assets.yaml`.
+Related: `.docs/decisions.md`, `src/pipeline/config.yaml`, `src/pipeline/assets.yaml`, `src/pipeline/run.py`, `.agents/skills/crypto-discovery/instructions.md`.
 
 ## 1. Problem Statement
 The current framework uses five universal dimensions — institutional, revenue, regulatory, supply, wyckoff — with four category-specific weight profiles (store-of-value, smart-contract, defi, infrastructure). Two recurring problems:
@@ -85,7 +85,7 @@ Key takeaway: restaking/shared-security tokens are valued on adoption breadth (A
 3. Introduce an **Adoption / Network Activity** dimension to capture usage signals (active addresses, TPS, TVS, validators, AVS count). Currently usage signals are implicitly folded into "Institutional" or "Revenue," which is imprecise.
 4. Keep **Institutional**, **Regulatory**, and **Supply/Tokenomics** as weighted dimensions, and use **Wyckoff** as a global post-score filter (not a weighted category dimension).
 5. Each asset carries an `asset_category` and, optionally, a `fee_model` (how fees translate into token value). The category determines the weight profile; the fee_model determines how the Value Capture dimension is scored, or whether it is excluded.
-6. Where a dimension is genuinely excluded, weights redistribute across the remaining dimensions (already supported in `pipeline/scoring/composite.py`).
+6. Where a dimension is genuinely excluded, weights redistribute across the remaining dimensions (already supported in `src/pipeline/scoring/composite.py`).
 7. The methodology should work for discovery too: when a new asset appears, the discovery flow assigns category + fee_model, and the scoring flow does the rest.
 
 ## 4. Proposed Categories
@@ -256,16 +256,16 @@ Usage signals that make the network real. Per-category:
 
 ## 9. Implementation Outline (for follow-up work)
 Not executed yet — awaiting approval.
-1. Extend `pipeline/assets.yaml` schema: add `asset_category` (one of Section 4) and richer `fee_model` (Section 5). Keep `asset_type` during transition for backward compatibility.
-2. Rewrite `pipeline/config.yaml` weights section: one profile per category without `wyckoff`; each profile enumerates only weighted dimensions.
-3. Generalise `pipeline/scoring/composite.py`: support variable dimension sets per category (already mostly works via missing-dim renormalisation; add guard for unknown dimension keys).
+1. Extend `src/pipeline/assets.yaml` schema: add `asset_category` (one of Section 4) and richer `fee_model` (Section 5). Keep `asset_type` during transition for backward compatibility.
+2. Rewrite `src/pipeline/config.yaml` weights section: one profile per category without `wyckoff`; each profile enumerates only weighted dimensions.
+3. Generalise `src/pipeline/scoring/composite.py`: support variable dimension sets per category (already mostly works via missing-dim renormalisation; add guard for unknown dimension keys).
 4. Add fetchers / scorers for new metrics:
    - hashrate + security budget (SoV)
    - adoption_activity scorer that pulls category-specific inputs (TVS for oracle, burn/mint ratio for Canton, AVS count for EIGEN, etc.)
    - Rename `revenue` scoring path to `value_capture` and dispatch by fee_model.
-5. Update `pipeline/run.py` narrative builder to describe the per-category dimension set and explain excluded dimensions (no more "⚠️ ESTIMATED" text for assets whose value_capture is excluded by design).
+5. Update `src/pipeline/run.py` narrative builder to describe the per-category dimension set and explain excluded dimensions (no more "⚠️ ESTIMATED" text for assets whose value_capture is excluded by design).
 6. Add a post-score Wyckoff filter step that applies phase-based downgrades before final recommendations.
-7. Update `pipeline/discovery/prompt.md` and `.agents/skills/crypto-discovery/instructions.md` with the new taxonomy, fee-model options, and category assignment guidance.
+7. Update `src/pipeline/discovery/prompt.md` and `.agents/skills/crypto-discovery/instructions.md` with the new taxonomy, fee-model options, and category assignment guidance.
 8. Document the change in `.docs/decisions.md` once implemented.
 
 ## 10. Open Questions

@@ -17,5 +17,8 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["pipeline*"]
+
+[tool.setuptools.package-data]
+pipeline = ["*.yaml", "discovery/*.md"]

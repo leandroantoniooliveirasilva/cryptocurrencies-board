@@ -7,8 +7,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 LOG_DIR="$PROJECT_DIR/logs"
-DISCOVERY_DIR="$PROJECT_DIR/discovery"
-PROMPT_FILE="$PROJECT_DIR/pipeline/discovery/prompt.md"
+DISCOVERY_DIR="$PROJECT_DIR/out/discovery"
+PROMPT_FILE="$PROJECT_DIR/src/pipeline/discovery/prompt.md"
 
 mkdir -p "$LOG_DIR"
 mkdir -p "$DISCOVERY_DIR"
@@ -81,7 +81,7 @@ if [ ! -f "$PROMPT_FILE" ]; then
     exit 1
 fi
 
-CURRENT_ASSETS=$(cat "$PROJECT_DIR/pipeline/assets.yaml")
+CURRENT_ASSETS=$(cat "$PROJECT_DIR/src/pipeline/assets.yaml")
 TODAY=$(date -u +"%Y-%m-%d")
 
 BASE_PROMPT="$(cat "$PROMPT_FILE")
@@ -338,7 +338,7 @@ log "  - Final report: $FINAL_REPORT"
 log ""
 log_progress 100 "ensemble discovery pipeline complete"
 log "Review the final report at: $FINAL_REPORT"
-log "To apply changes, manually edit pipeline/assets.yaml"
+log "To apply changes, manually edit src/pipeline/assets.yaml"
 
 log ""
 log "Final report preview:"

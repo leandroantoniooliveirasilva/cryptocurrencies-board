@@ -2,6 +2,17 @@
 
 Guidance for AI assistants and humans working with this repository.
 
+## Documentation map
+
+- `**README.md**` — Install, quick commands, high-level repo layout.
+- `**Agents.md**` (this file) — Signal framework, pipeline, launchd, commands, environment, workers, design rules.
+- `**src/pipeline/**` — Watchlist (`assets.yaml`), thresholds (`config.yaml`), pipeline code, SQLite (`storage/`), discovery prompt (`discovery/prompt.md`).
+- `**out/**` — Generated artifacts only: scoring JSON (`out/reports/scoring/…`), discovery markdown (`out/discovery/…`).
+- `.docs/cursor-agent-prompts.md` — Copy-paste Cursor Agent session prompts.
+- `**.docs/decisions.md**` — Calibration log and framework changes.
+- `**.docs/research/**` — Longer memos and taxonomy.
+- `**.agents/skills/crypto-discovery/**` and `**crypto-scoring/**` — Agent skill instructions for discovery and weekly interpretation.
+
 ## Overview
 
 A personal cryptocurrency scoring system for long-term accumulation. Runs locally on demand, stores snapshots in SQLite (committed to repo), displays via React dashboard on GitHub Pages.
@@ -22,14 +33,14 @@ A personal cryptocurrency scoring system for long-term accumulation. Runs locall
 This is a decision support system for patient accumulation:
 
 - Strong-accumulate fires more rarely across the watchlist, has specific triggers
-- Accumulate is active more frequent, it is assigned to leaders, when no drowngrade signals exist.
+- Accumulate is active more frequent, it is assigned to leaders, when no downgrade signals exist.
 - Hold is the default state — patience is the strategy
 
 ## Signal Framework
 
 ### Dimensions (composite vs filter)
 
-Composite uses **only the dimensions listed for that asset’s `asset_category`** in `pipeline/config.yaml` (`weights_by_category`). Typical dimensions:
+Composite uses **only the dimensions listed for that asset’s `asset_category`** in `src/pipeline/config.yaml` (`weights_by_category`). Typical dimensions:
 
 
 | Dimension           | What it measures                                                                                       |
@@ -49,7 +60,7 @@ Composite uses **only the dimensions listed for that asset’s `asset_category`*
 
 ### Weight profiles
 
-**Per `asset_category`**, not a single global table. Source of truth: `pipeline/config.yaml` → `weights_by_category` (nine categories + `default`).
+**Per `asset_category`**, not a single global table. Source of truth: `src/pipeline/config.yaml` → `weights_by_category` (nine categories + `default`).
 
 ### Action States
 
@@ -103,7 +114,7 @@ Tiers are computed automatically from composite scores:
 | Observation | 50-64     | Watch only, no position         |
 
 
-Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
+Thresholds defined in `src/pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
 
 ### Filters
 
@@ -140,10 +151,11 @@ Automation is **macOS launchd** (see `scripts/install-launchd.sh`), not cron. Al
 ```
 Weekly dimension job (Sunday 12:00 UTC) — scripts/run-local.sh
 ├── Fetch: DefiLlama (TVL, revenue) where needed for dimensions
-├── Score: CursorAgent CLI (`cursor-agent --print`, model configurable via `CURSOR_AGENT_MODEL`) for qualitative dimensions
+├── Score: per-asset subprocess; Cursor Agent CLI (`cursor-agent --print`) for qualitative dimensions
+├── Per-asset artifact: out/reports/scoring/assets/<date>/<SYMBOL>.json (child envelope before merge)
 ├── Composite: Weighted score by asset_category (strict required dimensions → scoring_errors if missing)
 ├── Store: Append snapshot to history.sqlite; GLI/F&G/market_context reused from prior latest.json
-└── Output: latest.json (action null until daily job), commit, push
+└── Output: latest.json (merged assets; action null until daily job), commit, push
 
 Daily indicators job (every day 12:00 UTC) — scripts/run-daily-indicators.sh
 ├── Fetch: prices (RSI), GLI, Fear & Greed; Wyckoff from price structure
@@ -151,7 +163,7 @@ Daily indicators job (every day 12:00 UTC) — scripts/run-daily-indicators.sh
 └── Output: latest.json + wyckoff_state in SQLite, commit, push
 
 Monthly discovery (day 1, 18:00 UTC) — scripts/run-discovery.sh
-└── Writes discovery/report_YYYY-MM.md (watchlist edits are manual)
+└── Writes out/discovery/report_YYYY-MM.md (watchlist edits are manual)
 
 GitHub Actions → Deploy /public to GitHub Pages
 ```
@@ -159,6 +171,8 @@ GitHub Actions → Deploy /public to GitHub Pages
 ## Commands
 
 Session prompts (copy-paste blocks): `.docs/cursor-agent-prompts.md`.
+
+**Python path:** from repo root, run `pip install -e .` once (see `README.md`), or use the `scripts/*.sh` entrypoints which set `PYTHONPATH=src`.
 
 ```bash
 # Scheduled jobs (install once): copies plists to ~/Library/LaunchAgents
@@ -226,26 +240,28 @@ Safety model:
 Configuration (optional):
 
 ```bash
-# Weekly run workers (default: 4)
-PIPELINE_MAX_WORKERS=4
+# Weekly run parallel pool size — subprocesses per asset (default: 10)
+PIPELINE_MAX_WORKERS=10
 
-# Daily indicators workers (default: INDICATORS_MAX_WORKERS, then PIPELINE_MAX_WORKERS, else 4)
-INDICATORS_MAX_WORKERS=4
+# Daily indicators workers (default: INDICATORS_MAX_WORKERS, then PIPELINE_MAX_WORKERS, else 10)
+INDICATORS_MAX_WORKERS=10
 ```
 
 Practical defaults:
 
-- 2 for quieter laptop runs
-- 4 as balanced default
-- 6 on stronger machines with stable network/API behavior
+- 2–4 for quieter laptop runs or rate limits
+- 10 default in code (`PIPELINE_MAX_WORKERS` unset)
+- Raise cautiously: each concurrent asset runs multiple `cursor-agent` calls
 
 ## Key Files
 
 ```
-pipeline/
+src/pipeline/
 ├── assets.yaml              # Watchlist (source of truth)
 ├── config.yaml              # All thresholds and parameters
 ├── run.py                   # Orchestrator
+├── discovery/
+│   └── prompt.md            # Monthly discovery prompt (input)
 ├── fetchers/                # Data sources
 ├── scoring/
 │   ├── actions.py           # Signal derivation (core logic)
@@ -255,6 +271,9 @@ pipeline/
 └── storage/
     ├── migrations.py        # SQLite schema
     └── history.sqlite       # Append-only database
+
+out/reports/scoring/assets/<YYYY-MM-DD>/  # Per-asset subprocess JSON before merge into public/latest.json
+out/discovery/                             # Generated discovery reports
 
 public/
 ├── dashboard.jsx            # React source
@@ -335,5 +354,5 @@ When framework changes occur (new dimensions, thresholds, action states), update
 2. Agents.md
 3. `.docs/cursor-agent-prompts.md` (if workflow prompts change)
 4. .agents/skills/ instructions
-5. pipeline/discovery/prompt.md (if scoring logic changes)
+5. src/pipeline/discovery/prompt.md (if scoring logic changes)
 

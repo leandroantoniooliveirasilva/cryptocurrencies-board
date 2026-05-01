@@ -33,12 +33,14 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Optional
 
 import yaml
 
+from pipeline.repo_paths import pipeline_root, repo_root
 from pipeline.category import (
     adoption_hint_for_category,
     resolve_asset_category,
@@ -59,12 +61,31 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-REPO_ROOT = Path(__file__).parent.parent
-ASSETS_FILE = REPO_ROOT / "pipeline" / "assets.yaml"
-DB_PATH = REPO_ROOT / "pipeline" / "storage" / "history.sqlite"
-PUBLIC_DIR = REPO_ROOT / "public"
-LATEST_JSON = PUBLIC_DIR / "latest.json"
-SCORING_ASSET_OUTPUT_DIR = REPO_ROOT / 'reports' / 'scoring' / 'assets'
+REPO_ROOT = repo_root()
+_PIPELINE_ROOT = pipeline_root()
+ASSETS_FILE = _PIPELINE_ROOT / 'assets.yaml'
+DB_PATH = _PIPELINE_ROOT / 'storage' / 'history.sqlite'
+PUBLIC_DIR = REPO_ROOT / 'public'
+LATEST_JSON = PUBLIC_DIR / 'latest.json'
+# One JSON per asset per run; orchestrator merges assets into public/latest.json after all children finish.
+SCORING_ASSET_OUTPUT_DIR = REPO_ROOT / 'out' / 'reports' / 'scoring' / 'assets'
+
+
+def _score_asset_child_env() -> dict[str, str]:
+    """
+    Child processes run ``python -m pipeline.run``; they need ``src/`` on ``PYTHONPATH``
+    when the venv has no editable install (scripts set this; IDEs may not).
+    """
+    env = dict(os.environ)
+    src_root = str(REPO_ROOT / 'src')
+    sep = os.pathsep
+    parts = [p for p in env.get('PYTHONPATH', '').split(sep) if p]
+    if src_root in parts:
+        parts = [src_root] + [p for p in parts if p != src_root]
+    else:
+        parts = [src_root] + parts
+    env['PYTHONPATH'] = sep.join(parts)
+    return env
 
 
 class DimensionScoringError(Exception):
@@ -548,7 +569,7 @@ def build_asset(
     }
 
 
-def _get_max_workers(default_workers: int = 4) -> int:
+def _get_max_workers(default_workers: int = 10) -> int:
     raw_value = os.environ.get("PIPELINE_MAX_WORKERS")
     if not raw_value:
         return default_workers
@@ -613,6 +634,29 @@ def _ensure_asset_reports_dir(snapshot_date: str) -> Path:
     return out_dir
 
 
+def _score_asset_job(
+    entry: dict,
+    gli_downtrend: bool,
+    fg_greedy: bool,
+    dimensions_only: bool,
+    asset_reports_dir_str: str,
+) -> dict:
+    """
+    Run one asset in an isolated subprocess, write out/reports/scoring/assets/<date>/<SYM>.json.
+    Safe for concurrent calls from a thread pool (each asset writes a distinct file).
+    """
+    symbol = entry.get('symbol', 'unknown')
+    result = _run_asset_subprocess(
+        entry,
+        gli_downtrend=gli_downtrend,
+        fg_greedy=fg_greedy,
+        dimensions_only=dimensions_only,
+    )
+    out_dir = Path(asset_reports_dir_str)
+    (out_dir / f'{symbol}.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+    return {'symbol': symbol, 'result': result}
+
+
 def _run_single_asset_mode(input_path: Path, output_path: Path) -> int:
     try:
         payload = json.loads(input_path.read_text(encoding='utf-8'))
@@ -662,7 +706,7 @@ def _run_asset_subprocess(
             '--score-asset-output',
             str(output_path),
         ]
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(cmd, capture_output=True, text=True, env=_score_asset_child_env())
 
         if not output_path.exists():
             return {
@@ -1203,25 +1247,45 @@ def main():
     # Process all assets (tiers computed dynamically from composite scores)
     logger.info(f"\nProcessing {len(assets_list)} assets...")
     worker_count = min(_get_max_workers(), max(1, len(assets_list)))
-    logger.info(f'Isolated child-process scoring per asset (requested workers: {worker_count})')
+    logger.info(
+        f'Isolated child-process scoring per asset (parallel pool: {worker_count} workers)',
+    )
     asset_reports_dir = _ensure_asset_reports_dir(today)
+    ads = str(asset_reports_dir)
+
+    if worker_count == 1 or len(assets_list) <= 1:
+        job_payloads = [
+            _score_asset_job(
+                entry,
+                gli_downtrend,
+                fg_greedy,
+                args.dimensions_only,
+                ads,
+            )
+            for entry in assets_list
+        ]
+    else:
+        by_index: dict[int, dict] = {}
+        with ThreadPoolExecutor(max_workers=worker_count) as executor:
+            futures = {
+                executor.submit(
+                    _score_asset_job,
+                    entry,
+                    gli_downtrend,
+                    fg_greedy,
+                    args.dimensions_only,
+                    ads,
+                ): i
+                for i, entry in enumerate(assets_list)
+            }
+            for fut in as_completed(futures):
+                by_index[futures[fut]] = fut.result()
+        job_payloads = [by_index[i] for i in range(len(assets_list))]
 
     processed_assets: list[dict] = []
     scoring_errors: list[dict] = []
-    for entry in assets_list:
-        symbol = entry.get('symbol', 'unknown')
-        result = _run_asset_subprocess(
-            entry,
-            gli_downtrend=gli_downtrend,
-            fg_greedy=fg_greedy,
-            dimensions_only=args.dimensions_only,
-        )
-
-        (asset_reports_dir / f'{symbol}.json').write_text(
-            json.dumps(result, indent=2),
-            encoding='utf-8',
-        )
-
+    for payload in job_payloads:
+        result = payload['result']
         if result.get('dimension_errors'):
             scoring_errors.append({
                 'symbol': result['symbol'],
