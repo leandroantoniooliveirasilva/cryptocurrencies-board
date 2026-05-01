@@ -644,16 +644,37 @@ def _score_asset_job(
     """
     Run one asset in an isolated subprocess, write out/reports/scoring/assets/<date>/<SYM>.json.
     Safe for concurrent calls from a thread pool (each asset writes a distinct file).
+    Never raises: failures become ``result['error']`` so the thread pool can finish all assets.
     """
     symbol = entry.get('symbol', 'unknown')
-    result = _run_asset_subprocess(
-        entry,
-        gli_downtrend=gli_downtrend,
-        fg_greedy=fg_greedy,
-        dimensions_only=dimensions_only,
-    )
-    out_dir = Path(asset_reports_dir_str)
-    (out_dir / f'{symbol}.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+    name = entry.get('name', '')
+    try:
+        result = _run_asset_subprocess(
+            entry,
+            gli_downtrend=gli_downtrend,
+            fg_greedy=fg_greedy,
+            dimensions_only=dimensions_only,
+        )
+        out_dir = Path(asset_reports_dir_str)
+        (out_dir / f'{symbol}.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+    except OSError as e:
+        logger.error(f'  Failed to write per-asset report for {symbol}: {e}')
+        result = {
+            'symbol': symbol,
+            'name': name,
+            'asset': None,
+            'error': f'per_asset_write_failed:{e}',
+            'dimension_errors': None,
+        }
+    except Exception as e:
+        logger.error(f'  Scoring job failed for {symbol}: {e}')
+        result = {
+            'symbol': symbol,
+            'name': name,
+            'asset': None,
+            'error': f'job_failed:{e}',
+            'dimension_errors': None,
+        }
     return {'symbol': symbol, 'result': result}
 
 
