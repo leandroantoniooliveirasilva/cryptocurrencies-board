@@ -1,4 +1,4 @@
-"""Qualitative scoring via Claude CLI (default) or Anthropic HTTP API when USE_CLAUDE_CLI=false."""
+"""Qualitative scoring via the Claude Code CLI only (subscription; ``claude --print``)."""
 
 import json
 import logging
@@ -11,10 +11,7 @@ logger = logging.getLogger(__name__)
 # Cache for qualitative scores (refresh weekly)
 _score_cache: dict = {}
 
-# Use Claude CLI (subscription) or API
-USE_CLI = os.environ.get("USE_CLAUDE_CLI", "true").lower() == "true"
-
-# Model to use for API calls (configurable via env var)
+# CLI model id (``claude --print --model``)
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
 
 # Per-invocation CLI timeout (seconds). Default 5m; adoption prompts are heavier.
@@ -137,11 +134,8 @@ def _query_claude(
     cache_key: str,
     cli_timeout: Optional[int] = None,
 ) -> Optional[dict]:
-    """Query Claude via CLI or API and parse JSON response."""
-    if USE_CLI:
-        return _query_claude_cli(prompt, cache_key, timeout_sec=cli_timeout)
-    else:
-        return _query_claude_api(prompt, cache_key)
+    """Query Claude via subscription CLI and parse JSON response."""
+    return _query_claude_cli(prompt, cache_key, timeout_sec=cli_timeout)
 
 
 def _query_claude_cli(
@@ -175,29 +169,6 @@ def _query_claude_cli(
         return None
     except Exception as e:
         logger.warning(f"Claude CLI error for {cache_key}: {e}")
-        return None
-
-
-def _query_claude_api(prompt: str, cache_key: str) -> Optional[dict]:
-    """Query Claude using the API (requires ANTHROPIC_API_KEY)."""
-    try:
-        import anthropic
-        client = anthropic.Anthropic()
-
-        response = client.messages.create(
-            model=CLAUDE_MODEL,
-            max_tokens=200,
-            messages=[{"role": "user", "content": prompt}],
-        )
-
-        text = response.content[0].text.strip()
-        return _parse_json_response(text, cache_key)
-
-    except ImportError:
-        logger.warning("anthropic package not installed")
-        return None
-    except Exception as e:
-        logger.warning(f"Claude API error for {cache_key}: {e}")
         return None
 
 

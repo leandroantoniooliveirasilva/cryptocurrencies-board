@@ -66,8 +66,6 @@ def _get_base_url() -> str:
 # In-memory cache for AI scores (persisted to DB separately)
 _supply_cache: dict = {}
 
-USE_CLI = os.environ.get("USE_CLAUDE_CLI", "true").lower() == "true"
-
 SUPPLY_PROMPT = """Analyze the supply dynamics and on-chain metrics for {symbol} ({name}).
 
 Consider these factors for a SUPPLY score (0-100 scale, higher = more bullish tokenomics):
@@ -204,10 +202,7 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
 
 
 def _query_claude(prompt: str, cache_key: str) -> Optional[dict]:
-    """Query Claude CLI for supply scoring."""
-    if not USE_CLI:
-        return None
-
+    """Query Claude Code CLI (subscription) for supply scoring."""
     try:
         result = subprocess.run(
             ["claude", "--print", "--model", CLAUDE_MODEL, prompt],
