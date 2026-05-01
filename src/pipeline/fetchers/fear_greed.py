@@ -6,6 +6,7 @@ Used as a sentiment filter to downgrade accumulation signals during extreme gree
 
 import logging
 from typing import Optional
+
 import requests
 
 from pipeline.config import config
@@ -88,3 +89,16 @@ def _fallback_result() -> dict:
         "greedy": False,  # Don't trigger downgrade on failure
         "error": "API unavailable",
     }
+
+
+def log_pipeline_summary(log: logging.Logger, fg_data: dict) -> None:
+    """Same Fear & Greed log line for ``pipeline.run`` and ``pipeline.indicators``."""
+    greedy = bool(fg_data.get('greedy'))
+    if fg_data.get('enabled') and fg_data.get('value') is not None:
+        cls = fg_data.get('classification') or 'unknown'
+        log.info(
+            f'Fear & Greed: {fg_data["value"]} ({cls}) - '
+            f"{'GREEDY' if greedy else 'neutral'}"
+        )
+    else:
+        log.info('Fear & Greed data unavailable - sentiment filter disabled')

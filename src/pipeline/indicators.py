@@ -266,14 +266,7 @@ def main():
 
     fg_data = fear_greed.fetch_fear_greed()
     fg_greedy = fg_data.get("greedy", False)
-    if fg_data.get("enabled") and fg_data.get("value") is not None:
-        fg_class = fg_data.get("classification") or "unknown"
-        logger.info(
-            f"Fear & Greed: {fg_data['value']} ({fg_class}) - "
-            f"{'GREEDY' if fg_greedy else 'neutral'}"
-        )
-    else:
-        logger.info("Fear & Greed data unavailable - sentiment filter disabled")
+    fear_greed.log_pipeline_summary(logger, fg_data)
 
     # Clear RS cache
     relative_strength.clear_cache()

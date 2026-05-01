@@ -653,6 +653,17 @@ def _ensure_asset_reports_dir(snapshot_date: str) -> Path:
     return out_dir
 
 
+def _failed_child_envelope(symbol: str, name: str, error: str) -> dict:
+    """Shape returned by per-asset subprocess scoring when the asset cannot be built."""
+    return {
+        'symbol': symbol,
+        'name': name,
+        'asset': None,
+        'error': error,
+        'dimension_errors': None,
+    }
+
+
 def _score_asset_job(
     entry: dict,
     gli_downtrend: bool,
@@ -678,22 +689,10 @@ def _score_asset_job(
         (out_dir / f'{symbol}.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
     except OSError as e:
         logger.error(f'  Failed to write per-asset report for {symbol}: {e}')
-        result = {
-            'symbol': symbol,
-            'name': name,
-            'asset': None,
-            'error': f'per_asset_write_failed:{e}',
-            'dimension_errors': None,
-        }
+        result = _failed_child_envelope(symbol, name, f'per_asset_write_failed:{e}')
     except Exception as e:
         logger.error(f'  Scoring job failed for {symbol}: {e}')
-        result = {
-            'symbol': symbol,
-            'name': name,
-            'asset': None,
-            'error': f'job_failed:{e}',
-            'dimension_errors': None,
-        }
+        result = _failed_child_envelope(symbol, name, f'job_failed:{e}')
     return {'symbol': symbol, 'result': result}
 
 
@@ -760,32 +759,18 @@ def _run_asset_subprocess(
             if len(tail) > 2000:
                 tail = tail[:2000] + '…'
             lim = f'{timeout_sec}s' if timeout_sec is not None else 'none'
-            return {
-                'symbol': entry.get('symbol', 'unknown'),
-                'name': entry.get('name', ''),
-                'asset': None,
-                'error': f'child_process_timeout:{lim}:{tail}',
-                'dimension_errors': None,
-            }
+            sym = entry.get('symbol', 'unknown')
+            return _failed_child_envelope(sym, entry.get('name', ''), f'child_process_timeout:{lim}:{tail}')
 
         if not output_path.exists():
-            return {
-                'symbol': entry.get('symbol', 'unknown'),
-                'name': entry.get('name', ''),
-                'asset': None,
-                'error': f'child_process_failed:{proc.returncode}:{proc.stderr.strip()}',
-                'dimension_errors': None,
-            }
+            sym = entry.get('symbol', 'unknown')
+            err = f'child_process_failed:{proc.returncode}:{proc.stderr.strip()}'
+            return _failed_child_envelope(sym, entry.get('name', ''), err)
         try:
             return json.loads(output_path.read_text(encoding='utf-8'))
         except (OSError, json.JSONDecodeError) as e:
-            return {
-                'symbol': entry.get('symbol', 'unknown'),
-                'name': entry.get('name', ''),
-                'asset': None,
-                'error': f'child_output_invalid:{e}',
-                'dimension_errors': None,
-            }
+            sym = entry.get('symbol', 'unknown')
+            return _failed_child_envelope(sym, entry.get('name', ''), f'child_output_invalid:{e}')
 
 
 
@@ -1222,14 +1207,7 @@ def main():
 
         fg_data = fear_greed.fetch_fear_greed()
         fg_greedy = fg_data.get('greedy', False)
-        if fg_data.get('enabled') and fg_data.get('value') is not None:
-            fg_class = fg_data.get('classification') or 'unknown'
-            logger.info(
-                f"Fear & Greed: {fg_data['value']} ({fg_class}) - "
-                f"{'GREEDY' if fg_greedy else 'neutral'}"
-            )
-        else:
-            logger.info('Fear & Greed data unavailable - sentiment filter disabled')
+        fear_greed.log_pipeline_summary(logger, fg_data)
 
         global_market = coingecko.fetch_global_market_data()
         stablecoin_mcap = coingecko.fetch_stablecoin_mcap()
