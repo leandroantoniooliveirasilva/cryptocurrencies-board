@@ -145,6 +145,7 @@ def update_asset_indicators(
     # This represents ~12 weekly snapshots (quarterly context), not literal 30 days.
     trend_30d = migrations.get_trend_data(conn, symbol, 12)
     composite_last_week = migrations.get_composite_last_week(conn, symbol)
+    weekly_averages = migrations.get_weekly_composite_averages(conn, symbol, weeks=10)
 
     composite_score = asset["composite"]
     if trend_7d:
@@ -172,6 +173,7 @@ def update_asset_indicators(
         gli_downtrend=gli_downtrend,
         rs_underperforming=rs_underperforming,
         fg_greedy=fg_greedy,
+        weekly_averages=weekly_averages,
     )
 
     # Update asset with fresh indicator data
@@ -263,14 +265,20 @@ def main():
     # Clear RS cache
     relative_strength.clear_cache()
 
-    # Update GLI and F&G in output
+    # Update GLI and F&G in output (match run.py shape so dashboard keeps trend/coverage fields)
     data["gli"] = {
         "enabled": config.gli.enabled,
         "downtrend": gli_downtrend,
-        "current": gli_data["current"],
-        "offset_value": gli_data["offset_value"],
-        "offset_days": gli_data["offset_days"],
-        "source": gli_data["source"],
+        "trend": gli_data.get("trend", gli.get_gli_trend_label(gli_data)),
+        "current": gli_data.get("current"),
+        "offset_value": gli_data.get("offset_value"),
+        "offset_days": gli_data.get("offset_days"),
+        "source": gli_data.get("source"),
+        "current_obs_date": gli_data.get("current_obs_date"),
+        "offset_obs_date": gli_data.get("offset_obs_date"),
+        "component_coverage": gli_data.get("component_coverage"),
+        "components_used": gli_data.get("components_used", []),
+        "components_missing": gli_data.get("components_missing", []),
     }
     data["fear_greed"] = {
         "enabled": fg_data.get("enabled", False),
@@ -313,7 +321,8 @@ def main():
                 logger.error(f"  Failed to update {symbol}: {result['error']}")
                 continue
             updated_assets[i] = result["asset"]
-            rsi_d_str = f"{result['asset']['rsi_daily']:.1f}" if result["asset"]["rsi_daily"] else 'N/A'
+            rd = result['asset']['rsi_daily']
+            rsi_d_str = f'{rd:.1f}' if rd is not None else 'N/A'
             logger.info(f"  {symbol}: rsi_d={rsi_d_str}, action={result['asset']['action']}")
     else:
         with ThreadPoolExecutor(max_workers=worker_count) as executor:
@@ -338,7 +347,8 @@ def main():
                     logger.error(f"  Failed to update {symbol}: {result['error']}")
                     continue
                 updated_assets[i] = result["asset"]
-                rsi_d_str = f"{result['asset']['rsi_daily']:.1f}" if result["asset"]["rsi_daily"] else 'N/A'
+                rd = result['asset']['rsi_daily']
+                rsi_d_str = f'{rd:.1f}' if rd is not None else 'N/A'
                 logger.info(f"  {symbol}: rsi_d={rsi_d_str}, action={result['asset']['action']}")
 
     data["assets"] = updated_assets
