@@ -306,6 +306,7 @@ def main():
     worker_count = min(_get_max_workers(), max(1, len(data["assets"])))
     logger.info(f"Parallel workers: {worker_count}")
     updated_assets: list[dict] = [dict(asset) for asset in data["assets"]]
+    failed_indices: list[int] = []
 
     if worker_count == 1:
         for i, asset in enumerate(updated_assets):
@@ -319,6 +320,7 @@ def main():
             )
             if result["error"]:
                 logger.error(f"  Failed to update {symbol}: {result['error']}")
+                failed_indices.append(i)
                 continue
             updated_assets[i] = result["asset"]
             rd = result['asset']['rsi_daily']
@@ -345,11 +347,30 @@ def main():
                 symbol = result["symbol"]
                 if result["error"]:
                     logger.error(f"  Failed to update {symbol}: {result['error']}")
+                    failed_indices.append(i)
                     continue
                 updated_assets[i] = result["asset"]
                 rd = result['asset']['rsi_daily']
                 rsi_d_str = f'{rd:.1f}' if rd is not None else 'N/A'
                 logger.info(f"  {symbol}: rsi_d={rsi_d_str}, action={result['asset']['action']}")
+
+    for i in sorted(failed_indices):
+        sym = data['assets'][i]['symbol']
+        logger.info(f"  Retrying indicators for {sym} (sequential fallback)...")
+        result = _update_asset_worker(
+            dict(data['assets'][i]),
+            coingecko_lookup.get(sym),
+            gli_downtrend,
+            fg_greedy,
+            wyckoff_lookup.get(sym),
+        )
+        if result['error']:
+            logger.error(f"  Retry failed for {sym}: {result['error']}")
+        else:
+            updated_assets[i] = result['asset']
+            rd = result['asset']['rsi_daily']
+            rsi_d_str = f'{rd:.1f}' if rd is not None else 'N/A'
+            logger.info(f"  {sym}: rsi_d={rsi_d_str}, action={result['asset']['action']} (after retry)")
 
     data["assets"] = updated_assets
 

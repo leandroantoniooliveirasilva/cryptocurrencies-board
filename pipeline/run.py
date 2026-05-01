@@ -401,7 +401,7 @@ def build_asset(
         raise DimensionScoringError(dim_errors)
 
     composite_score, missing_dimensions = composite.compute_composite(
-        scores, asset_category=asset_category
+        scores, asset_category=asset_category, fee_model=fee_model
     )
 
     # Compute tier dynamically from composite score
