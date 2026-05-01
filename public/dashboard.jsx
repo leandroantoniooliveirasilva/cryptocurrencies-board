@@ -674,6 +674,123 @@ function buildDecisionLogic(trace, tier, macroDowngrades, wyckoffDowngrades) {
   return parts.join(', ') + '.';
 }
 
+/** Expand/collapse control for asset detail modal — high-visibility affordance (not flat text). */
+function ModalSectionToggle({ expanded, onToggle, isMobile, accent, label, collapsedHint }) {
+  const a = accent || '#6a9a90';
+  return (
+    <button
+      type="button"
+      className="modal-section-toggle"
+      onClick={onToggle}
+      aria-expanded={expanded}
+      aria-label={expanded ? `${label} — expanded, click to hide` : `${label} — click to show details`}
+      style={{
+        background: expanded ? PALETTE.cardInset : '#1f1d1b',
+        border: `1px solid ${PALETTE.border}`,
+        borderLeft: `3px solid ${a}`,
+        borderRadius: '3px',
+        padding: isMobile ? `${SPACE.md}px ${SPACE.base}px` : `${SPACE.sm}px ${SPACE.md}px`,
+        width: '100%',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: `${SPACE.md}px`,
+        marginBottom: expanded ? `${SPACE.base}px` : 0,
+        minHeight: isMobile ? 48 : 44,
+        boxSizing: 'border-box',
+        transition: 'background 0.15s ease',
+      }}
+    >
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: `${SPACE.md}px`,
+        minWidth: 0,
+        flex: 1,
+        textAlign: 'left',
+      }}>
+        <span
+          aria-hidden
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: isMobile ? 30 : 26,
+            height: isMobile ? 30 : 26,
+            borderRadius: '3px',
+            border: `1px solid ${a}`,
+            color: a,
+            fontSize: TYPE.caption,
+            lineHeight: 1,
+            flexShrink: 0,
+            transition: 'transform 0.2s ease',
+            transform: expanded ? 'rotate(90deg)' : 'none',
+            background: 'rgba(106, 154, 144, 0.08)',
+          }}
+        >
+          ▸
+        </span>
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'flex-start' : 'center',
+          gap: isMobile ? 2 : `${SPACE.sm}px`,
+          minWidth: 0,
+        }}>
+          <span style={{
+            fontSize: TYPE.caption,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            color: PALETTE.textPrimary,
+            fontFamily: 'ui-monospace, monospace',
+            fontWeight: 600,
+          }}>
+            {label}
+          </span>
+          {!expanded && collapsedHint && (
+            <span style={{
+              fontSize: TYPE.caption,
+              letterSpacing: '0.04em',
+              color: PALETTE.textMuted,
+              fontFamily: 'ui-monospace, monospace',
+            }}>
+              {collapsedHint}
+            </span>
+          )}
+        </div>
+      </div>
+      {!expanded ? (
+        <span style={{
+          fontSize: '10px',
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          color: '#121110',
+          background: a,
+          padding: '6px 12px',
+          borderRadius: '2px',
+          flexShrink: 0,
+          fontWeight: 700,
+        }}>
+          Show
+        </span>
+      ) : (
+        <span style={{
+          fontSize: TYPE.caption,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: PALETTE.textMuted,
+          fontFamily: 'ui-monospace, monospace',
+          flexShrink: 0,
+        }}>
+          Hide
+        </span>
+      )}
+    </button>
+  );
+}
+
 function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
   // Collapsible section state
   const [dimensionsExpanded, setDimensionsExpanded] = useState(false);
@@ -918,30 +1035,14 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
 
           {/* Dimension Evidence - verbose explanations */}
           <div style={{ marginTop: SPACE.base, marginBottom: isMobile ? SPACE['2xl'] : SPACE.xl }}>
-            <button
-              onClick={() => setDimensionsExpanded(!dimensionsExpanded)}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: 0,
-                width: '100%',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: dimensionsExpanded ? SPACE.base : 0,
-              }}
-            >
-              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
-                Dimension evidence {!dimensionsExpanded && '· Tap to expand'}
-              </div>
-              <span style={{
-                display: 'inline-block',
-                transform: dimensionsExpanded ? 'rotate(90deg)' : 'none',
-                transition: 'transform 0.2s ease',
-                color: PALETTE.textMuted,
-              }}>▸</span>
-            </button>
+            <ModalSectionToggle
+              expanded={dimensionsExpanded}
+              onToggle={() => setDimensionsExpanded(!dimensionsExpanded)}
+              isMobile={isMobile}
+              accent={config?.accent}
+              label="Dimension evidence"
+              collapsedHint="Score rationales"
+            />
 
             {dimensionsExpanded && (
               <div style={{ marginTop: SPACE.base, display: 'grid', gap: SPACE.lg }}>
@@ -1052,30 +1153,14 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
 
           {/* Technical Analysis - detailed reasoning for filters */}
           <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.lg, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
-            <button
-              onClick={() => setTechnicalExpanded(!technicalExpanded)}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: 0,
-                width: '100%',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: technicalExpanded ? SPACE.base : 0,
-              }}
-            >
-              <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, fontFamily: 'ui-monospace, monospace' }}>
-                Technical analysis {!technicalExpanded && '· Tap to expand'}
-              </div>
-              <span style={{
-                display: 'inline-block',
-                transform: technicalExpanded ? 'rotate(90deg)' : 'none',
-                transition: 'transform 0.2s ease',
-                color: PALETTE.textMuted,
-              }}>▸</span>
-            </button>
+            <ModalSectionToggle
+              expanded={technicalExpanded}
+              onToggle={() => setTechnicalExpanded(!technicalExpanded)}
+              isMobile={isMobile}
+              accent={config?.accent}
+              label="Technical analysis"
+              collapsedHint="Wyckoff & RSI"
+            />
             {technicalExpanded && (
               <div style={{ marginTop: SPACE.base, display: 'grid', gap: SPACE.lg }}>
                 {/* Wyckoff Phase Analysis */}
@@ -2430,6 +2515,12 @@ function Dashboard() {
       color: PALETTE.textPrimary,
       padding: isMobile ? `${SPACE.lg}px ${SPACE.base}px` : `${SPACE['2xl']}px ${SPACE.lg}px`,
     }}>
+      <style>{`
+        .modal-section-toggle:focus-visible {
+          outline: 2px solid #6a9a90;
+          outline-offset: 2px;
+        }
+      `}</style>
       {/* Header: title + timestamp + description */}
       <div style={{ maxWidth: '900px', margin: `0 auto ${SPACE.lg}px` }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: `${SPACE.sm}px`, marginBottom: `${SPACE.sm}px` }}>
