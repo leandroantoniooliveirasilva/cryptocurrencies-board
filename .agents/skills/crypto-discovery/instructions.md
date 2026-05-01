@@ -13,16 +13,18 @@ Your role is to be an unbiased analyst. If a project meets the criteria, it belo
 ## Auto-Apply Rules
 
 After discovery analysis completes:
+
 1. **Add recommended assets** directly to `pipeline/assets.yaml` (flat list)
 2. **Remove flagged assets** from `pipeline/assets.yaml`
 3. **No tier assignment** — tiers are computed from composite scores at runtime:
-   - Composite ≥75 → Leader
-   - Composite ≥65 → Runner-up
-   - Composite <65 → Observation
+  - Composite ≥75 → Leader
+  - Composite ≥65 → Runner-up
+  - Composite <65 → Observation
 
 ## When to Use
 
 Invoke this skill when:
+
 - Running monthly watchlist reviews
 - Searching for new crypto projects to add
 - Evaluating tier changes (promotions, demotions, removals)
@@ -38,13 +40,15 @@ Invoke this skill when:
 
 ## Evaluation dimensions (aligned with pipeline)
 
-The pipeline uses **`asset_category`** (9 categories) and optional **`fee_model`**. Weights are in `pipeline/config.yaml` (`weights_by_category`). Typical scored dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply**. **Wyckoff** is a filter on actions, not a composite weight.
+The pipeline uses `**asset_category`** (9 categories) and optional `**fee_model**`. Weights are in `pipeline/config.yaml` (`weights_by_category`). Typical scored dimensions: **institutional**, **adoption_activity**, **value_capture**, **regulatory**, **supply**. **Wyckoff** is a filter on actions, not a composite weight.
 
 When adding an asset to `pipeline/assets.yaml`, set:
+
 - `asset_category` (required for correct weights), e.g. `defi-protocol`, `oracle-data`, `payments-rail`, `enterprise-settlement`, `monetary-store-of-value`, `smart-contract-platform`, `shared-security`, `data-availability-modular`, `ai-compute-depin`
 - `fee_model` when relevant: `revenue`, `burn`, `staking_share`, `miner`, `minimal`, `equity` (see `.docs/research/asset-category-taxonomy.md` Section 5)
 
 ### 1. Institutional (ETF/Fund Adoption)
+
 - ETF approval status or pipeline
 - Major fund holdings (Grayscale, a16z, Paradigm, etc.)
 - Institutional custody availability (Coinbase Custody, Fireblocks)
@@ -59,12 +63,14 @@ When adding an asset to `pipeline/assets.yaml`, set:
 Holder-accruing economics: fees to treasury, burns, staking real yield vs issuance — **not** raw fees that only go to miners with no holder accrual (`fee_model: miner`). Minimal-fee rails (`payments-rail`) typically exclude value capture by design (`fee_model: minimal`).
 
 ### 4. Regulatory (Jurisdictional Clarity)
+
 - SEC/CFTC classification clarity
 - Global regulatory stance (EU MiCA, etc.)
 - Exchange listing breadth (major regulated exchanges)
 - Compliance infrastructure
 
 ### 5. Supply (On-Chain Health & Tokenomics)
+
 - Exchange reserve trends (declining = bullish)
 - Long-term holder percentage
 - Token distribution (avoid concentrated holdings)
@@ -82,12 +88,14 @@ Phase informs **timing and action downgrades**, not composite weights.
 **A successful project does not guarantee token appreciation.** Evaluate how protocol success translates to token value:
 
 **Strong Value Accrual:**
+
 - Fee burns (deflationary pressure from usage) — set `fee_model: burn` in assets.yaml, evaluated under Supply
 - Revenue sharing / staking yields (direct value to holders) — scored under **value_capture** when weighted
 - Required token staking for network participation
 - Governance rights over meaningful treasury/protocol parameters
 
 **Weak Value Accrual (Red Flags):**
+
 - Utility token with no fee capture mechanism
 - Governance-only tokens for protocols with no treasury
 - Inflationary rewards without offsetting burns
@@ -103,17 +111,20 @@ Composite weights are **per `asset_category`** in `pipeline/config.yaml` (`weigh
 
 Tiers are computed automatically from composite scores:
 
-| Tier | Composite | Description |
-|------|-----------|-------------|
-| **Leader** | ≥75 | Core positions for accumulation |
-| **Runner-up** | 65-74 | Promotion candidates |
-| **Observation** | 50-64 | Watch only, no position |
+
+| Tier            | Composite | Description                     |
+| --------------- | --------- | ------------------------------- |
+| **Leader**      | ≥75       | Core positions for accumulation |
+| **Runner-up**   | 65-74     | Promotion candidates            |
+| **Observation** | 50-64     | Watch only, no position         |
+
 
 **No manual tier assignment** — if an asset's composite rises above 75, it automatically becomes a Leader. If it drops below 65, it becomes Observation.
 
 ## Discovery Process
 
 ### Step 1: Read Current Watchlist
+
 ```bash
 cat pipeline/assets.yaml
 ```
@@ -125,19 +136,23 @@ Understand the current state before making changes.
 Before searching for new projects, systematically check these sources for missing high-value assets:
 
 #### Revenue Leaders Check
-1. Open https://defillama.com/fees and check top 30 protocols by 24h fees
-2. Open https://defillama.com/fees/chains and check top 20 chains by fees
+
+1. Open [https://defillama.com/fees](https://defillama.com/fees) and check top 30 protocols by 24h fees
+2. Open [https://defillama.com/fees/chains](https://defillama.com/fees/chains) and check top 20 chains by fees
 3. For each protocol/chain NOT on the watchlist with >$10K daily fees, evaluate for inclusion
 
 #### Market Cap Check
+
 - Check top-30 market cap assets on CoinGecko not on the watchlist
 - Prioritize those with clear value accrual mechanisms
 
 #### Institutional Products Check
+
 - Check Grayscale, 21Shares, and other ETF/ETP providers for assets with products
 - Any asset with an institutional product should be evaluated
 
 #### Category Leaders Check
+
 - L1 platforms: Check top 10 by TVL on DefiLlama
 - DeFi protocols: Check top 10 by revenue on Token Terminal
 - Infrastructure: Check oracle, bridge, and data provider leaders
@@ -153,41 +168,47 @@ For each candidate, apply the full framework and recommend adding if it meets AN
 #### Primary Data Sources (MUST CHECK)
 
 **Revenue & Fees (Most Important Signal)**
-- **DefiLlama Fees**: https://defillama.com/fees — Check "Fees by Protocol" and "Revenue by Chain"
-- **DefiLlama Revenue**: https://defillama.com/fees/simple — Daily/weekly revenue rankings
-- **Token Terminal**: https://tokenterminal.com/terminal/metrics/revenue — Protocol revenue rankings
+
+- **DefiLlama Fees**: [https://defillama.com/fees](https://defillama.com/fees) — Check "Fees by Protocol" and "Revenue by Chain"
+- **DefiLlama Revenue**: [https://defillama.com/fees/simple](https://defillama.com/fees/simple) — Daily/weekly revenue rankings
+- **Token Terminal**: [https://tokenterminal.com/terminal/metrics/revenue](https://tokenterminal.com/terminal/metrics/revenue) — Protocol revenue rankings
 - Look for protocols with >$1M annualized revenue that are NOT on the watchlist
 
 **Institutional Adoption**
-- **ETF Filings**: Search SEC EDGAR for "crypto ETF" filings (https://www.sec.gov/cgi-bin/browse-edgar)
-- **Grayscale Products**: https://grayscale.com/products/ — Check their trust/fund offerings
-- **21Shares Products**: https://21shares.com/products — ETF/ETP product list
-- **CoinShares**: https://coinshares.com/products — Institutional products
+
+- **ETF Filings**: Search SEC EDGAR for "crypto ETF" filings ([https://www.sec.gov/cgi-bin/browse-edgar](https://www.sec.gov/cgi-bin/browse-edgar))
+- **Grayscale Products**: [https://grayscale.com/products/](https://grayscale.com/products/) — Check their trust/fund offerings
+- **21Shares Products**: [https://21shares.com/products](https://21shares.com/products) — ETF/ETP product list
+- **CoinShares**: [https://coinshares.com/products](https://coinshares.com/products) — Institutional products
 - **Galaxy Digital Holdings**: Check their portfolio and fund disclosures
-- **a16z Crypto Portfolio**: https://a16zcrypto.com/portfolio/ — Major VC holdings
+- **a16z Crypto Portfolio**: [https://a16zcrypto.com/portfolio/](https://a16zcrypto.com/portfolio/) — Major VC holdings
 
 **Regulatory Clarity**
+
 - **SEC Actions**: Search recent SEC enforcement actions and settlements
 - **CFTC Statements**: Check CFTC.gov for commodity classifications
 - **EU MiCA Registry**: Check for MiCA-compliant tokens
 - **Exchange Listings**: Check if listed on Coinbase, Kraken, Gemini (regulated US exchanges)
 
 **Supply & On-Chain Health**
-- **CoinGecko**: https://www.coingecko.com — Market cap, supply data, holder distribution
-- **DefiLlama**: https://defillama.com — TVL trends, chain comparisons
-- **Token Unlocks**: https://token.unlocks.app — Vesting schedules and unlock events
-- **Messari**: https://messari.io — Token supply analysis (free tier)
+
+- **CoinGecko**: [https://www.coingecko.com](https://www.coingecko.com) — Market cap, supply data, holder distribution
+- **DefiLlama**: [https://defillama.com](https://defillama.com) — TVL trends, chain comparisons
+- **Token Unlocks**: [https://token.unlocks.app](https://token.unlocks.app) — Vesting schedules and unlock events
+- **Messari**: [https://messari.io](https://messari.io) — Token supply analysis (free tier)
 
 **Developer Activity (Early Signal for L1/L2)**
-- **Artemis**: https://www.artemis.xyz — Developer activity, ecosystem growth, weekly active developers
+
+- **Artemis**: [https://www.artemis.xyz](https://www.artemis.xyz) — Developer activity, ecosystem growth, weekly active developers
 - Check weekly active developers trend — strong early indicator before institutional adoption
 - Growing developer count often precedes revenue and TVL growth
 
 **Market Intelligence Reports**
-- **Messari Reports**: https://messari.io/research — Quarterly reports on major protocols
-- **The Block Research**: https://www.theblock.co/data — Data dashboards
-- **Delphi Digital**: https://delphidigital.io — Research reports (some free)
-- **CoinGecko Research**: https://www.coingecko.com/research — Quarterly reports
+
+- **Messari Reports**: [https://messari.io/research](https://messari.io/research) — Quarterly reports on major protocols
+- **The Block Research**: [https://www.theblock.co/data](https://www.theblock.co/data) — Data dashboards
+- **Delphi Digital**: [https://delphidigital.io](https://delphidigital.io) — Research reports (some free)
+- **CoinGecko Research**: [https://www.coingecko.com/research](https://www.coingecko.com/research) — Quarterly reports
 
 #### Discovery Criteria (Inclusive)
 
@@ -208,6 +229,7 @@ Example: Canton has high fees/revenue on DefiLlama — should be evaluated even 
 ### Step 3: Review Existing Assets
 
 For each current watchlist asset, check for:
+
 - Regulatory actions against the project
 - Team departures or controversies
 - Sustained revenue decline
@@ -219,6 +241,7 @@ Flag any that should be demoted or removed.
 ### Step 4: Evaluate Candidates
 
 For each promising project:
+
 1. Score all 5 dimensions (0-100)
 2. Calculate weighted composite based on asset type
 3. Determine appropriate tier
@@ -290,17 +313,21 @@ assets:
 To **remove** an asset, delete its entry from the list.
 
 ## Watchlist Health Summary
+
 - Total assets: [N]
 - Projected Leaders (≥75): [N]
 - Projected Runner-ups (65-74): [N]
 - Projected Observation (50-64): [N]
+
 ```
 
 ### Step 6: Save Report
 
 Write the report to:
 ```
+
 discovery/report_YYYY-MM.md
+
 ```
 
 ## Ensemble Mode

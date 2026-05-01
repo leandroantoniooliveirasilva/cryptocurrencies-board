@@ -1,10 +1,10 @@
-# OpenCode session prompts
+# Cursor Agent session prompts
 
-**To use this file in one step:** open it in the project, then ask OpenCode: *“Read `.docs/opencode-prompts.md` and run the prompt in section N (or the one I name). Follow `Agents.md` and use the real shell — do not only suggest commands.”*
+**To use this file in one step:** open it in the project, then ask Cursor Agent: *'Read `.docs/cursor-agent-prompts.md` and run the prompt in section N (or the one I name). Follow `Agents.md` and use the real shell — do not only suggest commands.'*
 
 Copy one block below when you want a self-contained message without opening the file. Ground rules live in `Agents.md`; scoring logic in `pipeline/config.yaml` and `pipeline/assets.yaml`.
 
-**Defaults for this project:** qualitative scores use the **OpenCode CLI** (`opencode run --model opencode/big-pickle`). A full scoring run can take a long time (many per-asset calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
+**Defaults for this project:** qualitative scores use the **Cursor Agent CLI** (`cursor-agent --print --model auto`). A full scoring run can take a long time (many per-asset calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
 
 ---
 
@@ -15,7 +15,7 @@ Use when you want a fresh `public/latest.json` and updated `pipeline/storage/his
 ```
 In cryptocurrencies-board: run the weekly scoring pipeline end-to-end using my local setup.
 
-- Activate `.venv`; scoring invokes **OpenCode** for qualitative dimensions (default Big Pickle).
+- Activate `.venv`; scoring invokes Cursor Agent for qualitative dimensions.
 - Run `./scripts/run-scoring.sh` from the repo root (or document why you use `python -m pipeline.run` instead). If it fails, read the latest `logs/scoring_*.log`, fix env/locks, retry once.
 - Confirm `public/latest.json` and `pipeline/storage/history.sqlite` updated and `framework_version` / asset outputs look sane.
 - If I asked to publish: `npm run build`, bump `public/index.html` dashboard.js cache query if the bundle changed, then `git add` only the relevant paths and commit with a conventional subject under 100 characters (no footer signature).
@@ -58,7 +58,7 @@ From cryptocurrencies-board repo root: run `npm run build`. If `public/index.htm
 ## 5. Monthly discovery (ensemble)
 
 ```
-Run `./scripts/run-discovery-ensemble.sh` from repo root. Ensure `opencode` is on PATH and OpenCode Zen/auth is configured. When it finishes, point me to the new report path under `discovery/` and summarize additions/removals vs `pipeline/assets.yaml` (do not auto-edit assets unless I ask).
+Run `./scripts/run-discovery-ensemble.sh` from repo root. Ensure `cursor-agent` is on PATH and authenticated. When it finishes, point me to the new report path under `discovery/` and summarize additions/removals vs `pipeline/assets.yaml` (do not auto-edit assets unless I ask).
 ```
 
 ---
@@ -74,4 +74,4 @@ Read `public/latest.json` and give me a concise portfolio-level summary: GLI/Fea
 ## Tips
 
 - Prefer **one goal per session** (scoring vs discovery vs dashboard) to avoid overlapping SQLite access and long runs.
-- Name constraints explicitly: OpenCode CLI, wall-clock timeout, conventional commit format.
+- Name constraints explicitly: Cursor Agent CLI, wall-clock timeout, conventional commit format.

@@ -37,7 +37,7 @@ _rate_limit_lock = threading.Lock()
 CURSOR_AGENT_BIN = os.environ.get('CURSOR_AGENT_BIN', 'cursor-agent')
 CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'auto')
 CURSOR_AGENT_SUPPLY_TIMEOUT = int(
-    os.environ.get('CURSOR_AGENT_SUPPLY_TIMEOUT', os.environ.get('OPENCODE_SUPPLY_TIMEOUT', '60'))
+    os.environ.get('CURSOR_AGENT_SUPPLY_TIMEOUT', '60')
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]

@@ -16,12 +16,12 @@ _score_cache: dict = {}
 CURSOR_AGENT_BIN = os.environ.get('CURSOR_AGENT_BIN', 'cursor-agent')
 CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'auto')
 
-# Per-invocation timeouts (seconds); keeps legacy fallbacks for existing env files.
+# Per-invocation timeouts (seconds)
 CURSOR_AGENT_RUN_TIMEOUT = int(
-    os.environ.get('CURSOR_AGENT_RUN_TIMEOUT', os.environ.get('OPENCODE_RUN_TIMEOUT', os.environ.get('CLAUDE_CLI_TIMEOUT', '300')))
+    os.environ.get('CURSOR_AGENT_RUN_TIMEOUT', '300')
 )
 CURSOR_AGENT_ADOPTION_TIMEOUT = int(
-    os.environ.get('CURSOR_AGENT_ADOPTION_TIMEOUT', os.environ.get('OPENCODE_ADOPTION_TIMEOUT', os.environ.get('CLAUDE_ADOPTION_TIMEOUT', '300')))
+    os.environ.get('CURSOR_AGENT_ADOPTION_TIMEOUT', '300')
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]

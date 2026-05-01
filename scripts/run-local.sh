@@ -1,6 +1,6 @@
 #!/bin/bash
 # Local pipeline runner for macOS
-# Uses OpenCode CLI (opencode run; default model Big Pickle)
+# Uses Cursor Agent CLI for qualitative scoring
 
 set -e
 
@@ -33,8 +33,8 @@ else
     exit 1
 fi
 
-if ! command -v opencode &> /dev/null; then
-    log "WARNING: OpenCode CLI not found — qualitative calls will fail until installed (https://opencode.ai/docs)"
+if ! command -v cursor-agent &> /dev/null; then
+    log "WARNING: Cursor Agent CLI not found — qualitative calls will fail until installed and authenticated"
 fi
 
 # Run the pipeline

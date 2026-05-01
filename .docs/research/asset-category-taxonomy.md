@@ -2,7 +2,7 @@
 
 Date: 2026-04-21
 Status: Implemented — weights in `pipeline/config.yaml` (`weights_by_category`), assignments in `pipeline/assets.yaml`.
-Related: `.docs/decisions.md`, `pipeline/config.yaml`, `pipeline/assets.yaml`, `pipeline/run.py`, `.agents/skills/discovery/instructions.md`.
+Related: `.docs/decisions.md`, `pipeline/config.yaml`, `pipeline/assets.yaml`, `pipeline/run.py`, `.agents/skills/crypto-discovery/instructions.md`.
 
 ## 1. Problem Statement
 The current framework uses five universal dimensions — institutional, revenue, regulatory, supply, wyckoff — with four category-specific weight profiles (store-of-value, smart-contract, defi, infrastructure). Two recurring problems:
@@ -265,7 +265,7 @@ Not executed yet — awaiting approval.
    - Rename `revenue` scoring path to `value_capture` and dispatch by fee_model.
 5. Update `pipeline/run.py` narrative builder to describe the per-category dimension set and explain excluded dimensions (no more "⚠️ ESTIMATED" text for assets whose value_capture is excluded by design).
 6. Add a post-score Wyckoff filter step that applies phase-based downgrades before final recommendations.
-7. Update `pipeline/discovery/prompt.md` and `.agents/skills/discovery/instructions.md` with the new taxonomy, fee-model options, and category assignment guidance.
+7. Update `pipeline/discovery/prompt.md` and `.agents/skills/crypto-discovery/instructions.md` with the new taxonomy, fee-model options, and category assignment guidance.
 8. Document the change in `.docs/decisions.md` once implemented.
 
 ## 10. Open Questions

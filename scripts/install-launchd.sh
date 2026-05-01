@@ -190,7 +190,7 @@ run_now() {
             ;;
         discovery)
             echo "Running monthly discovery pipeline..."
-            echo "Note: Discovery uses OpenCode and may take several minutes."
+            echo "Note: Discovery uses Cursor Agent and may take several minutes."
             launchctl start "$DISCOVERY_LABEL"
             echo "Started. Check logs at: $SCRIPT_DIR/../logs/"
             ;;

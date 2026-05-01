@@ -158,7 +158,7 @@ GitHub Actions → Deploy /public to GitHub Pages
 
 ## Commands
 
-Session prompts (copy-paste blocks): `.docs/opencode-prompts.md`.
+Session prompts (copy-paste blocks): `.docs/cursor-agent-prompts.md`.
 
 ```bash
 # Scheduled jobs (install once): copies plists to ~/Library/LaunchAgents
@@ -267,8 +267,8 @@ public/
 └── research/                # Research and backtests
 
 .agents/skills/
-├── discovery/               # Monthly watchlist discovery
-└── weekly-summary/          # Weekly scan interpretation
+├── crypto-discovery/        # Monthly watchlist discovery
+└── crypto-scoring/           # Weekly scan interpretation
 ```
 
 ## Design Principles
@@ -324,8 +324,8 @@ Track changes in `.docs/decisions.md`. Monitor:
 
 ## Skills
 
-- `discovery` — Monthly watchlist discovery and vetting
-- `weekly-summary` — Interpret weekly scan results
+- `crypto-discovery` — Monthly watchlist discovery and vetting
+- `crypto-scoring` — Interpret weekly scan results
 
 ## Documentation Updates
 
@@ -333,7 +333,7 @@ When framework changes occur (new dimensions, thresholds, action states), update
 
 1. README.md
 2. Agents.md
-3. `.docs/opencode-prompts.md` (if workflow prompts change)
+3. `.docs/cursor-agent-prompts.md` (if workflow prompts change)
 4. .agents/skills/ instructions
 5. pipeline/discovery/prompt.md (if scoring logic changes)
 

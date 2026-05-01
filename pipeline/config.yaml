@@ -332,7 +332,7 @@ api:
     timeout: 30
     request_delay: 1.0
 
-  opencode:
+  cursor_agent:
     timeout: 60
     max_tokens: 200
 
@@ -340,7 +340,7 @@ api:
 # CACHE SETTINGS
 # =============================================================================
 cache:
-  qualitative_score_days: 7     # Days to cache OpenCode-generated scores
+  qualitative_score_days: 7     # Days to cache Cursor Agent-generated scores
   supply_score_days: 7          # Days to cache supply analysis
 
 # =============================================================================
