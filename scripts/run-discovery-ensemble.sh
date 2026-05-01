@@ -1,11 +1,6 @@
 #!/bin/bash
 # Ensemble discovery pipeline with fact-checking
 # Runs 3 independent discoveries, reviews them, then merges into final report
-#
-# Architecture:
-#   1. Run 3 parallel discoveries (independent context each)
-#   2. Fact-check review of all 3 reports
-#   3. Merge into consolidated final report
 
 set -e
 
@@ -15,44 +10,80 @@ LOG_DIR="$PROJECT_DIR/logs"
 DISCOVERY_DIR="$PROJECT_DIR/discovery"
 PROMPT_FILE="$PROJECT_DIR/pipeline/discovery/prompt.md"
 
-# Create directories
 mkdir -p "$LOG_DIR"
 mkdir -p "$DISCOVERY_DIR"
 
-# Timestamp for this run
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 MONTH_STAMP=$(date +"%Y-%m")
 LOG_FILE="$LOG_DIR/discovery_ensemble_$TIMESTAMP.log"
 REPORT_DIR="$DISCOVERY_DIR/$MONTH_STAMP"
 mkdir -p "$REPORT_DIR"
+START_TS=$(date +%s)
+PHASE_ESTIMATE_SECONDS="${DISCOVERY_PHASE_ESTIMATE_SECONDS:-1800}"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+elapsed_hms() {
+    local now elapsed h m s
+    now=$(date +%s)
+    elapsed=$((now - START_TS))
+    h=$((elapsed / 3600))
+    m=$(((elapsed % 3600) / 60))
+    s=$((elapsed % 60))
+    printf '%02d:%02d:%02d' "$h" "$m" "$s"
+}
+
+log_progress() {
+    local pct="$1"
+    local msg="$2"
+    log "progress=${pct}% elapsed=$(elapsed_hms) ${msg}"
+}
+
+run_step_with_progress() {
+    local label="$1"
+    local start_pct="$2"
+    local end_pct="$3"
+    shift 3
+
+    "$@" &
+    local pid=$!
+    local waited=0
+    local span=$((end_pct - start_pct))
+
+    while kill -0 "$pid" 2>/dev/null; do
+        sleep 30
+        waited=$((waited + 30))
+        local pct=$((start_pct + (waited * span / PHASE_ESTIMATE_SECONDS)))
+        if [ "$pct" -ge "$end_pct" ]; then
+            pct=$((end_pct - 1))
+        fi
+        log_progress "$pct" "$label in progress"
+    done
+
+    wait "$pid"
 }
 
 log "Starting ensemble discovery pipeline (3 independent runs + review + merge)"
 log "Project: $PROJECT_DIR"
 log "Output directory: $REPORT_DIR"
 
-# CursorAgent CLI
 CURSOR_AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
-CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-gpt-5}"
+CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-auto}"
 if ! command -v "$CURSOR_AGENT_BIN" &> /dev/null; then
     log "ERROR: cursor-agent CLI not found. Install Cursor Agent and run cursor-agent login."
     exit 1
 fi
 
-# Check prompt file exists
 if [ ! -f "$PROMPT_FILE" ]; then
     log "ERROR: Discovery prompt not found at $PROMPT_FILE"
     exit 1
 fi
 
-# Read current assets for context
 CURRENT_ASSETS=$(cat "$PROJECT_DIR/pipeline/assets.yaml")
 TODAY=$(date -u +"%Y-%m-%d")
 
-# Base discovery prompt
 BASE_PROMPT="$(cat "$PROMPT_FILE")
 
 ## Current Watchlist (assets.yaml)
@@ -78,17 +109,15 @@ $CURRENT_ASSETS
 
 Today's date: $TODAY"
 
-# ============================================================================
-# PHASE 1: Run 3 independent discoveries in parallel
-# ============================================================================
+log_progress 3 "ensemble run initialized"
 log "PHASE 1: Starting 3 independent discoveries in parallel..."
+log_progress 5 "phase 1 started"
 
 run_discovery() {
     local run_id=$1
     local output_file="$REPORT_DIR/discovery_${run_id}.md"
     local focus=""
 
-    # Each run gets a slightly different focus to encourage diversity
     case $run_id in
         1) focus="Focus particularly on NEW project launches and recent token generation events. Look for projects with strong institutional backing signals." ;;
         2) focus="Focus particularly on EXISTING projects showing momentum shifts. Look for regulatory developments and ETF-related news." ;;
@@ -118,21 +147,26 @@ $focus
     fi
 }
 
-# Run all 3 discoveries in parallel
-run_discovery 1 &
-PID1=$!
-run_discovery 2 &
-PID2=$!
-run_discovery 3 &
-PID3=$!
+run_discovery 1 & PID1=$!
+run_discovery 2 & PID2=$!
+run_discovery 3 & PID3=$!
 
-# Wait for all to complete
 log "Waiting for all 3 discoveries to complete..."
 FAILED=0
+while true; do
+    DONE=0
+    kill -0 "$PID1" 2>/dev/null || DONE=$((DONE + 1))
+    kill -0 "$PID2" 2>/dev/null || DONE=$((DONE + 1))
+    kill -0 "$PID3" 2>/dev/null || DONE=$((DONE + 1))
+    PCT=$((5 + DONE * 20))
+    log_progress "$PCT" "phase 1 progress (${DONE}/3 discovery runs completed)"
+    [ "$DONE" -eq 3 ] && break
+    sleep 30
+done
 
-wait $PID1 || { log "Discovery run #1 failed"; FAILED=1; }
-wait $PID2 || { log "Discovery run #2 failed"; FAILED=1; }
-wait $PID3 || { log "Discovery run #3 failed"; FAILED=1; }
+wait "$PID1" || { log "Discovery run #1 failed"; FAILED=1; }
+wait "$PID2" || { log "Discovery run #2 failed"; FAILED=1; }
+wait "$PID3" || { log "Discovery run #3 failed"; FAILED=1; }
 
 if [ $FAILED -eq 1 ]; then
     log "ERROR: One or more discovery runs failed"
@@ -140,11 +174,10 @@ if [ $FAILED -eq 1 ]; then
 fi
 
 log "All 3 discoveries completed successfully"
+log_progress 66 "phase 1 complete"
 
-# ============================================================================
-# PHASE 2: Fact-checking review
-# ============================================================================
 log "PHASE 2: Running fact-checking review..."
+log_progress 70 "phase 2 started"
 
 REPORT1=$(cat "$REPORT_DIR/discovery_1.md")
 REPORT2=$(cat "$REPORT_DIR/discovery_2.md")
@@ -200,21 +233,17 @@ Generate a fact-check report with:
 Today's date: $TODAY"
 
 REVIEW_FILE="$REPORT_DIR/fact_check_review.md"
-
-if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
+if run_step_with_progress "phase 2 fact-check review" 70 84 "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
     log "Fact-check review completed: $REVIEW_FILE"
 else
     log "ERROR: Fact-check review failed"
     exit 1
 fi
 
-# ============================================================================
-# PHASE 3: Merge into final report
-# ============================================================================
 log "PHASE 3: Merging into final consolidated report..."
+log_progress 86 "phase 3 started"
 
 REVIEW_CONTENT=$(cat "$REVIEW_FILE")
-
 MERGE_PROMPT="# Final Report Consolidation Task
 
 You are a senior crypto analyst tasked with creating the final consolidated discovery report. You have:
@@ -288,17 +317,13 @@ This report consolidates 3 independent discovery analyses with cross-referencing
 Today's date: $TODAY"
 
 FINAL_REPORT="$DISCOVERY_DIR/report_$MONTH_STAMP.md"
-
-if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
+if run_step_with_progress "phase 3 merge" 86 99 "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
     log "Final consolidated report generated: $FINAL_REPORT"
 else
     log "ERROR: Report merge failed"
     exit 1
 fi
 
-# ============================================================================
-# Summary
-# ============================================================================
 log ""
 log "=========================================="
 log "Ensemble Discovery Pipeline Complete"
@@ -311,10 +336,10 @@ log "  - Discovery #3: $REPORT_DIR/discovery_3.md"
 log "  - Fact-check:   $REPORT_DIR/fact_check_review.md"
 log "  - Final report: $FINAL_REPORT"
 log ""
+log_progress 100 "ensemble discovery pipeline complete"
 log "Review the final report at: $FINAL_REPORT"
 log "To apply changes, manually edit pipeline/assets.yaml"
 
-# Show preview of final report
 log ""
 log "Final report preview:"
 head -60 "$FINAL_REPORT" | tee -a "$LOG_FILE"

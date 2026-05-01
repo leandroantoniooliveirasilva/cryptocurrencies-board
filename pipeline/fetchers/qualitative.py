@@ -13,7 +13,7 @@ _score_cache: dict = {}
 
 # CursorAgent binary/model
 CURSOR_AGENT_BIN = os.environ.get('CURSOR_AGENT_BIN', 'cursor-agent')
-CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'gpt-5')
+CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'auto')
 
 # Per-invocation timeouts (seconds); keeps legacy fallbacks for existing env files.
 CURSOR_AGENT_RUN_TIMEOUT = int(

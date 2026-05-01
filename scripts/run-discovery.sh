@@ -1,6 +1,6 @@
 #!/bin/bash
 # Monthly discovery pipeline runner
-# Uses OpenCode CLI (default Big Pickle) to find and vet new crypto projects
+# Uses CursorAgent CLI to find and vet new crypto projects
 # Runs on day 1 of each month at 18:00 UTC
 
 set -e
@@ -20,9 +20,27 @@ TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 MONTH_STAMP=$(date +"%Y-%m")
 LOG_FILE="$LOG_DIR/discovery_$TIMESTAMP.log"
 REPORT_FILE="$DISCOVERY_DIR/report_$MONTH_STAMP.md"
+START_TS=$(date +%s)
+DISCOVERY_ESTIMATE_SECONDS="${DISCOVERY_ESTIMATE_SECONDS:-1800}"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+elapsed_hms() {
+    local now elapsed h m s
+    now=$(date +%s)
+    elapsed=$((now - START_TS))
+    h=$((elapsed / 3600))
+    m=$(((elapsed % 3600) / 60))
+    s=$((elapsed % 60))
+    printf '%02d:%02d:%02d' "$h" "$m" "$s"
+}
+
+log_progress() {
+    local pct="$1"
+    local msg="$2"
+    log "progress=${pct}% elapsed=$(elapsed_hms) ${msg}"
 }
 
 log "Starting monthly discovery pipeline"
@@ -30,7 +48,7 @@ log "Project: $PROJECT_DIR"
 
 # CursorAgent CLI
 CURSOR_AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
-CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-gpt-5}"
+CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-auto}"
 if ! command -v "$CURSOR_AGENT_BIN" &> /dev/null; then
     log "ERROR: cursor-agent CLI not found. Install Cursor Agent and run cursor-agent login."
     exit 1
@@ -71,17 +89,32 @@ Today's date: $(date -u +"%Y-%m-%d")
 "
 
 log "Running CursorAgent discovery (model: $CURSOR_AGENT_MODEL)..."
+log_progress 5 "discovery generation started"
 cd "$PROJECT_DIR"
 
-if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
+"$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$DISCOVERY_PROMPT" > "$REPORT_FILE.tmp" 2>> "$LOG_FILE" &
+DISCOVERY_PID=$!
+SECONDS_WAITED=0
+
+while kill -0 "$DISCOVERY_PID" 2>/dev/null; do
+    sleep 30
+    SECONDS_WAITED=$((SECONDS_WAITED + 30))
+    PCT=$((5 + (SECONDS_WAITED * 85 / DISCOVERY_ESTIMATE_SECONDS)))
+    if [ "$PCT" -gt 90 ]; then
+        PCT=90
+    fi
+    log_progress "$PCT" "discovery generation in progress"
+done
+
+if wait "$DISCOVERY_PID"; then
     mv "$REPORT_FILE.tmp" "$REPORT_FILE"
+    log_progress 96 "discovery output written"
     log "Discovery report generated: $REPORT_FILE"
 
-    # Extract proposed changes summary
     log "Report preview:"
     head -50 "$REPORT_FILE" | tee -a "$LOG_FILE"
 else
-    log "ERROR: OpenCode discovery failed"
+    log "ERROR: CursorAgent discovery failed"
     rm -f "$REPORT_FILE.tmp"
     exit 1
 fi
@@ -89,6 +122,6 @@ fi
 # Cleanup old logs (keep last 12 months)
 find "$LOG_DIR" -name "discovery_*.log" -mtime +365 -delete 2>/dev/null || true
 
-log "Discovery pipeline complete"
+log_progress 100 "discovery pipeline complete"
 log "Review the report at: $REPORT_FILE"
 log "To apply changes, manually edit pipeline/assets.yaml"
