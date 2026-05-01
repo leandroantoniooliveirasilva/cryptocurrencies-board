@@ -257,7 +257,7 @@ def main():
 
     # Fetch macro filters
     gli_data = gli.fetch_gli_data()
-    gli_downtrend = gli_data["downtrend"]
+    gli_downtrend = bool(gli_data.get('downtrend', False))
     gli.log_pipeline_summary(logger, gli_data)
 
     fg_data = fear_greed.fetch_fear_greed()
@@ -294,14 +294,27 @@ def main():
     import yaml
     assets_file = pipeline_root() / 'assets.yaml'
     with open(assets_file) as f:
-        assets_config = yaml.safe_load(f)
-    assets_list = assets_config.get("assets", [])
+        assets_config = yaml.safe_load(f) or {}
+    assets_list = assets_config.get('assets') or []
+    if not isinstance(assets_list, list):
+        logger.error('assets.yaml must contain an "assets" array')
+        return 1
 
     migrations.init_db(DB_PATH).close()
 
-    # Build lookup for coingecko_id
-    coingecko_lookup = {a["symbol"]: a.get("coingecko_id") for a in assets_list}
-    wyckoff_lookup = {a["symbol"]: a.get("wyckoff_override") for a in assets_list}
+    # Build lookup for coingecko_id (skip malformed rows instead of crashing)
+    coingecko_lookup: dict[str, Optional[str]] = {}
+    wyckoff_lookup: dict[str, Optional[str]] = {}
+    for a in assets_list:
+        if not isinstance(a, dict):
+            logger.warning('Ignoring invalid asset entry in assets.yaml (not a mapping)')
+            continue
+        sym = a.get('symbol')
+        if not sym:
+            logger.warning('Ignoring asset entry without symbol in assets.yaml')
+            continue
+        coingecko_lookup[sym] = a.get('coingecko_id')
+        wyckoff_lookup[sym] = a.get('wyckoff_override')
 
     # Update each asset's indicators
     logger.info(f"\nUpdating indicators for {len(data['assets'])} assets...")
