@@ -227,6 +227,8 @@ FRED_API_KEY=xxx               # Optional (GLI filter)
 
 Qualitative and supply LLM calls use the **CursorAgent CLI** (`cursor-agent --print` by default). Configure auth with `cursor-agent login` (or `CURSOR_API_KEY`). Override with `CURSOR_AGENT_BIN`, `CURSOR_AGENT_MODEL`, `CURSOR_AGENT_RUN_TIMEOUT` in `.env`.
 
+Weekly scoring waits on **one Python subprocess per asset**; each child is bounded by **`PIPELINE_SCORE_ASSET_TIMEOUT`** seconds (default **7200**, aligned with `SCORING_WALL_SECONDS` in `scripts/run-scoring.sh`). Set to **`0`** to disable the per-child cap. See `.env.example`.
+
 ## Parallel Workers
 
 Weekly scoring (`pipeline.run`) and daily indicators (`pipeline.indicators`) support parallel asset processing.
@@ -242,6 +244,9 @@ Configuration (optional):
 ```bash
 # Weekly run parallel pool size — subprocesses per asset (default: 10)
 PIPELINE_MAX_WORKERS=10
+
+# Per-asset scoring subprocess wall clock in seconds (default: 7200; 0 = no limit)
+PIPELINE_SCORE_ASSET_TIMEOUT=7200
 
 # Daily indicators workers (default: INDICATORS_MAX_WORKERS, then PIPELINE_MAX_WORKERS, else 10)
 INDICATORS_MAX_WORKERS=10
