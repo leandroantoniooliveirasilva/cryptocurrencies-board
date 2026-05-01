@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-01T11:00:04.130947+00:00",
+  "generated_at": "2026-05-01T17:14:31.841147+00:00",
   "snapshot_date": "2026-05-01",
   "framework_version": "3.0",
   "weight_profiles": {
@@ -279,7 +279,7 @@
         "supply": "Data-driven score. 90%+ circulating.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "High throughput usage and growing DeFi/NFT activity.",
-        "value_capture": "Daily revenue: $530K (~$193.5M/year). TVL: $5.45B. Revenue/TVL ratio: 3.55%."
+        "value_capture": "Daily revenue: $530K (~$193.5M/year). TVL: $5.48B. Revenue/TVL ratio: 3.53%."
       },
       "weights": {
         "institutional": 0.25,
@@ -341,7 +341,7 @@
       "scores": {
         "institutional": 85,
         "adoption_activity": 88,
-        "value_capture": 38,
+        "value_capture": 36,
         "regulatory": 82,
         "supply": 75
       },
@@ -351,7 +351,7 @@
         "supply": "Data-driven score. 90%+ circulating, minimal inflation.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Deep DeFi ecosystem, high transaction and staking activity.",
-        "value_capture": "Daily revenue: $1.1M (~$393.5M/year). TVL: $45.23B. Revenue/TVL ratio: 0.87%."
+        "value_capture": "Daily revenue: $859K (~$313.5M/year). TVL: $45.53B. Revenue/TVL ratio: 0.69%."
       },
       "weights": {
         "institutional": 0.25,
@@ -360,7 +360,7 @@
         "supply": 0.2,
         "regulatory": 0.15
       },
-      "composite": 74,
+      "composite": 73,
       "composite_last_week": 74,
       "wyckoff_phase": "Accumulation Phase B",
       "wyckoff_position_score": null,
@@ -372,7 +372,7 @@
         73,
         74,
         74,
-        74
+        73
       ],
       "trend_30d": [
         71,
@@ -386,7 +386,7 @@
         73,
         74,
         74,
-        74
+        73
       ],
       "rsi_daily": null,
       "rsi_weekly": null,
@@ -402,7 +402,7 @@
         "change_pct": null
       },
       "note": "Strong institutional adoption",
-      "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (85/100, 25% weight): Excellent institutional presence. ETF products, DeFi infrastructure for institutions\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. ETF approved, regulatory clarity improving\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (88/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (38/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 74/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
+      "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (85/100, 25% weight): Excellent institutional presence. ETF products, DeFi infrastructure for institutions\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. ETF approved, regulatory clarity improving\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (88/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (36/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 73/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions."
     },
     {
       "symbol": "HYPE",
@@ -423,7 +423,7 @@
         "supply": "Limited supply data available.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $1.6M (~$597.6M/year). TVL: $4.74B. Revenue/TVL ratio: 12.61%. Daily fees: $1.9M."
+        "value_capture": "Daily revenue: $1.6M (~$597.6M/year). TVL: $4.78B. Revenue/TVL ratio: 12.50%. Daily fees: $1.9M."
       },
       "weights": {
         "value_capture": 0.3,
@@ -848,7 +848,7 @@
         "supply": "Data-driven score. Fixed supply cap, 90%+ circulating.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $2K (~$578K/year). TVL: $628.3M. Revenue/TVL ratio: 0.09%."
+        "value_capture": "Daily revenue: $2K (~$587K/year). TVL: $634.6M. Revenue/TVL ratio: 0.09%."
       },
       "weights": {
         "institutional": 0.25,
@@ -920,7 +920,7 @@
         "supply": "Limited supply data available.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $398K (~$145.4M/year). TVL: $7.12B. Revenue/TVL ratio: 2.04%."
+        "value_capture": "Daily revenue: $398K (~$145.4M/year). TVL: $7.22B. Revenue/TVL ratio: 2.01%."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1063,7 +1063,7 @@
         "supply": "Limited supply data available.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $260K (~$94.8M/year). TVL: $14.59B. Revenue/TVL ratio: 0.65%. Daily fees: $1.7M."
+        "value_capture": "Daily revenue: $260K (~$94.8M/year). TVL: $14.75B. Revenue/TVL ratio: 0.64%. Daily fees: $1.9M."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1279,7 +1279,7 @@
         "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $2K (~$808K/year). TVL: $540.0M. Revenue/TVL ratio: 0.15%."
+        "value_capture": "Daily revenue: $2K (~$801K/year). TVL: $546.7M. Revenue/TVL ratio: 0.15%."
       },
       "weights": {
         "institutional": 0.25,
@@ -1351,7 +1351,7 @@
         "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $26K (~$9.6M/year). TVL: $3.53B. Revenue/TVL ratio: 0.27%."
+        "value_capture": "Daily revenue: $26K (~$9.6M/year). TVL: $3.56B. Revenue/TVL ratio: 0.27%."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1423,7 +1423,7 @@
         "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $103K (~$37.8M/year). TVL: $1.71B. Revenue/TVL ratio: 2.21%. Daily fees: $265K."
+        "value_capture": "Daily revenue: $103K (~$37.8M/year). TVL: $1.71B. Revenue/TVL ratio: 2.20%. Daily fees: $265K."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1495,7 +1495,7 @@
         "supply": "Data-driven score. Fixed supply cap, 70%+ circulating, high inflation.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $74K (~$27.0M/year). TVL: $3.47B. Revenue/TVL ratio: 0.78%. Daily fees: $905K."
+        "value_capture": "Daily revenue: $74K (~$27.0M/year). TVL: $3.48B. Revenue/TVL ratio: 0.77%. Daily fees: $905K."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1639,7 +1639,7 @@
         "supply": "Limited supply data available.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $153K (~$55.9M/year). TVL: $20.87B. Revenue/TVL ratio: 0.27%. Daily fees: $1.5M."
+        "value_capture": "Daily revenue: $153K (~$55.9M/year). TVL: $20.98B. Revenue/TVL ratio: 0.27%. Daily fees: $1.5M."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1701,7 +1701,7 @@
       "scores": {
         "institutional": 65,
         "adoption_activity": 55,
-        "value_capture": 34,
+        "value_capture": 32,
         "regulatory": 60,
         "supply": 40
       },
@@ -1711,7 +1711,7 @@
         "supply": "Data-driven score. High inflation.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $20K (~$7.1M/year). TVL: $1.49B. Revenue/TVL ratio: 0.48%. Daily fees: $20K."
+        "value_capture": "Daily revenue: $11K (~$4.1M/year). TVL: $1.50B. Revenue/TVL ratio: 0.27%. Daily fees: $12K."
       },
       "weights": {
         "value_capture": 0.3,
@@ -1762,7 +1762,7 @@
         "change_pct": null
       },
       "note": "DeFi protocol, revenue-focused",
-      "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Institutional Citadels product\n\u2022 Regulatory (60/100, 15% weight): Uncertain regulatory standing. Yield trading, DeFi regulatory uncertainty\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 48/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
+      "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Institutional Citadels product\n\u2022 Regulatory (60/100, 15% weight): Uncertain regulatory standing. Yield trading, DeFi regulatory uncertainty\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 48/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds."
     },
     {
       "symbol": "EIGEN",
@@ -1783,7 +1783,7 @@
         "supply": "Data-driven score. Low circulating ratio, high inflation.",
         "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
         "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-        "value_capture": "Daily revenue: $14K (~$5.0M/year). TVL: $8.40B. Revenue/TVL ratio: 0.06%."
+        "value_capture": "Daily revenue: $15K (~$5.6M/year). TVL: $8.48B. Revenue/TVL ratio: 0.07%."
       },
       "weights": {
         "adoption_activity": 0.25,
