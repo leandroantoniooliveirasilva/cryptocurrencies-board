@@ -63,6 +63,22 @@ assets:
     defillama_slug: sui
     wyckoff_override: null
 
+  - symbol: ADA
+    name: Cardano
+    asset_category: smart-contract-platform
+    asset_type: smart-contract
+    coingecko_id: cardano
+    defillama_slug: cardano
+    wyckoff_override: null
+
+  - symbol: POL
+    name: Polygon
+    asset_category: smart-contract-platform
+    asset_type: smart-contract
+    coingecko_id: polygon-ecosystem-token
+    defillama_slug: polygon
+    wyckoff_override: null
+
   - symbol: LINK
     name: Chainlink
     asset_category: oracle-data
