@@ -4,7 +4,7 @@
 
 Copy one block below when you want a self-contained message without opening the file. Ground rules live in `CLAUDE.md`; scoring logic in `pipeline/config.yaml` and `pipeline/assets.yaml`.
 
-**Defaults for this project:** qualitative scores use **Claude CLI** (subscription: `USE_CLAUDE_CLI=true`). A full scoring run can take a long time (many per-asset CLI calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
+**Defaults for this project:** qualitative scores use the **Claude Code CLI** (`claude --print`, subscription). A full scoring run can take a long time (many per-asset CLI calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
 
 ---
 
@@ -15,7 +15,7 @@ Use when you want a fresh `public/latest.json` and updated `pipeline/storage/his
 ```
 In cryptocurrencies-board: run the weekly scoring pipeline end-to-end using my local setup.
 
-- Activate `.venv`, ensure `USE_CLAUDE_CLI=true` (subscription CLI; no Anthropic API unless I already set it).
+- Activate `.venv`; scoring uses the subscription **Claude Code CLI** only (no HTTP API path in this repo).
 - Run `./scripts/run-scoring.sh` from the repo root (or document why you use `python -m pipeline.run` instead). If it fails, read the latest `logs/scoring_*.log`, fix env/locks, retry once.
 - Confirm `public/latest.json` and `pipeline/storage/history.sqlite` updated and `framework_version` / asset outputs look sane.
 - If I asked to publish: `npm run build`, bump `public/index.html` dashboard.js cache query if the bundle changed, then `git add` only the relevant paths and commit with a conventional subject under 100 characters (no footer signature).

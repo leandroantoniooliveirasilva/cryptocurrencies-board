@@ -31,8 +31,6 @@
         <string>UTC</string>
         <key>PATH</key>
         <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
-        <key>USE_CLAUDE_CLI</key>
-        <string>true</string>
     </dict>
 
     <key>StandardOutPath</key>

@@ -126,7 +126,7 @@ Automation is **macOS launchd** (see `scripts/install-launchd.sh`), not cron. Al
 ```
 Weekly dimension job (Sunday 12:00 UTC) — scripts/run-local.sh
 ├── Fetch: DefiLlama (TVL, revenue) where needed for dimensions
-├── Score: Claude CLI (default) for qualitative dimensions; optional HTTP API via env
+├── Score: Claude Code CLI (subscription) for qualitative dimensions
 ├── Composite: Weighted score by asset_category (strict required dimensions → scoring_errors if missing)
 ├── Store: Append snapshot to history.sqlite; GLI/F&G/market_context reused from prior latest.json
 └── Output: latest.json (action null until daily job), commit, push
@@ -193,8 +193,9 @@ Store in `.env` (auto-loaded):
 
 ```bash
 FRED_API_KEY=xxx               # Optional (GLI filter)
-# ANTHROPIC_API_KEY=xxx        # Only when USE_CLAUDE_CLI=false (HTTP API)
 ```
+
+Qualitative and supply LLM calls use the **Claude Code CLI** (`claude`) with your **subscription** — there is no Anthropic HTTP API path in this project.
 
 ## Parallel Workers
 

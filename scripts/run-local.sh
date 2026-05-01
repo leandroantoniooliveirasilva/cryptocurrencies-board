@@ -38,9 +38,6 @@ if ! command -v claude &> /dev/null; then
     log "WARNING: Claude CLI not found, will use fallback scores"
 fi
 
-# Set environment for CLI usage
-export USE_CLAUDE_CLI=true
-
 # Run the pipeline
 cd "$PROJECT_DIR"
 log "Running pipeline..."

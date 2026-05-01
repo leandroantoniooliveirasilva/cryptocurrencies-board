@@ -84,8 +84,8 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 # Configure (create .env)
-# ANTHROPIC_API_KEY=...  # Only if USE_CLAUDE_CLI=false (HTTP API instead of subscription CLI)
 FRED_API_KEY=your_fred_key_here  # Optional, for GLI filter
+# Scoring uses Claude Code CLI (subscription); install: npm i -g @anthropic-ai/claude-code
 
 # Scheduled: install launchd agents (Sunday dimensions, daily indicators, monthly discovery)
 ./scripts/install-launchd.sh install

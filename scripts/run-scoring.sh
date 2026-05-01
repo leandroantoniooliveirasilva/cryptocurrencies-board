@@ -9,12 +9,8 @@
 # - A slow or timing-out call can burn the full per-call timeout (see
 #   CLAUDE_CLI_TIMEOUT / CLAUDE_ADOPTION_TIMEOUT in .env).
 #
-# Optional: set USE_CLAUDE_CLI=false only if you want the Anthropic HTTP API
-# instead (extra cost vs subscription CLI).
-#
 # Env (optional):
 #   SCORING_WALL_SECONDS   Wall-clock max for the whole run (default 7200).
-#   USE_CLAUDE_CLI         true (default) — CLI subscription; false = HTTP API.
 #   CLAUDE_CLI_TIMEOUT     Per general qualitative call (default 300 in code).
 #   CLAUDE_ADOPTION_TIMEOUT Per adoption_activity call (default 300 in code).
 
@@ -46,8 +42,6 @@ fi
 source "$VENV_DIR/bin/activate"
 
 cd "$PROJECT_DIR"
-
-export USE_CLAUDE_CLI="${USE_CLAUDE_CLI:-true}"
 
 run_inner() {
   python -m pipeline.run "$@"

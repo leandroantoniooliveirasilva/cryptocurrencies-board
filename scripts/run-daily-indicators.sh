@@ -28,7 +28,6 @@ else
     exit 1
 fi
 
-export USE_CLAUDE_CLI=true
 cd "$PROJECT_DIR"
 
 if python -m pipeline.indicators 2>&1 | tee -a "$LOG_FILE"; then
