@@ -6,6 +6,7 @@ prolonged downtrend relative to BTC, accumulation signals are muted.
 """
 
 import logging
+import threading
 from typing import Optional
 
 from pipeline.config import config
@@ -15,16 +16,20 @@ logger = logging.getLogger(__name__)
 
 # Cache BTC prices for the session (fetched once, reused for all assets)
 _btc_prices_cache: Optional[list[tuple[int, float]]] = None
+_btc_cache_lock = threading.Lock()
 
 
 def _get_btc_prices() -> Optional[list[tuple[int, float]]]:
-    """Fetch and cache BTC prices for RS calculation."""
+    """Fetch and cache BTC prices for RS calculation (thread-safe for parallel workers)."""
     global _btc_prices_cache
-    if _btc_prices_cache is None:
-        _btc_prices_cache = defillama.fetch_daily_prices_with_timestamps(
-            "bitcoin", days=config.data.price_history_days
-        )
-    return _btc_prices_cache
+    if _btc_prices_cache is not None:
+        return _btc_prices_cache
+    with _btc_cache_lock:
+        if _btc_prices_cache is None:
+            _btc_prices_cache = defillama.fetch_daily_prices_with_timestamps(
+                'bitcoin', days=config.data.price_history_days
+            )
+        return _btc_prices_cache
 
 
 def compute_relative_strength(
