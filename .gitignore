@@ -21,7 +21,9 @@ sdist/
 var/
 wheels/
 share/python-wheels/
+# setuptools / pip editable metadata (e.g. src/cryptocurrencies_board.egg-info after pip install -e .)
 *.egg-info/
+**/*.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
