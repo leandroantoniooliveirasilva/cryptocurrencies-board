@@ -88,6 +88,25 @@ def _score_asset_child_env() -> dict[str, str]:
     return env
 
 
+def _score_asset_subprocess_timeout_sec() -> Optional[int]:
+    """
+    Wall-clock cap for each ``--score-asset-input`` child (parent waits on subprocess).
+
+    ``PIPELINE_SCORE_ASSET_TIMEOUT`` in seconds; default **7200** (aligns with
+    ``SCORING_WALL_SECONDS`` in ``scripts/run-scoring.sh``). **0** or negative
+    means no per-child limit (child can still be limited by ``run-scoring.sh`` / launchd).
+    """
+    raw = os.environ.get('PIPELINE_SCORE_ASSET_TIMEOUT', '7200')
+    try:
+        n = int(str(raw).strip())
+    except ValueError:
+        logger.warning(f'Invalid PIPELINE_SCORE_ASSET_TIMEOUT={raw!r}, using 7200')
+        return 7200
+    if n <= 0:
+        return None
+    return n
+
+
 class DimensionScoringError(Exception):
     """Raised when a required weighted dimension is missing (strict scoring, no renormalisation)."""
 
@@ -727,7 +746,27 @@ def _run_asset_subprocess(
             '--score-asset-output',
             str(output_path),
         ]
-        proc = subprocess.run(cmd, capture_output=True, text=True, env=_score_asset_child_env())
+        timeout_sec = _score_asset_subprocess_timeout_sec()
+        try:
+            proc = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                env=_score_asset_child_env(),
+                timeout=timeout_sec,
+            )
+        except subprocess.TimeoutExpired as e:
+            tail = (e.stderr or e.stdout or '').strip()
+            if len(tail) > 2000:
+                tail = tail[:2000] + '…'
+            lim = f'{timeout_sec}s' if timeout_sec is not None else 'none'
+            return {
+                'symbol': entry.get('symbol', 'unknown'),
+                'name': entry.get('name', ''),
+                'asset': None,
+                'error': f'child_process_timeout:{lim}:{tail}',
+                'dimension_errors': None,
+            }
 
         if not output_path.exists():
             return {
@@ -1345,7 +1384,9 @@ def main():
 
     # Sort assets by tier priority then composite score
     tier_order = {'leader': 0, 'runner-up': 1, 'observation': 2}
-    output['assets'].sort(key=lambda a: (tier_order.get(a['tier'], 3), -a['composite']))
+    output['assets'].sort(
+        key=lambda a: (tier_order.get(a.get('tier'), 3), -(a.get('composite') or 0)),
+    )
 
     # Commit database changes only when writes are enabled.
     if not args.dry_run:
