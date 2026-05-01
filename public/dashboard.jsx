@@ -984,7 +984,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
           </div>
 
           {/* Global filters - list all filters with color coding */}
-          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.xl, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.xl }}>
             <div style={{ fontSize: TYPE.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: PALETTE.textMuted, marginBottom: SPACE.base, fontFamily: 'ui-monospace, monospace' }}>
               Global filters
             </div>
@@ -1056,7 +1056,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
           </div>
 
           {/* Technical Analysis - detailed reasoning for filters */}
-          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.lg, paddingTop: isMobile ? SPACE.lg : SPACE.md, borderTop: `1px solid ${PALETTE.border}` }}>
+          <div style={{ marginTop: isMobile ? SPACE['2xl'] : SPACE.lg }}>
             <button
               type="button"
               onClick={() => setTechnicalExpanded(!technicalExpanded)}
