@@ -4,6 +4,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Weekly dimension scoring (Sunday 12:00 UTC)
 SCORING_PLIST_SRC="$SCRIPT_DIR/com.crypto.scoring.plist"
@@ -53,8 +54,8 @@ install_job() {
 
     mkdir -p "$HOME/Library/LaunchAgents"
 
-    cp "$src" "$dst"
-    echo "  Copied plist to $dst"
+    sed "s@__CRYPTO_BOARD_ROOT__@${PROJECT_DIR}@g" "$src" > "$dst"
+    echo "  Wrote plist to $dst (repo root: $PROJECT_DIR)"
 
     chmod +x "$script"
 

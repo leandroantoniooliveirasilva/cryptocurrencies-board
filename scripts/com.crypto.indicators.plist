@@ -7,7 +7,7 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board/scripts/run-daily-indicators.sh</string>
+        <string>__CRYPTO_BOARD_ROOT__/scripts/run-daily-indicators.sh</string>
     </array>
 
     <!-- Every day 12:00 UTC -->
@@ -23,7 +23,7 @@
     <false/>
 
     <key>WorkingDirectory</key>
-    <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board</string>
+    <string>__CRYPTO_BOARD_ROOT__</string>
 
     <key>EnvironmentVariables</key>
     <dict>
@@ -34,9 +34,9 @@
     </dict>
 
     <key>StandardOutPath</key>
-    <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board/logs/launchd-indicators.out.log</string>
+    <string>__CRYPTO_BOARD_ROOT__/logs/launchd-indicators.out.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/leandrosilva/Projects/personal/cryptocurrencies-board/logs/launchd-indicators.err.log</string>
+    <string>__CRYPTO_BOARD_ROOT__/logs/launchd-indicators.err.log</string>
 
     <key>KeepAlive</key>
     <false/>
