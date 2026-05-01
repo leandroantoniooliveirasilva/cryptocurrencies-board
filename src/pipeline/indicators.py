@@ -258,11 +258,7 @@ def main():
     # Fetch macro filters
     gli_data = gli.fetch_gli_data()
     gli_downtrend = gli_data["downtrend"]
-    if gli_data["source"] != "fallback":
-        gli_trend = gli.get_gli_trend_label(gli_data)
-        logger.info(f"GLI status: {gli_trend} (source: {gli_data['source']})")
-    else:
-        logger.info("GLI data unavailable - macro filter disabled")
+    gli.log_pipeline_summary(logger, gli_data)
 
     fg_data = fear_greed.fetch_fear_greed()
     fg_greedy = fg_data.get("greedy", False)

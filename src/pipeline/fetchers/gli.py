@@ -66,6 +66,16 @@ def get_gli_trend_label(data: GLIData) -> str:
     return 'expanding'
 
 
+def log_pipeline_summary(log: logging.Logger, gli_data: GLIData) -> None:
+    """Same GLI status line for ``pipeline.run`` and ``pipeline.indicators``."""
+    if gli_data.get('source') != 'fallback':
+        trend = get_gli_trend_label(gli_data)
+        src = gli_data.get('source') or 'unknown'
+        log.info(f'GLI status: {trend} (source: {src})')
+    else:
+        log.info('GLI data unavailable - macro filter disabled')
+
+
 def fetch_gli_data(offset_days: Optional[int] = None) -> GLIData:
     """Fetch GLI data and determine trend."""
     gli_cfg = config.gli
