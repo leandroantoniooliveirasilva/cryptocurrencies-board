@@ -1,6 +1,7 @@
 """DefiLlama API fetcher for TVL, fees, revenue, and price data."""
 
 import logging
+import threading
 import time
 from typing import Optional
 
@@ -15,6 +16,7 @@ REQUEST_DELAY = 1.0  # seconds between requests to be respectful
 
 # Process-level cache for /v2/chains (large payload, refreshed per run).
 _chains_cache: Optional[list[dict]] = None
+_chains_cache_lock = threading.Lock()
 
 
 def fetch_defillama_data(slug: str) -> Optional[dict]:
@@ -89,15 +91,17 @@ def _fetch_chain_tvl(slug: str) -> Optional[float]:
     """
     global _chains_cache
     if _chains_cache is None:
-        time.sleep(REQUEST_DELAY)
-        try:
-            resp = requests.get(f"{BASE_URL}/v2/chains", timeout=TIMEOUT)
-            resp.raise_for_status()
-            data = resp.json()
-            _chains_cache = data if isinstance(data, list) else []
-        except Exception as e:
-            logger.debug(f"Chain list fetch failed: {e}")
-            _chains_cache = []
+        with _chains_cache_lock:
+            if _chains_cache is None:
+                time.sleep(REQUEST_DELAY)
+                try:
+                    resp = requests.get(f"{BASE_URL}/v2/chains", timeout=TIMEOUT)
+                    resp.raise_for_status()
+                    data = resp.json()
+                    _chains_cache = data if isinstance(data, list) else []
+                except Exception as e:
+                    logger.debug(f"Chain list fetch failed: {e}")
+                    _chains_cache = []
 
     needle = slug.lower()
     for chain in _chains_cache:
