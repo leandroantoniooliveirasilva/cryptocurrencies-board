@@ -34,9 +34,11 @@ log "Starting ensemble discovery pipeline (3 independent runs + review + merge)"
 log "Project: $PROJECT_DIR"
 log "Output directory: $REPORT_DIR"
 
-# Check Claude CLI is available
-if ! command -v claude &> /dev/null; then
-    log "ERROR: Claude CLI not found. Install with: npm install -g @anthropic-ai/claude-code"
+# OpenCode CLI
+OPENCODE_BIN="${OPENCODE_BIN:-opencode}"
+OPENCODE_MODEL="${OPENCODE_MODEL:-opencode/big-pickle}"
+if ! command -v "$OPENCODE_BIN" &> /dev/null; then
+    log "ERROR: OpenCode CLI not found. Install: https://opencode.ai/docs"
     exit 1
 fi
 
@@ -107,7 +109,7 @@ $focus
 
     log "  Starting discovery run #$run_id..."
 
-    if claude --model claude-opus-4-5-20251101 --print "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
+    if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
         log "  Discovery run #$run_id completed: $output_file"
         return 0
     else
@@ -199,7 +201,7 @@ Today's date: $TODAY"
 
 REVIEW_FILE="$REPORT_DIR/fact_check_review.md"
 
-if claude --model claude-opus-4-5-20251101 --print "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
+if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
     log "Fact-check review completed: $REVIEW_FILE"
 else
     log "ERROR: Fact-check review failed"
@@ -287,7 +289,7 @@ Today's date: $TODAY"
 
 FINAL_REPORT="$DISCOVERY_DIR/report_$MONTH_STAMP.md"
 
-if claude --model claude-opus-4-5-20251101 --print "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
+if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
     log "Final consolidated report generated: $FINAL_REPORT"
 else
     log "ERROR: Report merge failed"

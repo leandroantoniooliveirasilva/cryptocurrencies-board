@@ -1,4 +1,4 @@
-"""Qualitative scoring via the Claude Code CLI only (subscription; ``claude --print``)."""
+"""Qualitative scoring via OpenCode CLI: ``opencode run --print`` (default model Big Pickle)."""
 
 import json
 import logging
@@ -11,13 +11,17 @@ logger = logging.getLogger(__name__)
 # Cache for qualitative scores (refresh weekly)
 _score_cache: dict = {}
 
-# CLI model id (``claude --print --model``)
-CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
+# OpenCode binary and model (provider/model, e.g. opencode/big-pickle)
+OPENCODE_BIN = os.environ.get('OPENCODE_BIN', 'opencode')
+OPENCODE_MODEL = os.environ.get('OPENCODE_MODEL', 'opencode/big-pickle')
 
-# Per-invocation CLI timeout (seconds). Default 5m; adoption prompts are heavier.
-CLAUDE_CLI_TIMEOUT = int(os.environ.get('CLAUDE_CLI_TIMEOUT', '300'))
-# Adoption prompts are heavier; cap separately (default 5m; raise if CLI consistently times out).
-CLAUDE_ADOPTION_TIMEOUT = int(os.environ.get('CLAUDE_ADOPTION_TIMEOUT', '300'))
+# Per-invocation timeouts (seconds). CLAUDE_* fallbacks for existing .env files.
+OPENCODE_RUN_TIMEOUT = int(
+    os.environ.get('OPENCODE_RUN_TIMEOUT', os.environ.get('CLAUDE_CLI_TIMEOUT', '300'))
+)
+OPENCODE_ADOPTION_TIMEOUT = int(
+    os.environ.get('OPENCODE_ADOPTION_TIMEOUT', os.environ.get('CLAUDE_ADOPTION_TIMEOUT', '300'))
+)
 
 
 REGULATORY_PROMPT = """Score the regulatory trajectory for {symbol} ({name}) on a 0-100 scale.
@@ -73,7 +77,7 @@ No other text."""
 
 def score_regulatory(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
-    Score regulatory trajectory using Claude.
+    Score regulatory trajectory using OpenCode (Big Pickle by default).
 
     Args:
         symbol: Asset symbol (e.g., 'BTC')
@@ -88,7 +92,7 @@ def score_regulatory(symbol: str, name: str, use_cache: bool = True) -> dict:
     if use_cache and cache_key in _score_cache:
         return _score_cache[cache_key]
 
-    result = _query_claude(
+    result = _query_scoring_llm(
         REGULATORY_PROMPT.format(symbol=symbol, name=name), cache_key
     )
 
@@ -102,7 +106,7 @@ def score_regulatory(symbol: str, name: str, use_cache: bool = True) -> dict:
 
 def score_institutional(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
-    Score institutional adoption using Claude.
+    Score institutional adoption using OpenCode (Big Pickle by default).
 
     Args:
         symbol: Asset symbol (e.g., 'BTC')
@@ -117,7 +121,7 @@ def score_institutional(symbol: str, name: str, use_cache: bool = True) -> dict:
     if use_cache and cache_key in _score_cache:
         return _score_cache[cache_key]
 
-    result = _query_claude(
+    result = _query_scoring_llm(
         INSTITUTIONAL_PROMPT.format(symbol=symbol, name=name), cache_key
     )
 
@@ -129,51 +133,52 @@ def score_institutional(symbol: str, name: str, use_cache: bool = True) -> dict:
     return _get_fallback_institutional(symbol)
 
 
-def _query_claude(
+def _query_scoring_llm(
     prompt: str,
     cache_key: str,
     cli_timeout: Optional[int] = None,
 ) -> Optional[dict]:
-    """Query Claude via subscription CLI and parse JSON response."""
-    return _query_claude_cli(prompt, cache_key, timeout_sec=cli_timeout)
+    """Run prompt through OpenCode CLI and parse JSON response."""
+    return _invoke_opencode_run(prompt, cache_key, timeout_sec=cli_timeout)
 
 
-def _query_claude_cli(
+def _invoke_opencode_run(
     prompt: str,
     cache_key: str,
     timeout_sec: Optional[int] = None,
 ) -> Optional[dict]:
-    """Query Claude using the CLI (subscription-based)."""
-    limit = timeout_sec if timeout_sec is not None else CLAUDE_CLI_TIMEOUT
+    """``opencode run --print --model …`` (non-interactive)."""
+    limit = timeout_sec if timeout_sec is not None else OPENCODE_RUN_TIMEOUT
     try:
-        # Use claude CLI with --print flag for non-interactive output
         result = subprocess.run(
-            ['claude', '--print', '--model', CLAUDE_MODEL, prompt],
+            [OPENCODE_BIN, 'run', '--print', '--model', OPENCODE_MODEL, prompt],
             capture_output=True,
             text=True,
             timeout=limit,
         )
 
         if result.returncode != 0:
-            logger.warning(f"Claude CLI error for {cache_key}: {result.stderr}")
+            logger.warning(f'OpenCode CLI error for {cache_key}: {result.stderr}')
             return None
 
         text = result.stdout.strip()
         return _parse_json_response(text, cache_key)
 
     except subprocess.TimeoutExpired:
-        logger.warning(f"Claude CLI timeout for {cache_key}")
+        logger.warning(f'OpenCode CLI timeout for {cache_key}')
         return None
     except FileNotFoundError:
-        logger.warning("Claude CLI not found. Install with: npm install -g @anthropic-ai/claude-code")
+        logger.warning(
+            'OpenCode CLI not found. Install: https://opencode.ai/docs (e.g. brew install anomalyco/tap/opencode)'
+        )
         return None
     except Exception as e:
-        logger.warning(f"Claude CLI error for {cache_key}: {e}")
+        logger.warning(f'OpenCode CLI error for {cache_key}: {e}')
         return None
 
 
 def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
-    """Parse JSON from Claude response."""
+    """Parse JSON from model response."""
     try:
         # Handle potential markdown code blocks
         if "```" in text:
@@ -197,7 +202,7 @@ def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
         return json.loads(text)
 
     except json.JSONDecodeError as e:
-        logger.warning(f"Failed to parse Claude response for {cache_key}: {e}")
+        logger.warning(f'Failed to parse model response for {cache_key}: {e}')
         logger.debug(f"Response was: {text[:500]}")
         return None
 
@@ -256,7 +261,7 @@ def _get_fallback_institutional(symbol: str) -> dict:
 
 def score_value_capture(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
-    Score value capture using Claude when API data is unavailable.
+    Score value capture via OpenCode when API data is unavailable.
 
     Returns:
         Dict with 'score' (int), 'rationale' (str), and 'estimated' (bool)
@@ -266,7 +271,7 @@ def score_value_capture(symbol: str, name: str, use_cache: bool = True) -> dict:
     if use_cache and cache_key in _score_cache:
         return _score_cache[cache_key]
 
-    result = _query_claude(
+    result = _query_scoring_llm(
         VALUE_CAPTURE_PROMPT.format(symbol=symbol, name=name), cache_key
     )
 
@@ -299,10 +304,10 @@ def score_adoption_activity(
     if use_cache and cache_key in _score_cache:
         return _score_cache[cache_key]
 
-    result = _query_claude(
+    result = _query_scoring_llm(
         ADOPTION_ACTIVITY_PROMPT.format(symbol=symbol, name=name, hint=hint),
         cache_key,
-        cli_timeout=CLAUDE_ADOPTION_TIMEOUT,
+        cli_timeout=OPENCODE_ADOPTION_TIMEOUT,
     )
 
     if result:

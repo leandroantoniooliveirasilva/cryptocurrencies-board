@@ -1,6 +1,6 @@
 #!/bin/bash
 # Monthly discovery pipeline runner
-# Uses Claude CLI with Opus to find and vet new crypto projects
+# Uses OpenCode CLI (default Big Pickle) to find and vet new crypto projects
 # Runs on day 1 of each month at 18:00 UTC
 
 set -e
@@ -28,9 +28,11 @@ log() {
 log "Starting monthly discovery pipeline"
 log "Project: $PROJECT_DIR"
 
-# Check Claude CLI is available
-if ! command -v claude &> /dev/null; then
-    log "ERROR: Claude CLI not found. Install with: npm install -g @anthropic-ai/claude-code"
+# OpenCode CLI (Big Pickle default — override with OPENCODE_MODEL)
+OPENCODE_BIN="${OPENCODE_BIN:-opencode}"
+OPENCODE_MODEL="${OPENCODE_MODEL:-opencode/big-pickle}"
+if ! command -v "$OPENCODE_BIN" &> /dev/null; then
+    log "ERROR: OpenCode CLI not found. Install: https://opencode.ai/docs (e.g. brew install anomalyco/tap/opencode)"
     exit 1
 fi
 
@@ -68,12 +70,10 @@ $CURRENT_ASSETS
 Today's date: $(date -u +"%Y-%m-%d")
 "
 
-log "Running Claude discovery with Opus..."
+log "Running OpenCode discovery (model: $OPENCODE_MODEL)..."
 cd "$PROJECT_DIR"
 
-# Run Claude with the discovery prompt
-# Using --model opus for deep research capability
-if claude --model claude-opus-4-5-20251101 --print "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
+if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
     mv "$REPORT_FILE.tmp" "$REPORT_FILE"
     log "Discovery report generated: $REPORT_FILE"
 
@@ -81,7 +81,7 @@ if claude --model claude-opus-4-5-20251101 --print "$DISCOVERY_PROMPT" 2>&1 | te
     log "Report preview:"
     head -50 "$REPORT_FILE" | tee -a "$LOG_FILE"
 else
-    log "ERROR: Claude discovery failed"
+    log "ERROR: OpenCode discovery failed"
     rm -f "$REPORT_FILE.tmp"
     exit 1
 fi

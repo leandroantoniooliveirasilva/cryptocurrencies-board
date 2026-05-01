@@ -32,8 +32,10 @@ MAX_RETRIES = 3
 _last_request_time = 0.0
 _rate_limit_lock = threading.Lock()
 
-# Claude model for qualitative scoring (configurable via env)
-CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "opus")
+# OpenCode CLI (default Big Pickle)
+OPENCODE_BIN = os.environ.get('OPENCODE_BIN', 'opencode')
+OPENCODE_MODEL = os.environ.get('OPENCODE_MODEL', 'opencode/big-pickle')
+OPENCODE_SUPPLY_TIMEOUT = int(os.environ.get('OPENCODE_SUPPLY_TIMEOUT', '60'))
 
 
 def _rate_limit():
@@ -188,7 +190,7 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
     else:
         supply_str = "No supply data available - assess based on known tokenomics"
 
-    result = _query_claude(
+    result = _invoke_opencode_supply(
         SUPPLY_PROMPT.format(symbol=symbol, name=name, supply_data=supply_str),
         cache_key
     )
@@ -201,35 +203,35 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
     return _compute_fallback_score(symbol, supply_data)
 
 
-def _query_claude(prompt: str, cache_key: str) -> Optional[dict]:
-    """Query Claude Code CLI (subscription) for supply scoring."""
+def _invoke_opencode_supply(prompt: str, cache_key: str) -> Optional[dict]:
+    """``opencode run --print`` for supply scoring."""
     try:
         result = subprocess.run(
-            ["claude", "--print", "--model", CLAUDE_MODEL, prompt],
+            [OPENCODE_BIN, 'run', '--print', '--model', OPENCODE_MODEL, prompt],
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=OPENCODE_SUPPLY_TIMEOUT,
         )
 
         if result.returncode != 0:
-            logger.warning(f"Claude CLI failed for {cache_key}: {result.stderr}")
+            logger.warning(f'OpenCode CLI failed for {cache_key}: {result.stderr}')
             return None
 
         return _parse_json_response(result.stdout, cache_key)
 
     except subprocess.TimeoutExpired:
-        logger.warning(f"Claude CLI timeout for {cache_key}")
+        logger.warning(f'OpenCode CLI timeout for {cache_key}')
         return None
     except FileNotFoundError:
-        logger.warning("Claude CLI not found")
+        logger.warning('OpenCode CLI not found (see https://opencode.ai/docs)')
         return None
     except Exception as e:
-        logger.warning(f"Claude CLI error for {cache_key}: {e}")
+        logger.warning(f'OpenCode CLI error for {cache_key}: {e}')
         return None
 
 
 def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
-    """Parse JSON from Claude response."""
+    """Parse JSON from model response."""
     try:
         text = text.strip()
 
@@ -243,7 +245,7 @@ def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
         return json.loads(text)
 
     except json.JSONDecodeError as e:
-        logger.warning(f"Failed to parse Claude response for {cache_key}: {e}")
+        logger.warning(f'Failed to parse model response for {cache_key}: {e}')
         return None
 
 

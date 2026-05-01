@@ -331,7 +331,7 @@ api:
     timeout: 30
     request_delay: 1.0
 
-  claude:
+  opencode:
     timeout: 60
     max_tokens: 200
 
@@ -339,7 +339,7 @@ api:
 # CACHE SETTINGS
 # =============================================================================
 cache:
-  qualitative_score_days: 7     # Days to cache Claude-generated scores
+  qualitative_score_days: 7     # Days to cache OpenCode-generated scores
   supply_score_days: 7          # Days to cache supply analysis
 
 # =============================================================================

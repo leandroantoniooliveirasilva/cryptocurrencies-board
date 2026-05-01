@@ -85,7 +85,7 @@ pip install -r requirements.txt
 
 # Configure (create .env)
 FRED_API_KEY=your_fred_key_here  # Optional, for GLI filter
-# Scoring uses Claude Code CLI (subscription); install: npm i -g @anthropic-ai/claude-code
+# Scoring uses OpenCode CLI (default model Big Pickle). Install: https://opencode.ai/docs
 
 # Scheduled: install launchd agents (Sunday dimensions, daily indicators, monthly discovery)
 ./scripts/install-launchd.sh install
@@ -123,7 +123,7 @@ Recommended starting points:
 - `4` as a balanced default for most machines
 - `6` for higher-end CPUs with good network stability
 
-If APIs start rate-limiting or Claude CLI becomes unstable, reduce workers and retry.
+If APIs start rate-limiting or OpenCode runs become unstable, reduce workers and retry.
 
 ## Project Structure
 

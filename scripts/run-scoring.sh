@@ -2,17 +2,16 @@
 # Weekly scoring pipeline with a hard wall-clock cap (default 2h).
 #
 # Why this feels slower than discovery:
-# - Discovery is usually a few large Claude prompts (one report per phase).
-# - Scoring runs up to several Claude calls *per watchlist asset* (regulatory,
-#   institutional, value capture, adoption), each as a separate `claude`
-#   subprocess — intended for Claude subscription (CLI); no API key required.
+# - Discovery is usually a few large OpenCode prompts (one report per phase).
+# - Scoring runs up to several OpenCode runs *per watchlist asset* (regulatory,
+#   institutional, value capture, adoption), each `opencode run --print` (default Big Pickle).
 # - A slow or timing-out call can burn the full per-call timeout (see
-#   CLAUDE_CLI_TIMEOUT / CLAUDE_ADOPTION_TIMEOUT in .env).
+#   OPENCODE_RUN_TIMEOUT / OPENCODE_ADOPTION_TIMEOUT in .env).
 #
 # Env (optional):
 #   SCORING_WALL_SECONDS   Wall-clock max for the whole run (default 7200).
-#   CLAUDE_CLI_TIMEOUT     Per general qualitative call (default 300 in code).
-#   CLAUDE_ADOPTION_TIMEOUT Per adoption_activity call (default 300 in code).
+#   OPENCODE_RUN_TIMEOUT     Per general qualitative call (default 300 in code).
+#   OPENCODE_ADOPTION_TIMEOUT Per adoption_activity call (default 300 in code).
 
 set -euo pipefail
 
@@ -61,7 +60,7 @@ else
 fi
 
 if [ "$EXIT" -eq 124 ]; then
-  log "ERROR: hit wall timeout (${SCORING_WALL_SECONDS}s). Raise SCORING_WALL_SECONDS or lower CLAUDE_*_TIMEOUT values (faster fallbacks)."
+  log "ERROR: hit wall timeout (${SCORING_WALL_SECONDS}s). Raise SCORING_WALL_SECONDS or lower OPENCODE_*_TIMEOUT values (faster fallbacks)."
 elif [ "$EXIT" -eq 142 ]; then
   log "ERROR: subprocess timed out (often same as 124 on macOS)"
 elif [ "$EXIT" -ne 0 ]; then

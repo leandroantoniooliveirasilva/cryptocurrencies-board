@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude Code when working with this repository.
+Guidance for AI assistants and humans working with this repository.
 
 ## Overview
 
@@ -126,7 +126,7 @@ Automation is **macOS launchd** (see `scripts/install-launchd.sh`), not cron. Al
 ```
 Weekly dimension job (Sunday 12:00 UTC) — scripts/run-local.sh
 ├── Fetch: DefiLlama (TVL, revenue) where needed for dimensions
-├── Score: Claude Code CLI (subscription) for qualitative dimensions
+├── Score: OpenCode CLI (`opencode run --print`, default **Big Pickle** `opencode/big-pickle`) for qualitative dimensions
 ├── Composite: Weighted score by asset_category (strict required dimensions → scoring_errors if missing)
 ├── Store: Append snapshot to history.sqlite; GLI/F&G/market_context reused from prior latest.json
 └── Output: latest.json (action null until daily job), commit, push
@@ -144,7 +144,7 @@ GitHub Actions → Deploy /public to GitHub Pages
 
 ## Commands
 
-Session prompts for Claude Code (copy-paste blocks): `.docs/claude-code-prompts.md`.
+Session prompts (copy-paste blocks): `.docs/opencode-prompts.md`.
 
 ```bash
 # Scheduled jobs (install once): copies plists to ~/Library/LaunchAgents
@@ -195,7 +195,7 @@ Store in `.env` (auto-loaded):
 FRED_API_KEY=xxx               # Optional (GLI filter)
 ```
 
-Qualitative and supply LLM calls use the **Claude Code CLI** (`claude`) with your **subscription** — there is no Anthropic HTTP API path in this project.
+Qualitative and supply LLM calls use the **OpenCode CLI** (`opencode run --print --model opencode/big-pickle` by default). Configure auth per [OpenCode docs](https://opencode.ai/docs) (e.g. OpenCode Zen). Override with `OPENCODE_BIN`, `OPENCODE_MODEL`, `OPENCODE_RUN_TIMEOUT` in `.env`.
 
 ## Parallel Workers
 
@@ -310,6 +310,6 @@ Track changes in `.docs/decisions.md`. Monitor:
 When framework changes occur (new dimensions, thresholds, action states), update:
 1. README.md
 2. CLAUDE.md
-3. `.docs/claude-code-prompts.md` (if workflow prompts change)
+3. `.docs/opencode-prompts.md` (if workflow prompts change)
 4. .agents/skills/ instructions
 5. pipeline/discovery/prompt.md (if scoring logic changes)

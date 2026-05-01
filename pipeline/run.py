@@ -3,7 +3,7 @@
 Weekly full scoring pipeline — qualitative dimensions, composite, and tiers.
 
 This runs the complete scoring pipeline including:
-- Qualitative scores (regulatory, institutional) via Claude Code CLI (subscription)
+- Qualitative scores (regulatory, institutional) via OpenCode CLI (default model Big Pickle)
 - Revenue scores from DefiLlama
 - Supply/on-chain analysis
 - RSI calculation (daily/weekly)

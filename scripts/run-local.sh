@@ -1,6 +1,6 @@
 #!/bin/bash
 # Local pipeline runner for macOS
-# Uses Claude CLI (subscription) instead of API
+# Uses OpenCode CLI (opencode run --print; default model Big Pickle)
 
 set -e
 
@@ -33,9 +33,8 @@ else
     exit 1
 fi
 
-# Check Claude CLI is available
-if ! command -v claude &> /dev/null; then
-    log "WARNING: Claude CLI not found, will use fallback scores"
+if ! command -v opencode &> /dev/null; then
+    log "WARNING: OpenCode CLI not found — qualitative calls will fail until installed (https://opencode.ai/docs)"
 fi
 
 # Run the pipeline
