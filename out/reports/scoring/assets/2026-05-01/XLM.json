@@ -9,17 +9,17 @@
     "asset_category": "payments-rail",
     "scores": {
       "institutional": 70,
-      "adoption_activity": 55,
+      "adoption_activity": 59,
       "value_capture": null,
       "regulatory": 75,
-      "supply": 50
+      "supply": 68
     },
     "score_rationales": {
       "institutional": "Payments infrastructure, enterprise partnerships",
       "regulatory": "Payments focus, regulatory partnerships",
-      "supply": "Limited supply data available.",
+      "supply": "XLM has a fixed cap of about 50.0 billion lumens after the SDF burned roughly 55.44 billion XLM on 4 Nov 2019, and the prior 1% annual inflation was removed by validator vote on 28 Oct 2019\u2014so there is no ongoing minting, only modest on-chain fee destruction. Recent market snapshots list circulating supply around ~33.3 billion of ~50.0 billion max (~two-thirds floated), with the remainder largely Stellar Development Foundation reserves\u2014transparent reporting but meaningful concentration and discretionary release risk versus pure free-float distribution. The network uses SCP (no PoS staking yield); exchange reserve trends were not taken from a labeled on-chain feed here, so reserve dynamics are treated as neutral beyond that fixed-supply and foundation-overhang trade-off.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "adoption_activity": "Evidence includes SDF 2025 figures (~10.3M unique addresses, 632k monthly active addresses up 24% YoY, $55.6B payment volume up 52% YoY) and Messari Q1 2026 (~$297M on-chain stablecoin market cap with USDC ~$256.3M, RWA market cap over ~$1.52B at quarter-end, ~$16.5M average daily Soroban smart-contract volume). Messari also reports QoQ declines in average daily transfer volume and in XLM-denominated payment flows as usage tilts toward stablecoins and RWAs.",
       "value_capture": "Fees minimal by design. Value capture excluded for this asset."
     },
     "weights": {
@@ -28,7 +28,7 @@
       "regulatory": 0.3,
       "supply": 0.15
     },
-    "composite": 66,
+    "composite": 69,
     "composite_last_week": 67,
     "wyckoff_phase": "Accumulation Phase B",
     "wyckoff_position_score": null,
@@ -36,11 +36,11 @@
     "trend": [
       67,
       67,
-      67,
       69,
       66,
       66,
-      66
+      66,
+      69
     ],
     "trend_30d": [
       63,
@@ -54,24 +54,56 @@
       69,
       66,
       66,
-      66
+      66,
+      69
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 41.5,
+    "rsi_weekly": 34.3,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 69,
+        "composite_last_week": 67,
+        "delta_7d": 2,
+        "delta_30d": 6,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
-    "label_changed_days_ago": 10,
+    "label_changed_days_ago": 11,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": -0.08498991478527827
     },
     "note": "Infrastructure/enterprise",
-    "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 35% weight): Strong institutional presence. Payments infrastructure, enterprise partnerships\n\u2022 Regulatory (75/100, 30% weight): Favorable regulatory standing. Payments focus, regulatory partnerships\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
-    "cache_writes": []
+    "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 35% weight): Strong institutional presence. Payments infrastructure, enterprise partnerships\n\u2022 Regulatory (75/100, 30% weight): Favorable regulatory standing. Payments focus, regulatory partnerships\n\u2022 Supply/On-Chain (68/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (59/100, 20% weight): Network usage and growth signals for this category.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 41.5 sits in neutral range.\n\u2022 Weekly RSI at 34.3 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-8.5% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 69/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "XLM",
+        "adoption_activity",
+        59,
+        "Evidence includes SDF 2025 figures (~10.3M unique addresses, 632k monthly active addresses up 24% YoY, $55.6B payment volume up 52% YoY) and Messari Q1 2026 (~$297M on-chain stablecoin market cap with USDC ~$256.3M, RWA market cap over ~$1.52B at quarter-end, ~$16.5M average daily Soroban smart-contract volume). Messari also reports QoQ declines in average daily transfer volume and in XLM-denominated payment flows as usage tilts toward stablecoins and RWAs."
+      ],
+      [
+        "XLM",
+        "supply",
+        68,
+        "XLM has a fixed cap of about 50.0 billion lumens after the SDF burned roughly 55.44 billion XLM on 4 Nov 2019, and the prior 1% annual inflation was removed by validator vote on 28 Oct 2019\u2014so there is no ongoing minting, only modest on-chain fee destruction. Recent market snapshots list circulating supply around ~33.3 billion of ~50.0 billion max (~two-thirds floated), with the remainder largely Stellar Development Foundation reserves\u2014transparent reporting but meaningful concentration and discretionary release risk versus pure free-float distribution. The network uses SCP (no PoS staking yield); exchange reserve trends were not taken from a labeled on-chain feed here, so reserve dynamics are treated as neutral beyond that fixed-supply and foundation-overhang trade-off."
+      ]
+    ]
   },
   "error": null,
   "dimension_errors": null

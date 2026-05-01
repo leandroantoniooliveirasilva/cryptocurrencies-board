@@ -9,7 +9,7 @@
     "asset_category": "smart-contract-platform",
     "scores": {
       "institutional": 72,
-      "adoption_activity": 55,
+      "adoption_activity": 56,
       "value_capture": 30,
       "regulatory": 72,
       "supply": 75
@@ -19,8 +19,8 @@
       "regulatory": "No major regulatory issues, moderate clarity",
       "supply": "Data-driven score. Fixed supply cap, 90%+ circulating.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "AVAX shows mid-level usage traction for an L1/L2 platform with $634.4M TVL, but current network monetization remains weak at about $1K daily revenue (~$539K/year), which suggests activity is present but not yet translating into strong economic throughput. Momentum is mixed (weekly RSI 32.1, daily RSI 46.4) and the asset remains in Observation tier with a 61 composite, supporting a neutral-to-moderate adoption score rather than a high-conviction one.",
-      "value_capture": "Daily revenue: $2K (~$610K/year). TVL: $631.3M. Revenue/TVL ratio: 0.10%."
+      "adoption_activity": "Weekly scan records roughly $634M DeFi TVL on Avalanche\u2014meaningful but mid-pack versus top L1 smart-contract chains; DefiLlama shows high operational usage (~595k active addresses and ~2.3M transactions in 24h on the C-chain), which supports solid adoption without placing AVAX in the top tier on capital locked or ecosystem breadth.",
+      "value_capture": "Daily revenue: $2K (~$594K/year). TVL: $628.1M. Revenue/TVL ratio: 0.09%."
     },
     "weights": {
       "institutional": 0.25,
@@ -57,10 +57,28 @@
       61,
       61
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 44.7,
+    "rsi_weekly": 35.1,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 61,
+        "composite_last_week": 66,
+        "delta_7d": -5,
+        "delta_30d": 0,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 3,
     "missing_dimensions": 0,
@@ -68,16 +86,16 @@
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": -0.08155597557653742
     },
     "note": "Subnet architecture",
-    "note_detailed": "AVAX sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. RWA TVL, VanEck ETF, BlackRock fund\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. No major regulatory issues, moderate clarity\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 61/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "note_detailed": "AVAX sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. RWA TVL, VanEck ETF, BlackRock fund\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. No major regulatory issues, moderate clarity\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (56/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 44.7 sits in neutral range.\n\u2022 Weekly RSI at 35.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-8.2% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 61/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
     "cache_writes": [
       [
         "AVAX",
         "adoption_activity",
-        55,
-        "AVAX shows mid-level usage traction for an L1/L2 platform with $634.4M TVL, but current network monetization remains weak at about $1K daily revenue (~$539K/year), which suggests activity is present but not yet translating into strong economic throughput. Momentum is mixed (weekly RSI 32.1, daily RSI 46.4) and the asset remains in Observation tier with a 61 composite, supporting a neutral-to-moderate adoption score rather than a high-conviction one."
+        56,
+        "Weekly scan records roughly $634M DeFi TVL on Avalanche\u2014meaningful but mid-pack versus top L1 smart-contract chains; DefiLlama shows high operational usage (~595k active addresses and ~2.3M transactions in 24h on the C-chain), which supports solid adoption without placing AVAX in the top tier on capital locked or ecosystem breadth."
       ]
     ]
   },

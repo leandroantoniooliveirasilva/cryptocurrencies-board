@@ -10,17 +10,17 @@
     "scores": {
       "institutional": 78,
       "adoption_activity": 77,
-      "value_capture": 49,
+      "value_capture": 50,
       "regulatory": 70,
-      "supply": 59
+      "supply": 54
     },
     "score_rationales": {
       "institutional": "Apollo investment, institutional curator standard",
       "regulatory": "DeFi lending, institutional backing signals compliance",
-      "supply": "MORPHO is capped at 1,000,000,000 tokens with no mint-beyond-max design, and CoinGecko-style figures align with ~606M circulating (~60.6% of total), so a large share is already liquid while the rest follows disclosed vesting rather than uncapped emissions (Morpho governance docs: founder and strategic cohort schedules into 2027\u20132028). Third-party schedules still imply material unlock cadence over the four-year emission window (~24% in year one cited on tokenomics dashboards), which keeps ongoing sell-side flow risk. Public rich-list snapshots (e.g., CoinLore: top 10 addresses ~74.5% of supply) show extreme on-chain concentration, though Morpho notes many top balances are treasuries, custodians, and contracts\u2014so distribution is not broadly decentralized until more supply sits outside a few labeled wallets. Governance uses holdings for Snapshot votes (wrapped MORPHO for on-chain accounting per docs), not a large yield-staking lock that mechanically removes float.",
+      "supply": "MORPHO is hard-capped at 1,000,000,000 tokens (Morpho governance FAQ) with CoinGecko-consistent circulation near ~606M (~60.6% of supply), so a large share is already liquid under disclosed cohort vesting rather than unlimited inflation. DeFiLlama\u2019s unlock view still flags ongoing daily releases from strategic-partner and founder schedules (on the order of hundreds of thousands of MORPHO per day combined), and public top-holder snapshots remain very concentrated\u2014much of it labeled treasuries/contracts but still not broadly decentralized float. Governance voting locks some usage but does not act like a large, yield-backed staking sink that materially removes sell-side pressure.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "DefiLlama\u2019s canonical Morpho TVL is about $7.29B (May 2026), with major liquidity on Ethereum and Base and lending deployed across many additional chains (Arbitrum, OP Mainnet, Polygon, Hyperliquid L1, Monad, Katana, etc.), plus roughly $4B in borrowed-side liquidity\u2014indicating deep, actively used lending markets rather than idle deposits.",
-      "value_capture": "Daily revenue: $398K (~$145.4M/year). TVL: $7.27B. Revenue/TVL ratio: 2.00%."
+      "adoption_activity": "DefiLlama (May 2026) shows Morpho at roughly $7.29B TVL with major depth on Ethereum and Base and deployment across Arbitrum, OP Mainnet, Polygon, Hyperliquid L1, Monad, Katana, and others; about $4B on the borrowed side shows lending is actively drawn, not passive TVL. That scale and multi-chain, curator-driven vault usage place Morpho among the most-used modular lending stacks in DeFi, though it remains smaller than the largest monolithic lenders.",
+      "value_capture": "Daily revenue: $398K (~$145.4M/year). TVL: $7.26B. Revenue/TVL ratio: 2.00%."
     },
     "weights": {
       "value_capture": 0.3,
@@ -29,7 +29,7 @@
       "regulatory": 0.15,
       "supply": 0.2
     },
-    "composite": 64,
+    "composite": 63,
     "composite_last_week": 70,
     "wyckoff_phase": "Distribution Phase A",
     "wyckoff_position_score": null,
@@ -41,7 +41,7 @@
       63,
       60,
       64,
-      64
+      63
     ],
     "trend_30d": [
       66,
@@ -55,12 +55,30 @@
       63,
       60,
       64,
-      64
+      63
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 61.3,
+    "rsi_weekly": 66.9,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 63,
+        "composite_last_week": 70,
+        "delta_7d": -7,
+        "delta_30d": -3,
+        "wyckoff_phase": "Distribution Phase A",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 7,
     "missing_dimensions": 0,
@@ -68,22 +86,22 @@
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": 0.8174563985685932
     },
     "note": "Distribution risk",
-    "note_detailed": "MORPHO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 20% weight): Strong institutional presence. Apollo investment, institutional curator standard\n\u2022 Regulatory (70/100, 15% weight): Favorable regulatory standing. DeFi lending, institutional backing signals compliance\n\u2022 Supply/On-Chain (59/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (77/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (49/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 64/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "note_detailed": "MORPHO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 20% weight): Strong institutional presence. Apollo investment, institutional curator standard\n\u2022 Regulatory (70/100, 15% weight): Favorable regulatory standing. DeFi lending, institutional backing signals compliance\n\u2022 Supply/On-Chain (54/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (77/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (50/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 61.3 sits in neutral range.\n\u2022 Weekly RSI at 66.9 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 81.7% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 63/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
     "cache_writes": [
       [
         "MORPHO",
         "adoption_activity",
         77,
-        "DefiLlama\u2019s canonical Morpho TVL is about $7.29B (May 2026), with major liquidity on Ethereum and Base and lending deployed across many additional chains (Arbitrum, OP Mainnet, Polygon, Hyperliquid L1, Monad, Katana, etc.), plus roughly $4B in borrowed-side liquidity\u2014indicating deep, actively used lending markets rather than idle deposits."
+        "DefiLlama (May 2026) shows Morpho at roughly $7.29B TVL with major depth on Ethereum and Base and deployment across Arbitrum, OP Mainnet, Polygon, Hyperliquid L1, Monad, Katana, and others; about $4B on the borrowed side shows lending is actively drawn, not passive TVL. That scale and multi-chain, curator-driven vault usage place Morpho among the most-used modular lending stacks in DeFi, though it remains smaller than the largest monolithic lenders."
       ],
       [
         "MORPHO",
         "supply",
-        59,
-        "MORPHO is capped at 1,000,000,000 tokens with no mint-beyond-max design, and CoinGecko-style figures align with ~606M circulating (~60.6% of total), so a large share is already liquid while the rest follows disclosed vesting rather than uncapped emissions (Morpho governance docs: founder and strategic cohort schedules into 2027\u20132028). Third-party schedules still imply material unlock cadence over the four-year emission window (~24% in year one cited on tokenomics dashboards), which keeps ongoing sell-side flow risk. Public rich-list snapshots (e.g., CoinLore: top 10 addresses ~74.5% of supply) show extreme on-chain concentration, though Morpho notes many top balances are treasuries, custodians, and contracts\u2014so distribution is not broadly decentralized until more supply sits outside a few labeled wallets. Governance uses holdings for Snapshot votes (wrapped MORPHO for on-chain accounting per docs), not a large yield-staking lock that mechanically removes float."
+        54,
+        "MORPHO is hard-capped at 1,000,000,000 tokens (Morpho governance FAQ) with CoinGecko-consistent circulation near ~606M (~60.6% of supply), so a large share is already liquid under disclosed cohort vesting rather than unlimited inflation. DeFiLlama\u2019s unlock view still flags ongoing daily releases from strategic-partner and founder schedules (on the order of hundreds of thousands of MORPHO per day combined), and public top-holder snapshots remain very concentrated\u2014much of it labeled treasuries/contracts but still not broadly decentralized float. Governance voting locks some usage but does not act like a large, yield-backed staking sink that materially removes sell-side pressure."
       ]
     ]
   },

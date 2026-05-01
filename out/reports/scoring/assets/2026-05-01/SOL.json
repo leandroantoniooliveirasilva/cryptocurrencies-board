@@ -20,7 +20,7 @@
       "supply": "Data-driven score. 90%+ circulating.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
       "adoption_activity": "High throughput usage and growing DeFi/NFT activity.",
-      "value_capture": "Daily revenue: $530K (~$193.5M/year). TVL: $5.48B. Revenue/TVL ratio: 3.53%."
+      "value_capture": "Daily revenue: $530K (~$193.5M/year). TVL: $5.46B. Revenue/TVL ratio: 3.54%."
     },
     "weights": {
       "institutional": 0.25,
@@ -57,21 +57,49 @@
       76,
       75
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 44.1,
+    "rsi_weekly": 30.4,
+    "action": "hold",
+    "decision_trace": {
+      "path": "leader_hold_default",
+      "final_action": "hold",
+      "summary": "Hold: leader-tier asset remains active, but no accumulation trigger is currently confirmed (no RSI capitulation and no active Wyckoff accumulation regime).",
+      "inputs": {
+        "tier": "leader",
+        "composite": 75,
+        "composite_last_week": 74,
+        "delta_7d": 1,
+        "delta_30d": 6,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5,
+        "rsi_daily": 44.1,
+        "rsi_weekly": 30.4,
+        "rsi_weekly_4w_ago": 26.3,
+        "weekly_capitulation": false,
+        "daily_capitulation": false,
+        "wyckoff_ready": false,
+        "overbought_weekly": false,
+        "accumulate_regime": false,
+        "accumulate_threshold": 75
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 4,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
-      "underperforming": false,
-      "change_pct": null
+      "underperforming": true,
+      "change_pct": -0.2208682608954262
     },
     "note": "High-throughput L1, DeFi ecosystem",
-    "note_detailed": "SOL holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (84/100, 25% weight): Strong institutional presence. Growing fund holdings, major VC backing\n\u2022 Regulatory (78/100, 15% weight): Favorable regulatory standing. Growing institutional interest, no adverse rulings\n\u2022 Supply/On-Chain (65/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (85/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (60/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 75/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "note_detailed": "SOL holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (84/100, 25% weight): Strong institutional presence. Growing fund holdings, major VC backing\n\u2022 Regulatory (78/100, 15% weight): Favorable regulatory standing. Growing institutional interest, no adverse rulings\n\u2022 Supply/On-Chain (65/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (85/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (60/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 44.1 sits in neutral range.\n\u2022 Weekly RSI at 30.4 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 22.1% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nHold: leader-tier asset remains active, but no accumulation trigger is currently confirmed (no RSI capitulation and no active Wyckoff accumulation regime).\n\nDECISION TRACE:\n\u2022 path: Leader hold default\n\u2022 final_action: Hold\n\nCOMPOSITE SCORE: 75/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
     "cache_writes": []
   },
   "error": null,

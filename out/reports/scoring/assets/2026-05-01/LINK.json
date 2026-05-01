@@ -12,12 +12,12 @@
       "adoption_activity": 90,
       "value_capture": 95,
       "regulatory": 82,
-      "supply": 66
+      "supply": 75
     },
     "score_rationales": {
       "institutional": "Enterprise integrations, oracle standard",
       "regulatory": "Enterprise partnerships signal regulatory comfort",
-      "supply": "LINK is structurally positive on tokenomics because supply is capped at 1,000,000,000 with no inflationary mining, and 727,099,970 already circulates (72.7%), reducing long-run dilution risk versus uncapped assets. The main offset is the remaining 272.9M non-circulating tokens, which still represents meaningful future distribution/sell-pressure overhang, and holder concentration remains relatively high in large wallets (including treasury/contract-controlled balances), which weakens decentralization of supply. Staking helps but is still moderate in scale (Chainlink Staking v0.2 capacity is ~45M LINK, about 4.5% of max supply), so lock-up driven sell-pressure reduction is supportive but not yet strong enough to push supply dynamics into top-tier bullish territory.",
+      "supply": "LINK is hard-capped at 1B with no minting; CoinGecko-style snapshots show about 727M circulating (~72.7% of max), so most supply is already in the float, while roughly 273M remain non-circulating and Chainlink still routes periodic treasury releases (on-chain reporting cited transfers on the order of ~14M LINK in a single April 2025 quarterly event). Native Staking v0.2 caps participation at 45M LINK (~6.2% of that circulating supply) with a 28-day unstaking cooldown, locking meaningful liquidity for security. Glassnode labels roughly 143.5M LINK on exchanges (aggregated balances, sample point March 2026), which is a material but not majority share of circulation\u2014consistent with continued self-custody and staking sinks versus pure CEX inventory.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
       "adoption_activity": "Broad oracle integrations and enterprise TVS.",
       "value_capture": "Daily revenue: $1.1M (~$417.2M/year). No TVL (oracle/infra model, scored on absolute revenue). Daily fees: $1.2M."
@@ -29,7 +29,7 @@
       "value_capture": 0.15,
       "supply": 0.15
     },
-    "composite": 85,
+    "composite": 86,
     "composite_last_week": 82,
     "wyckoff_phase": "Re-accumulation",
     "wyckoff_position_score": null,
@@ -41,7 +41,7 @@
       76,
       77,
       76,
-      85
+      86
     ],
     "trend_30d": [
       74,
@@ -55,12 +55,39 @@
       76,
       77,
       76,
-      85
+      86
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 47.4,
+    "rsi_weekly": 32.9,
+    "action": "hold",
+    "decision_trace": {
+      "path": "leader_hold_default",
+      "final_action": "hold",
+      "summary": "Hold: leader-tier asset remains active, but no accumulation trigger is currently confirmed (no RSI capitulation and no active Wyckoff accumulation regime).",
+      "inputs": {
+        "tier": "leader",
+        "composite": 86,
+        "composite_last_week": 82,
+        "delta_7d": 4,
+        "delta_30d": 12,
+        "wyckoff_phase": "Re-accumulation",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5,
+        "rsi_daily": 47.4,
+        "rsi_weekly": 32.9,
+        "rsi_weekly_4w_ago": 27.7,
+        "weekly_capitulation": false,
+        "daily_capitulation": false,
+        "wyckoff_ready": false,
+        "overbought_weekly": false,
+        "accumulate_regime": false,
+        "accumulate_threshold": 75
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 10,
     "missing_dimensions": 0,
@@ -68,16 +95,16 @@
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": -0.07021410801889731
     },
     "note": "Strong institutional adoption",
-    "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: oracle/data \u2014 adoption (e.g. TVS) and institutions weighted with value capture and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (66/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (90/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 15% weight): Strong holder-accruing economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 85/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: oracle/data \u2014 adoption (e.g. TVS) and institutions weighted with value capture and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (75/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (90/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 15% weight): Strong holder-accruing economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 47.4 sits in neutral range.\n\u2022 Weekly RSI at 32.9 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-7.0% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nHold: leader-tier asset remains active, but no accumulation trigger is currently confirmed (no RSI capitulation and no active Wyckoff accumulation regime).\n\nDECISION TRACE:\n\u2022 path: Leader hold default\n\u2022 final_action: Hold\n\nCOMPOSITE SCORE: 86/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
     "cache_writes": [
       [
         "LINK",
         "supply",
-        66,
-        "LINK is structurally positive on tokenomics because supply is capped at 1,000,000,000 with no inflationary mining, and 727,099,970 already circulates (72.7%), reducing long-run dilution risk versus uncapped assets. The main offset is the remaining 272.9M non-circulating tokens, which still represents meaningful future distribution/sell-pressure overhang, and holder concentration remains relatively high in large wallets (including treasury/contract-controlled balances), which weakens decentralization of supply. Staking helps but is still moderate in scale (Chainlink Staking v0.2 capacity is ~45M LINK, about 4.5% of max supply), so lock-up driven sell-pressure reduction is supportive but not yet strong enough to push supply dynamics into top-tier bullish territory."
+        75,
+        "LINK is hard-capped at 1B with no minting; CoinGecko-style snapshots show about 727M circulating (~72.7% of max), so most supply is already in the float, while roughly 273M remain non-circulating and Chainlink still routes periodic treasury releases (on-chain reporting cited transfers on the order of ~14M LINK in a single April 2025 quarterly event). Native Staking v0.2 caps participation at 45M LINK (~6.2% of that circulating supply) with a 28-day unstaking cooldown, locking meaningful liquidity for security. Glassnode labels roughly 143.5M LINK on exchanges (aggregated balances, sample point March 2026), which is a material but not majority share of circulation\u2014consistent with continued self-custody and staking sinks versus pure CEX inventory."
       ]
     ]
   },

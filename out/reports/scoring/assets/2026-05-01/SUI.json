@@ -19,8 +19,8 @@
       "regulatory": "VC-backed L1, growing institutional presence",
       "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Sui shows moderate adoption for a smart-contract platform, with TVL at $546.5M and stable but not expanding usage posture reflected by an adoption/activity baseline of 55 in the latest snapshot. Monetization remains thin (about $2K daily revenue, ~$828K annualized, 0.15% revenue/TVL), so network activity exists but is not yet converting into strong economic throughput.",
-      "value_capture": "Daily revenue: $2K (~$828K/year). TVL: $548.7M. Revenue/TVL ratio: 0.15%."
+      "adoption_activity": "Sui\u2019s DeFi TVL is on the order of ~$550M (DefiLlama ~$585M vs this repo\u2019s May 2026 scan ~$546.5M), with meaningful daily DEX/perps volume; that is credible smart-contract usage but still mid-pack versus the largest L1s rather than dominant adoption depth.",
+      "value_capture": "Daily revenue: $2K (~$847K/year). TVL: $549.1M. Revenue/TVL ratio: 0.15%."
     },
     "weights": {
       "institutional": 0.25,
@@ -57,27 +57,46 @@
       53,
       53
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 43.4,
+    "rsi_weekly": 32.6,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 53,
+        "composite_last_week": 57,
+        "delta_7d": -4,
+        "delta_30d": 0,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 11,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
-      "underperforming": false,
-      "change_pct": null
+      "underperforming": true,
+      "change_pct": -0.21724079992190426
     },
     "note": "Smart contract platform",
-    "note_detailed": "SUI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 25% weight): Strong institutional presence. CME futures, multiple ETF filings\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. VC-backed L1, growing institutional presence\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (31/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "note_detailed": "SUI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 25% weight): Strong institutional presence. CME futures, multiple ETF filings\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. VC-backed L1, growing institutional presence\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (31/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 43.4 sits in neutral range.\n\u2022 Weekly RSI at 32.6 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 21.7% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
     "cache_writes": [
       [
         "SUI",
         "adoption_activity",
         55,
-        "Sui shows moderate adoption for a smart-contract platform, with TVL at $546.5M and stable but not expanding usage posture reflected by an adoption/activity baseline of 55 in the latest snapshot. Monetization remains thin (about $2K daily revenue, ~$828K annualized, 0.15% revenue/TVL), so network activity exists but is not yet converting into strong economic throughput."
+        "Sui\u2019s DeFi TVL is on the order of ~$550M (DefiLlama ~$585M vs this repo\u2019s May 2026 scan ~$546.5M), with meaningful daily DEX/perps volume; that is credible smart-contract usage but still mid-pack versus the largest L1s rather than dominant adoption depth."
       ]
     ]
   },

@@ -10,7 +10,7 @@
     "scores": {
       "institutional": 65,
       "adoption_activity": 60,
-      "value_capture": 32,
+      "value_capture": 34,
       "regulatory": 60,
       "supply": 40
     },
@@ -19,8 +19,8 @@
       "regulatory": "Yield trading, DeFi regulatory uncertainty",
       "supply": "Data-driven score. High inflation.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Pendle shows solid usage footprint for a DeFi yield protocol with about $1.50B TVL, roughly $14.2M DEX volume in the last 24h, and about $633.7M over 30 days, plus deployment across major chains (including Ethereum, Arbitrum, Base, Optimism, BNB Chain, and Avalanche). The score stays below high-conviction because current cashflow activity is modest relative to that footprint (about $10.1K daily fees, $87.7K over 7 days), and this dataset does not provide a dependable active-user count to confirm user growth quality.",
-      "value_capture": "Daily revenue: $10K (~$3.5M/year). TVL: $1.50B. Revenue/TVL ratio: 0.24%. Daily fees: $10K."
+      "adoption_activity": "DefiLlama shows about $1.50B TVL (current protocol TVL), and the weekly scan captured roughly $14.2M DEX volume (24h) and ~$634M (30d) with deployments across Ethereum, Arbitrum, Base, Optimism, BNB Chain, and Avalanche\u2014strong footprint for a yield-trading AMM. The score stays in the mid-range because fee throughput in that pass (~$10.1K/day, ~$87.7K over 7 days) was modest versus TVL and there was no reliable active-user metric to confirm engagement quality.",
+      "value_capture": "Daily revenue: $18K (~$6.5M/year). TVL: $1.50B. Revenue/TVL ratio: 0.43%. Daily fees: $18K."
     },
     "weights": {
       "value_capture": 0.3,
@@ -57,27 +57,46 @@
       49,
       49
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 59.5,
+    "rsi_weekly": 36.4,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 49,
+        "composite_last_week": 53,
+        "delta_7d": -4,
+        "delta_30d": -13,
+        "wyckoff_phase": "Accumulation Phase D",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 10,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
-      "underperforming": false,
-      "change_pct": null
+      "underperforming": true,
+      "change_pct": -0.13627174490334873
     },
     "note": "DeFi protocol, revenue-focused",
-    "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Institutional Citadels product\n\u2022 Regulatory (60/100, 15% weight): Uncertain regulatory standing. Yield trading, DeFi regulatory uncertainty\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (60/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 49/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Institutional Citadels product\n\u2022 Regulatory (60/100, 15% weight): Uncertain regulatory standing. Yield trading, DeFi regulatory uncertainty\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (60/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 59.5 sits in neutral range.\n\u2022 Weekly RSI at 36.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 13.6% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 49/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
     "cache_writes": [
       [
         "PENDLE",
         "adoption_activity",
         60,
-        "Pendle shows solid usage footprint for a DeFi yield protocol with about $1.50B TVL, roughly $14.2M DEX volume in the last 24h, and about $633.7M over 30 days, plus deployment across major chains (including Ethereum, Arbitrum, Base, Optimism, BNB Chain, and Avalanche). The score stays below high-conviction because current cashflow activity is modest relative to that footprint (about $10.1K daily fees, $87.7K over 7 days), and this dataset does not provide a dependable active-user count to confirm user growth quality."
+        "DefiLlama shows about $1.50B TVL (current protocol TVL), and the weekly scan captured roughly $14.2M DEX volume (24h) and ~$634M (30d) with deployments across Ethereum, Arbitrum, Base, Optimism, BNB Chain, and Avalanche\u2014strong footprint for a yield-trading AMM. The score stays in the mid-range because fee throughput in that pass (~$10.1K/day, ~$87.7K over 7 days) was modest versus TVL and there was no reliable active-user metric to confirm engagement quality."
       ]
     ]
   },

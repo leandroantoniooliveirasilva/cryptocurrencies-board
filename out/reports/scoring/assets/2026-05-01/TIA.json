@@ -9,17 +9,17 @@
     "asset_category": "data-availability-modular",
     "scores": {
       "institutional": 55,
-      "adoption_activity": 55,
+      "adoption_activity": 58,
       "value_capture": 50,
       "regulatory": 65,
-      "supply": 50
+      "supply": 56
     },
     "score_rationales": {
       "institutional": "Limited institutional presence",
       "regulatory": "Limited regulatory clarity",
-      "supply": "Limited supply data available.",
+      "supply": "Official docs fix genesis at 1B TIA with no uncapped tail; post\u2013v6 (CIP-41, Nov 2025) headline inflation is about 2.5% annually and steps down 6.7% per year toward a 1.5% floor\u2014materially better than launch-era 8% but still ongoing issuance. On-chain staking dashboards report roughly 43\u201344% of minted supply bonded, which materially reduces liquid float versus unstaked holdings. Genesis allocates only 20% to public allocation versus ~54% combined early backers plus core/R&D-style buckets with staged unlocks through year 4 (R&E), which keeps insider and ecosystem overhang as a structural drag; public exchange reserve trends were not used here because no comparable snapshot series was provided.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "adoption_activity": "Evidence includes large cumulative rollup data posted to Celestia (third-party analyses citing 160+ GB total and multi\u2011GB daily averages), namespace-level activity such as Eclipse-scale deployments (~58,486 MB across millions of blobs per public DA leaderboards), post\u2011Matcha mainnet stress/load tests reporting on the order of ~100 GiB/day sustained throughput with 99.97% blob inclusion, and reported multifold growth in blob fee revenue since late 2024\u2014indicating real modular DA adoption but with notable rollup concentration and still-early absolute fee scale versus Ethereum blobs and competing DA stacks.",
       "value_capture": "Limited value-capture data available"
     },
     "weights": {
@@ -29,7 +29,7 @@
       "regulatory": 0.15,
       "supply": 0.2
     },
-    "composite": 54,
+    "composite": 56,
     "composite_last_week": 52,
     "wyckoff_phase": "Uptrend",
     "wyckoff_position_score": null,
@@ -38,10 +38,10 @@
       52,
       52,
       52,
-      52,
       54,
       54,
-      54
+      54,
+      56
     ],
     "trend_30d": [
       56,
@@ -55,24 +55,56 @@
       52,
       54,
       54,
-      54
+      54,
+      56
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 50.4,
+    "rsi_weekly": 38.4,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 56,
+        "composite_last_week": 52,
+        "delta_7d": 4,
+        "delta_30d": 0,
+        "wyckoff_phase": "Uptrend",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
-    "label_changed_days_ago": 11,
+    "label_changed_days_ago": 12,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": -0.05652834845122543
     },
     "note": "Infrastructure/enterprise",
-    "note_detailed": "TIA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: modular data availability \u2014 adoption and value capture with supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (50/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 54/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
-    "cache_writes": []
+    "note_detailed": "TIA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: modular data availability \u2014 adoption and value capture with supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (56/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (58/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (50/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 50.4 sits in neutral range.\n\u2022 Weekly RSI at 38.4 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-5.7% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 56/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "TIA",
+        "adoption_activity",
+        58,
+        "Evidence includes large cumulative rollup data posted to Celestia (third-party analyses citing 160+ GB total and multi\u2011GB daily averages), namespace-level activity such as Eclipse-scale deployments (~58,486 MB across millions of blobs per public DA leaderboards), post\u2011Matcha mainnet stress/load tests reporting on the order of ~100 GiB/day sustained throughput with 99.97% blob inclusion, and reported multifold growth in blob fee revenue since late 2024\u2014indicating real modular DA adoption but with notable rollup concentration and still-early absolute fee scale versus Ethereum blobs and competing DA stacks."
+      ],
+      [
+        "TIA",
+        "supply",
+        56,
+        "Official docs fix genesis at 1B TIA with no uncapped tail; post\u2013v6 (CIP-41, Nov 2025) headline inflation is about 2.5% annually and steps down 6.7% per year toward a 1.5% floor\u2014materially better than launch-era 8% but still ongoing issuance. On-chain staking dashboards report roughly 43\u201344% of minted supply bonded, which materially reduces liquid float versus unstaked holdings. Genesis allocates only 20% to public allocation versus ~54% combined early backers plus core/R&D-style buckets with staged unlocks through year 4 (R&E), which keeps insider and ecosystem overhang as a structural drag; public exchange reserve trends were not used here because no comparable snapshot series was provided."
+      ]
+    ]
   },
   "error": null,
   "dimension_errors": null

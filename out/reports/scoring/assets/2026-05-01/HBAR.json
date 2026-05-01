@@ -9,17 +9,17 @@
     "asset_category": "payments-rail",
     "scores": {
       "institutional": 68,
-      "adoption_activity": 55,
+      "adoption_activity": 56,
       "value_capture": null,
       "regulatory": 78,
-      "supply": 50
+      "supply": 67
     },
     "score_rationales": {
       "institutional": "Enterprise council, limited retail-focused",
       "regulatory": "Enterprise governance structure helps compliance",
-      "supply": "Limited supply data available.",
+      "supply": "HBAR has a hard-capped 50B max supply pre-minted at genesis; Hedera\u2019s Treasury Management Report (data through Apr 2026) states all 50B is allocated with 0 unallocated supply, and circulation grows via scheduled allocation releases rather than unlimited inflation. Third-party trackers (e.g. Glassnode circulating-supply series, CoinGlass) place circulating supply near ~43.3B HBAR (~86\u201387% of max), which is bullish float but still implies ongoing unlock cadence from treasury buckets. Messari State of Hedera Q1 2025 cited ~15.9B HBAR staked (~37.7% of circulating), supporting reduced liquid supply for consensus, though Hedera\u2019s FAQ emphasizes staking stays liquid with no lock-up; exchange-balance trends were not verified here for a directional reserves call.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "adoption_activity": "Hedera is processing on the order of hundreds of thousands of mainnet transactions per day with Crypto/transfer-weighted mix (~68% Crypto Service in reported quarterly breakdowns) and a fast-growing on-network stablecoin footprint near ~$70M+, indicating real payment-token activity; scale still trails dominant settlement/L2 rails and there is no ODL-style public corridor volume comparable to XRP for this category.",
       "value_capture": "Fees minimal by design. Value capture excluded for this asset."
     },
     "weights": {
@@ -28,7 +28,7 @@
       "regulatory": 0.3,
       "supply": 0.15
     },
-    "composite": 66,
+    "composite": 68,
     "composite_last_week": 68,
     "wyckoff_phase": "Accumulation Phase B",
     "wyckoff_position_score": null,
@@ -36,11 +36,11 @@
     "trend": [
       68,
       68,
-      68,
       66,
       66,
       66,
-      66
+      66,
+      68
     ],
     "trend_30d": [
       65,
@@ -54,24 +54,56 @@
       66,
       66,
       66,
-      66
+      66,
+      68
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 43.1,
+    "rsi_weekly": 31.0,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 68,
+        "composite_last_week": 68,
+        "delta_7d": 0,
+        "delta_30d": 3,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
-    "label_changed_days_ago": 10,
+    "label_changed_days_ago": 11,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": -0.01964593657881101
     },
     "note": "Infrastructure/enterprise",
-    "note_detailed": "HBAR is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (68/100, 35% weight): Moderate institutional presence. Enterprise council, limited retail-focused\n\u2022 Regulatory (78/100, 30% weight): Favorable regulatory standing. Enterprise governance structure helps compliance\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
-    "cache_writes": []
+    "note_detailed": "HBAR is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (68/100, 35% weight): Moderate institutional presence. Enterprise council, limited retail-focused\n\u2022 Regulatory (78/100, 30% weight): Favorable regulatory standing. Enterprise governance structure helps compliance\n\u2022 Supply/On-Chain (67/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (56/100, 20% weight): Network usage and growth signals for this category.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 43.1 sits in neutral range.\n\u2022 Weekly RSI at 31.0 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-2.0% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 68/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "HBAR",
+        "adoption_activity",
+        56,
+        "Hedera is processing on the order of hundreds of thousands of mainnet transactions per day with Crypto/transfer-weighted mix (~68% Crypto Service in reported quarterly breakdowns) and a fast-growing on-network stablecoin footprint near ~$70M+, indicating real payment-token activity; scale still trails dominant settlement/L2 rails and there is no ODL-style public corridor volume comparable to XRP for this category."
+      ],
+      [
+        "HBAR",
+        "supply",
+        67,
+        "HBAR has a hard-capped 50B max supply pre-minted at genesis; Hedera\u2019s Treasury Management Report (data through Apr 2026) states all 50B is allocated with 0 unallocated supply, and circulation grows via scheduled allocation releases rather than unlimited inflation. Third-party trackers (e.g. Glassnode circulating-supply series, CoinGlass) place circulating supply near ~43.3B HBAR (~86\u201387% of max), which is bullish float but still implies ongoing unlock cadence from treasury buckets. Messari State of Hedera Q1 2025 cited ~15.9B HBAR staked (~37.7% of circulating), supporting reduced liquid supply for consensus, though Hedera\u2019s FAQ emphasizes staking stays liquid with no lock-up; exchange-balance trends were not verified here for a directional reserves call."
+      ]
+    ]
   },
   "error": null,
   "dimension_errors": null

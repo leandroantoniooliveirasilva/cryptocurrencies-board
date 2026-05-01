@@ -12,15 +12,15 @@
       "adoption_activity": 62,
       "value_capture": 92,
       "regulatory": 68,
-      "supply": 55
+      "supply": 52
     },
     "score_rationales": {
       "institutional": "Revenue leader, growing institutional interest",
       "regulatory": "Newer protocol, regulatory status evolving",
-      "supply": "HYPE has a hard 1,000,000,000 max supply, but only 238,385,316 is circulating (24.8%), with substantial future unlock pressure still ahead (e.g., Core Contributors 23.8% allocation on cliff-plus-linear vesting and the next scheduled 9.92M unlock). Supply structure is mixed: community allocations are large (~70.2%), yet concentration risk remains from insider/foundation buckets and tracked large-holder wallets, while transparent treasury buckets (e.g., Future Emissions and Hyper Foundation) show a meaningful overhang versus float. Staking mechanics help reduce immediate sell pressure (10k validator self-delegation locked for 1 year, 1-day delegation lock, 7-day unstaking queue), but I keep exchange-reserve dynamics near-neutral because robust, time-series reserve outflow evidence for HYPE is still limited across major public dashboards.",
+      "supply": "HYPE is capped at 1B with ~238.4M circulating (~24.8% of max) and ~962.3M total on CoinGecko, so most supply is still non-circulating\u2014especially the 23.8% core-contributor tranche with multi-year vesting\u2014implying years of potential sell pressure even though allocation is community-heavy and has no VC bucket. Third-party vesting trackers report discretionary monthly claims far below the theoretical vesting ceiling and highlight large unclaimed balances in vesting wallets, while staking uses short locks and a 7-day unstaking queue and protocol revenue funds buybacks/burns, partially offsetting emissions; established exchange-reserve trend data for HYPE remains sparse, so reserve flow is treated as neutral rather than bullish.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Hyperliquid shows solid DeFi usage depth with $4.81B TVL, about $1.9M daily fees, and about $1.6M daily revenue (about $597.6M annualized), indicating meaningful on-chain activity and monetization. The score stays below high-conviction territory because this snapshot does not provide concrete active-user or integration counts, so adoption breadth is only partially evidenced.",
-      "value_capture": "Daily revenue: $1.6M (~$597.6M/year). TVL: $4.82B. Revenue/TVL ratio: 12.39%. Daily fees: $1.9M."
+      "adoption_activity": "Hyperliquid\u2019s adoption is backed by DefiLlama-scale depth (~$4.81B TVL as of the 2026-05-01 pipeline snapshot), heavy derivatives usage (e.g., tens of billions in 30d perp volume and ~$7\u20138B open interest on public dashboards), and strong monetized activity (~$1.9M daily fees, ~$1.6M daily revenue, ~$598M annualized). The score stays in the low-60s because transparent MAU/DAU and integration counts are not consistently evidenced, so usage breadth is inferred mainly from TVL, volume, and fees rather than full user-level telemetry.",
+      "value_capture": "Daily revenue: $1.6M (~$597.6M/year). TVL: $4.81B. Revenue/TVL ratio: 12.43%. Daily fees: $1.9M."
     },
     "weights": {
       "value_capture": 0.3,
@@ -29,7 +29,7 @@
       "regulatory": 0.15,
       "supply": 0.2
     },
-    "composite": 73,
+    "composite": 72,
     "composite_last_week": 75,
     "wyckoff_phase": "Re-accumulation",
     "wyckoff_position_score": null,
@@ -41,7 +41,7 @@
       76,
       71,
       72,
-      73
+      72
     ],
     "trend_30d": [
       72,
@@ -55,12 +55,30 @@
       76,
       71,
       72,
-      73
+      72
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 45.9,
+    "rsi_weekly": 59.6,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 72,
+        "composite_last_week": 75,
+        "delta_7d": -3,
+        "delta_30d": 0,
+        "wyckoff_phase": "Re-accumulation",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 3,
     "missing_dimensions": 0,
@@ -68,22 +86,22 @@
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": 0.4006953329320466
     },
     "note": "Revenue-per-user sector leader",
-    "note_detailed": "HYPE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. Revenue leader, growing institutional interest\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. Newer protocol, regulatory status evolving\n\u2022 Supply/On-Chain (55/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (92/100, 30% weight): Strong holder-accruing economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 73/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "note_detailed": "HYPE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. Revenue leader, growing institutional interest\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. Newer protocol, regulatory status evolving\n\u2022 Supply/On-Chain (52/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (92/100, 30% weight): Strong holder-accruing economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 45.9 sits in neutral range.\n\u2022 Weekly RSI at 59.6 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 40.1% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 72/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
     "cache_writes": [
       [
         "HYPE",
         "adoption_activity",
         62,
-        "Hyperliquid shows solid DeFi usage depth with $4.81B TVL, about $1.9M daily fees, and about $1.6M daily revenue (about $597.6M annualized), indicating meaningful on-chain activity and monetization. The score stays below high-conviction territory because this snapshot does not provide concrete active-user or integration counts, so adoption breadth is only partially evidenced."
+        "Hyperliquid\u2019s adoption is backed by DefiLlama-scale depth (~$4.81B TVL as of the 2026-05-01 pipeline snapshot), heavy derivatives usage (e.g., tens of billions in 30d perp volume and ~$7\u20138B open interest on public dashboards), and strong monetized activity (~$1.9M daily fees, ~$1.6M daily revenue, ~$598M annualized). The score stays in the low-60s because transparent MAU/DAU and integration counts are not consistently evidenced, so usage breadth is inferred mainly from TVL, volume, and fees rather than full user-level telemetry."
       ],
       [
         "HYPE",
         "supply",
-        55,
-        "HYPE has a hard 1,000,000,000 max supply, but only 238,385,316 is circulating (24.8%), with substantial future unlock pressure still ahead (e.g., Core Contributors 23.8% allocation on cliff-plus-linear vesting and the next scheduled 9.92M unlock). Supply structure is mixed: community allocations are large (~70.2%), yet concentration risk remains from insider/foundation buckets and tracked large-holder wallets, while transparent treasury buckets (e.g., Future Emissions and Hyper Foundation) show a meaningful overhang versus float. Staking mechanics help reduce immediate sell pressure (10k validator self-delegation locked for 1 year, 1-day delegation lock, 7-day unstaking queue), but I keep exchange-reserve dynamics near-neutral because robust, time-series reserve outflow evidence for HYPE is still limited across major public dashboards."
+        52,
+        "HYPE is capped at 1B with ~238.4M circulating (~24.8% of max) and ~962.3M total on CoinGecko, so most supply is still non-circulating\u2014especially the 23.8% core-contributor tranche with multi-year vesting\u2014implying years of potential sell pressure even though allocation is community-heavy and has no VC bucket. Third-party vesting trackers report discretionary monthly claims far below the theoretical vesting ceiling and highlight large unclaimed balances in vesting wallets, while staking uses short locks and a 7-day unstaking queue and protocol revenue funds buybacks/burns, partially offsetting emissions; established exchange-reserve trend data for HYPE remains sparse, so reserve flow is treated as neutral rather than bullish."
       ]
     ]
   },

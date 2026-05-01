@@ -9,17 +9,17 @@
     "asset_category": "ai-compute-depin",
     "scores": {
       "institutional": 65,
-      "adoption_activity": 55,
+      "adoption_activity": 64,
       "value_capture": 45,
       "regulatory": 55,
-      "supply": 50
+      "supply": 73
     },
     "score_rationales": {
       "institutional": "Grayscale ETF filing, DCG backing",
       "regulatory": "AI-crypto, limited regulatory framework",
-      "supply": "Limited supply data available.",
+      "supply": "TAO has a fixed 21M max supply with supply-milestone halvings (first halving at 10.5M issued cuts the block reward from 1 to 0.5 TAO and halves schedule issuance per docs.learnbittensor.org and Staking Rewards\u2019 Bittensor methodology). CoinGlass currently reports circulating supply near 10.78M TAO (~51% of max), while Tao Yield and Staking Rewards\u2013style dashboards cite roughly 67\u201376% of supply staked\u2014materially reducing liquid float despite ongoing emissions. A single authoritative, cited time series for aggregate exchange balances was not available in this pass, so reserve direction is not scored as bullish; the grade leans on hard cap, halving-driven disinflation, and very high staking lock-up.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "adoption_activity": "As of early 2026 the network runs at the 128 active-subnet cap with post\u2013Dynamic TAO expansion from tens of subnets to a full competitive grid, Taostats remains the official on-chain analytics surface since 2022, and third-party summaries cite roughly $1.1B aggregate subnet alpha market cap\u2014clear breadth of specialized deployments and staking-driven compute markets, offset by heterogeneous subnet quality and emission-heavy incentives that keep usage signals noisy versus traditional TVL-style adoption.",
       "value_capture": "Subnet registration fees, compute marketplace fees"
     },
     "weights": {
@@ -29,7 +29,7 @@
       "supply": 0.2,
       "regulatory": 0.15
     },
-    "composite": 54,
+    "composite": 61,
     "composite_last_week": 52,
     "wyckoff_phase": "Distribution Phase E",
     "wyckoff_position_score": null,
@@ -37,11 +37,11 @@
     "trend": [
       52,
       52,
-      52,
       54,
       54,
       54,
-      54
+      54,
+      61
     ],
     "trend_30d": [
       52,
@@ -55,24 +55,56 @@
       54,
       54,
       54,
-      54
+      54,
+      61
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 44.6,
+    "rsi_weekly": 46.3,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 61,
+        "composite_last_week": 52,
+        "delta_7d": 9,
+        "delta_30d": 9,
+        "wyckoff_phase": "Distribution Phase E",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
-    "label_changed_days_ago": 11,
+    "label_changed_days_ago": 12,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
       "underperforming": false,
-      "change_pct": null
+      "change_pct": 0.2776019975926546
     },
     "note": "Distribution risk",
-    "note_detailed": "TAO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: AI / DePIN \u2014 adoption and value capture with supply and regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Grayscale ETF filing, DCG backing\n\u2022 Regulatory (55/100, 15% weight): Uncertain regulatory standing. AI-crypto, limited regulatory framework\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (45/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 54/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
-    "cache_writes": []
+    "note_detailed": "TAO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: AI / DePIN \u2014 adoption and value capture with supply and regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Grayscale ETF filing, DCG backing\n\u2022 Regulatory (55/100, 15% weight): Uncertain regulatory standing. AI-crypto, limited regulatory framework\n\u2022 Supply/On-Chain (73/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (64/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (45/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 44.6 sits in neutral range.\n\u2022 Weekly RSI at 46.3 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 27.8% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 61/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "TAO",
+        "adoption_activity",
+        64,
+        "As of early 2026 the network runs at the 128 active-subnet cap with post\u2013Dynamic TAO expansion from tens of subnets to a full competitive grid, Taostats remains the official on-chain analytics surface since 2022, and third-party summaries cite roughly $1.1B aggregate subnet alpha market cap\u2014clear breadth of specialized deployments and staking-driven compute markets, offset by heterogeneous subnet quality and emission-heavy incentives that keep usage signals noisy versus traditional TVL-style adoption."
+      ],
+      [
+        "TAO",
+        "supply",
+        73,
+        "TAO has a fixed 21M max supply with supply-milestone halvings (first halving at 10.5M issued cuts the block reward from 1 to 0.5 TAO and halves schedule issuance per docs.learnbittensor.org and Staking Rewards\u2019 Bittensor methodology). CoinGlass currently reports circulating supply near 10.78M TAO (~51% of max), while Tao Yield and Staking Rewards\u2013style dashboards cite roughly 67\u201376% of supply staked\u2014materially reducing liquid float despite ongoing emissions. A single authoritative, cited time series for aggregate exchange balances was not available in this pass, so reserve direction is not scored as bullish; the grade leans on hard cap, halving-driven disinflation, and very high staking lock-up."
+      ]
+    ]
   },
   "error": null,
   "dimension_errors": null

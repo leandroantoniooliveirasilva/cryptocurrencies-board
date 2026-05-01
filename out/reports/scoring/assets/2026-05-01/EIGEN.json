@@ -9,7 +9,7 @@
     "asset_category": "shared-security",
     "scores": {
       "institutional": 55,
-      "adoption_activity": 55,
+      "adoption_activity": 78,
       "value_capture": 30,
       "regulatory": 65,
       "supply": 30
@@ -19,8 +19,8 @@
       "regulatory": "Limited regulatory clarity",
       "supply": "Data-driven score. Low circulating ratio, high inflation.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
-      "value_capture": "Daily revenue: $14K (~$5.2M/year). TVL: $8.46B. Revenue/TVL ratio: 0.06%."
+      "adoption_activity": "DefiLlama (protocol `eigenlayer`, live) shows ~$8.40B restaked value on Ethereum, and ecosystem reporting places EigenLayer at roughly 20+ mainnet AVSs (including EigenDA and other shared-security services) with on the order of ~1,900 operators\u2014category-dominant usage and operator supply, docked from the top of the scale because stake remains concentrated among larger operators and headline TVL is below prior-cycle peaks.",
+      "value_capture": "Daily revenue: $5K (~$1.8M/year). TVL: $8.40B. Revenue/TVL ratio: 0.02%."
     },
     "weights": {
       "adoption_activity": 0.25,
@@ -29,19 +29,19 @@
       "regulatory": 0.15,
       "supply": 0.15
     },
-    "composite": 46,
+    "composite": 52,
     "composite_last_week": 55,
     "wyckoff_phase": "Accumulation Phase B",
     "wyckoff_position_score": null,
     "wyckoff_signal": null,
     "trend": [
       55,
-      55,
       56,
       52,
       47,
       47,
-      46
+      46,
+      52
     ],
     "trend_30d": [
       56,
@@ -55,24 +55,51 @@
       52,
       47,
       47,
-      46
+      46,
+      52
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 50.6,
+    "rsi_weekly": 21.8,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 52,
+        "composite_last_week": 55,
+        "delta_7d": -3,
+        "delta_30d": -4,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
-    "label_changed_days_ago": 11,
+    "label_changed_days_ago": 12,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
-      "underperforming": false,
-      "change_pct": null
+      "underperforming": true,
+      "change_pct": -0.33176638727771113
     },
     "note": "Infrastructure/enterprise",
-    "note_detailed": "EIGEN sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: shared security / restaking \u2014 adoption and value capture central.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (30/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 25% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 46/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
-    "cache_writes": []
+    "note_detailed": "EIGEN sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: shared security / restaking \u2014 adoption and value capture central.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (30/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (78/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 25% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 50.6 sits in neutral range.\n\u2022 Weekly RSI at 21.8 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 33.2% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "EIGEN",
+        "adoption_activity",
+        78,
+        "DefiLlama (protocol `eigenlayer`, live) shows ~$8.40B restaked value on Ethereum, and ecosystem reporting places EigenLayer at roughly 20+ mainnet AVSs (including EigenDA and other shared-security services) with on the order of ~1,900 operators\u2014category-dominant usage and operator supply, docked from the top of the scale because stake remains concentrated among larger operators and headline TVL is below prior-cycle peaks."
+      ]
+    ]
   },
   "error": null,
   "dimension_errors": null

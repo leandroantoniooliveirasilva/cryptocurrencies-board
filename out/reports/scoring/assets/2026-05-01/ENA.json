@@ -9,7 +9,7 @@
     "asset_category": "defi-protocol",
     "scores": {
       "institutional": 60,
-      "adoption_activity": 55,
+      "adoption_activity": 72,
       "value_capture": 37,
       "regulatory": 50,
       "supply": 50
@@ -19,7 +19,7 @@
       "regulatory": "Synthetic dollar, MiCA concerns",
       "supply": "Data-driven score. Fixed supply cap, high inflation.",
       "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
-      "adoption_activity": "Ethena shows real usage scale with $4.44B TVL and about $2.4M daily fees, indicating active demand for USDe-related flows and integrations across DeFi venues. However, protocol-level capture is modest at roughly $92K daily revenue (~$33.7M annualized, ~0.76% revenue/TVL), so adoption quality is solid but still mid-tier rather than high-conviction.",
+      "adoption_activity": "DefiLlama lists Ethena USDe at roughly $5.8B TVL with about $17.9M fees in the last 30 days and ~$218M annualized fees, indicating very large ongoing usage; USDe/sUSDe is wired into major venues (e.g., Aave collateral markets, Pendle yield markets, Uniswap V3 liquidity), but circulating supply is far below its 2025 peak after the leveraged DeFi unwind, so adoption is elite in scale but not unambiguously expanding.",
       "value_capture": "Daily revenue: $92K (~$33.7M/year). TVL: $4.44B. Revenue/TVL ratio: 0.76%. Daily fees: $2.4M."
     },
     "weights": {
@@ -29,7 +29,7 @@
       "regulatory": 0.15,
       "supply": 0.2
     },
-    "composite": 49,
+    "composite": 51,
     "composite_last_week": 47,
     "wyckoff_phase": "Uptrend",
     "wyckoff_position_score": null,
@@ -41,7 +41,7 @@
       47,
       48,
       47,
-      49
+      51
     ],
     "trend_30d": [
       46,
@@ -55,29 +55,48 @@
       47,
       48,
       47,
-      49
+      51
     ],
-    "rsi_daily": null,
-    "rsi_weekly": null,
-    "action": null,
-    "decision_trace": null,
+    "rsi_daily": 47.7,
+    "rsi_weekly": 27.8,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 51,
+        "composite_last_week": 47,
+        "delta_7d": 4,
+        "delta_30d": 5,
+        "wyckoff_phase": "Uptrend",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
     "strong_accumulate_days_active": 0,
     "label_changed_days_ago": 11,
     "missing_dimensions": 0,
     "value_capture_estimated": false,
     "revenue_estimated": false,
     "rs_vs_btc": {
-      "underperforming": false,
-      "change_pct": null
+      "underperforming": true,
+      "change_pct": -0.2650729409014463
     },
     "note": "DeFi protocol, revenue-focused",
-    "note_detailed": "ENA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (60/100, 20% weight): Moderate institutional presence. Large USDe supply, institutional iUSDe\n\u2022 Regulatory (50/100, 15% weight): Uncertain regulatory standing. Synthetic dollar, MiCA concerns\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (37/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 49/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "note_detailed": "ENA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (60/100, 20% weight): Moderate institutional presence. Large USDe supply, institutional iUSDe\n\u2022 Regulatory (50/100, 15% weight): Uncertain regulatory standing. Synthetic dollar, MiCA concerns\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (37/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 47.7 sits in neutral range.\n\u2022 Weekly RSI at 27.8 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 26.5% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 51/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
     "cache_writes": [
       [
         "ENA",
         "adoption_activity",
-        55,
-        "Ethena shows real usage scale with $4.44B TVL and about $2.4M daily fees, indicating active demand for USDe-related flows and integrations across DeFi venues. However, protocol-level capture is modest at roughly $92K daily revenue (~$33.7M annualized, ~0.76% revenue/TVL), so adoption quality is solid but still mid-tier rather than high-conviction."
+        72,
+        "DefiLlama lists Ethena USDe at roughly $5.8B TVL with about $17.9M fees in the last 30 days and ~$218M annualized fees, indicating very large ongoing usage; USDe/sUSDe is wired into major venues (e.g., Aave collateral markets, Pendle yield markets, Uniswap V3 liquidity), but circulating supply is far below its 2025 peak after the leveraged DeFi unwind, so adoption is elite in scale but not unambiguously expanding."
       ]
     ]
   },
