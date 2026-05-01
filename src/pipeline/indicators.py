@@ -245,6 +245,14 @@ def main():
         logger.error(str(e))
         return 1
 
+    assets_snapshot = data.get('assets')
+    if not isinstance(assets_snapshot, list):
+        logger.error(
+            'latest.json must contain an "assets" array. Run the weekly pipeline first or repair the file.'
+        )
+        return 1
+    data['assets'] = assets_snapshot
+
     logger.info(f"Loaded {len(data['assets'])} assets from latest.json")
 
     # Fetch macro filters
@@ -259,7 +267,11 @@ def main():
     fg_data = fear_greed.fetch_fear_greed()
     fg_greedy = fg_data.get("greedy", False)
     if fg_data.get("enabled") and fg_data.get("value") is not None:
-        logger.info(f"Fear & Greed: {fg_data['value']} ({fg_data['classification']}) - {'GREEDY' if fg_greedy else 'neutral'}")
+        fg_class = fg_data.get("classification") or "unknown"
+        logger.info(
+            f"Fear & Greed: {fg_data['value']} ({fg_class}) - "
+            f"{'GREEDY' if fg_greedy else 'neutral'}"
+        )
     else:
         logger.info("Fear & Greed data unavailable - sentiment filter disabled")
 
