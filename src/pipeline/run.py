@@ -1163,8 +1163,9 @@ def main():
         fg_data = fear_greed.fetch_fear_greed()
         fg_greedy = fg_data.get('greedy', False)
         if fg_data.get('enabled') and fg_data.get('value') is not None:
+            fg_class = fg_data.get('classification') or 'unknown'
             logger.info(
-                f"Fear & Greed: {fg_data['value']} ({fg_data['classification']}) - "
+                f"Fear & Greed: {fg_data['value']} ({fg_class}) - "
                 f"{'GREEDY' if fg_greedy else 'neutral'}"
             )
         else:
