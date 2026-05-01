@@ -1,0 +1,86 @@
+{
+  "symbol": "ONDO",
+  "name": "Ondo",
+  "asset": {
+    "symbol": "ONDO",
+    "name": "Ondo",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 72,
+      "adoption_activity": 55,
+      "value_capture": 32,
+      "regulatory": 75,
+      "supply": 40
+    },
+    "score_rationales": {
+      "institutional": "RWA focus, BlackRock BUIDL integration",
+      "regulatory": "RWA focus, BlackRock partnership signals compliance",
+      "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Ondo\u2019s DeFi footprint is meaningful with $3.55B TVL, indicating real capital adoption, but usage quality looks moderate because monetization is still thin at about $26K daily revenue (~$9.6M annualized), only a 0.27% revenue/TVL ratio. This supports a mid-range adoption score rather than a high-conviction growth reading.",
+      "value_capture": "Daily revenue: $26K (~$9.6M/year). TVL: $3.57B. Revenue/TVL ratio: 0.27%."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 52,
+    "composite_last_week": 60,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      60,
+      59,
+      59,
+      57,
+      56,
+      60,
+      52
+    ],
+    "trend_30d": [
+      58,
+      59,
+      60,
+      60,
+      60,
+      60,
+      59,
+      59,
+      57,
+      56,
+      60,
+      52
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 11,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "ONDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 20% weight): Strong institutional presence. RWA focus, BlackRock BUIDL integration\n\u2022 Regulatory (75/100, 15% weight): Favorable regulatory standing. RWA focus, BlackRock partnership signals compliance\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "ONDO",
+        "adoption_activity",
+        55,
+        "Ondo\u2019s DeFi footprint is meaningful with $3.55B TVL, indicating real capital adoption, but usage quality looks moderate because monetization is still thin at about $26K daily revenue (~$9.6M annualized), only a 0.27% revenue/TVL ratio. This supports a mid-range adoption score rather than a high-conviction growth reading."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

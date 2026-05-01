@@ -1,0 +1,86 @@
+{
+  "symbol": "SUI",
+  "name": "Sui",
+  "asset": {
+    "symbol": "SUI",
+    "name": "Sui",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 70,
+      "adoption_activity": 55,
+      "value_capture": 31,
+      "regulatory": 68,
+      "supply": 40
+    },
+    "score_rationales": {
+      "institutional": "CME futures, multiple ETF filings",
+      "regulatory": "VC-backed L1, growing institutional presence",
+      "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Sui shows moderate adoption for a smart-contract platform, with TVL at $546.5M and stable but not expanding usage posture reflected by an adoption/activity baseline of 55 in the latest snapshot. Monetization remains thin (about $2K daily revenue, ~$828K annualized, 0.15% revenue/TVL), so network activity exists but is not yet converting into strong economic throughput.",
+      "value_capture": "Daily revenue: $2K (~$828K/year). TVL: $548.7M. Revenue/TVL ratio: 0.15%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 53,
+    "composite_last_week": 57,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      56,
+      56,
+      56,
+      56,
+      53,
+      53,
+      53
+    ],
+    "trend_30d": [
+      53,
+      53,
+      57,
+      57,
+      57,
+      56,
+      56,
+      56,
+      56,
+      53,
+      53,
+      53
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 11,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Smart contract platform",
+    "note_detailed": "SUI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 25% weight): Strong institutional presence. CME futures, multiple ETF filings\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. VC-backed L1, growing institutional presence\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (31/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "SUI",
+        "adoption_activity",
+        55,
+        "Sui shows moderate adoption for a smart-contract platform, with TVL at $546.5M and stable but not expanding usage posture reflected by an adoption/activity baseline of 55 in the latest snapshot. Monetization remains thin (about $2K daily revenue, ~$828K annualized, 0.15% revenue/TVL), so network activity exists but is not yet converting into strong economic throughput."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

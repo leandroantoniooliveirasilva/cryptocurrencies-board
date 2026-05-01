@@ -1,0 +1,76 @@
+{
+  "symbol": "KAS",
+  "name": "Kaspa",
+  "asset": {
+    "symbol": "KAS",
+    "name": "Kaspa",
+    "tier": "runner-up",
+    "asset_type": "store-of-value",
+    "asset_category": "monetary-store-of-value",
+    "scores": {
+      "institutional": 50,
+      "adoption_activity": null,
+      "value_capture": null,
+      "regulatory": 60,
+      "supply": 85
+    },
+    "score_rationales": {
+      "institutional": "Retail-driven, limited institutional adoption",
+      "regulatory": "Newer PoW chain, limited regulatory clarity",
+      "supply": "Data-driven score. Fixed supply cap, 90%+ circulating, minimal inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "value_capture": "Fee model routes fees to miners/validators without holder accrual. Value capture excluded; security budget read under Supply."
+    },
+    "weights": {
+      "institutional": 0.4,
+      "supply": 0.35,
+      "regulatory": 0.25
+    },
+    "composite": 65,
+    "composite_last_week": 65,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65
+    ],
+    "trend_30d": [
+      60,
+      61,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 10,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Store of value, supply-focused",
+    "note_detailed": "KAS is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: monetary store of value \u2014 institutional + supply/security + regulatory; no separate value-capture dimension.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (50/100, 40% weight): Moderate institutional presence. Retail-driven, limited institutional adoption\n\u2022 Regulatory (60/100, 25% weight): Uncertain regulatory standing. Newer PoW chain, limited regulatory clarity\n\u2022 Supply/On-Chain (85/100, 35% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

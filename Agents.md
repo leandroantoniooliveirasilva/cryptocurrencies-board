@@ -20,8 +20,9 @@ A personal cryptocurrency scoring system for long-term accumulation. Runs locall
 ### Conviction Over Trading
 
 This is a decision support system for patient accumulation:
-- Strong-accumulate fires ~5-15 times per year across the watchlist
-- Accumulate is active ~20-40% of the time per leader in bull phases
+
+- Strong-accumulate fires more rarely across the watchlist, has specific triggers
+- Accumulate is active more frequent, it is assigned to leaders, when no drowngrade signals exist.
 - Hold is the default state — patience is the strategy
 
 ## Signal Framework
@@ -30,13 +31,15 @@ This is a decision support system for patient accumulation:
 
 Composite uses **only the dimensions listed for that asset’s `asset_category`** in `pipeline/config.yaml` (`weights_by_category`). Typical dimensions:
 
-| Dimension | What it measures |
-|-----------|------------------|
-| Institutional | ETF flows, fund holdings, custody adoption |
-| Adoption / activity | Category-specific usage (TVL, TPS, TVS, validators, ODL, etc.) |
-| Value capture | Holder-accruing economics (treasury fees, burns to holders, real yield vs issuance) — skipped when N/A |
-| Regulatory | Jurisdictional clarity, compliance |
-| Supply | Exchange reserves, holder distribution, inflation, burn rate |
+
+| Dimension           | What it measures                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------ |
+| Institutional       | ETF flows, fund holdings, custody adoption                                                             |
+| Adoption / activity | Category-specific usage (TVL, TPS, TVS, validators, ODL, etc.)                                         |
+| Value capture       | Holder-accruing economics (treasury fees, burns to holders, real yield vs issuance) — skipped when N/A |
+| Regulatory          | Jurisdictional clarity, compliance                                                                     |
+| Supply              | Exchange reserves, holder distribution, inflation, burn rate                                           |
+
 
 **Wyckoff** is **not** a composite dimension (it is not in weekly `scores`); phase is refreshed on the **daily indicators** job and used with **GLI / RS / Fear–Greed** as **post-score downgrades** (Wyckoff-dip logic, phase display).
 
@@ -50,33 +53,39 @@ Composite uses **only the dimensions listed for that asset’s `asset_category`*
 
 ### Action States
 
-| State | Tier | Description |
-|-------|------|-------------|
-| strong-accumulate | Leaders | True capitulation or quality dip — act now |
-| accumulate | Leaders | Tranche-eligible zone |
-| promote | Runner-ups | Crossing leader threshold |
-| hold | Leaders | Default — no action signal |
-| await | Runner-ups | Signal building |
-| observe | Observation | Watch only |
-| stand-aside | Any | Distribution risk — do not engage |
+
+| State             | Tier        | Description                                |
+| ----------------- | ----------- | ------------------------------------------ |
+| strong-accumulate | Leaders     | True capitulation or quality dip — act now |
+| accumulate        | Leaders     | Tranche-eligible zone                      |
+| promote           | Runner-ups  | Crossing leader threshold                  |
+| hold              | Leaders     | Default — no action signal                 |
+| await             | Runner-ups  | Signal building                            |
+| observe           | Observation | Watch only                                 |
+| stand-aside       | Any         | Distribution risk — do not engage          |
+
 
 ### Signal Logic
 
 **Strong Accumulate** triggers:
+
 1. **Capitulation**: Weekly RSI <30 AND daily RSI <30 (82.9% hit rate)
 2. **Wyckoff dip**: Phase C + daily RSI ≤32 + weekly RSI ≥42 + composite stable
 
 **Accumulate** triggers:
+
 - Weekly RSI <30 alone (capitulation without daily confirmation)
 - Wyckoff dip when weekly RSI is falling from elevated levels
 
 **Downgrade Filters** (OR logic — any one triggers):
 When ANY of these conditions is true:
+
 - GLI contracting (GLI today < GLI 75 days ago)
 - RS underperforming BTC (asset/BTC ratio declined ≥10% over 90 days)
 - Fear & Greed ≥70 (market euphoria)
 
 The following downgrades apply:
+
 - strong-accumulate → accumulate → **hold**
 - accumulate → **hold**
 
@@ -86,11 +95,13 @@ This is aggressive filtering — designed to suppress accumulation signals durin
 
 Tiers are computed automatically from composite scores:
 
-| Tier | Composite | Purpose |
-|------|-----------|---------|
-| Leaders | ≥75 | Core positions for accumulation |
-| Runner-ups | 65-74 | Promotion candidates |
-| Observation | 50-64 | Watch only, no position |
+
+| Tier        | Composite | Purpose                         |
+| ----------- | --------- | ------------------------------- |
+| Leaders     | ≥75       | Core positions for accumulation |
+| Runner-ups  | 65-74     | Promotion candidates            |
+| Observation | 50-64     | Watch only, no position         |
+
 
 Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tiers are purely score-driven.
 
@@ -99,18 +110,21 @@ Thresholds defined in `pipeline/config.yaml`. No manual tier assignment — tier
 All three filters use OR logic — when ANY is active, signals downgrade ONE level (strong-accumulate→accumulate, accumulate→hold).
 
 **GLI (Global Liquidity Index)**:
+
 - Compares current GLI vs 75 days ago
 - If contracting → signal downgrades one level
 - Based on 56-90 day lag between liquidity inflection and BTC tops/bottoms
 - Sources: FRED M2, Manual override, Fallback (neutral)
 
 **RS (Relative Strength vs BTC)**:
+
 - Compares each asset's price ratio to BTC over 90 days
 - If underperforming BTC by ≥10% → signal downgrades one level
 - Rationale: if an asset is underperforming BTC, you may be better off just holding BTC
 - BTC excluded (RS vs itself is always 1.0)
 
 **Fear & Greed Index**:
+
 - Fetches Bitcoin Fear & Greed Index from Alternative.me API
 - If ≥70 (Greed/Extreme Greed) → signal downgrades one level
 - Rationale: buying during euphoria often means buying near local tops
@@ -121,7 +135,7 @@ Assets with composite score below 50 are hidden from the dashboard.
 
 ## Pipeline
 
-Automation is **macOS launchd** (see `scripts/install-launchd.sh`), not cron. All calendar triggers use **`TZ=UTC`** in the plist so **Hour/Minute are UTC**.
+Automation is **macOS launchd** (see `scripts/install-launchd.sh`), not cron. All calendar triggers use `**TZ=UTC`** in the plist so **Hour/Minute are UTC**.
 
 ```
 Weekly dimension job (Sunday 12:00 UTC) — scripts/run-local.sh
@@ -175,13 +189,15 @@ cd public && python -m http.server 8000
 
 ## Local launchd (macOS)
 
-Use **`./scripts/install-launchd.sh`** — not `crontab`. Installs three agents (see `scripts/com.crypto.*.plist`):
+Use `**./scripts/install-launchd.sh**` — not `crontab`. Installs three agents (see `scripts/com.crypto.*.plist`):
 
-| Label | Schedule (UTC) | Script |
-|-------|----------------|--------|
-| `com.crypto.scoring` | Sunday 12:00 | `run-local.sh` → `pipeline.run --dimensions-only` |
-| `com.crypto.indicators` | Daily 12:00 | `run-daily-indicators.sh` → `pipeline.indicators` |
-| `com.crypto.discovery` | Monthly day 1, 18:00 | `run-discovery.sh` |
+
+| Label                   | Schedule (UTC)       | Script                                            |
+| ----------------------- | -------------------- | ------------------------------------------------- |
+| `com.crypto.scoring`    | Sunday 12:00         | `run-local.sh` → `pipeline.run --dimensions-only` |
+| `com.crypto.indicators` | Daily 12:00          | `run-daily-indicators.sh` → `pipeline.indicators` |
+| `com.crypto.discovery`  | Monthly day 1, 18:00 | `run-discovery.sh`                                |
+
 
 **Manual trigger:** `./scripts/install-launchd.sh run scoring` | `indicators` | `discovery` — does not change plist schedules.
 
@@ -202,11 +218,13 @@ Qualitative and supply LLM calls use the **CursorAgent CLI** (`cursor-agent --pr
 Weekly scoring (`pipeline.run`) and daily indicators (`pipeline.indicators`) support parallel asset processing.
 
 Safety model:
+
 - Worker threads only compute asset results.
 - SQLite cache writes, snapshot writes, and final output writes are done by the master process.
 - This avoids write conflicts and keeps output deterministic.
 
 Configuration (optional):
+
 ```bash
 # Weekly run workers (default: 4)
 PIPELINE_MAX_WORKERS=4
@@ -216,6 +234,7 @@ INDICATORS_MAX_WORKERS=4
 ```
 
 Practical defaults:
+
 - 2 for quieter laptop runs
 - 4 as balanced default
 - 6 on stronger machines with stable network/API behavior
@@ -268,6 +287,7 @@ public/
 All dimension scores and Wyckoff phase identifications must include supporting evidence:
 
 **Required for each dimension:**
+
 - **Wyckoff**: Price metrics that led to phase classification (position in 90d range, 7d/30d trends, volatility)
 - **Institutional**: Specific ETF products, fund holdings, custody availability cited
 - **Value capture / adoption**: Evidence appropriate to the category (DefiLlama, metrics APIs, or research)
@@ -275,6 +295,7 @@ All dimension scores and Wyckoff phase identifications must include supporting e
 - **Supply**: Exchange reserve data, holder distribution, inflation metrics
 
 **Format in JSON output:**
+
 ```json
 "scores": {
   "wyckoff": 65,
@@ -295,6 +316,7 @@ Author: `leandroantoniooliveirasilva@gmail.com` (personal account)
 ## Calibration
 
 Track changes in `.docs/decisions.md`. Monitor:
+
 - Does strong-accumulate fire at sensible moments?
 - Does promote fire appropriately?
 - Is composite stable week-over-week?
@@ -308,8 +330,10 @@ Track changes in `.docs/decisions.md`. Monitor:
 ## Documentation Updates
 
 When framework changes occur (new dimensions, thresholds, action states), update:
+
 1. README.md
 2. Agents.md
 3. `.docs/opencode-prompts.md` (if workflow prompts change)
 4. .agents/skills/ instructions
 5. pipeline/discovery/prompt.md (if scoring logic changes)
+

@@ -1,0 +1,86 @@
+{
+  "symbol": "JUP",
+  "name": "Jupiter",
+  "asset": {
+    "symbol": "JUP",
+    "name": "Jupiter",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 57,
+      "value_capture": 51,
+      "regulatory": 65,
+      "supply": 40
+    },
+    "score_rationales": {
+      "institutional": "Limited institutional presence",
+      "regulatory": "Limited regulatory clarity",
+      "supply": "Data-driven score. Fixed supply cap, low circulating ratio, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Jupiter shows meaningful DeFi usage with $1.71B TVL, about $265K in daily fees, and roughly $103K daily revenue (~$37.8M annualized), indicating real network activity and transaction flow. The adoption signal remains mid-tier rather than leading (adoption/activity 55, composite 52 in Observation), so usage is solid but not yet strong enough for a high-conviction score.",
+      "value_capture": "Daily revenue: $103K (~$37.8M/year). TVL: $1.71B. Revenue/TVL ratio: 2.20%. Daily fees: $265K."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 53,
+    "composite_last_week": 59,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      57,
+      58,
+      59,
+      58,
+      54,
+      56,
+      53
+    ],
+    "trend_30d": [
+      57,
+      56,
+      59,
+      60,
+      59,
+      57,
+      58,
+      59,
+      58,
+      54,
+      56,
+      53
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 11,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "JUP sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (57/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (51/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "JUP",
+        "adoption_activity",
+        57,
+        "Jupiter shows meaningful DeFi usage with $1.71B TVL, about $265K in daily fees, and roughly $103K daily revenue (~$37.8M annualized), indicating real network activity and transaction flow. The adoption signal remains mid-tier rather than leading (adoption/activity 55, composite 52 in Observation), so usage is solid but not yet strong enough for a high-conviction score."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

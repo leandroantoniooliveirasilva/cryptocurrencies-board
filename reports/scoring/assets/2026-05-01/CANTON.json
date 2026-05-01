@@ -1,0 +1,79 @@
+{
+  "symbol": "CANTON",
+  "name": "Canton Network",
+  "asset": {
+    "symbol": "CANTON",
+    "name": "Canton Network",
+    "tier": "runner-up",
+    "asset_type": "infrastructure",
+    "asset_category": "enterprise-settlement",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 55,
+      "value_capture": 95,
+      "regulatory": 70,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Enterprise blockchain, pre-market phase",
+      "regulatory": "Enterprise blockchain, pre-market",
+      "supply": "Limited supply data available.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Daily revenue: $2.2M (~$804.6M/year). TVL: $459. Revenue/TVL ratio: 175384995.25%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "regulatory": 0.2,
+      "supply": 0.15
+    },
+    "composite": 65,
+    "composite_last_week": 82,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      82,
+      82,
+      82,
+      64,
+      58,
+      58,
+      65
+    ],
+    "trend_30d": [
+      81,
+      83,
+      82,
+      82,
+      82,
+      82,
+      82,
+      82,
+      64,
+      58,
+      58,
+      65
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 4,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Infrastructure/enterprise",
+    "note_detailed": "CANTON is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Enterprise blockchain, pre-market phase\n\u2022 Regulatory (70/100, 20% weight): Favorable regulatory standing. Enterprise blockchain, pre-market\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 20% weight): Strong holder-accruing economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

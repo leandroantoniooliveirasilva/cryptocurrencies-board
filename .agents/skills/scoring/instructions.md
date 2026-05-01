@@ -1,4 +1,4 @@
-# Weekly Summary Skill
+# Scoring Skill
 
 Interpret weekly scan results and provide actionable insights.
 

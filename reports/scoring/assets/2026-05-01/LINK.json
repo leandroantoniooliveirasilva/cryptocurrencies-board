@@ -1,0 +1,86 @@
+{
+  "symbol": "LINK",
+  "name": "Chainlink",
+  "asset": {
+    "symbol": "LINK",
+    "name": "Chainlink",
+    "tier": "leader",
+    "asset_type": "infrastructure",
+    "asset_category": "oracle-data",
+    "scores": {
+      "institutional": 88,
+      "adoption_activity": 90,
+      "value_capture": 95,
+      "regulatory": 82,
+      "supply": 66
+    },
+    "score_rationales": {
+      "institutional": "Enterprise integrations, oracle standard",
+      "regulatory": "Enterprise partnerships signal regulatory comfort",
+      "supply": "LINK is structurally positive on tokenomics because supply is capped at 1,000,000,000 with no inflationary mining, and 727,099,970 already circulates (72.7%), reducing long-run dilution risk versus uncapped assets. The main offset is the remaining 272.9M non-circulating tokens, which still represents meaningful future distribution/sell-pressure overhang, and holder concentration remains relatively high in large wallets (including treasury/contract-controlled balances), which weakens decentralization of supply. Staking helps but is still moderate in scale (Chainlink Staking v0.2 capacity is ~45M LINK, about 4.5% of max supply), so lock-up driven sell-pressure reduction is supportive but not yet strong enough to push supply dynamics into top-tier bullish territory.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Broad oracle integrations and enterprise TVS.",
+      "value_capture": "Daily revenue: $1.1M (~$417.2M/year). No TVL (oracle/infra model, scored on absolute revenue). Daily fees: $1.2M."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.25,
+      "regulatory": 0.2,
+      "value_capture": 0.15,
+      "supply": 0.15
+    },
+    "composite": 85,
+    "composite_last_week": 82,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      76,
+      77,
+      77,
+      76,
+      77,
+      76,
+      85
+    ],
+    "trend_30d": [
+      74,
+      73,
+      76,
+      77,
+      82,
+      76,
+      77,
+      77,
+      76,
+      77,
+      76,
+      85
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 10,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Strong institutional adoption",
+    "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: oracle/data \u2014 adoption (e.g. TVS) and institutions weighted with value capture and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (66/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (90/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 15% weight): Strong holder-accruing economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 85/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "cache_writes": [
+      [
+        "LINK",
+        "supply",
+        66,
+        "LINK is structurally positive on tokenomics because supply is capped at 1,000,000,000 with no inflationary mining, and 727,099,970 already circulates (72.7%), reducing long-run dilution risk versus uncapped assets. The main offset is the remaining 272.9M non-circulating tokens, which still represents meaningful future distribution/sell-pressure overhang, and holder concentration remains relatively high in large wallets (including treasury/contract-controlled balances), which weakens decentralization of supply. Staking helps but is still moderate in scale (Chainlink Staking v0.2 capacity is ~45M LINK, about 4.5% of max supply), so lock-up driven sell-pressure reduction is supportive but not yet strong enough to push supply dynamics into top-tier bullish territory."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

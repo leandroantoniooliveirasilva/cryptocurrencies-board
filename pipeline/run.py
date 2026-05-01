@@ -3,7 +3,7 @@
 Weekly full scoring pipeline — qualitative dimensions, composite, and tiers.
 
 This runs the complete scoring pipeline including:
-- Qualitative scores (regulatory, institutional) via OpenCode CLI (default model Big Pickle)
+- Qualitative scores (regulatory, institutional) via CursorAgent CLI
 - Revenue scores from DefiLlama
 - Supply/on-chain analysis
 - RSI calculation (daily/weekly)
@@ -26,12 +26,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import argparse
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import logging
 import os
 import sqlite3
+import subprocess
 import sys
+import tempfile
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -63,6 +64,7 @@ ASSETS_FILE = REPO_ROOT / "pipeline" / "assets.yaml"
 DB_PATH = REPO_ROOT / "pipeline" / "storage" / "history.sqlite"
 PUBLIC_DIR = REPO_ROOT / "public"
 LATEST_JSON = PUBLIC_DIR / "latest.json"
+SCORING_ASSET_OUTPUT_DIR = REPO_ROOT / 'reports' / 'scoring' / 'assets'
 
 
 class DimensionScoringError(Exception):
@@ -71,6 +73,18 @@ class DimensionScoringError(Exception):
     def __init__(self, errors: list[str]):
         self.errors = errors
         super().__init__(', '.join(errors))
+
+
+def _is_low_quality_rationale(rationale: Optional[str]) -> bool:
+    text = (rationale or '').strip().lower()
+    if not text:
+        return True
+    low_quality_markers = (
+        'limited supply data available',
+        'moderate usage signal; verify with on-chain data',
+        'enterprise blockchain, pre-market',
+    )
+    return any(marker in text for marker in low_quality_markers)
 
 
 def _collect_dimension_errors(
@@ -304,13 +318,13 @@ def build_asset(
     cached_regulatory = migrations.get_cached_qualitative_score(conn, symbol, "regulatory")
     cached_institutional = migrations.get_cached_qualitative_score(conn, symbol, "institutional")
 
-    if cached_regulatory:
+    if cached_regulatory and not _is_low_quality_rationale(cached_regulatory.get('rationale')):
         regulatory_data = cached_regulatory
     else:
         regulatory_data = qualitative.score_regulatory(symbol, name, use_cache=False)
         record_cache_write(symbol, "regulatory", regulatory_data["score"], regulatory_data["rationale"])
 
-    if cached_institutional:
+    if cached_institutional and not _is_low_quality_rationale(cached_institutional.get('rationale')):
         institutional_data = cached_institutional
     else:
         institutional_data = qualitative.score_institutional(symbol, name, use_cache=False)
@@ -324,10 +338,6 @@ def build_asset(
         skip = value_capture_skip_rationale(fee_model)
         if skip:
             value_capture_rationale = skip
-        else:
-            value_capture_rationale = (
-                "Value capture not in this category's weighted dimensions; weight redistributes."
-            )
         logger.info(f"Skipping value capture for {symbol} (category/fee_model)")
     elif defi_data and defi_data.get("revenue_24h") is not None:
         revenue_24h = defi_data.get("revenue_24h")
@@ -342,7 +352,7 @@ def build_asset(
         cached_vc = migrations.get_cached_qualitative_score(conn, symbol, "value_capture")
         if not cached_vc:
             cached_vc = migrations.get_cached_qualitative_score(conn, symbol, "revenue")
-        if cached_vc:
+        if cached_vc and not _is_low_quality_rationale(cached_vc.get('rationale')):
             vc_result = cached_vc
             value_capture_estimated = False
         else:
@@ -362,7 +372,7 @@ def build_asset(
     adoption_rationale = None
     if should_score_adoption_activity(weights_profile):
         cached_ad = migrations.get_cached_qualitative_score(conn, symbol, "adoption_activity")
-        if cached_ad:
+        if cached_ad and not _is_low_quality_rationale(cached_ad.get('rationale')):
             adoption_data = cached_ad
         else:
             hint = adoption_hint_for_category(asset_category)
@@ -596,6 +606,82 @@ def _build_asset_worker(
     finally:
         conn.close()
 
+
+def _ensure_asset_reports_dir(snapshot_date: str) -> Path:
+    out_dir = SCORING_ASSET_OUTPUT_DIR / snapshot_date
+    out_dir.mkdir(parents=True, exist_ok=True)
+    return out_dir
+
+
+def _run_single_asset_mode(input_path: Path, output_path: Path) -> int:
+    try:
+        payload = json.loads(input_path.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError) as e:
+        output_path.write_text(
+            json.dumps({'symbol': 'unknown', 'error': f'invalid_input:{e}'}, indent=2),
+            encoding='utf-8',
+        )
+        return 1
+
+    entry = payload.get('entry') or {}
+    result = _build_asset_worker(
+        entry=entry,
+        gli_downtrend=bool(payload.get('gli_downtrend', False)),
+        fg_greedy=bool(payload.get('fg_greedy', False)),
+        dimensions_only=bool(payload.get('dimensions_only', False)),
+    )
+    output_path.write_text(json.dumps(result, indent=2), encoding='utf-8')
+    return 0 if not result.get('error') else 1
+
+
+def _run_asset_subprocess(
+    entry: dict,
+    *,
+    gli_downtrend: bool,
+    fg_greedy: bool,
+    dimensions_only: bool,
+) -> dict:
+    payload = {
+        'entry': entry,
+        'gli_downtrend': gli_downtrend,
+        'fg_greedy': fg_greedy,
+        'dimensions_only': dimensions_only,
+    }
+    with tempfile.TemporaryDirectory(prefix='asset-score-') as tmpdir:
+        tmp_path = Path(tmpdir)
+        input_path = tmp_path / 'input.json'
+        output_path = tmp_path / 'output.json'
+        input_path.write_text(json.dumps(payload), encoding='utf-8')
+
+        cmd = [
+            sys.executable,
+            '-m',
+            'pipeline.run',
+            '--score-asset-input',
+            str(input_path),
+            '--score-asset-output',
+            str(output_path),
+        ]
+        proc = subprocess.run(cmd, capture_output=True, text=True)
+
+        if not output_path.exists():
+            return {
+                'symbol': entry.get('symbol', 'unknown'),
+                'name': entry.get('name', ''),
+                'asset': None,
+                'error': f'child_process_failed:{proc.returncode}:{proc.stderr.strip()}',
+                'dimension_errors': None,
+            }
+        try:
+            return json.loads(output_path.read_text(encoding='utf-8'))
+        except (OSError, json.JSONDecodeError) as e:
+            return {
+                'symbol': entry.get('symbol', 'unknown'),
+                'name': entry.get('name', ''),
+                'asset': None,
+                'error': f'child_output_invalid:{e}',
+                'dimension_errors': None,
+            }
 
 
 
@@ -985,7 +1071,12 @@ def main():
         action='store_true',
         help='Weighted dimensions + composite/tier only; skip RSI/RS/action; reuse macro from last latest.json.',
     )
+    parser.add_argument('--score-asset-input', type=str, default=None, help=argparse.SUPPRESS)
+    parser.add_argument('--score-asset-output', type=str, default=None, help=argparse.SUPPRESS)
     args = parser.parse_args()
+
+    if args.score_asset_input and args.score_asset_output:
+        return _run_single_asset_mode(Path(args.score_asset_input), Path(args.score_asset_output))
 
     logger.info('=' * 60)
     if args.dimensions_only:
@@ -1112,60 +1203,39 @@ def main():
     # Process all assets (tiers computed dynamically from composite scores)
     logger.info(f"\nProcessing {len(assets_list)} assets...")
     worker_count = min(_get_max_workers(), max(1, len(assets_list)))
-    logger.info(f"Parallel workers: {worker_count}")
+    logger.info(f'Isolated child-process scoring per asset (requested workers: {worker_count})')
+    asset_reports_dir = _ensure_asset_reports_dir(today)
 
     processed_assets: list[dict] = []
     scoring_errors: list[dict] = []
-    if worker_count == 1:
-        for entry in assets_list:
-            result = _build_asset_worker(
-                entry,
-                gli_downtrend=gli_downtrend,
-                fg_greedy=fg_greedy,
-                dimensions_only=args.dimensions_only,
+    for entry in assets_list:
+        symbol = entry.get('symbol', 'unknown')
+        result = _run_asset_subprocess(
+            entry,
+            gli_downtrend=gli_downtrend,
+            fg_greedy=fg_greedy,
+            dimensions_only=args.dimensions_only,
+        )
+
+        (asset_reports_dir / f'{symbol}.json').write_text(
+            json.dumps(result, indent=2),
+            encoding='utf-8',
+        )
+
+        if result.get('dimension_errors'):
+            scoring_errors.append({
+                'symbol': result['symbol'],
+                'name': result.get('name', ''),
+                'errors': result['dimension_errors'],
+            })
+            logger.error(
+                f"  Dimension scoring failed for {result['symbol']}: {result['dimension_errors']}"
             )
-            if result.get('dimension_errors'):
-                scoring_errors.append({
-                    'symbol': result['symbol'],
-                    'name': result.get('name', ''),
-                    'errors': result['dimension_errors'],
-                })
-                logger.error(
-                    f"  Dimension scoring failed for {result['symbol']}: {result['dimension_errors']}"
-                )
-                continue
-            if result['error']:
-                logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
-                continue
-            processed_assets.append(result['asset'])
-    else:
-        with ThreadPoolExecutor(max_workers=worker_count) as executor:
-            futures = {
-                executor.submit(
-                    _build_asset_worker,
-                    entry,
-                    gli_downtrend,
-                    fg_greedy,
-                    dimensions_only=args.dimensions_only,
-                ): entry
-                for entry in assets_list
-            }
-            for future in as_completed(futures):
-                result = future.result()
-                if result.get('dimension_errors'):
-                    scoring_errors.append({
-                        'symbol': result['symbol'],
-                        'name': result.get('name', ''),
-                        'errors': result['dimension_errors'],
-                    })
-                    logger.error(
-                        f"  Dimension scoring failed for {result['symbol']}: {result['dimension_errors']}"
-                    )
-                    continue
-                if result['error']:
-                    logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
-                    continue
-                processed_assets.append(result['asset'])
+            continue
+        if result.get('error'):
+            logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
+            continue
+        processed_assets.append(result['asset'])
 
     # Persist cache writes and snapshots in the master process only.
     for asset in processed_assets:

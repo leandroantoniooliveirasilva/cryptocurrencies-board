@@ -1,0 +1,79 @@
+{
+  "symbol": "SOL",
+  "name": "Solana",
+  "asset": {
+    "symbol": "SOL",
+    "name": "Solana",
+    "tier": "leader",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 84,
+      "adoption_activity": 85,
+      "value_capture": 60,
+      "regulatory": 78,
+      "supply": 65
+    },
+    "score_rationales": {
+      "institutional": "Growing fund holdings, major VC backing",
+      "regulatory": "Growing institutional interest, no adverse rulings",
+      "supply": "Data-driven score. 90%+ circulating.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "High throughput usage and growing DeFi/NFT activity.",
+      "value_capture": "Daily revenue: $530K (~$193.5M/year). TVL: $5.48B. Revenue/TVL ratio: 3.53%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 75,
+    "composite_last_week": 74,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      70,
+      74,
+      74,
+      76,
+      76,
+      76,
+      75
+    ],
+    "trend_30d": [
+      69,
+      72,
+      75,
+      75,
+      74,
+      70,
+      74,
+      74,
+      76,
+      76,
+      76,
+      75
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 4,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "High-throughput L1, DeFi ecosystem",
+    "note_detailed": "SOL holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (84/100, 25% weight): Strong institutional presence. Growing fund holdings, major VC backing\n\u2022 Regulatory (78/100, 15% weight): Favorable regulatory standing. Growing institutional interest, no adverse rulings\n\u2022 Supply/On-Chain (65/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (85/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (60/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 75/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

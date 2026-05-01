@@ -177,10 +177,11 @@ weights_by_category:
     supply: 0.15
 
   enterprise-settlement:
-    institutional: 0.30
-    adoption_activity: 0.25
-    regulatory: 0.25
-    supply: 0.20
+    institutional: 0.25
+    adoption_activity: 0.20
+    value_capture: 0.20
+    regulatory: 0.20
+    supply: 0.15
 
   payments-rail:
     institutional: 0.35

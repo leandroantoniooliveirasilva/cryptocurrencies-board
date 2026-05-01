@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+from pathlib import Path
 import subprocess
 from typing import Optional
 
@@ -22,6 +23,27 @@ CURSOR_AGENT_RUN_TIMEOUT = int(
 CURSOR_AGENT_ADOPTION_TIMEOUT = int(
     os.environ.get('CURSOR_AGENT_ADOPTION_TIMEOUT', os.environ.get('OPENCODE_ADOPTION_TIMEOUT', os.environ.get('CLAUDE_ADOPTION_TIMEOUT', '300')))
 )
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SCORING_SKILL_FILE = REPO_ROOT / '.agents' / 'skills' / 'scoring' / 'instructions.md'
+
+
+def _load_scoring_skill_excerpt(max_chars: int = 2400) -> str:
+    try:
+        text = SCORING_SKILL_FILE.read_text(encoding='utf-8').strip()
+    except OSError:
+        return ''
+    if not text:
+        return ''
+    return text[:max_chars]
+
+
+SCORING_SKILL_EXCERPT = _load_scoring_skill_excerpt()
+SCORING_SYSTEM_PREFIX = (
+    'Apply this scoring skill guidance for this single-asset evaluation.\n'
+    'Use concrete evidence, avoid placeholders, and return strict JSON only.\n\n'
+    f'{SCORING_SKILL_EXCERPT}\n\n'
+) if SCORING_SKILL_EXCERPT else ''
 
 
 REGULATORY_PROMPT = """Score the regulatory trajectory for {symbol} ({name}) on a 0-100 scale.
@@ -139,7 +161,8 @@ def _query_scoring_llm(
     cli_timeout: Optional[int] = None,
 ) -> Optional[dict]:
     """Run prompt through CursorAgent CLI and parse JSON response."""
-    return _invoke_cursor_agent_run(prompt, cache_key, timeout_sec=cli_timeout)
+    full_prompt = f'{SCORING_SYSTEM_PREFIX}{prompt}'
+    return _invoke_cursor_agent_run(full_prompt, cache_key, timeout_sec=cli_timeout)
 
 
 def _invoke_cursor_agent_run(
@@ -261,7 +284,7 @@ def _get_fallback_institutional(symbol: str) -> dict:
 
 def score_value_capture(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
-    Score value capture via OpenCode when API data is unavailable.
+    Score value capture via CursorAgent when API data is unavailable.
 
     Returns:
         Dict with 'score' (int), 'rationale' (str), and 'estimated' (bool)

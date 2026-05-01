@@ -12,6 +12,7 @@ Combines actual supply data from CoinGecko with AI-based qualitative assessment.
 import json
 import logging
 import os
+from pathlib import Path
 import subprocess
 import time
 import threading
@@ -38,6 +39,27 @@ CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'auto')
 CURSOR_AGENT_SUPPLY_TIMEOUT = int(
     os.environ.get('CURSOR_AGENT_SUPPLY_TIMEOUT', os.environ.get('OPENCODE_SUPPLY_TIMEOUT', '60'))
 )
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SCORING_SKILL_FILE = REPO_ROOT / '.agents' / 'skills' / 'scoring' / 'instructions.md'
+
+
+def _load_scoring_skill_excerpt(max_chars: int = 2400) -> str:
+    try:
+        text = SCORING_SKILL_FILE.read_text(encoding='utf-8').strip()
+    except OSError:
+        return ''
+    if not text:
+        return ''
+    return text[:max_chars]
+
+
+SCORING_SKILL_EXCERPT = _load_scoring_skill_excerpt()
+SCORING_SYSTEM_PREFIX = (
+    'Apply this scoring skill guidance for this single-asset evaluation.\n'
+    'Use concrete evidence for tokenomics and avoid placeholder rationales.\n\n'
+    f'{SCORING_SKILL_EXCERPT}\n\n'
+) if SCORING_SKILL_EXCERPT else ''
 
 
 def _rate_limit():
@@ -208,8 +230,9 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
 def _invoke_cursor_agent_supply(prompt: str, cache_key: str) -> Optional[dict]:
     """``cursor-agent --print`` for supply scoring."""
     try:
+        full_prompt = f'{SCORING_SYSTEM_PREFIX}{prompt}'
         result = subprocess.run(
-            [CURSOR_AGENT_BIN, '--print', '--trust', '--force', '--model', CURSOR_AGENT_MODEL, prompt],
+            [CURSOR_AGENT_BIN, '--print', '--trust', '--force', '--model', CURSOR_AGENT_MODEL, full_prompt],
             capture_output=True,
             text=True,
             timeout=CURSOR_AGENT_SUPPLY_TIMEOUT,
@@ -295,7 +318,18 @@ def _compute_fallback_score(symbol: str, supply_data: Optional[dict]) -> dict:
     # Clamp score
     score = max(0, min(100, score))
 
-    rationale = f"Data-driven score. {', '.join(factors).capitalize()}." if factors else "Limited supply data available."
+    if factors:
+        rationale = f"Data-driven score from available supply metrics: {', '.join(factors)}."
+    elif supply_data:
+        rationale = (
+            'Data-driven score from partial CoinGecko supply fields; tokenomics context is incomplete '
+            '(missing reliable circulating/total/max relationships).'
+        )
+    else:
+        rationale = (
+            'Supply APIs unavailable, fallback neutral score applied from framework defaults '
+            '(no reliable tokenomics data returned).'
+        )
 
     return {"score": score, "rationale": rationale}
 
@@ -327,7 +361,12 @@ def compute_supply_score(
         from pipeline.storage import migrations
         cached = migrations.get_cached_qualitative_score(conn, symbol, "supply")
         if cached:
-            return {"score": cached["score"], "rationale": cached["rationale"]}
+            cached_rationale = (cached.get('rationale') or '').strip()
+            if cached_rationale != 'Limited supply data available.':
+                return {'score': cached['score'], 'rationale': cached['rationale']}
+            logger.info(
+                f'Refreshing cached supply rationale for {symbol} (placeholder detected)'
+            )
 
     # Compute fresh score
     name = name or symbol

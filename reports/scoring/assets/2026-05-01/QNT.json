@@ -1,0 +1,86 @@
+{
+  "symbol": "QNT",
+  "name": "Quant",
+  "asset": {
+    "symbol": "QNT",
+    "name": "Quant",
+    "tier": "observation",
+    "asset_type": "infrastructure",
+    "asset_category": "enterprise-settlement",
+    "scores": {
+      "institutional": 72,
+      "adoption_activity": 55,
+      "value_capture": 38,
+      "regulatory": 75,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Enterprise interoperability focus",
+      "regulatory": "Enterprise-focused, regulatory engagement",
+      "supply": "Limited supply data available.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "QNT\u2019s value capture is primarily indirect: Overledger licenses and gateway usage are settled via the Treasury model that purchases and locks QNT for fixed periods, reducing circulating supply but not distributing protocol cash flows to holders. There is no widely documented recurring burn program, buyback-to-holder mechanism, or transparent on-chain real yield net of issuance, so holder accrual is weaker than fee-sharing DeFi tokens and major burn-driven L1s."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "regulatory": 0.2,
+      "supply": 0.15
+    },
+    "composite": 59,
+    "composite_last_week": 68,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      68,
+      68,
+      68,
+      68,
+      64,
+      64,
+      59
+    ],
+    "trend_30d": [
+      65,
+      65,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      64,
+      64,
+      59
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 3,
+    "missing_dimensions": 0,
+    "value_capture_estimated": true,
+    "revenue_estimated": true,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Enterprise interoperability",
+    "note_detailed": "QNT sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. Enterprise interoperability focus\n\u2022 Regulatory (75/100, 20% weight): Favorable regulatory standing. Enterprise-focused, regulatory engagement\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (38/100, 20% weight \u26a0\ufe0f ESTIMATED): Limited value capture\u2014may rely on incentives or early-stage economics.\n  (Score derived from LLM research \u2014 API data unavailable)\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 59/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "QNT",
+        "value_capture",
+        38,
+        "QNT\u2019s value capture is primarily indirect: Overledger licenses and gateway usage are settled via the Treasury model that purchases and locks QNT for fixed periods, reducing circulating supply but not distributing protocol cash flows to holders. There is no widely documented recurring burn program, buyback-to-holder mechanism, or transparent on-chain real yield net of issuance, so holder accrual is weaker than fee-sharing DeFi tokens and major burn-driven L1s."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}
