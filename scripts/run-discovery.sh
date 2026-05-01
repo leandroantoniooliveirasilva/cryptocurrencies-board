@@ -28,11 +28,11 @@ log() {
 log "Starting monthly discovery pipeline"
 log "Project: $PROJECT_DIR"
 
-# OpenCode CLI (Big Pickle default — override with OPENCODE_MODEL)
-OPENCODE_BIN="${OPENCODE_BIN:-opencode}"
-OPENCODE_MODEL="${OPENCODE_MODEL:-opencode/big-pickle}"
-if ! command -v "$OPENCODE_BIN" &> /dev/null; then
-    log "ERROR: OpenCode CLI not found. Install: https://opencode.ai/docs (e.g. brew install anomalyco/tap/opencode)"
+# CursorAgent CLI
+CURSOR_AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
+CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-gpt-5}"
+if ! command -v "$CURSOR_AGENT_BIN" &> /dev/null; then
+    log "ERROR: cursor-agent CLI not found. Install Cursor Agent and run cursor-agent login."
     exit 1
 fi
 
@@ -70,10 +70,10 @@ $CURRENT_ASSETS
 Today's date: $(date -u +"%Y-%m-%d")
 "
 
-log "Running OpenCode discovery (model: $OPENCODE_MODEL)..."
+log "Running CursorAgent discovery (model: $CURSOR_AGENT_MODEL)..."
 cd "$PROJECT_DIR"
 
-if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
+if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
     mv "$REPORT_FILE.tmp" "$REPORT_FILE"
     log "Discovery report generated: $REPORT_FILE"
 

@@ -1,4 +1,4 @@
-"""Qualitative scoring via OpenCode CLI: ``opencode run`` (default model Big Pickle)."""
+"""Qualitative scoring via CursorAgent CLI: ``cursor-agent --print``."""
 
 import json
 import logging
@@ -11,16 +11,16 @@ logger = logging.getLogger(__name__)
 # Cache for qualitative scores (refresh weekly)
 _score_cache: dict = {}
 
-# OpenCode binary and model (provider/model, e.g. opencode/big-pickle)
-OPENCODE_BIN = os.environ.get('OPENCODE_BIN', 'opencode')
-OPENCODE_MODEL = os.environ.get('OPENCODE_MODEL', 'opencode/big-pickle')
+# CursorAgent binary/model
+CURSOR_AGENT_BIN = os.environ.get('CURSOR_AGENT_BIN', 'cursor-agent')
+CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'gpt-5')
 
-# Per-invocation timeouts (seconds). CLAUDE_* fallbacks for existing .env files.
-OPENCODE_RUN_TIMEOUT = int(
-    os.environ.get('OPENCODE_RUN_TIMEOUT', os.environ.get('CLAUDE_CLI_TIMEOUT', '300'))
+# Per-invocation timeouts (seconds); keeps legacy fallbacks for existing env files.
+CURSOR_AGENT_RUN_TIMEOUT = int(
+    os.environ.get('CURSOR_AGENT_RUN_TIMEOUT', os.environ.get('OPENCODE_RUN_TIMEOUT', os.environ.get('CLAUDE_CLI_TIMEOUT', '300')))
 )
-OPENCODE_ADOPTION_TIMEOUT = int(
-    os.environ.get('OPENCODE_ADOPTION_TIMEOUT', os.environ.get('CLAUDE_ADOPTION_TIMEOUT', '300'))
+CURSOR_AGENT_ADOPTION_TIMEOUT = int(
+    os.environ.get('CURSOR_AGENT_ADOPTION_TIMEOUT', os.environ.get('OPENCODE_ADOPTION_TIMEOUT', os.environ.get('CLAUDE_ADOPTION_TIMEOUT', '300')))
 )
 
 
@@ -77,7 +77,7 @@ No other text."""
 
 def score_regulatory(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
-    Score regulatory trajectory using OpenCode (Big Pickle by default).
+    Score regulatory trajectory using CursorAgent.
 
     Args:
         symbol: Asset symbol (e.g., 'BTC')
@@ -106,7 +106,7 @@ def score_regulatory(symbol: str, name: str, use_cache: bool = True) -> dict:
 
 def score_institutional(symbol: str, name: str, use_cache: bool = True) -> dict:
     """
-    Score institutional adoption using OpenCode (Big Pickle by default).
+    Score institutional adoption using CursorAgent.
 
     Args:
         symbol: Asset symbol (e.g., 'BTC')
@@ -138,42 +138,42 @@ def _query_scoring_llm(
     cache_key: str,
     cli_timeout: Optional[int] = None,
 ) -> Optional[dict]:
-    """Run prompt through OpenCode CLI and parse JSON response."""
-    return _invoke_opencode_run(prompt, cache_key, timeout_sec=cli_timeout)
+    """Run prompt through CursorAgent CLI and parse JSON response."""
+    return _invoke_cursor_agent_run(prompt, cache_key, timeout_sec=cli_timeout)
 
 
-def _invoke_opencode_run(
+def _invoke_cursor_agent_run(
     prompt: str,
     cache_key: str,
     timeout_sec: Optional[int] = None,
 ) -> Optional[dict]:
-    """``opencode run --model …`` (non-interactive)."""
-    limit = timeout_sec if timeout_sec is not None else OPENCODE_RUN_TIMEOUT
+    """``cursor-agent --print --model …`` (non-interactive)."""
+    limit = timeout_sec if timeout_sec is not None else CURSOR_AGENT_RUN_TIMEOUT
     try:
         result = subprocess.run(
-            [OPENCODE_BIN, 'run', '--pure', '--model', OPENCODE_MODEL, prompt],
+            [CURSOR_AGENT_BIN, '--print', '--trust', '--force', '--model', CURSOR_AGENT_MODEL, prompt],
             capture_output=True,
             text=True,
             timeout=limit,
         )
 
         if result.returncode != 0:
-            logger.warning(f'OpenCode CLI error for {cache_key}: {result.stderr}')
+            logger.warning(f'CursorAgent CLI error for {cache_key}: {result.stderr}')
             return None
 
         text = result.stdout.strip()
         return _parse_json_response(text, cache_key)
 
     except subprocess.TimeoutExpired:
-        logger.warning(f'OpenCode CLI timeout for {cache_key}')
+        logger.warning(f'CursorAgent CLI timeout for {cache_key}')
         return None
     except FileNotFoundError:
         logger.warning(
-            'OpenCode CLI not found. Install: https://opencode.ai/docs (e.g. brew install anomalyco/tap/opencode)'
+            'CursorAgent CLI not found. Install Cursor Agent CLI and run `cursor-agent login`.'
         )
         return None
     except Exception as e:
-        logger.warning(f'OpenCode CLI error for {cache_key}: {e}')
+        logger.warning(f'CursorAgent CLI error for {cache_key}: {e}')
         return None
 
 
@@ -307,7 +307,7 @@ def score_adoption_activity(
     result = _query_scoring_llm(
         ADOPTION_ACTIVITY_PROMPT.format(symbol=symbol, name=name, hint=hint),
         cache_key,
-        cli_timeout=OPENCODE_ADOPTION_TIMEOUT,
+        cli_timeout=CURSOR_AGENT_ADOPTION_TIMEOUT,
     )
 
     if result:

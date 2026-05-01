@@ -34,11 +34,11 @@ log "Starting ensemble discovery pipeline (3 independent runs + review + merge)"
 log "Project: $PROJECT_DIR"
 log "Output directory: $REPORT_DIR"
 
-# OpenCode CLI
-OPENCODE_BIN="${OPENCODE_BIN:-opencode}"
-OPENCODE_MODEL="${OPENCODE_MODEL:-opencode/big-pickle}"
-if ! command -v "$OPENCODE_BIN" &> /dev/null; then
-    log "ERROR: OpenCode CLI not found. Install: https://opencode.ai/docs"
+# CursorAgent CLI
+CURSOR_AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
+CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-gpt-5}"
+if ! command -v "$CURSOR_AGENT_BIN" &> /dev/null; then
+    log "ERROR: cursor-agent CLI not found. Install Cursor Agent and run cursor-agent login."
     exit 1
 fi
 
@@ -109,7 +109,7 @@ $focus
 
     log "  Starting discovery run #$run_id..."
 
-    if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
+    if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
         log "  Discovery run #$run_id completed: $output_file"
         return 0
     else
@@ -201,7 +201,7 @@ Today's date: $TODAY"
 
 REVIEW_FILE="$REPORT_DIR/fact_check_review.md"
 
-if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
+if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
     log "Fact-check review completed: $REVIEW_FILE"
 else
     log "ERROR: Fact-check review failed"
@@ -289,7 +289,7 @@ Today's date: $TODAY"
 
 FINAL_REPORT="$DISCOVERY_DIR/report_$MONTH_STAMP.md"
 
-if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
+if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
     log "Final consolidated report generated: $FINAL_REPORT"
 else
     log "ERROR: Report merge failed"

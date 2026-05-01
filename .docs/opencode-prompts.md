@@ -1,8 +1,8 @@
 # OpenCode session prompts
 
-**To use this file in one step:** open it in the project, then ask OpenCode: *“Read `.docs/opencode-prompts.md` and run the prompt in section N (or the one I name). Follow `CLAUDE.md` and use the real shell — do not only suggest commands.”*
+**To use this file in one step:** open it in the project, then ask OpenCode: *“Read `.docs/opencode-prompts.md` and run the prompt in section N (or the one I name). Follow `Agents.md` and use the real shell — do not only suggest commands.”*
 
-Copy one block below when you want a self-contained message without opening the file. Ground rules live in `CLAUDE.md`; scoring logic in `pipeline/config.yaml` and `pipeline/assets.yaml`.
+Copy one block below when you want a self-contained message without opening the file. Ground rules live in `Agents.md`; scoring logic in `pipeline/config.yaml` and `pipeline/assets.yaml`.
 
 **Defaults for this project:** qualitative scores use the **OpenCode CLI** (`opencode run --model opencode/big-pickle`). A full scoring run can take a long time (many per-asset calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
 
@@ -20,7 +20,7 @@ In cryptocurrencies-board: run the weekly scoring pipeline end-to-end using my l
 - Confirm `public/latest.json` and `pipeline/storage/history.sqlite` updated and `framework_version` / asset outputs look sane.
 - If I asked to publish: `npm run build`, bump `public/index.html` dashboard.js cache query if the bundle changed, then `git add` only the relevant paths and commit with a conventional subject under 100 characters (no footer signature).
 
-Do not refactor unrelated code. Follow CLAUDE.md for framework behavior.
+Do not refactor unrelated code. Follow Agents.md for framework behavior.
 ```
 
 **Variant — no git:** use section 2.

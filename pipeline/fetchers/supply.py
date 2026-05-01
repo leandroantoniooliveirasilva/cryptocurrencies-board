@@ -32,10 +32,12 @@ MAX_RETRIES = 3
 _last_request_time = 0.0
 _rate_limit_lock = threading.Lock()
 
-# OpenCode CLI (default Big Pickle)
-OPENCODE_BIN = os.environ.get('OPENCODE_BIN', 'opencode')
-OPENCODE_MODEL = os.environ.get('OPENCODE_MODEL', 'opencode/big-pickle')
-OPENCODE_SUPPLY_TIMEOUT = int(os.environ.get('OPENCODE_SUPPLY_TIMEOUT', '60'))
+# CursorAgent CLI
+CURSOR_AGENT_BIN = os.environ.get('CURSOR_AGENT_BIN', 'cursor-agent')
+CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'gpt-5')
+CURSOR_AGENT_SUPPLY_TIMEOUT = int(
+    os.environ.get('CURSOR_AGENT_SUPPLY_TIMEOUT', os.environ.get('OPENCODE_SUPPLY_TIMEOUT', '60'))
+)
 
 
 def _rate_limit():
@@ -190,7 +192,7 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
     else:
         supply_str = "No supply data available - assess based on known tokenomics"
 
-    result = _invoke_opencode_supply(
+    result = _invoke_cursor_agent_supply(
         SUPPLY_PROMPT.format(symbol=symbol, name=name, supply_data=supply_str),
         cache_key
     )
@@ -203,30 +205,30 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
     return _compute_fallback_score(symbol, supply_data)
 
 
-def _invoke_opencode_supply(prompt: str, cache_key: str) -> Optional[dict]:
-    """``opencode run`` for supply scoring."""
+def _invoke_cursor_agent_supply(prompt: str, cache_key: str) -> Optional[dict]:
+    """``cursor-agent --print`` for supply scoring."""
     try:
         result = subprocess.run(
-            [OPENCODE_BIN, 'run', '--pure', '--model', OPENCODE_MODEL, prompt],
+            [CURSOR_AGENT_BIN, '--print', '--trust', '--force', '--model', CURSOR_AGENT_MODEL, prompt],
             capture_output=True,
             text=True,
-            timeout=OPENCODE_SUPPLY_TIMEOUT,
+            timeout=CURSOR_AGENT_SUPPLY_TIMEOUT,
         )
 
         if result.returncode != 0:
-            logger.warning(f'OpenCode CLI failed for {cache_key}: {result.stderr}')
+            logger.warning(f'CursorAgent CLI failed for {cache_key}: {result.stderr}')
             return None
 
         return _parse_json_response(result.stdout, cache_key)
 
     except subprocess.TimeoutExpired:
-        logger.warning(f'OpenCode CLI timeout for {cache_key}')
+        logger.warning(f'CursorAgent CLI timeout for {cache_key}')
         return None
     except FileNotFoundError:
-        logger.warning('OpenCode CLI not found (see https://opencode.ai/docs)')
+        logger.warning('CursorAgent CLI not found; install and run `cursor-agent login`')
         return None
     except Exception as e:
-        logger.warning(f'OpenCode CLI error for {cache_key}: {e}')
+        logger.warning(f'CursorAgent CLI error for {cache_key}: {e}')
         return None
 
 
