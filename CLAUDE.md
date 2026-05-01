@@ -126,7 +126,7 @@ Automation is **macOS launchd** (see `scripts/install-launchd.sh`), not cron. Al
 ```
 Weekly dimension job (Sunday 12:00 UTC) — scripts/run-local.sh
 ├── Fetch: DefiLlama (TVL, revenue) where needed for dimensions
-├── Score: OpenCode CLI (`opencode run --print`, default **Big Pickle** `opencode/big-pickle`) for qualitative dimensions
+├── Score: OpenCode CLI (`opencode run`, default **Big Pickle** `opencode/big-pickle`) for qualitative dimensions
 ├── Composite: Weighted score by asset_category (strict required dimensions → scoring_errors if missing)
 ├── Store: Append snapshot to history.sqlite; GLI/F&G/market_context reused from prior latest.json
 └── Output: latest.json (action null until daily job), commit, push
@@ -195,7 +195,7 @@ Store in `.env` (auto-loaded):
 FRED_API_KEY=xxx               # Optional (GLI filter)
 ```
 
-Qualitative and supply LLM calls use the **OpenCode CLI** (`opencode run --print --model opencode/big-pickle` by default). Configure auth per [OpenCode docs](https://opencode.ai/docs) (e.g. OpenCode Zen). Override with `OPENCODE_BIN`, `OPENCODE_MODEL`, `OPENCODE_RUN_TIMEOUT` in `.env`.
+Qualitative and supply LLM calls use the **OpenCode CLI** (`opencode run --model opencode/big-pickle` by default). Configure auth per [OpenCode docs](https://opencode.ai/docs) (e.g. OpenCode Zen). Override with `OPENCODE_BIN`, `OPENCODE_MODEL`, `OPENCODE_RUN_TIMEOUT` in `.env`.
 
 ## Parallel Workers
 

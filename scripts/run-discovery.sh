@@ -73,7 +73,7 @@ Today's date: $(date -u +"%Y-%m-%d")
 log "Running OpenCode discovery (model: $OPENCODE_MODEL)..."
 cd "$PROJECT_DIR"
 
-if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
+if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$DISCOVERY_PROMPT" 2>&1 | tee -a "$LOG_FILE" > "$REPORT_FILE.tmp"; then
     mv "$REPORT_FILE.tmp" "$REPORT_FILE"
     log "Discovery report generated: $REPORT_FILE"
 

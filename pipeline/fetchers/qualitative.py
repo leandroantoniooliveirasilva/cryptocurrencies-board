@@ -1,4 +1,4 @@
-"""Qualitative scoring via OpenCode CLI: ``opencode run --print`` (default model Big Pickle)."""
+"""Qualitative scoring via OpenCode CLI: ``opencode run`` (default model Big Pickle)."""
 
 import json
 import logging
@@ -147,11 +147,11 @@ def _invoke_opencode_run(
     cache_key: str,
     timeout_sec: Optional[int] = None,
 ) -> Optional[dict]:
-    """``opencode run --print --model …`` (non-interactive)."""
+    """``opencode run --model …`` (non-interactive)."""
     limit = timeout_sec if timeout_sec is not None else OPENCODE_RUN_TIMEOUT
     try:
         result = subprocess.run(
-            [OPENCODE_BIN, 'run', '--print', '--model', OPENCODE_MODEL, prompt],
+            [OPENCODE_BIN, 'run', '--pure', '--model', OPENCODE_MODEL, prompt],
             capture_output=True,
             text=True,
             timeout=limit,

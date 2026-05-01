@@ -4,7 +4,7 @@
 # Why this feels slower than discovery:
 # - Discovery is usually a few large OpenCode prompts (one report per phase).
 # - Scoring runs up to several OpenCode runs *per watchlist asset* (regulatory,
-#   institutional, value capture, adoption), each `opencode run --print` (default Big Pickle).
+#   institutional, value capture, adoption), each `opencode run` (default Big Pickle).
 # - A slow or timing-out call can burn the full per-call timeout (see
 #   OPENCODE_RUN_TIMEOUT / OPENCODE_ADOPTION_TIMEOUT in .env).
 #

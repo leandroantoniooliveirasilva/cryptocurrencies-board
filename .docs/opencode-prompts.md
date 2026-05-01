@@ -4,7 +4,7 @@
 
 Copy one block below when you want a self-contained message without opening the file. Ground rules live in `CLAUDE.md`; scoring logic in `pipeline/config.yaml` and `pipeline/assets.yaml`.
 
-**Defaults for this project:** qualitative scores use the **OpenCode CLI** (`opencode run --print --model opencode/big-pickle`). A full scoring run can take a long time (many per-asset calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
+**Defaults for this project:** qualitative scores use the **OpenCode CLI** (`opencode run --model opencode/big-pickle`). A full scoring run can take a long time (many per-asset calls). Use `./scripts/run-scoring.sh` (see script header for `SCORING_WALL_SECONDS`).
 
 ---
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Local pipeline runner for macOS
-# Uses OpenCode CLI (opencode run --print; default model Big Pickle)
+# Uses OpenCode CLI (opencode run; default model Big Pickle)
 
 set -e
 

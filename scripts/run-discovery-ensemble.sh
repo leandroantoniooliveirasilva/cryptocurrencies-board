@@ -109,7 +109,7 @@ $focus
 
     log "  Starting discovery run #$run_id..."
 
-    if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
+    if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
         log "  Discovery run #$run_id completed: $output_file"
         return 0
     else
@@ -201,7 +201,7 @@ Today's date: $TODAY"
 
 REVIEW_FILE="$REPORT_DIR/fact_check_review.md"
 
-if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
+if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
     log "Fact-check review completed: $REVIEW_FILE"
 else
     log "ERROR: Fact-check review failed"
@@ -289,7 +289,7 @@ Today's date: $TODAY"
 
 FINAL_REPORT="$DISCOVERY_DIR/report_$MONTH_STAMP.md"
 
-if "$OPENCODE_BIN" run --print --model "$OPENCODE_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
+if "$OPENCODE_BIN" run --pure --model "$OPENCODE_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
     log "Final consolidated report generated: $FINAL_REPORT"
 else
     log "ERROR: Report merge failed"

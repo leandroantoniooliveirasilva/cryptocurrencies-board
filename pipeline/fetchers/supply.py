@@ -204,10 +204,10 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
 
 
 def _invoke_opencode_supply(prompt: str, cache_key: str) -> Optional[dict]:
-    """``opencode run --print`` for supply scoring."""
+    """``opencode run`` for supply scoring."""
     try:
         result = subprocess.run(
-            [OPENCODE_BIN, 'run', '--print', '--model', OPENCODE_MODEL, prompt],
+            [OPENCODE_BIN, 'run', '--pure', '--model', OPENCODE_MODEL, prompt],
             capture_output=True,
             text=True,
             timeout=OPENCODE_SUPPLY_TIMEOUT,
