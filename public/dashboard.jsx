@@ -1160,7 +1160,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                         {gliTrendLabel.charAt(0).toUpperCase() + gliTrendLabel.slice(1)}
                         {gli.current && gli.offset_value && ` (current: $${gli.current.toFixed(1)}T vs ${gli.offset_days}d ago: $${gli.offset_value.toFixed(1)}T)`}
                         {'. '}
-                        {gli.downtrend ? 'Filter active: liquidity contracting, downgrades accumulate signals.' : 'Filter neutral: liquidity expanding, no downgrade.'}
+                        {gli.downtrend ? 'Filter active: liquidity contracting — accumulation signals downgraded one level.' : 'Filter neutral: liquidity expanding, no downgrade.'}
                         {gli.source && ` Source: ${gli.source}.`}
                       </>
                     ) : (
@@ -1192,7 +1192,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                         {asset.rs_vs_btc.underperforming ? 'Underperforming' : 'Holding or outperforming'} BTC
                         {typeof asset.rs_vs_btc.change_pct === 'number' && ` by ${asset.rs_vs_btc.change_pct > 0 ? '+' : ''}${(asset.rs_vs_btc.change_pct * 100).toFixed(1)}%`}
                         {` over ${rs?.lookback_days || 90} days`}
-                        {asset.rs_vs_btc.underperforming && '. Filter active: downgrades accumulate signals.'}
+                        {asset.rs_vs_btc.underperforming && '. Filter active: RS weak vs BTC — accumulation signals downgraded one level.'}
                         {!asset.rs_vs_btc.underperforming && '. Filter neutral: no downgrade.'}
                       </>
                     ) : (
@@ -1220,7 +1220,7 @@ function DetailModal({ asset, onClose, isMobile, gli, rs, fearGreed }) {
                     {fearGreed?.enabled ? (
                       <>
                         {fgClassification}{fgValue !== null && ` (${fgValue}/100)`}
-                        {fgValue !== null && fgValue >= 70 && '. Filter active: extreme greed detected, downgrades accumulate signals.'}
+                        {fgValue !== null && fgValue >= 70 && '. Filter active: extreme greed — accumulation signals downgraded one level.'}
                         {fgValue !== null && fgValue < 70 && '. Filter neutral: sentiment not extreme, no downgrade.'}
                       </>
                     ) : (
@@ -1459,7 +1459,7 @@ function ActionSummary({ assets, isMobile, minScore = 50, strongCount = 0, gli =
           gap: `${SPACE.sm}px`,
         }}>
           <Info size={14} strokeWidth={1.5} />
-          <span>GLI contracting — strong-accumulate signals downgraded</span>
+          <span>GLI contracting — accumulation signals downgraded one level</span>
         </div>
       )}
 
@@ -1609,7 +1609,7 @@ function GliSection({ gli, isMobile }) {
         }}>
           <p style={{ margin: 0 }}>
             <strong style={{ color: PALETTE.textPrimary }}>Global Liquidity Index</strong> tracks aggregate central bank liquidity with a {offsetDays}-day offset.
-            When liquidity is contracting (current GLI &lt; {offsetDays} days ago), accumulation signals are downgraded because even quality assets tend to fall further during liquidity withdrawal.
+            When liquidity is contracting (current GLI &lt; {offsetDays} days ago), accumulation signals are downgraded one level (same rule as RS and Fear & Greed filters) because even quality assets tend to fall further during liquidity withdrawal.
           </p>
           <p style={{ margin: `${SPACE.sm}px 0 0`, fontSize: TYPE.caption, color: PALETTE.textMuted }}>
             Current: {gli.current?.toLocaleString() ?? 'N/A'} | {offsetDays}d ago: {gli.offset_value?.toLocaleString() ?? 'N/A'} | Source: {gli.source}
@@ -1690,7 +1690,7 @@ function FearGreedSection({ fearGreed, isMobile }) {
         }}>
           <p style={{ margin: 0 }}>
             <strong style={{ color: PALETTE.textPrimary }}>Fear & Greed Index</strong> measures market sentiment from 0 (Extreme Fear) to 100 (Extreme Greed).
-            When the index reaches {fearGreed.threshold}+ (Greed/Extreme Greed), accumulation signals are downgraded because buying during euphoria often means buying near local tops.
+            When the index reaches {fearGreed.threshold}+ (Greed/Extreme Greed), accumulation signals are downgraded one level because buying during euphoria often means buying near local tops.
           </p>
           <p style={{ margin: `${SPACE.sm}px 0 0`, fontSize: TYPE.caption, color: PALETTE.textMuted }}>
             Current: {value} ({classification}) | Threshold: ≥{fearGreed.threshold} triggers downgrade | {isGreedy ? '⚠️ Downgrade active' : '✓ No downgrade'}
@@ -1915,7 +1915,7 @@ function ActionLegend({ isMobile }) {
   const [expanded, setExpanded] = useState(false);
 
   const items = [
-    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32, weekly RSI ≥42). Downgrades to accumulate when any filter active: GLI contracting, RS underperforming BTC, or Fear & Greed ≥70.' },
+    { key: 'strong-accumulate', text: 'Capitulation (weekly + daily RSI <30) or Wyckoff dip (Phase C+, daily RSI ≤32, weekly RSI ≥42). When any macro filter is active (GLI contracting, RS weak vs BTC, or Fear & Greed ≥70), accumulation moves down one level (strong-accumulate→accumulate, accumulate→hold).' },
     { key: 'accumulate', text: 'Weekly RSI <30 alone, or Wyckoff dip filtered by RSI slope. Downgrades to hold when any macro filter active (GLI, RS, or F&G).' },
     { key: 'promote', text: 'Runner-up crossing leader threshold. Composite ≥75 with 30-day trend ≥+8 and 7-day trend ≥+2.' },
     { key: 'hold', text: 'Active leader position. No accumulation signal. Patience by design — also the downgrade target when macro filters suppress accumulation.' },
@@ -2133,7 +2133,7 @@ function RelativeStrengthSection({ assets, rs, isMobile }) {
             fontFamily: 'ui-monospace, monospace',
             fontStyle: 'italic',
           }}>
-            Threshold: ±{(threshold * 100).toFixed(0)}%. Underperforming assets have strong-accumulate signals suppressed.
+            Threshold: ±{(threshold * 100).toFixed(0)}%. Underperforming assets get a one-level downgrade of accumulation signals (same macro-filter rule as GLI / Fear & Greed).
           </div>
         </div>
       )}

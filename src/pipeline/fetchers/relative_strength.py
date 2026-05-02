@@ -2,7 +2,7 @@
 
 Compares each asset's performance against Bitcoin to detect assets
 that are underperforming the market leader. When an asset is in a
-prolonged downtrend relative to BTC, accumulation signals are muted.
+prolonged downtrend relative to BTC, accumulation signals are downgraded one level (same macro-filter rule as GLI / Fear & Greed).
 """
 
 import logging

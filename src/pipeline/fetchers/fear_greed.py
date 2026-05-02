@@ -1,7 +1,7 @@
 """Fear & Greed Index fetcher.
 
 Fetches the Bitcoin Fear & Greed Index from Alternative.me API.
-Used as a sentiment filter to downgrade accumulation signals during extreme greed.
+Used as a sentiment filter to downgrade accumulation signals one level during extreme greed (same rule as GLI / RS filters).
 """
 
 import logging
