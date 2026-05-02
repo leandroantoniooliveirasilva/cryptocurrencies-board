@@ -115,10 +115,9 @@ def compute_composite_legacy(scores: dict) -> tuple[int, int]:
         Tuple of (rounded composite score 0-100, count of missing dimensions)
     """
     legacy_weights = {
-        "institutional": 0.30,
-        "revenue": 0.30,
-        "regulatory": 0.25,
-        "wyckoff": 0.15,
+        "institutional": 0.35,
+        "revenue": 0.35,
+        "regulatory": 0.30,
     }
 
     total = 0.0

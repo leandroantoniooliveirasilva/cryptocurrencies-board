@@ -5,7 +5,7 @@ Status: Implemented — weights in `src/pipeline/config.yaml` (`weights_by_categ
 Related: `.docs/decisions.md`, `src/pipeline/config.yaml`, `src/pipeline/assets.yaml`, `src/pipeline/run.py`, `.agents/skills/crypto-discovery/instructions.md`.
 
 ## 1. Problem Statement
-The current framework uses five universal dimensions — institutional, revenue, regulatory, supply, wyckoff — with four category-specific weight profiles (store-of-value, smart-contract, defi, infrastructure). Two recurring problems:
+The framework uses **`weights_by_category`** over weighted dimensions such as institutional, adoption/activity, value capture, regulatory, and supply. **Wyckoff is not a weighted dimension** — it is a global post-score filter (with GLI / RS / Fear–Greed). Two recurring problems:
 
 1. "Revenue" means something different in each category — and sometimes does not apply. Forcing a single definition creates incoherence: BTC gets an LLM-estimated revenue score even though fees go to miners, not holders; CANTON excludes revenue via `fee_model: burn` and redistributes weight; XRP/XLM/HBAR get punitive revenue scores despite fees being minimal by design.
 2. The "infrastructure" bucket is too broad. LINK (oracle), CANTON (enterprise-ledger), XRP (payments rail), TIA (data availability), EIGEN (restaking) have materially different value theses and measurable signals. One weight profile cannot represent them all.

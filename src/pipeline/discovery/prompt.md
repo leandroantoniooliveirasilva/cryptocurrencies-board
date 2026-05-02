@@ -49,11 +49,9 @@ Use `fee_model` in `assets.yaml` per `.docs/research/asset-category-taxonomy.md`
 - Token distribution (avoid concentrated holdings)
 - Inflation/emission schedule
 
-### 5. Wyckoff (technical filter)
+**Wyckoff phase — global filter (not a composite dimension):** Informs timing and action downgrades on the daily job; do **not** treat as a weighted scoring dimension alongside fundamentals.
 
-Phase informs **timing and action downgrades**, not composite weights.
-
-### 6. Value accrual (discovery filter) — CRITICAL
+### 5. Value accrual (discovery filter) — CRITICAL
 
 **A successful project does not guarantee token appreciation.** Evaluate how protocol success translates to token value:
 
@@ -107,7 +105,7 @@ Before searching for new projects, explicitly evaluate whether any **major estab
 - Are there assets with significant ETF infrastructure not being tracked?
 - Are there category leaders (L1s, DeFi, infrastructure) absent without clear rationale?
 
-**Evaluate each omission candidate** using the full 5-dimension framework. If an asset scores well, recommend adding it — regardless of whether it's "new" or "exciting."
+**Evaluate each omission candidate** using the **composite dimensions** in `weights_by_category` for its category. If an asset scores well, recommend adding it — regardless of whether it's "new" or "exciting." (Wyckoff is a global filter, not a composite dimension.)
 
 Common omissions to check: ETH, BNB, ADA, DOT, MATIC, ATOM, UNI, LTC, etc.
 
@@ -158,12 +156,12 @@ Generate a markdown report with:
 ### [Symbol] - [Name]
 - **Asset Type**: [store-of-value|smart-contract|defi|infrastructure]
 - **Recommended Tier**: [leader|runner-up|observation]
-- **Scores**:
+- **Scores** (composite dimensions for this category only):
   - Institutional: [0-100] - [brief rationale]
-  - Revenue: [0-100] - [brief rationale]
+  - Adoption / value capture (as weighted): [0-100] - [brief rationale]
   - Regulatory: [0-100] - [brief rationale]
   - Supply: [0-100] - [brief rationale]
-  - Wyckoff: [0-100] - [current phase]
+- **Wyckoff** (filter only, not composite): [phase or n/a] — one line
 - **Value Accrual**: [strong|moderate|weak] - [mechanism description]
 - **Composite**: [weighted score]
 - **Thesis**: [2-3 sentences on why this asset belongs]

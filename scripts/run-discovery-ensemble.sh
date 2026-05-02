@@ -96,13 +96,13 @@ $CURRENT_ASSETS
 
 1. **OMISSION AUDIT (MANDATORY FIRST)**: Before new discoveries, check if major established assets are missing from the watchlist (ETH, BNB, ADA, DOT, etc.). Evaluate any omissions using the full framework.
 2. Search the web for promising crypto projects released or gaining traction in the past 30-60 days
-3. Evaluate each candidate against our framework:
+3. Evaluate each candidate against weighted composite dimensions (`weights_by_category`) plus value accrual:
    - Institutional (ETF potential, fund holdings, custody)
-   - Revenue (protocol fees, sustainable revenue)
+   - Adoption / value capture (as weighted — fees, TVL, usage)
    - Regulatory (jurisdictional clarity, compliance)
    - Supply (tokenomics, exchange reserves, holder distribution)
-   - Wyckoff (current accumulation/distribution phase)
-   - Value Accrual (CRITICAL: how does protocol success translate to token appreciation?)
+   - Value accrual (CRITICAL: how does protocol success translate to token appreciation?)
+   Wyckoff phase is a global filter (daily indicators), not a composite dimension — optional qualitative context only.
 4. For current watchlist assets, flag any that should be removed (fundamental deterioration)
 5. Propose additions with tier placement (leader, runner-up, observation)
 6. Output a structured report in markdown format

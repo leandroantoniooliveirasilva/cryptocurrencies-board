@@ -11,7 +11,7 @@ Track all changes to weights, thresholds, and rationale. This file prevents fram
 - Replaced flat `asset_type` weight profiles with **`weights_by_category`** in `src/pipeline/config.yaml` (nine categories + `default`).
 - Each watchlist asset has **`asset_category`** (and optional **`fee_model`**) in `src/pipeline/assets.yaml`.
 - **Value capture** and **adoption_activity** replace a single **revenue** dimension where the taxonomy calls for it; dimensions omitted for a category are excluded and weights renormalise.
-- **Wyckoff** stays in `scores` for display and phase logic but is **not** part of composite weights; it remains a **post-score filter** with GLI / RS / Fear–Greed.
+- **Wyckoff** is **not** a composite dimension; phase/score fields stay in JSON for **global filter** logic and UI only (with GLI / RS / Fear–Greed), excluded from composite weights.
 - SQLite column **`snapshots.revenue`** still stores the value-capture score for backward compatibility.
 - **`framework_version`**: `3.0`.
 

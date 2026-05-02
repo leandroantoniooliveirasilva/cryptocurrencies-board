@@ -162,7 +162,7 @@ Requires manual decision to promote in `assets.yaml`.
 
 ## Score Rationales (Evidence-Backed Claims)
 
-Each dimension score includes a rationale explaining the data behind it:
+Each **composite dimension** includes a rationale. **Wyckoff** is not weighted in the composite; `wyckoff` / `wyckoff_rationale` support the **global phase filter** only.
 
 ```json
 "score_rationales": {
@@ -170,13 +170,13 @@ Each dimension score includes a rationale explaining the data behind it:
   "regulatory": "SEC clarity via Ripple ruling, Coinbase custody...",
   "revenue": "Daily revenue: $1.2M (~$438M/year). TVL: $5.2B. Revenue/TVL ratio: 8.4%.",
   "supply": "Fixed supply cap, 93% circulating, minimal inflation.",
-  "wyckoff": "Position 65% in 90d range, 7d trend +3.2%, 30d trend -1.5%..."
+  "wyckoff": "Position 65% in 90d range, 7d trend +3.2%, 30d trend -1.5%... (filter, not composite weight)"
 }
 ```
 
 **Use rationales for validation:**
 
-- When Wyckoff phase seems wrong, check `wyckoff` rationale for underlying metrics
+- When Wyckoff phase seems wrong, check `wyckoff` rationale for underlying metrics (phase filter, not a dimension weight)
 - When revenue score seems off, verify the actual fee data in rationale
 - Cross-reference supply rationale with tokenomics claims
 

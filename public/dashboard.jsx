@@ -1771,7 +1771,7 @@ function StrategySection({ isMobile }) {
                 <strong style={{ color: PALETTE.textPrimary }}>Buying weakness in non-leaders = momentum trap.</strong> Without fundamental strength, oversold assets often continue declining.
               </p>
               <p style={{ margin: 0 }}>
-                <strong style={{ color: PALETTE.textPrimary }}>Macro filters suppress accumulation</strong> when conditions are unfavorable: GLI contracting, asset underperforming BTC, or Fear & Greed in greed territory. When any filter is active, signals downgrade one level (strong-accumulate→accumulate, accumulate→hold).
+                <strong style={{ color: PALETTE.textPrimary }}>Macro and structure filters suppress accumulation</strong> when conditions are unfavorable: GLI contracting, asset underperforming BTC, Fear & Greed in greed territory, or adverse Wyckoff phase (distribution/markdown). When any filter is active, signals downgrade one level (strong-accumulate→accumulate, accumulate→hold).
               </p>
             </div>
           </div>
@@ -1801,7 +1801,6 @@ function StrategySection({ isMobile }) {
               <div><span style={{ color: PALETTE.textSecondary }}>Revenue</span> — Protocol fees, sustainability</div>
               <div><span style={{ color: PALETTE.textSecondary }}>Regulatory</span> — Jurisdictional clarity</div>
               <div><span style={{ color: PALETTE.textSecondary }}>Supply</span> — Exchange reserves, distribution</div>
-              <div><span style={{ color: PALETTE.textSecondary }}>Wyckoff</span> — Phase filter (not in composite weight)</div>
             </div>
           </div>
 

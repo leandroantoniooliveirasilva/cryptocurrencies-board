@@ -75,12 +75,12 @@ $CURRENT_ASSETS
 ## Output Instructions
 
 1. Search the web for promising crypto projects released or gaining traction in the past 30-60 days
-2. Evaluate each candidate against our 5-dimension framework:
+2. Evaluate each candidate against weighted composite dimensions (`weights_by_category` in config):
    - Institutional (ETF potential, fund holdings, custody)
-   - Revenue (protocol fees, sustainable revenue)
+   - Adoption / value capture (as weighted — fees, TVL, usage)
    - Regulatory (jurisdictional clarity, compliance)
    - Supply (tokenomics, exchange reserves, holder distribution)
-   - Wyckoff (current accumulation/distribution phase)
+   Wyckoff phase is a global filter (daily indicators), not a composite dimension — optional qualitative context only.
 3. For current watchlist assets, flag any that should be removed (fundamental deterioration)
 4. Propose additions with tier placement (leader, runner-up, observation)
 5. Output a structured report in markdown format

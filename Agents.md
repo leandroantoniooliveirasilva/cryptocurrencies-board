@@ -308,20 +308,19 @@ public/
 
 ### Evidence-Backed Claims (Principle 8)
 
-All dimension scores and Wyckoff phase identifications must include supporting evidence:
+**Composite dimensions** (whatever is weighted for that asset’s `asset_category`) must include supporting evidence — institutional, adoption/activity, value capture (when weighted), regulatory, supply.
 
-**Required for each dimension:**
+**Wyckoff** is **not** a composite dimension. Phase classification is a **global filter** (daily indicators); it still requires evidence. Stored as `scores.wyckoff` / `wyckoff_rationale` for display and filter/downgrade logic only — excluded from composite weights.
 
-- **Wyckoff**: Price metrics that led to phase classification (position in 90d range, 7d/30d trends, volatility)
-- **Institutional**: Specific ETF products, fund holdings, custody availability cited
-- **Value capture / adoption**: Evidence appropriate to the category (DefiLlama, metrics APIs, or research)
-- **Regulatory**: Specific regulatory actions, classifications, or compliance status
-- **Supply**: Exchange reserve data, holder distribution, inflation metrics
+**Wyckoff phase evidence** (classification rationale):
 
-**Format in JSON output:**
+- Price metrics that led to phase classification (position in 90d range, 7d/30d trends, volatility)
+
+**Format in JSON output** (Wyckoff alongside weighted dimensions for persistence only):
 
 ```json
 "scores": {
+  "institutional": 72,
   "wyckoff": 65,
   "wyckoff_rationale": "Distribution Phase B: position 72% in 90d range, 7d trend -2.1%, 30d trend +3.4%, consolidating near highs"
 }

@@ -79,11 +79,9 @@ Holder-accruing economics: fees to treasury, burns, staking real yield vs issuan
   - For burn-mint equilibrium (Canton): burns should exceed or match mints for net deflation
   - Burns from fee activity indicate real usage and demand
 
-### 6. Wyckoff (technical filter)
+**Wyckoff phase (global filter)** — Not a composite scoring dimension. Phase informs timing and action logic on the daily indicators job. You may mention phase qualitatively in narrative; do **not** list it as a 0–100 score alongside fundamental dimensions.
 
-Phase informs **timing and action downgrades**, not composite weights.
-
-### 7. Value accrual (discovery filter) — CRITICAL
+### 6. Value accrual (discovery filter) — CRITICAL
 
 **A successful project does not guarantee token appreciation.** Evaluate how protocol success translates to token value:
 
@@ -242,8 +240,8 @@ Flag any that should be demoted or removed.
 
 For each promising project:
 
-1. Score all 5 dimensions (0-100)
-2. Calculate weighted composite based on asset type
+1. Score all **weighted composite dimensions** for the candidate’s category (0–100 each; see `weights_by_category`)
+2. Calculate weighted composite from those dimensions only
 3. Determine appropriate tier
 4. Write investment thesis (2-3 sentences)
 
@@ -265,12 +263,12 @@ Output a markdown report following this structure:
 #### [Symbol] - [Name]
 - **Asset Type**: [store-of-value|smart-contract|defi|infrastructure]
 - **Recommended Tier**: [leader|runner-up|observation]
-- **Scores**:
+- **Scores** (composite dimensions only — omit N/A dimensions for category):
   - Institutional: [0-100] - [brief rationale]
-  - Revenue: [0-100] - [brief rationale]
+  - Adoption / value capture (as weighted): [0-100] - [brief rationale]
   - Regulatory: [0-100] - [brief rationale]
   - Supply: [0-100] - [brief rationale]
-  - Wyckoff: [0-100] - [current phase]
+- **Wyckoff context** (optional, filter only — not a composite score): [phase label or “n/a”] — one line
 - **Value Accrual**: [strong|moderate|weak] - [mechanism description]
 - **Composite**: [weighted score]
 - **Thesis**: [2-3 sentences]
