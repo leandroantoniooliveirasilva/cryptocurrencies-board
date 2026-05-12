@@ -17,20 +17,17 @@ logger = logging.getLogger(__name__)
 FEAR_GREED_API = "https://api.alternative.me/fng/"
 
 
-def fetch_fear_greed() -> dict:
+def fetch_fear_greed() -> Optional[dict]:
     """
     Fetch current Fear & Greed Index.
 
-    Returns:
-        Dict with:
-        - value: int (0-100)
-        - classification: str ("Extreme Fear", "Fear", "Neutral", "Greed", "Extreme Greed")
-        - timestamp: str (ISO format)
-        - greedy: bool (True if value >= threshold, triggers downgrade)
+    Returns ``None`` when the API call fails so the caller can retry or reuse
+    the previous run's value, instead of silently disabling the filter with a
+    fabricated record.
     """
     fg_cfg = getattr(config, 'fear_greed', None)
 
-    # Check if F&G filter is enabled
+    # Filter explicitly disabled in config — return the disabled record directly.
     if fg_cfg and not fg_cfg.enabled:
         return {
             "enabled": False,
@@ -52,7 +49,7 @@ def fetch_fear_greed() -> dict:
 
         if "data" not in data or len(data["data"]) == 0:
             logger.warning("Fear & Greed API returned no data")
-            return _fallback_result()
+            return None
 
         fg_data = data["data"][0]
         value = int(fg_data.get("value", 50))
@@ -77,18 +74,17 @@ def fetch_fear_greed() -> dict:
 
     except requests.RequestException as e:
         logger.warning(f"Failed to fetch Fear & Greed Index: {e}")
-        return _fallback_result()
+        return None
 
 
-def _fallback_result() -> dict:
-    """Return neutral fallback when API fails."""
-    return {
-        "enabled": False,  # Filter unavailable when API fails
-        "value": None,
-        "classification": None,
-        "greedy": False,  # Don't trigger downgrade on failure
-        "error": "API unavailable",
-    }
+def fetch_fear_greed_with_retry(max_attempts: int = 3) -> Optional[dict]:
+    """Retry ``fetch_fear_greed`` up to ``max_attempts`` times. Returns None if all fail."""
+    for attempt in range(1, max_attempts + 1):
+        data = fetch_fear_greed()
+        if data is not None:
+            return data
+        logger.warning(f'Fear & Greed fetch attempt {attempt}/{max_attempts} failed')
+    return None
 
 
 def log_pipeline_summary(log: logging.Logger, fg_data: dict) -> None:

@@ -184,18 +184,13 @@ def fetch_supply_metrics(coingecko_id: str) -> Optional[dict]:
         return None
 
 
-def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bool = True) -> dict:
+def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bool = True) -> Optional[dict]:
     """
-    Score supply dynamics using data + AI analysis.
+    Score supply dynamics using data + LLM analysis.
 
-    Args:
-        symbol: Asset symbol (e.g., 'BTC')
-        name: Asset name (e.g., 'Bitcoin')
-        coingecko_id: CoinGecko ID for fetching supply data
-        use_cache: Whether to use cached scores
-
-    Returns:
-        Dict with 'score' (int) and 'rationale' (str)
+    Returns ``None`` when the LLM call fails. The orchestrator handles retries
+    and prior-score fallback — no hardcoded or data-only fallback is applied
+    here so that composites do not drift between strong and neutral defaults.
     """
     cache_key = f"supply_{symbol}"
 
@@ -222,12 +217,22 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
         cache_key
     )
 
-    if result:
+    if result and _is_valid_supply_result(result):
         _supply_cache[cache_key] = result
         return result
 
-    # Fallback: compute from data if AI fails
-    return _compute_fallback_score(symbol, supply_data)
+    return None
+
+
+def _is_valid_supply_result(result: dict) -> bool:
+    """A scoring result is valid if it has a 0-100 score and non-empty rationale."""
+    score = result.get('score')
+    if not isinstance(score, (int, float)):
+        return False
+    if score < 0 or score > 100:
+        return False
+    rationale = (result.get('rationale') or '').strip()
+    return bool(rationale)
 
 
 def _invoke_agent_supply(prompt: str, cache_key: str) -> Optional[dict]:
@@ -278,66 +283,6 @@ def _parse_json_response(text: str, cache_key: str) -> Optional[dict]:
         return None
 
 
-def _compute_fallback_score(symbol: str, supply_data: Optional[dict]) -> dict:
-    """
-    Compute supply score from data when AI is unavailable.
-
-    Starts at 50 (neutral) and adjusts based on available metrics.
-    """
-    score = 50
-    factors = []
-
-    if supply_data:
-        # Max supply cap is bullish (+10)
-        if supply_data.get("has_max_supply"):
-            score += 10
-            factors.append("fixed supply cap")
-
-        # High circulating ratio is bullish (tokens already distributed)
-        circ_ratio = supply_data.get("circulating_ratio")
-        if circ_ratio is not None:
-            if circ_ratio >= 0.9:
-                score += 15
-                factors.append("90%+ circulating")
-            elif circ_ratio >= 0.7:
-                score += 8
-                factors.append("70%+ circulating")
-            elif circ_ratio < 0.5:
-                score -= 10
-                factors.append("low circulating ratio")
-
-        # Low inflation is bullish
-        inflation = supply_data.get("inflation_ratio")
-        if inflation is not None:
-            if inflation < 0.02:
-                score += 10
-                factors.append("minimal inflation")
-            elif inflation < 0.05:
-                score += 5
-                factors.append("low inflation")
-            elif inflation > 0.15:
-                score -= 10
-                factors.append("high inflation")
-
-    # Clamp score
-    score = max(0, min(100, score))
-
-    if factors:
-        rationale = f"Data-driven score from available supply metrics: {', '.join(factors)}."
-    elif supply_data:
-        rationale = (
-            'Data-driven score from partial CoinGecko supply fields; tokenomics context is incomplete '
-            '(missing reliable circulating/total/max relationships).'
-        )
-    else:
-        rationale = (
-            'Supply APIs unavailable, fallback neutral score applied from framework defaults '
-            '(no reliable tokenomics data returned).'
-        )
-
-    return {"score": score, "rationale": rationale}
-
-
 def compute_supply_score(
     symbol: str,
     name: str = None,
@@ -345,52 +290,25 @@ def compute_supply_score(
     conn = None,
     cache_writes: Optional[list[tuple[str, str, int, str]]] = None,
     use_in_memory_cache: bool = True,
-) -> dict:
+) -> Optional[dict]:
     """
     Compute supply/on-chain score (0-100) with rationale.
 
-    This is the main entry point - uses cached DB scores or computes fresh.
-
-    Args:
-        symbol: Asset symbol
-        name: Asset name (for AI prompt)
-        coingecko_id: CoinGecko ID for supply data
-        conn: Database connection for caching
-
-    Returns:
-        Dict with 'score' (int 0-100) and 'rationale' (str)
+    Returns ``None`` when the LLM call fails. The orchestrator handles retries
+    and prior-score fallback.
     """
-    # Try to get cached score from database
-    if conn:
-        from pipeline.storage import migrations
-        cached = migrations.get_cached_qualitative_score(conn, symbol, "supply")
-        if cached:
-            cached_rationale = (cached.get('rationale') or '').strip()
-            if cached_rationale != 'Limited supply data available.':
-                return {'score': cached['score'], 'rationale': cached['rationale']}
-            logger.info(
-                f'Refreshing cached supply rationale for {symbol} (placeholder detected)'
-            )
-
-    # Compute fresh score
     name = name or symbol
     result = score_supply(symbol, name, coingecko_id, use_cache=use_in_memory_cache)
-
-    # Handle case where result is None (shouldn't happen but defensive)
     if not result:
-        logger.warning(f"Failed to compute supply score for {symbol}, using fallback")
-        result = _compute_fallback_score(symbol, None)
+        return None
 
-    # Cache to database
-    if conn:
+    if conn and cache_writes is not None:
+        cache_writes.append((symbol, 'supply', result['score'], result['rationale']))
+    elif conn:
         from pipeline.storage import migrations
-        if cache_writes is not None:
-            cache_writes.append((symbol, 'supply', result['score'], result['rationale']))
-        else:
-            migrations.save_qualitative_score(
-                conn, symbol, 'supply',
-                result['score'], result['rationale']
-            )
+        migrations.save_qualitative_score(
+            conn, symbol, 'supply', result['score'], result['rationale']
+        )
 
     return {"score": result["score"], "rationale": result["rationale"]}
 

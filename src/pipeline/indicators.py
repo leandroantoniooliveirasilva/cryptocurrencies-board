@@ -255,12 +255,24 @@ def main():
 
     logger.info(f"Loaded {len(data['assets'])} assets from latest.json")
 
-    # Fetch macro filters
-    gli_data = gli.fetch_gli_data()
+    # Fetch macro filters (3-attempt retry; reuse previous snapshot's value on total failure)
+    fresh_gli = gli.fetch_gli_data_with_retry(max_attempts=3)
+    if fresh_gli is not None:
+        gli_data = fresh_gli
+    else:
+        gli_data = dict(data.get('gli') or {})
+        gli_data['source'] = 'unchanged'
+        logger.warning('GLI unavailable after 3 attempts; reusing value from previous snapshot')
     gli_downtrend = bool(gli_data.get('downtrend', False))
     gli.log_pipeline_summary(logger, gli_data)
 
-    fg_data = fear_greed.fetch_fear_greed()
+    fresh_fg = fear_greed.fetch_fear_greed_with_retry(max_attempts=3)
+    if fresh_fg is not None:
+        fg_data = fresh_fg
+    else:
+        fg_data = dict(data.get('fear_greed') or {})
+        fg_data['source'] = 'unchanged'
+        logger.warning('Fear & Greed unavailable after 3 attempts; reusing value from previous snapshot')
     fg_greedy = fg_data.get("greedy", False)
     fear_greed.log_pipeline_summary(logger, fg_data)
 

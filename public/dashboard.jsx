@@ -201,6 +201,7 @@ const TIER_CONFIG = {
   'leader': { label: 'Leaders', icon: CheckCircle2, accent: '#5aafcf', order: 0 },
   'runner-up': { label: 'Runner-ups', icon: Clock, accent: '#6a9a90', order: 1 },
   'observation': { label: 'Observation', icon: Eye, accent: '#8a8a9a', order: 2 },
+  'pending': { label: 'Pending Evaluation', icon: Clock, accent: '#b08a4a', order: 4 },
 };
 
 // Action colors: semantic scale from blue (positive) → neutral → red (negative)
@@ -2212,6 +2213,82 @@ function ScoringErrorsSection({ errors, isMobile }) {
   );
 }
 
+function PendingEvaluationSection({ assets, isMobile }) {
+  const [expanded, setExpanded] = useState(true);
+  if (!assets || assets.length === 0) return null;
+  const accent = TIER_CONFIG.pending.accent;
+
+  return (
+    <div style={{ marginBottom: `${SPACE.xl}px` }}>
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: accent,
+          padding: 0,
+          fontSize: TYPE.small,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          fontFamily: 'ui-monospace, monospace',
+          fontWeight: 500,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${SPACE.md}px`,
+          width: '100%',
+          textAlign: 'left',
+          minHeight: isMobile ? '44px' : 'auto',
+        }}
+      >
+        <div style={{ width: `${SPACE.xl}px`, height: '1px', background: accent }} />
+        <span style={{
+          transition: 'transform 0.2s',
+          display: 'inline-block',
+          transform: expanded ? 'rotate(90deg)' : 'none',
+          fontSize: TYPE.caption,
+        }}>▸</span>
+        <span>Pending Evaluation — {assets.length}</span>
+      </button>
+      {expanded && (
+        <div style={{ marginTop: `${SPACE.lg}px`, display: 'flex', flexDirection: 'column', gap: `${SPACE.md}px` }}>
+          <div style={{ fontSize: TYPE.caption, color: PALETTE.textMuted, fontStyle: 'italic' }}>
+            These assets are on the watchlist but could not be scored this run. They will appear in a tier once the next evaluation succeeds.
+          </div>
+          {assets.map((asset) => {
+            const missing = asset.pending_dimensions
+              || (asset.dimension_errors ? Object.keys(asset.dimension_errors) : []);
+            return (
+              <div
+                key={asset.symbol}
+                style={{
+                  padding: `${SPACE.md}px ${SPACE.lg}px`,
+                  background: PALETTE.cardBg,
+                  border: `1px solid ${accent}`,
+                  borderRadius: '2px',
+                  fontSize: TYPE.small,
+                  color: PALETTE.textPrimary,
+                  fontFamily: 'Georgia, serif',
+                }}
+              >
+                <div style={{ fontFamily: 'ui-monospace, monospace', color: accent, marginBottom: `${SPACE.xs}px` }}>
+                  {asset.symbol}{asset.name ? ` — ${asset.name}` : ''}
+                </div>
+                <div style={{ color: PALETTE.textSecondary, lineHeight: TYPE.relaxed }}>
+                  Awaiting evaluation
+                  {missing && missing.length > 0 ? ` (missing: ${missing.join(', ')})` : ''}.
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TierSection({ tier, assets, isMobile, defaultExpanded = false, gli, rs, fearGreed }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const config = TIER_CONFIG[tier];
@@ -2386,9 +2463,10 @@ function Dashboard() {
   const filteredAssets = useMemo(() => {
     // Filter out assets below minimum score threshold (from config)
     // Leaders are ALWAYS shown regardless of score to ensure visibility of deteriorating positions
+    // Pending assets are ALWAYS shown so the user can see what is still being evaluated
     const minScore = thresholds.min_display_score;
     const qualified = assets.filter(a =>
-      (a.composite || 0) >= minScore || a.tier === 'leader'
+      (a.composite || 0) >= minScore || a.tier === 'leader' || a.tier === 'pending'
     );
 
     return [...qualified].sort((a, b) => {
@@ -2402,7 +2480,7 @@ function Dashboard() {
   }, [assets, thresholds.min_display_score]);
 
   const groupedAssets = useMemo(() => {
-    const groups = { leader: [], 'runner-up': [], observation: [] };
+    const groups = { leader: [], 'runner-up': [], observation: [], pending: [] };
     filteredAssets.forEach(a => {
       if (groups[a.tier]) {
         groups[a.tier].push(a);
@@ -2487,6 +2565,7 @@ function Dashboard() {
             />
           );
         })}
+        <PendingEvaluationSection assets={groupedAssets.pending} isMobile={isMobile} />
         <ScoringErrorsSection errors={scoringErrors} isMobile={isMobile} />
       </div>
 

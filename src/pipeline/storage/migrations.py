@@ -563,3 +563,36 @@ def get_cached_qualitative_score(
     if row:
         return {"score": row["score"], "rationale": row["rationale"]}
     return None
+
+
+def get_any_qualitative_score(
+    conn: sqlite3.Connection,
+    symbol: str,
+    score_type: str,
+) -> Optional[dict]:
+    """
+    Return the most recent cached qualitative score regardless of age.
+
+    Used as a last-resort fallback after the LLM has failed every retry, so the
+    composite can keep using the previous successful evaluation rather than a
+    hardcoded default.
+
+    Returns:
+        Dict with ``score``, ``rationale`` and ``fetched_at``, or None if no
+        prior score has ever been cached for this (symbol, score_type) pair.
+    """
+    cursor = conn.execute(
+        """
+        SELECT score, rationale, fetched_at FROM qualitative_cache
+        WHERE asset_symbol = ? AND score_type = ?
+        """,
+        (symbol, score_type),
+    )
+    row = cursor.fetchone()
+    if row:
+        return {
+            "score": row["score"],
+            "rationale": row["rationale"],
+            "fetched_at": row["fetched_at"],
+        }
+    return None

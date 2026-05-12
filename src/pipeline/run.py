@@ -107,6 +107,9 @@ def _score_asset_subprocess_timeout_sec() -> Optional[int]:
     return n
 
 
+SCORING_MAX_ATTEMPTS = 3
+
+
 class DimensionScoringError(Exception):
     """Raised when a required weighted dimension is missing (strict scoring, no renormalisation)."""
 
@@ -127,14 +130,12 @@ def _is_low_quality_rationale(rationale: Optional[str]) -> bool:
     return any(marker in text for marker in low_quality_markers)
 
 
-def _collect_dimension_errors(
-    scores: dict,
-    asset_category: str,
-    fee_model: Optional[str],
+def _required_dimensions(
     weights_profile: dict[str, float],
+    fee_model: Optional[str],
 ) -> list[str]:
-    """Return human-readable errors for any required weighted dimension that is missing."""
-    errors: list[str] = []
+    """The dimensions this asset's category requires for a valid composite."""
+    needed: list[str] = []
     for dim, weight in weights_profile.items():
         if weight is None or float(weight) <= 0:
             continue
@@ -142,10 +143,52 @@ def _collect_dimension_errors(
             continue
         if dim == 'adoption_activity' and not should_score_adoption_activity(weights_profile):
             continue
-        val = scores.get(dim)
-        if val is None or (isinstance(val, float) and val != val):
-            errors.append(f'{dim}:missing')
-    return errors
+        needed.append(dim)
+    return needed
+
+
+def _stale_score_prefix(fetched_at: Optional[str]) -> str:
+    """Friendly note placed in front of a cached rationale used as fallback."""
+    when = ''
+    if fetched_at:
+        try:
+            when = f' from {fetched_at[:10]}'
+        except Exception:
+            when = ''
+    return (
+        f"⚠️ Latest evaluation could not be completed; showing the previous score{when}. "
+    )
+
+
+def _score_single_dimension(
+    dim: str,
+    *,
+    symbol: str,
+    name: str,
+    asset_category: str,
+    coingecko_id: Optional[str],
+) -> Optional[dict]:
+    """Single LLM attempt for one dimension. Returns ``None`` on failure."""
+    if dim == 'regulatory':
+        return qualitative.score_regulatory(symbol, name, use_cache=False)
+    if dim == 'institutional':
+        return qualitative.score_institutional(symbol, name, use_cache=False)
+    if dim == 'value_capture':
+        return qualitative.score_value_capture(symbol, name, use_cache=False)
+    if dim == 'adoption_activity':
+        hint = adoption_hint_for_category(asset_category)
+        return qualitative.score_adoption_activity(symbol, name, hint, use_cache=False)
+    if dim == 'supply':
+        # Pass use_in_memory_cache=False so retries actually re-invoke the model.
+        return supply.compute_supply_score(
+            symbol=symbol,
+            name=name,
+            coingecko_id=coingecko_id,
+            conn=None,
+            cache_writes=None,
+            use_in_memory_cache=False,
+        )
+    raise ValueError(f'Unknown dimension: {dim}')
 
 
 def _load_macro_from_latest_json() -> tuple[dict, dict, dict]:
@@ -350,105 +393,145 @@ def build_asset(
         )
 
     cache_writes: list[tuple[str, str, int, str]] = []
+    dimension_errors: dict[str, str] = {}
 
     def record_cache_write(asset_symbol: str, score_type: str, score: int, rationale: str) -> None:
         cache_writes.append((asset_symbol, score_type, score, rationale))
 
-    # Get qualitative scores (cached or fresh)
-    cached_regulatory = migrations.get_cached_qualitative_score(conn, symbol, "regulatory")
-    cached_institutional = migrations.get_cached_qualitative_score(conn, symbol, "institutional")
+    needed_dims = _required_dimensions(weights_profile, fee_model)
 
-    if cached_regulatory and not _is_low_quality_rationale(cached_regulatory.get('rationale')):
-        regulatory_data = cached_regulatory
-    else:
-        regulatory_data = qualitative.score_regulatory(symbol, name, use_cache=False)
-        record_cache_write(symbol, "regulatory", regulatory_data["score"], regulatory_data["rationale"])
-
-    if cached_institutional and not _is_low_quality_rationale(cached_institutional.get('rationale')):
-        institutional_data = cached_institutional
-    else:
-        institutional_data = qualitative.score_institutional(symbol, name, use_cache=False)
-        record_cache_write(symbol, "institutional", institutional_data["score"], institutional_data["rationale"])
-
-    # Value capture (category + fee_model gated)
-    value_capture_score = None
+    # Track scores + rationales + estimated flags by dimension.
+    dim_scores: dict[str, Optional[int]] = {d: None for d in needed_dims}
+    dim_rationales: dict[str, Optional[str]] = {d: None for d in needed_dims}
     value_capture_estimated = False
-    value_capture_rationale = None
-    if not should_score_value_capture(weights_profile, fee_model):
+    value_capture_rationale_when_skipped: Optional[str] = None
+
+    if 'value_capture' not in needed_dims:
         skip = value_capture_skip_rationale(fee_model)
         if skip:
-            value_capture_rationale = skip
-        logger.info(f"Skipping value capture for {symbol} (category/fee_model)")
-    elif defi_data and defi_data.get("revenue_24h") is not None:
-        revenue_24h = defi_data.get("revenue_24h")
-        tvl = defi_data.get("tvl")
-        fees_24h = defi_data.get("fees_24h")
-        value_capture_score = defillama.compute_revenue_score(revenue_24h, tvl)
-        value_capture_rationale = _build_revenue_rationale(
-            revenue_24h, tvl, fees_24h, value_capture_score
-        )
-    else:
-        logger.info(f"No API fee/revenue data for {symbol}, using LLM for value capture")
-        cached_vc = migrations.get_cached_qualitative_score(conn, symbol, "value_capture")
-        if not cached_vc:
-            cached_vc = migrations.get_cached_qualitative_score(conn, symbol, "revenue")
-        if cached_vc and not _is_low_quality_rationale(cached_vc.get('rationale')):
-            vc_result = cached_vc
-            value_capture_estimated = False
-        else:
-            vc_result = qualitative.score_value_capture(symbol, name, use_cache=False)
-            record_cache_write(
-                symbol, "value_capture",
-                vc_result["score"], vc_result.get("rationale", "")
-            )
-            value_capture_estimated = vc_result.get("estimated", True)
-        value_capture_score = vc_result.get("score")
-        value_capture_rationale = vc_result.get(
-            "rationale", "LLM-estimated value capture (no API data available)"
-        )
+            value_capture_rationale_when_skipped = skip
 
-    # Adoption / network activity (LLM, cached weekly)
-    adoption_score = None
-    adoption_rationale = None
-    if should_score_adoption_activity(weights_profile):
-        cached_ad = migrations.get_cached_qualitative_score(conn, symbol, "adoption_activity")
-        if cached_ad and not _is_low_quality_rationale(cached_ad.get('rationale')):
-            adoption_data = cached_ad
-        else:
-            hint = adoption_hint_for_category(asset_category)
-            adoption_data = qualitative.score_adoption_activity(
-                symbol, name, hint, use_cache=False
-            )
-            record_cache_write(
-                symbol, "adoption_activity",
-                adoption_data["score"], adoption_data.get("rationale", "")
-            )
-        adoption_score = adoption_data["score"]
-        adoption_rationale = adoption_data.get("rationale", "")
+    # API path: when DefiLlama returns revenue, score value-capture from data
+    # without any LLM call. This dimension is then considered satisfied.
+    if 'value_capture' in needed_dims and defi_data and defi_data.get('revenue_24h') is not None:
+        revenue_24h = defi_data.get('revenue_24h')
+        tvl = defi_data.get('tvl')
+        fees_24h = defi_data.get('fees_24h')
+        vc_score = defillama.compute_revenue_score(revenue_24h, tvl)
+        vc_rationale = _build_revenue_rationale(revenue_24h, tvl, fees_24h, vc_score)
+        dim_scores['value_capture'] = vc_score
+        dim_rationales['value_capture'] = vc_rationale
+        # Persist API-derived value-capture too so future runs can fall back to
+        # it when both the API and the LLM fail.
+        record_cache_write(symbol, 'value_capture', vc_score, vc_rationale)
 
-    # Compute supply/on-chain score (AI-powered with data from CoinGecko)
-    supply_data = supply.compute_supply_score(
-        symbol=symbol,
-        name=name,
-        coingecko_id=coingecko_id,
-        conn=conn,
-        cache_writes=cache_writes,
-        use_in_memory_cache=False,
-    )
-    supply_score = supply_data["score"]
-    supply_rationale = supply_data["rationale"]
+    # Pre-fill from fresh cache (weekly TTL) for everything still missing.
+    cache_type_for = {
+        'regulatory': 'regulatory',
+        'institutional': 'institutional',
+        'value_capture': 'value_capture',
+        'adoption_activity': 'adoption_activity',
+        'supply': 'supply',
+    }
+    for dim in needed_dims:
+        if dim_scores[dim] is not None:
+            continue
+        ctype = cache_type_for[dim]
+        cached = migrations.get_cached_qualitative_score(conn, symbol, ctype)
+        if not cached and dim == 'value_capture':
+            # Backwards compatibility with legacy 'revenue' cache key.
+            cached = migrations.get_cached_qualitative_score(conn, symbol, 'revenue')
+        if cached and not _is_low_quality_rationale(cached.get('rationale')):
+            dim_scores[dim] = cached['score']
+            dim_rationales[dim] = cached['rationale']
+
+    # Live-score whatever is still missing, retrying ONLY the failed dims up to
+    # SCORING_MAX_ATTEMPTS so a single transient LLM error doesn't drag the
+    # composite back to a hardcoded default.
+    remaining = [d for d in needed_dims if dim_scores[d] is None]
+    for attempt in range(1, SCORING_MAX_ATTEMPTS + 1):
+        if not remaining:
+            break
+        logger.info(
+            f"{symbol}: scoring attempt {attempt}/{SCORING_MAX_ATTEMPTS} for {remaining}"
+        )
+        still_failing: list[str] = []
+        for dim in remaining:
+            result = _score_single_dimension(
+                dim,
+                symbol=symbol,
+                name=name,
+                asset_category=asset_category,
+                coingecko_id=coingecko_id,
+            )
+            if result is None:
+                still_failing.append(dim)
+                continue
+            dim_scores[dim] = result['score']
+            dim_rationales[dim] = result.get('rationale', '')
+            record_cache_write(
+                symbol, cache_type_for[dim], result['score'], result.get('rationale', ''),
+            )
+            if dim == 'value_capture':
+                value_capture_estimated = bool(result.get('estimated', True))
+        remaining = still_failing
+
+    # For anything still missing after retries, fall back to the most recent
+    # cached score we have (any age) and mark the dimension as errored.
+    for dim in list(remaining):
+        any_cached = migrations.get_any_qualitative_score(
+            conn, symbol, cache_type_for[dim],
+        )
+        if any_cached is None and dim == 'value_capture':
+            any_cached = migrations.get_any_qualitative_score(conn, symbol, 'revenue')
+        if any_cached is not None:
+            dim_scores[dim] = any_cached['score']
+            dim_rationales[dim] = (
+                _stale_score_prefix(any_cached.get('fetched_at'))
+                + (any_cached.get('rationale') or '')
+            )
+            dimension_errors[dim] = (
+                f"llm_failed_after_{SCORING_MAX_ATTEMPTS}_attempts; "
+                f"using prior score from {any_cached.get('fetched_at', 'unknown')}"
+            )
+            logger.warning(
+                f"{symbol}: {dim} fell back to prior cached score after "
+                f"{SCORING_MAX_ATTEMPTS} failed attempts"
+            )
+            remaining.remove(dim)
 
     scores = {
-        "institutional": institutional_data["score"],
-        "adoption_activity": adoption_score,
-        "value_capture": value_capture_score,
-        "regulatory": regulatory_data["score"],
-        "supply": supply_score,
+        'institutional': dim_scores.get('institutional'),
+        'adoption_activity': dim_scores.get('adoption_activity'),
+        'value_capture': dim_scores.get('value_capture'),
+        'regulatory': dim_scores.get('regulatory'),
+        'supply': dim_scores.get('supply'),
     }
+    regulatory_data = {
+        'score': scores.get('regulatory'),
+        'rationale': dim_rationales.get('regulatory') or '',
+    }
+    institutional_data = {
+        'score': scores.get('institutional'),
+        'rationale': dim_rationales.get('institutional') or '',
+    }
+    value_capture_score = scores.get('value_capture')
+    value_capture_rationale = (
+        dim_rationales.get('value_capture')
+        or value_capture_rationale_when_skipped
+    )
+    adoption_score = scores.get('adoption_activity')
+    adoption_rationale = dim_rationales.get('adoption_activity')
+    supply_score = scores.get('supply')
+    supply_rationale = dim_rationales.get('supply') or ''
 
-    dim_errors = _collect_dimension_errors(scores, asset_category, fee_model, weights_profile)
-    if dim_errors:
-        raise DimensionScoringError(dim_errors)
+    # If any required dim is still without a score AND has no prior cache,
+    # the asset cannot be tiered — surface it as pending-evaluation rather than
+    # excluding it from the dashboard.
+    if remaining:
+        raise DimensionScoringError(
+            [f'{d}:no_score_and_no_prior_cache' for d in remaining]
+        )
 
     composite_score, missing_dimensions = composite.compute_composite(
         scores, asset_category=asset_category, fee_model=fee_model
@@ -576,6 +659,7 @@ def build_asset(
         "strong_accumulate_days_active": strong_accumulate_days + (1 if action == "strong-accumulate" else 0),
         "label_changed_days_ago": label_changed_days_ago,
         "missing_dimensions": missing_dimensions,
+        "dimension_errors": dimension_errors,
         "value_capture_estimated": value_capture_estimated,
         "revenue_estimated": value_capture_estimated,
         "rs_vs_btc": {
@@ -598,6 +682,53 @@ def _get_max_workers(default_workers: int = 10) -> int:
     except ValueError:
         logger.warning(f"Invalid PIPELINE_MAX_WORKERS={raw_value!r}, using {default_workers}")
         return default_workers
+
+
+def _build_pending_asset(entry: dict, dimension_errors: list[str]) -> dict:
+    """
+    Build a minimal asset payload for an asset that cannot be tiered yet
+    because at least one required dimension is missing and no prior cached
+    score exists. The dashboard renders these in a Pending Evaluation section
+    so the user still sees that the asset is on the watchlist.
+    """
+    asset_type = entry.get('asset_type', 'smart-contract')
+    asset_category = resolve_asset_category(entry)
+    return {
+        'symbol': entry.get('symbol', 'unknown'),
+        'name': entry.get('name', ''),
+        'tier': 'pending',
+        'asset_type': asset_type,
+        'asset_category': asset_category,
+        'scores': {},
+        'score_rationales': {},
+        'weights': composite.get_weights(asset_category),
+        'composite': None,
+        'composite_last_week': None,
+        'wyckoff_phase': None,
+        'wyckoff_position_score': None,
+        'wyckoff_signal': None,
+        'trend': [],
+        'trend_30d': [],
+        'rsi_daily': None,
+        'rsi_weekly': None,
+        'action': None,
+        'decision_trace': None,
+        'strong_accumulate_days_active': 0,
+        'label_changed_days_ago': None,
+        'missing_dimensions': len(dimension_errors),
+        'dimension_errors': {err.split(':', 1)[0]: err for err in dimension_errors},
+        'pending_dimensions': [err.split(':', 1)[0] for err in dimension_errors],
+        'value_capture_estimated': False,
+        'revenue_estimated': False,
+        'rs_vs_btc': {'underperforming': False, 'change_pct': None},
+        'note': 'Pending evaluation — scoring failed and no prior score available.',
+        'note_detailed': (
+            f"{entry.get('symbol', 'unknown')} could not be evaluated in this run. "
+            f"Missing dimensions: {', '.join(err.split(':', 1)[0] for err in dimension_errors)}. "
+            'Once the scoring agent returns a valid response, the asset will be tiered.'
+        ),
+        'cache_writes': [],
+    }
 
 
 def _build_asset_worker(
@@ -631,7 +762,7 @@ def _build_asset_worker(
         return {
             'symbol': symbol,
             'name': name,
-            'asset': None,
+            'asset': _build_pending_asset(entry, e.errors),
             'error': None,
             'dimension_errors': e.errors,
         }
@@ -1186,8 +1317,10 @@ def main():
         )
     logger.info(f"Loaded {len(assets_list)} assets from config")
 
+    prev_gli, prev_fg, prev_mc = _load_macro_from_latest_json()
+
     if args.dimensions_only:
-        gli_data, fg_data, mc = _load_macro_from_latest_json()
+        gli_data, fg_data, mc = prev_gli, prev_fg, prev_mc
         gli_downtrend = bool(gli_data.get('downtrend'))
         fg_greedy = bool(fg_data.get('greedy'))
         logger.info('Reused GLI / Fear & Greed / market_context from previous latest.json')
@@ -1197,12 +1330,32 @@ def main():
             'total_mcap': (mc.get('total_mcap_trillions') or 0) * 1e12,
         }
     else:
-        gli_data = gli.fetch_gli_data()
-        gli_downtrend = gli_data['downtrend']
+        fresh_gli = gli.fetch_gli_data_with_retry(max_attempts=SCORING_MAX_ATTEMPTS)
+        if fresh_gli is not None:
+            gli_data = fresh_gli
+            gli_downtrend = gli_data['downtrend']
+        else:
+            gli_data = dict(prev_gli)
+            gli_data['source'] = 'unchanged'
+            gli_downtrend = bool(prev_gli.get('downtrend'))
+            logger.warning(
+                f'GLI unavailable after {SCORING_MAX_ATTEMPTS} attempts; '
+                'reusing value from previous run'
+            )
         gli.log_pipeline_summary(logger, gli_data)
 
-        fg_data = fear_greed.fetch_fear_greed()
-        fg_greedy = fg_data.get('greedy', False)
+        fresh_fg = fear_greed.fetch_fear_greed_with_retry(max_attempts=SCORING_MAX_ATTEMPTS)
+        if fresh_fg is not None:
+            fg_data = fresh_fg
+            fg_greedy = fg_data.get('greedy', False)
+        else:
+            fg_data = dict(prev_fg)
+            fg_data['source'] = 'unchanged'
+            fg_greedy = bool(prev_fg.get('greedy'))
+            logger.warning(
+                f'Fear & Greed unavailable after {SCORING_MAX_ATTEMPTS} attempts; '
+                'reusing value from previous run'
+            )
         fear_greed.log_pipeline_summary(logger, fg_data)
 
         global_market = coingecko.fetch_global_market_data()
@@ -1321,6 +1474,7 @@ def main():
     scoring_errors: list[dict] = []
     for payload in job_payloads:
         result = payload['result']
+        asset = result.get('asset')
         if result.get('dimension_errors'):
             scoring_errors.append({
                 'symbol': result['symbol'],
@@ -1328,36 +1482,46 @@ def main():
                 'errors': result['dimension_errors'],
             })
             logger.error(
-                f"  Dimension scoring failed for {result['symbol']}: {result['dimension_errors']}"
+                f"  Dimension scoring failed for {result['symbol']}: {result['dimension_errors']} "
+                f"(asset surfaced as pending evaluation)"
             )
+            if asset:
+                processed_assets.append(asset)
             continue
         if result.get('error'):
             logger.error(f"  Failed to process {result['symbol']}: {result['error']}")
             continue
-        processed_assets.append(result['asset'])
+        processed_assets.append(asset)
 
     # Persist cache writes and snapshots in the master process only.
     for asset in processed_assets:
+        is_pending = asset.get('tier') == 'pending'
         if not args.dry_run:
             for symbol, score_type, score, rationale in asset.get('cache_writes', []):
                 migrations.save_qualitative_score(conn, symbol, score_type, score, rationale)
-            migrations.save_snapshot(
-                conn,
-                asset,
-                today,
-                preserve_null_technicals=args.dimensions_only,
-            )
+            if not is_pending:
+                migrations.save_snapshot(
+                    conn,
+                    asset,
+                    today,
+                    preserve_null_technicals=args.dimensions_only,
+                )
 
         asset.pop('cache_writes', None)
         output['assets'].append(asset)
-        logger.info(
-            f"  {asset['symbol']} ({asset['tier']}): composite={asset['composite']}, action={asset['action']}"
-        )
+        if is_pending:
+            logger.info(
+                f"  {asset['symbol']} (pending): missing={asset.get('pending_dimensions')}"
+            )
+        else:
+            logger.info(
+                f"  {asset['symbol']} ({asset['tier']}): composite={asset['composite']}, action={asset['action']}"
+            )
 
     output['scoring_errors'] = scoring_errors
 
-    # Sort assets by tier priority then composite score
-    tier_order = {'leader': 0, 'runner-up': 1, 'observation': 2}
+    # Sort assets by tier priority then composite score; pending always last.
+    tier_order = {'leader': 0, 'runner-up': 1, 'observation': 2, 'pending': 4}
     output['assets'].sort(
         key=lambda a: (tier_order.get(a.get('tier'), 3), -(a.get('composite') or 0)),
     )

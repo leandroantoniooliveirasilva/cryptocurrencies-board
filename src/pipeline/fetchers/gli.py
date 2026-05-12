@@ -66,18 +66,27 @@ def get_gli_trend_label(data: GLIData) -> str:
     return 'expanding'
 
 
-def log_pipeline_summary(log: logging.Logger, gli_data: GLIData) -> None:
+def log_pipeline_summary(log: logging.Logger, gli_data: Optional[GLIData]) -> None:
     """Same GLI status line for ``pipeline.run`` and ``pipeline.indicators``."""
-    if gli_data.get('source') != 'fallback':
-        trend = get_gli_trend_label(gli_data)
-        src = gli_data.get('source') or 'unknown'
-        log.info(f'GLI status: {trend} (source: {src})')
-    else:
+    if gli_data is None:
         log.info('GLI data unavailable - macro filter disabled')
+        return
+    source = gli_data.get('source') or 'unknown'
+    if source in ('fallback', 'unchanged'):
+        log.info(f'GLI status: reusing previous value (source: {source})')
+        return
+    trend = get_gli_trend_label(gli_data)
+    log.info(f'GLI status: {trend} (source: {source})')
 
 
-def fetch_gli_data(offset_days: Optional[int] = None) -> GLIData:
-    """Fetch GLI data and determine trend."""
+def fetch_gli_data(offset_days: Optional[int] = None) -> Optional[GLIData]:
+    """
+    Fetch GLI data and determine trend.
+
+    Returns ``None`` when every source fails so the caller can retry or fall
+    back to the previous run's value, instead of silently turning the macro
+    filter off with a fabricated record.
+    """
     gli_cfg = config.gli
     if offset_days is None:
         offset_days = gli_cfg.offset_days
@@ -106,22 +115,27 @@ def fetch_gli_data(offset_days: Optional[int] = None) -> GLIData:
         if data:
             return _cache(offset_days, data)
 
-    logger.warning('GLI data unavailable - filter disabled')
-    data = GLIData(
-        current=None,
-        offset_value=None,
-        offset_days=offset_days,
-        downtrend=False,
-        source='fallback',
-        fetched_at=datetime.now(timezone.utc).isoformat(),
-        current_obs_date=None,
-        offset_obs_date=None,
-        trend='unknown',
-        component_coverage=0.0,
-        components_used=[],
-        components_missing=[],
-    )
-    return _cache(offset_days, data)
+    logger.warning('GLI data unavailable from every configured source')
+    return None
+
+
+def fetch_gli_data_with_retry(
+    offset_days: Optional[int] = None,
+    max_attempts: int = 3,
+) -> Optional[GLIData]:
+    """
+    Retry ``fetch_gli_data`` up to ``max_attempts`` times.
+
+    Returns ``None`` if every attempt fails so callers can substitute the
+    previous run's published value (kept in ``public/latest.json``) instead of
+    pretending the filter succeeded.
+    """
+    for attempt in range(1, max_attempts + 1):
+        data = fetch_gli_data(offset_days)
+        if data is not None:
+            return data
+        logger.warning(f'GLI fetch attempt {attempt}/{max_attempts} failed')
+    return None
 
 
 def _cache(offset_days: int, data: GLIData) -> GLIData:
@@ -616,13 +630,16 @@ def _try_fred_m2(offset_days: int) -> Optional[GLIData]:
 def is_gli_downtrend() -> bool:
     if not config.gli.enabled:
         return False
-    return fetch_gli_data()['downtrend']
+    data = fetch_gli_data()
+    if data is None:
+        return False
+    return data['downtrend']
 
 
 def get_gli_status() -> dict:
     data = fetch_gli_data()
 
-    if data['current'] is None:
+    if data is None or data['current'] is None:
         return {
             'available': False,
             'message': 'GLI data unavailable',
