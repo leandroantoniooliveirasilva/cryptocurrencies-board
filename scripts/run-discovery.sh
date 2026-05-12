@@ -90,7 +90,7 @@ $CURRENT_ASSETS
 ## Output Instructions
 
 1. Search the web for promising crypto projects released or gaining traction in the past 30-60 days
-2. Evaluate each candidate against weighted composite dimensions (`weights_by_category` in config):
+2. Evaluate each candidate against weighted composite dimensions (\`weights_by_category\` in config):
    - Institutional (ETF potential, fund holdings, custody)
    - Adoption / value capture (as weighted — fees, TVL, usage)
    - Regulatory (jurisdictional clarity, compliance)

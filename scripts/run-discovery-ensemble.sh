@@ -112,7 +112,7 @@ $CURRENT_ASSETS
 
 1. **OMISSION AUDIT (MANDATORY FIRST)**: Before new discoveries, check if major established assets are missing from the watchlist (ETH, BNB, ADA, DOT, etc.). Evaluate any omissions using the full framework.
 2. Search the web for promising crypto projects released or gaining traction in the past 30-60 days
-3. Evaluate each candidate against weighted composite dimensions (`weights_by_category`) plus value accrual:
+3. Evaluate each candidate against weighted composite dimensions (\`weights_by_category\`) plus value accrual:
    - Institutional (ETF potential, fund holdings, custody)
    - Adoption / value capture (as weighted — fees, TVL, usage)
    - Regulatory (jurisdictional clarity, compliance)
