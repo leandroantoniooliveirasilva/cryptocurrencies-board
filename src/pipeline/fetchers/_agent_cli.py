@@ -7,6 +7,9 @@ Env vars:
   LLM_AGENT_CLI         "claude" (default) | "cursor"
   CLAUDE_AGENT_BIN      override claude binary path (default: ``claude``)
   CLAUDE_AGENT_MODEL    claude model alias (default: ``sonnet``)
+  CLAUDE_AGENT_TOOLS    comma-separated built-in tools to enable
+                        (default: ``WebSearch,WebFetch`` — disables Write/Edit
+                        so output must come on stdout)
   CURSOR_AGENT_BIN      override cursor-agent binary (default: ``cursor-agent``)
   CURSOR_AGENT_MODEL    cursor-agent model (default: ``auto``)
 """
@@ -30,10 +33,12 @@ def build_agent_command(prompt: str) -> list[str]:
 
     binary = os.environ.get('CLAUDE_AGENT_BIN', 'claude')
     model = os.environ.get('CLAUDE_AGENT_MODEL', 'sonnet')
+    tools = os.environ.get('CLAUDE_AGENT_TOOLS', 'WebSearch,WebFetch')
     return [
         binary,
         '--print',
         '--dangerously-skip-permissions',
+        '--tools', tools,
         '--model', model,
         prompt,
     ]

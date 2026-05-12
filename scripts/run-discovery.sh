@@ -59,8 +59,11 @@ case "$LLM_AGENT_CLI" in
     *)
         AGENT_BIN="${CLAUDE_AGENT_BIN:-claude}"
         AGENT_MODEL="${CLAUDE_AGENT_MODEL:-sonnet}"
+        # Restrict tools so the report must come on stdout (Write/Edit would
+        # otherwise let Claude side-channel the output to disk on its own).
+        AGENT_TOOLS="${CLAUDE_AGENT_TOOLS:-WebSearch,WebFetch}"
         AGENT_LABEL="Claude Code"
-        AGENT_FLAGS=(--print --dangerously-skip-permissions --model "$AGENT_MODEL")
+        AGENT_FLAGS=(--print --dangerously-skip-permissions --tools "$AGENT_TOOLS" --model "$AGENT_MODEL")
         AGENT_INSTALL_HINT="Install Claude Code and run \`claude login\` (or set ANTHROPIC_API_KEY)."
         ;;
 esac
