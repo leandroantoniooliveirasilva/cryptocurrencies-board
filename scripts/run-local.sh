@@ -1,6 +1,7 @@
 #!/bin/bash
 # Local pipeline runner for macOS
-# Uses Cursor Agent CLI for qualitative scoring
+# Uses an LLM agent CLI for qualitative scoring (Claude Code by default,
+# Cursor Agent when LLM_AGENT_CLI=cursor).
 
 set -e
 
@@ -34,8 +35,21 @@ else
     exit 1
 fi
 
-if ! command -v cursor-agent &> /dev/null; then
-    log "WARNING: Cursor Agent CLI not found — qualitative calls will fail until installed and authenticated"
+LLM_AGENT_CLI="${LLM_AGENT_CLI:-claude}"
+case "$LLM_AGENT_CLI" in
+    cursor|cursor-agent)
+        AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
+        AGENT_LABEL="Cursor Agent"
+        AGENT_AUTH_HINT="run \`cursor-agent login\`"
+        ;;
+    *)
+        AGENT_BIN="${CLAUDE_AGENT_BIN:-claude}"
+        AGENT_LABEL="Claude Code"
+        AGENT_AUTH_HINT="run \`claude login\` (or set ANTHROPIC_API_KEY)"
+        ;;
+esac
+if ! command -v "$AGENT_BIN" &> /dev/null; then
+    log "WARNING: $AGENT_LABEL CLI ($AGENT_BIN) not found — qualitative calls will fail until installed; $AGENT_AUTH_HINT"
 fi
 
 # Run the pipeline (per-asset subprocesses → out/reports/scoring/assets/<date>/*.json → public/latest.json)

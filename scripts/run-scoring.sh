@@ -3,21 +3,25 @@
 #
 # Flow (matches crypto-scoring skill):
 # - One isolated Python child process per watchlist asset; qualitative dimensions use
-#   cursor-agent inside that child (see src/pipeline/fetchers/qualitative.py).
+#   the configured agent CLI inside that child — Claude Code by default
+#   (`claude --print`), or Cursor Agent (`cursor-agent --print`) when
+#   LLM_AGENT_CLI=cursor (see src/pipeline/fetchers/qualitative.py).
 # - After each child: out/reports/scoring/assets/<YYYY-MM-DD>/<SYMBOL>.json (raw envelope).
 # - Orchestrator merges successful assets into public/latest.json + SQLite.
 #
 # Why this feels slower than discovery:
-# - Discovery is usually a few large Cursor Agent prompts (one report per phase).
-# - Scoring runs up to several Cursor Agent calls *per watchlist asset* (regulatory,
-#   institutional, value capture, adoption), each `cursor-agent --print`.
+# - Discovery is usually a few large agent prompts (one report per phase).
+# - Scoring runs up to several agent calls *per watchlist asset* (regulatory,
+#   institutional, value capture, adoption), each one `--print`.
 # - A slow or timing-out call can burn the full per-call timeout (see
-#   CURSOR_AGENT_RUN_TIMEOUT / CURSOR_AGENT_ADOPTION_TIMEOUT in .env).
+#   LLM_AGENT_RUN_TIMEOUT / LLM_AGENT_ADOPTION_TIMEOUT in .env; legacy
+#   CURSOR_AGENT_* names still honored).
 #
 # Env (optional):
-#   SCORING_WALL_SECONDS   Wall-clock max for the whole run (default 7200).
-#   CURSOR_AGENT_RUN_TIMEOUT     Per general qualitative call (default 300 in code).
-#   CURSOR_AGENT_ADOPTION_TIMEOUT Per adoption_activity call (default 300 in code).
+#   SCORING_WALL_SECONDS         Wall-clock max for the whole run (default 7200).
+#   LLM_AGENT_CLI                "claude" (default) or "cursor".
+#   LLM_AGENT_RUN_TIMEOUT        Per general qualitative call (default 300).
+#   LLM_AGENT_ADOPTION_TIMEOUT   Per adoption_activity call (default 300).
 
 set -euo pipefail
 
@@ -67,7 +71,7 @@ else
 fi
 
 if [ "$EXIT" -eq 124 ]; then
-  log "ERROR: hit wall timeout (${SCORING_WALL_SECONDS}s). Raise SCORING_WALL_SECONDS or lower CURSOR_AGENT_*_TIMEOUT values (faster fallbacks)."
+  log "ERROR: hit wall timeout (${SCORING_WALL_SECONDS}s). Raise SCORING_WALL_SECONDS or lower LLM_AGENT_*_TIMEOUT values (faster fallbacks)."
 elif [ "$EXIT" -eq 142 ]; then
   log "ERROR: subprocess timed out (often same as 124 on macOS)"
 elif [ "$EXIT" -ne 0 ]; then

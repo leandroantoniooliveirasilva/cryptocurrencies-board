@@ -46,11 +46,26 @@ log_progress() {
 log "Starting monthly discovery pipeline"
 log "Project: $PROJECT_DIR"
 
-# CursorAgent CLI
-CURSOR_AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
-CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-auto}"
-if ! command -v "$CURSOR_AGENT_BIN" &> /dev/null; then
-    log "ERROR: cursor-agent CLI not found. Install Cursor Agent and run cursor-agent login."
+# Select LLM agent CLI: "claude" (default) or "cursor".
+LLM_AGENT_CLI="${LLM_AGENT_CLI:-claude}"
+case "$LLM_AGENT_CLI" in
+    cursor|cursor-agent)
+        AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
+        AGENT_MODEL="${CURSOR_AGENT_MODEL:-auto}"
+        AGENT_LABEL="Cursor Agent"
+        AGENT_FLAGS=(--print --trust --force --model "$AGENT_MODEL")
+        AGENT_INSTALL_HINT="Install Cursor Agent and run cursor-agent login."
+        ;;
+    *)
+        AGENT_BIN="${CLAUDE_AGENT_BIN:-claude}"
+        AGENT_MODEL="${CLAUDE_AGENT_MODEL:-sonnet}"
+        AGENT_LABEL="Claude Code"
+        AGENT_FLAGS=(--print --dangerously-skip-permissions --model "$AGENT_MODEL")
+        AGENT_INSTALL_HINT="Install Claude Code and run \`claude login\` (or set ANTHROPIC_API_KEY)."
+        ;;
+esac
+if ! command -v "$AGENT_BIN" &> /dev/null; then
+    log "ERROR: $AGENT_LABEL CLI ($AGENT_BIN) not found. $AGENT_INSTALL_HINT"
     exit 1
 fi
 
@@ -88,11 +103,11 @@ $CURRENT_ASSETS
 Today's date: $(date -u +"%Y-%m-%d")
 "
 
-log "Running CursorAgent discovery (model: $CURSOR_AGENT_MODEL)..."
+log "Running $AGENT_LABEL discovery (model: $AGENT_MODEL)..."
 log_progress 5 "discovery generation started"
 cd "$PROJECT_DIR"
 
-"$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$DISCOVERY_PROMPT" > "$REPORT_FILE.tmp" 2>> "$LOG_FILE" &
+"$AGENT_BIN" "${AGENT_FLAGS[@]}" "$DISCOVERY_PROMPT" > "$REPORT_FILE.tmp" 2>> "$LOG_FILE" &
 DISCOVERY_PID=$!
 SECONDS_WAITED=0
 
@@ -114,7 +129,7 @@ if wait "$DISCOVERY_PID"; then
     log "Report preview:"
     head -50 "$REPORT_FILE" | tee -a "$LOG_FILE"
 else
-    log "ERROR: CursorAgent discovery failed"
+    log "ERROR: $AGENT_LABEL discovery failed"
     rm -f "$REPORT_FILE.tmp"
     exit 1
 fi

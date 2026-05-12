@@ -21,6 +21,8 @@ import requests
 
 from pipeline.repo_paths import repo_root
 
+from ._agent_cli import agent_install_hint, agent_label, build_agent_command
+
 logger = logging.getLogger(__name__)
 
 # CoinGecko provides some supply metrics for free
@@ -34,11 +36,11 @@ MAX_RETRIES = 3
 _last_request_time = 0.0
 _rate_limit_lock = threading.Lock()
 
-# CursorAgent CLI
-CURSOR_AGENT_BIN = os.environ.get('CURSOR_AGENT_BIN', 'cursor-agent')
-CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'auto')
-CURSOR_AGENT_SUPPLY_TIMEOUT = int(
-    os.environ.get('CURSOR_AGENT_SUPPLY_TIMEOUT', '60')
+# Per-invocation timeout for supply scoring. ``LLM_AGENT_SUPPLY_TIMEOUT`` is the
+# generic name; ``CURSOR_AGENT_SUPPLY_TIMEOUT`` kept for backwards compat.
+LLM_AGENT_SUPPLY_TIMEOUT = int(
+    os.environ.get('LLM_AGENT_SUPPLY_TIMEOUT',
+                   os.environ.get('CURSOR_AGENT_SUPPLY_TIMEOUT', '60'))
 )
 
 REPO_ROOT = repo_root()
@@ -215,7 +217,7 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
     else:
         supply_str = "No supply data available - assess based on known tokenomics"
 
-    result = _invoke_cursor_agent_supply(
+    result = _invoke_agent_supply(
         SUPPLY_PROMPT.format(symbol=symbol, name=name, supply_data=supply_str),
         cache_key
     )
@@ -228,31 +230,32 @@ def score_supply(symbol: str, name: str, coingecko_id: str = None, use_cache: bo
     return _compute_fallback_score(symbol, supply_data)
 
 
-def _invoke_cursor_agent_supply(prompt: str, cache_key: str) -> Optional[dict]:
-    """``cursor-agent --print`` for supply scoring."""
+def _invoke_agent_supply(prompt: str, cache_key: str) -> Optional[dict]:
+    """Run the selected agent CLI for supply scoring (non-interactive)."""
+    label = agent_label()
     try:
         full_prompt = f'{SCORING_SYSTEM_PREFIX}{prompt}'
         result = subprocess.run(
-            [CURSOR_AGENT_BIN, '--print', '--trust', '--force', '--model', CURSOR_AGENT_MODEL, full_prompt],
+            build_agent_command(full_prompt),
             capture_output=True,
             text=True,
-            timeout=CURSOR_AGENT_SUPPLY_TIMEOUT,
+            timeout=LLM_AGENT_SUPPLY_TIMEOUT,
         )
 
         if result.returncode != 0:
-            logger.warning(f'CursorAgent CLI failed for {cache_key}: {result.stderr}')
+            logger.warning(f'{label} CLI failed for {cache_key}: {result.stderr}')
             return None
 
         return _parse_json_response(result.stdout, cache_key)
 
     except subprocess.TimeoutExpired:
-        logger.warning(f'CursorAgent CLI timeout for {cache_key}')
+        logger.warning(f'{label} CLI timeout for {cache_key}')
         return None
     except FileNotFoundError:
-        logger.warning('CursorAgent CLI not found; install and run `cursor-agent login`')
+        logger.warning(f'{label} CLI not found. {agent_install_hint()}')
         return None
     except Exception as e:
-        logger.warning(f'CursorAgent CLI error for {cache_key}: {e}')
+        logger.warning(f'{label} CLI error for {cache_key}: {e}')
         return None
 
 

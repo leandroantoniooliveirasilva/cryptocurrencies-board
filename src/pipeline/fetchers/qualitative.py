@@ -1,4 +1,5 @@
-"""Qualitative scoring via CursorAgent CLI: ``cursor-agent --print``."""
+"""Qualitative scoring via an LLM agent CLI (``claude --print`` by default,
+``cursor-agent --print`` when ``LLM_AGENT_CLI=cursor``)."""
 
 import json
 import logging
@@ -8,21 +9,22 @@ from typing import Optional
 
 from pipeline.repo_paths import repo_root
 
+from ._agent_cli import agent_install_hint, agent_label, build_agent_command
+
 logger = logging.getLogger(__name__)
 
 # Cache for qualitative scores (refresh weekly)
 _score_cache: dict = {}
 
-# CursorAgent binary/model
-CURSOR_AGENT_BIN = os.environ.get('CURSOR_AGENT_BIN', 'cursor-agent')
-CURSOR_AGENT_MODEL = os.environ.get('CURSOR_AGENT_MODEL', 'auto')
-
-# Per-invocation timeouts (seconds)
-CURSOR_AGENT_RUN_TIMEOUT = int(
-    os.environ.get('CURSOR_AGENT_RUN_TIMEOUT', '300')
+# Per-invocation timeouts (seconds). ``LLM_AGENT_*`` are the new generic names;
+# ``CURSOR_AGENT_*`` are honored for backwards compatibility.
+LLM_AGENT_RUN_TIMEOUT = int(
+    os.environ.get('LLM_AGENT_RUN_TIMEOUT',
+                   os.environ.get('CURSOR_AGENT_RUN_TIMEOUT', '300'))
 )
-CURSOR_AGENT_ADOPTION_TIMEOUT = int(
-    os.environ.get('CURSOR_AGENT_ADOPTION_TIMEOUT', '300')
+LLM_AGENT_ADOPTION_TIMEOUT = int(
+    os.environ.get('LLM_AGENT_ADOPTION_TIMEOUT',
+                   os.environ.get('CURSOR_AGENT_ADOPTION_TIMEOUT', '300'))
 )
 
 REPO_ROOT = repo_root()
@@ -161,43 +163,42 @@ def _query_scoring_llm(
     cache_key: str,
     cli_timeout: Optional[int] = None,
 ) -> Optional[dict]:
-    """Run prompt through CursorAgent CLI and parse JSON response."""
+    """Run prompt through the selected agent CLI and parse JSON response."""
     full_prompt = f'{SCORING_SYSTEM_PREFIX}{prompt}'
-    return _invoke_cursor_agent_run(full_prompt, cache_key, timeout_sec=cli_timeout)
+    return _invoke_agent_run(full_prompt, cache_key, timeout_sec=cli_timeout)
 
 
-def _invoke_cursor_agent_run(
+def _invoke_agent_run(
     prompt: str,
     cache_key: str,
     timeout_sec: Optional[int] = None,
 ) -> Optional[dict]:
-    """``cursor-agent --print --model …`` (non-interactive)."""
-    limit = timeout_sec if timeout_sec is not None else CURSOR_AGENT_RUN_TIMEOUT
+    """Run the selected agent CLI in non-interactive mode."""
+    limit = timeout_sec if timeout_sec is not None else LLM_AGENT_RUN_TIMEOUT
+    label = agent_label()
     try:
         result = subprocess.run(
-            [CURSOR_AGENT_BIN, '--print', '--trust', '--force', '--model', CURSOR_AGENT_MODEL, prompt],
+            build_agent_command(prompt),
             capture_output=True,
             text=True,
             timeout=limit,
         )
 
         if result.returncode != 0:
-            logger.warning(f'CursorAgent CLI error for {cache_key}: {result.stderr}')
+            logger.warning(f'{label} CLI error for {cache_key}: {result.stderr}')
             return None
 
         text = result.stdout.strip()
         return _parse_json_response(text, cache_key)
 
     except subprocess.TimeoutExpired:
-        logger.warning(f'CursorAgent CLI timeout for {cache_key}')
+        logger.warning(f'{label} CLI timeout for {cache_key}')
         return None
     except FileNotFoundError:
-        logger.warning(
-            'CursorAgent CLI not found. Install Cursor Agent CLI and run `cursor-agent login`.'
-        )
+        logger.warning(f'{label} CLI not found. {agent_install_hint()}')
         return None
     except Exception as e:
-        logger.warning(f'CursorAgent CLI error for {cache_key}: {e}')
+        logger.warning(f'{label} CLI error for {cache_key}: {e}')
         return None
 
 
@@ -331,7 +332,7 @@ def score_adoption_activity(
     result = _query_scoring_llm(
         ADOPTION_ACTIVITY_PROMPT.format(symbol=symbol, name=name, hint=hint),
         cache_key,
-        cli_timeout=CURSOR_AGENT_ADOPTION_TIMEOUT,
+        cli_timeout=LLM_AGENT_ADOPTION_TIMEOUT,
     )
 
     if result:

@@ -69,10 +69,26 @@ log "Starting ensemble discovery pipeline (3 independent runs + review + merge)"
 log "Project: $PROJECT_DIR"
 log "Output directory: $REPORT_DIR"
 
-CURSOR_AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
-CURSOR_AGENT_MODEL="${CURSOR_AGENT_MODEL:-auto}"
-if ! command -v "$CURSOR_AGENT_BIN" &> /dev/null; then
-    log "ERROR: cursor-agent CLI not found. Install Cursor Agent and run cursor-agent login."
+# Select LLM agent CLI: "claude" (default) or "cursor".
+LLM_AGENT_CLI="${LLM_AGENT_CLI:-claude}"
+case "$LLM_AGENT_CLI" in
+    cursor|cursor-agent)
+        AGENT_BIN="${CURSOR_AGENT_BIN:-cursor-agent}"
+        AGENT_MODEL="${CURSOR_AGENT_MODEL:-auto}"
+        AGENT_LABEL="Cursor Agent"
+        AGENT_FLAGS=(--print --trust --force --model "$AGENT_MODEL")
+        AGENT_INSTALL_HINT="Install Cursor Agent and run cursor-agent login."
+        ;;
+    *)
+        AGENT_BIN="${CLAUDE_AGENT_BIN:-claude}"
+        AGENT_MODEL="${CLAUDE_AGENT_MODEL:-sonnet}"
+        AGENT_LABEL="Claude Code"
+        AGENT_FLAGS=(--print --dangerously-skip-permissions --model "$AGENT_MODEL")
+        AGENT_INSTALL_HINT="Install Claude Code and run \`claude login\` (or set ANTHROPIC_API_KEY)."
+        ;;
+esac
+if ! command -v "$AGENT_BIN" &> /dev/null; then
+    log "ERROR: $AGENT_LABEL CLI ($AGENT_BIN) not found. $AGENT_INSTALL_HINT"
     exit 1
 fi
 
@@ -138,7 +154,7 @@ $focus
 
     log "  Starting discovery run #$run_id..."
 
-    if "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
+    if "$AGENT_BIN" "${AGENT_FLAGS[@]}" "$prompt" > "$output_file" 2>> "$LOG_FILE"; then
         log "  Discovery run #$run_id completed: $output_file"
         return 0
     else
@@ -233,7 +249,7 @@ Generate a fact-check report with:
 Today's date: $TODAY"
 
 REVIEW_FILE="$REPORT_DIR/fact_check_review.md"
-if run_step_with_progress "phase 2 fact-check review" 70 84 "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
+if run_step_with_progress "phase 2 fact-check review" 70 84 "$AGENT_BIN" "${AGENT_FLAGS[@]}" "$REVIEW_PROMPT" > "$REVIEW_FILE" 2>> "$LOG_FILE"; then
     log "Fact-check review completed: $REVIEW_FILE"
 else
     log "ERROR: Fact-check review failed"
@@ -317,7 +333,7 @@ This report consolidates 3 independent discovery analyses with cross-referencing
 Today's date: $TODAY"
 
 FINAL_REPORT="$DISCOVERY_DIR/report_$MONTH_STAMP.md"
-if run_step_with_progress "phase 3 merge" 86 99 "$CURSOR_AGENT_BIN" --print --trust --force --model "$CURSOR_AGENT_MODEL" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
+if run_step_with_progress "phase 3 merge" 86 99 "$AGENT_BIN" "${AGENT_FLAGS[@]}" "$MERGE_PROMPT" > "$FINAL_REPORT" 2>> "$LOG_FILE"; then
     log "Final consolidated report generated: $FINAL_REPORT"
 else
     log "ERROR: Report merge failed"
