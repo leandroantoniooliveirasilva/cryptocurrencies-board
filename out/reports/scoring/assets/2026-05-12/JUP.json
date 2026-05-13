@@ -1,0 +1,112 @@
+{
+  "symbol": "JUP",
+  "name": "Jupiter",
+  "asset": {
+    "symbol": "JUP",
+    "name": "Jupiter",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 75,
+      "value_capture": 60,
+      "regulatory": 65,
+      "supply": 40
+    },
+    "score_rationales": {
+      "institutional": "Limited institutional presence",
+      "regulatory": "Limited regulatory clarity",
+      "supply": "Data-driven score from available supply metrics: fixed supply cap, low circulating ratio, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Jupiter commands ~95% of Solana aggregator market share with $5.3B 30d DEX volume and $5.8B 30d perp volume, annualized fees of $171M, and a live product suite spanning swaps, perps, lending, staking, and prediction markets \u2014 all signals of deep, genuine usage. TVL has pulled back to ~$1.9B from prior highs and the single-chain (Solana) concentration caps the ceiling, but the March 2026 Unified Swap API V2 and Polymarket integration indicate continued integration momentum.",
+      "value_capture": "Daily revenue: $185K (~$67.5M/year). TVL: $1.87B. Revenue/TVL ratio: 3.61%. Daily fees: $547K."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 58,
+    "composite_last_week": 50,
+    "wyckoff_phase": "Distribution Phase A",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      58,
+      54,
+      56,
+      53,
+      50,
+      55,
+      58
+    ],
+    "trend_30d": [
+      59,
+      60,
+      59,
+      57,
+      58,
+      59,
+      58,
+      54,
+      56,
+      53,
+      50,
+      55,
+      58
+    ],
+    "rsi_daily": 80.8,
+    "rsi_weekly": 67.7,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 58,
+        "composite_last_week": 50,
+        "delta_7d": -1,
+        "delta_30d": -1,
+        "wyckoff_phase": "Distribution Phase A",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 22,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.4778908292487989
+    },
+    "note": "Distribution risk",
+    "note_detailed": "JUP sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (75/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (60/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 80.8 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 67.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 47.8% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 58/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "JUP",
+        "value_capture",
+        60,
+        "Daily revenue: $185K (~$67.5M/year). TVL: $1.87B. Revenue/TVL ratio: 3.61%. Daily fees: $547K."
+      ],
+      [
+        "JUP",
+        "adoption_activity",
+        75,
+        "Jupiter commands ~95% of Solana aggregator market share with $5.3B 30d DEX volume and $5.8B 30d perp volume, annualized fees of $171M, and a live product suite spanning swaps, perps, lending, staking, and prediction markets \u2014 all signals of deep, genuine usage. TVL has pulled back to ~$1.9B from prior highs and the single-chain (Solana) concentration caps the ceiling, but the March 2026 Unified Swap API V2 and Polymarket integration indicate continued integration momentum."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

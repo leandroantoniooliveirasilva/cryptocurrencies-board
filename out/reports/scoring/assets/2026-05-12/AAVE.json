@@ -1,0 +1,113 @@
+{
+  "symbol": "AAVE",
+  "name": "Aave",
+  "asset": {
+    "symbol": "AAVE",
+    "name": "Aave",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 75,
+      "adoption_activity": 78,
+      "value_capture": 33,
+      "regulatory": 75,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "SOC 2 compliance, Horizon RWA platform",
+      "regulatory": "The SEC closed its four-year Aave investigation without enforcement action (Aug 2025), and the April 2026 SEC safe-harbor guidance for DeFi interfaces further de-risks the protocol's US legal standing; institutional adoption via Aave Horizon (backed by Franklin Templeton, VanEck, Circle) reinforces regulatory validation. Score is capped below 80 because no AAVE-specific ETF exists, EU/UK jurisdictional clarity remains unsettled, and the safe-harbor framework is still interpretive rather than formal statutory approval.",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Aave remains the dominant DeFi lending protocol with 62.8% market share and crossed $1T in cumulative loan originations in early 2026; V4 mainnet launched March 30 with 12-16 chain deployments and institutional RWA partnerships (Circle, Franklin Templeton, VanEck) at $550M. Score tempered by the April 2026 Kelp DAO hack-driven TVL decline from ~$26B to ~$18B, which exposed structural LRT concentration risk.",
+      "value_capture": "Daily revenue: $161K (~$58.7M/year). TVL: $15.33B. Revenue/TVL ratio: 0.38%. Daily fees: $1.1M."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 58,
+    "composite_last_week": 60,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      59,
+      55,
+      55,
+      61,
+      60,
+      54,
+      58
+    ],
+    "trend_30d": [
+      65,
+      64,
+      64,
+      64,
+      64,
+      64,
+      59,
+      55,
+      55,
+      61,
+      60,
+      54,
+      58
+    ],
+    "rsi_daily": 58.0,
+    "rsi_weekly": 29.2,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 58,
+        "composite_last_week": 60,
+        "delta_7d": -6,
+        "delta_30d": -7,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 20,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": true,
+      "change_pct": -0.21198399884430716
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "AAVE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. SOC 2 compliance, Horizon RWA platform\n\u2022 Regulatory (75/100, 15% weight): Favorable regulatory standing. The SEC closed its four-year Aave investigation without enforcement action (Aug 2025), and the April 2026 SEC safe-harbor guidance for DeFi interfaces further de-risks the protocol's US legal standing; institutional adoption via Aave Horizon (backed by Franklin Templeton, VanEck, Circle) reinforces regulatory validation. Score is capped below 80 because no AAVE-specific ETF exists, EU/UK jurisdictional clarity remains unsettled, and the safe-harbor framework is still interpretive rather than formal statutory approval.\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (78/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (33/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 58.0 sits in neutral range.\n\u2022 Weekly RSI at 29.2 suggests longer-term oversold conditions\u2014structural opportunity if fundamentals hold.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 21.2% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 58/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "AAVE",
+        "value_capture",
+        33,
+        "Daily revenue: $161K (~$58.7M/year). TVL: $15.33B. Revenue/TVL ratio: 0.38%. Daily fees: $1.1M."
+      ],
+      [
+        "AAVE",
+        "adoption_activity",
+        78,
+        "Aave remains the dominant DeFi lending protocol with 62.8% market share and crossed $1T in cumulative loan originations in early 2026; V4 mainnet launched March 30 with 12-16 chain deployments and institutional RWA partnerships (Circle, Franklin Templeton, VanEck) at $550M. Score tempered by the April 2026 Kelp DAO hack-driven TVL decline from ~$26B to ~$18B, which exposed structural LRT concentration risk."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

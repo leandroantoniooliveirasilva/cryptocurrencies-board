@@ -1,0 +1,64 @@
+{
+  "symbol": "ADA",
+  "name": "Cardano",
+  "asset": {
+    "symbol": "ADA",
+    "name": "Cardano",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 56,
+      "value_capture": 34,
+      "regulatory": 87,
+      "supply": 77
+    },
+    "score_rationales": {
+      "institutional": "Institutional rails exist\u2014Coinbase Custody Trust Company (NYDFS chartered qualified custodian) and Coinbase Prime support ADA custody and staking, and ADA is a named component of Grayscale\u2019s CoinDesk Crypto 5 ETF (GDLC) at about 0.67% of the portfolio per SEC-related listing disclosures (Nov 2025). The NYSE Arca rule change to list Grayscale Cardano Trust ETF shares was withdrawn in September 2025, so U.S. spot ETF access remains behind Bitcoin and Ethereum despite these fund and custody hooks.",
+      "regulatory": "In March 2026 the SEC and CFTC issued a joint interpretation that explicitly cites Cardano (ADA) among illustrative \u201cdigital commodities\u201d under the Commodity Exchange Act, aligning U.S. enforcement posture with a commodity framing rather than a blanket security label. In the EU, the Cardano Foundation joined the MiCA Crypto Alliance (Oct 2025) and supports MiCA-ready disclosures (including an industry ADA white paper and Cardano-token templates), giving EU venues a compliance path\u2014while the U.S. guidance remains an interim agency position open to comment, not a final rule.",
+      "supply": "ADA has a protocol-enforced 45 billion hard cap with no uncapped minting; circulating supply is roughly 36.8\u201336.9 billion ADA (~82% of max per Glassnode/CoinGecko-class figures), so most coins are already distributed while remaining issuance comes from the decaying staking reserve and treasury rather than opaque VC cliffs. On-chain staking participation is very high (commonly reported ~60\u201375% of supply delegated across thousands of pools), which materially reduces liquid float versus non-staked supply even without lockups. Remaining scheduled emissions still dilute holders until reserves exhaust, and short-term exchange-reserve direction cannot be asserted from the data given\u2014so the score is strong but not maximal.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "DefiLlama chain stats show roughly $136M DeFi TVL (often mid\u201120s among chains), ~$49M stablecoin market cap, ~16k active addresses and ~25k transactions in 24h\u2014real DeFi and daily usage, but TVL and on-chain activity remain far below top L1 leaders.",
+      "value_capture": "Daily revenue: $2K (~$591K/year). TVL: $129.7M. Revenue/TVL ratio: 0.46%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 60,
+    "composite_last_week": 60,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      60,
+      60
+    ],
+    "trend_30d": [
+      60,
+      60
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 0,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Regulatory clarity",
+    "note_detailed": "ADA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Institutional rails exist\u2014Coinbase Custody Trust Company (NYDFS chartered qualified custodian) and Coinbase Prime support ADA custody and staking, and ADA is a named component of Grayscale\u2019s CoinDesk Crypto 5 ETF (GDLC) at about 0.67% of the portfolio per SEC-related listing disclosures (Nov 2025). The NYSE Arca rule change to list Grayscale Cardano Trust ETF shares was withdrawn in September 2025, so U.S. spot ETF access remains behind Bitcoin and Ethereum despite these fund and custody hooks.\n\u2022 Regulatory (87/100, 15% weight): Clear regulatory standing. In March 2026 the SEC and CFTC issued a joint interpretation that explicitly cites Cardano (ADA) among illustrative \u201cdigital commodities\u201d under the Commodity Exchange Act, aligning U.S. enforcement posture with a commodity framing rather than a blanket security label. In the EU, the Cardano Foundation joined the MiCA Crypto Alliance (Oct 2025) and supports MiCA-ready disclosures (including an industry ADA white paper and Cardano-token templates), giving EU venues a compliance path\u2014while the U.S. guidance remains an interim agency position open to comment, not a final rule.\n\u2022 Supply/On-Chain (77/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (56/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 60/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

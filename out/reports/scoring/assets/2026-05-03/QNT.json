@@ -1,0 +1,80 @@
+{
+  "symbol": "QNT",
+  "name": "Quant",
+  "asset": {
+    "symbol": "QNT",
+    "name": "Quant",
+    "tier": "observation",
+    "asset_type": "infrastructure",
+    "asset_category": "enterprise-settlement",
+    "scores": {
+      "institutional": 72,
+      "adoption_activity": 56,
+      "value_capture": 38,
+      "regulatory": 75,
+      "supply": 79
+    },
+    "score_rationales": {
+      "institutional": "Enterprise interoperability focus",
+      "regulatory": "Enterprise-focused, regulatory engagement",
+      "supply": "QNT\u2019s supply is capped at 14,612,493 tokens with no inflationary emissions (full mint at the 2018 TGE; circulating supply is ~14.54M per major aggregators, roughly 99.5% of max). Glassnode\u2019s labeled exchange share is about 10.2% of supply (Mar 2026), indicating most tokens sit off exchanges though short-term trend was not verified here. Operational demand locks QNT as gateway/licensing collateral, which mechanically reduces tradeable float versus the fixed cap, while precise foundation and insider wallet concentration is harder to audit without full CoinGecko-style supply metadata.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Adoption is evidenced by large institutional programs\u2014UK Finance selected R3 and Quant in April 2024 to deliver the UK Regulated Liability Network experimentation prototype (participants include Barclays, HSBC, Mastercard, Visa, etc.), Overledger underpinned Bank of England/BIS Project Rosalind retail CBDC work, and Quant provides interoperability gateways on IDB-backed LACChain across 12 Latin American and Caribbean countries\u2014while public aggregate Overledger TPS, tx/day, or a global validator count are not published like an open L1, so measurable usage stays moderate.",
+      "value_capture": "QNT\u2019s max supply is fixed at about 14.61M with no ongoing mint (2018 TGE), and Overledger licensing and gateway collateral tie enterprise usage to treasury-held and locked QNT, which can tighten float but does not route cash flows to passive holders. Public materials emphasize fiat or QNT payment for licenses and lack a transparent, recurring fee-burn, buyback-to-holder, or inflation-offsetting staking yield comparable to fee-sharing DeFi or burn-heavy L1s, so holder accrual stays indirect versus category peers."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "regulatory": 0.2,
+      "supply": 0.15
+    },
+    "composite": 64,
+    "composite_last_week": 68,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      68,
+      68,
+      68,
+      64,
+      64,
+      64,
+      64
+    ],
+    "trend_30d": [
+      65,
+      65,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      64,
+      64,
+      64,
+      64
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 5,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Enterprise interoperability",
+    "note_detailed": "QNT sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. Enterprise interoperability focus\n\u2022 Regulatory (75/100, 20% weight): Favorable regulatory standing. Enterprise-focused, regulatory engagement\n\u2022 Supply/On-Chain (79/100, 15% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (56/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (38/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 64/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

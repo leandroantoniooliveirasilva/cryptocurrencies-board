@@ -1,0 +1,80 @@
+{
+  "symbol": "CANTON",
+  "name": "Canton Network",
+  "asset": {
+    "symbol": "CANTON",
+    "name": "Canton Network",
+    "tier": "leader",
+    "asset_type": "infrastructure",
+    "asset_category": "enterprise-settlement",
+    "scores": {
+      "institutional": 72,
+      "adoption_activity": 80,
+      "value_capture": 95,
+      "regulatory": 79,
+      "supply": 53
+    },
+    "score_rationales": {
+      "institutional": "21shares launched the Canton Network ETP (CANTN) and runs a network validator; Fireblocks Trust Company and Northern Trust (with Digital Asset) add regulated custody and tokenized-asset servicing on Canton; DTCC is partnering to tokenize DTC-custodied U.S. Treasury securities on-network and co-chairs Canton Foundation governance with Euroclear, with major institutions (e.g. J.P. Morgan, Goldman Sachs per issuer materials) in the participant set, though much of the roadmap is still phased toward production MVPs.",
+      "regulatory": "In December 2025 the SEC staff issued a no-action letter to DTC for its voluntary securities-tokenization pilot (SEC Division of Trading and Markets, letter dated Dec 11, 2025), and DTCC publicly partnered with Digital Asset to mint DTC-custodied U.S. Treasury securities on Canton with MVP targeted for H1 2026 while DTCC co-chairs the Canton Foundation alongside Euroclear\u2014clear US and EU market-structure alignment for regulated assets on the network. Canton\u2019s design (Daml workflows, privacy/selective disclosure, integrations such as Elliptic and TRM Labs for AML) supports institutional compliance, but relief is pilot-scoped and time-limited, there is no spot ETF for Canton Coin, and broad retail-token classification across jurisdictions remains less settled than the DTCC/RWA path.",
+      "supply": "CoinGecko lists ~38.43B circulating equal to total_supply with no max_supply cap, so there is no fixed-cap scarcity and supply is governed by the protocol\u2019s burn\u2013mint equilibrium (fees burn CC while emissions reward apps, Super Validators, and active users, with a published declining schedule and material cumulative burns versus the initial ~40B CC baseline). Reported participation sinks are modest for holders (~2B CC staked, roughly 5% of float in widely cited ecosystem summaries) and concentration remains a concern (foundation/treasury and ecosystem-locked tranches plus institutional holdings in published allocation breakdowns), while fee-driven burns improve the profile versus a pure inflation schedule.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Canton sustains 600,000+ daily transactions with roughly 575\u2013600 validator nodes (including Super Validators such as Visa as of March 2026 and six new Super Validators in Q1 2026), and ecosystem reporting cites on the order of hundreds of billions of dollars in daily asset movement alongside burst loads like 3.5 million Canton Coin events in a single day\u2014clear institutional workflow adoption, though headline global TPS stays modest (~7 TPS peak in public network health reporting) because work is sharded across domains rather than one global mempool.",
+      "value_capture": "Daily revenue: $1.9M (~$708.7M/year). TVL: $463. Revenue/TVL ratio: 153078977.03%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "regulatory": 0.2,
+      "supply": 0.15
+    },
+    "composite": 77,
+    "composite_last_week": 82,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      82,
+      82,
+      64,
+      58,
+      58,
+      77,
+      77
+    ],
+    "trend_30d": [
+      81,
+      83,
+      82,
+      82,
+      82,
+      82,
+      82,
+      82,
+      64,
+      58,
+      58,
+      77,
+      77
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 3,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Infrastructure/enterprise",
+    "note_detailed": "CANTON holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. 21shares launched the Canton Network ETP (CANTN) and runs a network validator; Fireblocks Trust Company and Northern Trust (with Digital Asset) add regulated custody and tokenized-asset servicing on Canton; DTCC is partnering to tokenize DTC-custodied U.S. Treasury securities on-network and co-chairs Canton Foundation governance with Euroclear, with major institutions (e.g. J.P. Morgan, Goldman Sachs per issuer materials) in the participant set, though much of the roadmap is still phased toward production MVPs.\n\u2022 Regulatory (79/100, 20% weight): Favorable regulatory standing. In December 2025 the SEC staff issued a no-action letter to DTC for its voluntary securities-tokenization pilot (SEC Division of Trading and Markets, letter dated Dec 11, 2025), and DTCC publicly partnered with Digital Asset to mint DTC-custodied U.S. Treasury securities on Canton with MVP targeted for H1 2026 while DTCC co-chairs the Canton Foundation alongside Euroclear\u2014clear US and EU market-structure alignment for regulated assets on the network. Canton\u2019s design (Daml workflows, privacy/selective disclosure, integrations such as Elliptic and TRM Labs for AML) supports institutional compliance, but relief is pilot-scoped and time-limited, there is no spot ETF for Canton Coin, and broad retail-token classification across jurisdictions remains less settled than the DTCC/RWA path.\n\u2022 Supply/On-Chain (53/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (80/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 20% weight): Strong holder-accruing economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 77/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

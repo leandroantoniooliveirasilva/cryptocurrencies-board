@@ -1,0 +1,80 @@
+{
+  "symbol": "MORPHO",
+  "name": "Morpho",
+  "asset": {
+    "symbol": "MORPHO",
+    "name": "Morpho",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 78,
+      "adoption_activity": 77,
+      "value_capture": 50,
+      "regulatory": 70,
+      "supply": 54
+    },
+    "score_rationales": {
+      "institutional": "Apollo investment, institutional curator standard",
+      "regulatory": "DeFi lending, institutional backing signals compliance",
+      "supply": "MORPHO is hard-capped at 1,000,000,000 tokens (Morpho governance FAQ) with CoinGecko-consistent circulation near ~606M (~60.6% of supply), so a large share is already liquid under disclosed cohort vesting rather than unlimited inflation. DeFiLlama\u2019s unlock view still flags ongoing daily releases from strategic-partner and founder schedules (on the order of hundreds of thousands of MORPHO per day combined), and public top-holder snapshots remain very concentrated\u2014much of it labeled treasuries/contracts but still not broadly decentralized float. Governance voting locks some usage but does not act like a large, yield-backed staking sink that materially removes sell-side pressure.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "DefiLlama (May 2026) shows Morpho at roughly $7.29B TVL with major depth on Ethereum and Base and deployment across Arbitrum, OP Mainnet, Polygon, Hyperliquid L1, Monad, Katana, and others; about $4B on the borrowed side shows lending is actively drawn, not passive TVL. That scale and multi-chain, curator-driven vault usage place Morpho among the most-used modular lending stacks in DeFi, though it remains smaller than the largest monolithic lenders.",
+      "value_capture": "Daily revenue: $405K (~$147.8M/year). TVL: $7.34B. Revenue/TVL ratio: 2.01%."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 63,
+    "composite_last_week": 63,
+    "wyckoff_phase": "Distribution Phase A",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      63,
+      63,
+      63,
+      60,
+      64,
+      63,
+      63
+    ],
+    "trend_30d": [
+      66,
+      67,
+      65,
+      64,
+      70,
+      64,
+      63,
+      63,
+      63,
+      60,
+      64,
+      63,
+      63
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 9,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Distribution risk",
+    "note_detailed": "MORPHO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 20% weight): Strong institutional presence. Apollo investment, institutional curator standard\n\u2022 Regulatory (70/100, 15% weight): Favorable regulatory standing. DeFi lending, institutional backing signals compliance\n\u2022 Supply/On-Chain (54/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (77/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (50/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 63/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

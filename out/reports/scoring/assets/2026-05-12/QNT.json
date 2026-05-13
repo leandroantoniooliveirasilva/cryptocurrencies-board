@@ -1,0 +1,106 @@
+{
+  "symbol": "QNT",
+  "name": "Quant",
+  "asset": {
+    "symbol": "QNT",
+    "name": "Quant",
+    "tier": "observation",
+    "asset_type": "infrastructure",
+    "asset_category": "enterprise-settlement",
+    "scores": {
+      "institutional": 72,
+      "adoption_activity": 44,
+      "value_capture": 50,
+      "regulatory": 75,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Enterprise interoperability focus",
+      "regulatory": "Enterprise-focused, regulatory engagement",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "QNT operates as middleware (Overledger), not a native L1, so TPS/validator metrics don't apply directly; real institutional traction exists (1,000+ enterprise clients, Bank of England/HSBC/Barclays CBDC pilots, $1.5T claimed through OEM partners), but the network is still transitioning from pilots to production-scale (Overledger Fusion Mainnet and QuantNet settlement layer both expected/launched late 2025\u20132026), and verifiable on-chain usage data remains opaque.",
+      "value_capture": "Enterprise licensing model, limited on-chain fee activity"
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "regulatory": 0.2,
+      "supply": 0.15
+    },
+    "composite": 59,
+    "composite_last_week": 64,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      68,
+      64,
+      64,
+      64,
+      64,
+      62,
+      59
+    ],
+    "trend_30d": [
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      64,
+      64,
+      64,
+      64,
+      62,
+      59
+    ],
+    "rsi_daily": 56.1,
+    "rsi_weekly": 47.6,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 59,
+        "composite_last_week": 64,
+        "delta_7d": -9,
+        "delta_30d": -9,
+        "wyckoff_phase": "Re-accumulation",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 14,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.08727126668593747
+    },
+    "note": "Enterprise interoperability",
+    "note_detailed": "QNT sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. Enterprise interoperability focus\n\u2022 Regulatory (75/100, 20% weight): Favorable regulatory standing. Enterprise-focused, regulatory engagement\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (44/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (50/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 56.1 sits in neutral range.\n\u2022 Weekly RSI at 47.6 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-8.7% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 59/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "QNT",
+        "adoption_activity",
+        44,
+        "QNT operates as middleware (Overledger), not a native L1, so TPS/validator metrics don't apply directly; real institutional traction exists (1,000+ enterprise clients, Bank of England/HSBC/Barclays CBDC pilots, $1.5T claimed through OEM partners), but the network is still transitioning from pilots to production-scale (Overledger Fusion Mainnet and QuantNet settlement layer both expected/launched late 2025\u20132026), and verifiable on-chain usage data remains opaque."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

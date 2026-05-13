@@ -1,0 +1,106 @@
+{
+  "symbol": "TAO",
+  "name": "Bittensor",
+  "asset": {
+    "symbol": "TAO",
+    "name": "Bittensor",
+    "tier": "observation",
+    "asset_type": "infrastructure",
+    "asset_category": "ai-compute-depin",
+    "scores": {
+      "institutional": 65,
+      "adoption_activity": 62,
+      "value_capture": 45,
+      "regulatory": 55,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Grayscale ETF filing, DCG backing",
+      "regulatory": "AI-crypto, limited regulatory framework",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Bittensor shows genuine traction: 128 active subnets (expanding to 256 in May 2026), $43M in Q1 2026 AI usage revenue, ~73% of supply staked (~$2.2B TVS), 102k+ wallets, and a live dTAO market allocating emissions dynamically \u2014 but demand-side usage remains thin relative to compute supply, real-world API consumption is nascent outside Chutes/Targon, and subnet quality is highly uneven with most emissions still driven by speculative staking rather than verified AI output.",
+      "value_capture": "Subnet registration fees, compute marketplace fees"
+    },
+    "weights": {
+      "adoption_activity": 0.25,
+      "value_capture": 0.2,
+      "institutional": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 56,
+    "composite_last_week": 61,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      54,
+      54,
+      54,
+      61,
+      61,
+      54,
+      56
+    ],
+    "trend_30d": [
+      52,
+      52,
+      52,
+      52,
+      52,
+      52,
+      54,
+      54,
+      54,
+      61,
+      61,
+      54,
+      56
+    ],
+    "rsi_daily": 72.1,
+    "rsi_weekly": 55.1,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 56,
+        "composite_last_week": 61,
+        "delta_7d": 4,
+        "delta_30d": 4,
+        "wyckoff_phase": "Accumulation Phase D",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 22,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.7492815242758666
+    },
+    "note": "Infrastructure/enterprise",
+    "note_detailed": "TAO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: AI / DePIN \u2014 adoption and value capture with supply and regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Grayscale ETF filing, DCG backing\n\u2022 Regulatory (55/100, 15% weight): Uncertain regulatory standing. AI-crypto, limited regulatory framework\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (45/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 72.1 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 55.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 74.9% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 56/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "TAO",
+        "adoption_activity",
+        62,
+        "Bittensor shows genuine traction: 128 active subnets (expanding to 256 in May 2026), $43M in Q1 2026 AI usage revenue, ~73% of supply staked (~$2.2B TVS), 102k+ wallets, and a live dTAO market allocating emissions dynamically \u2014 but demand-side usage remains thin relative to compute supply, real-world API consumption is nascent outside Chutes/Targon, and subnet quality is highly uneven with most emissions still driven by speculative staking rather than verified AI output."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

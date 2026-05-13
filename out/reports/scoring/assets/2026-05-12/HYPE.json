@@ -1,0 +1,106 @@
+{
+  "symbol": "HYPE",
+  "name": "Hyperliquid",
+  "asset": {
+    "symbol": "HYPE",
+    "name": "Hyperliquid",
+    "tier": "runner-up",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 42,
+      "adoption_activity": 80,
+      "value_capture": 93,
+      "regulatory": 48,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "HYPE has accelerating institutional signals \u2014 four ETF filings pending SEC approval (Bitwise/BHYP, Grayscale/GHYP, 21Shares/THYP, VanEck/VHYP), institutional-grade custody via Komainu and Anchorage Digital, a listed corporate treasury vehicle (Hyperliquid Strategies, ~$800M HYPE), prime brokerage integration via Ripple Prime, and FIX-connectivity infrastructure via Gold-i/MatrixNET \u2014 but no ETF has been approved yet and TradFi penetration remains nascent relative to BTC/ETH.",
+      "regulatory": "HYPE has meaningful positive signals \u2014 multiple spot ETF filings (Grayscale, Bitwise, 21Shares), a $29M lobbying arm (Hyperliquid Policy Center), MiCA-aligned USDH stablecoin, and growing institutional custody support \u2014 but faces real headwinds: no CFTC-regulated futures yet (blocking SEC's generic listing standard pathway), documented KYC/AML gaps flagging 63% of institutional investors, CFTC chair explicitly targeting DEX onshoring, and no ETF approvals pending as of May 2026, leaving legal status unsettled in all major jurisdictions.",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Hyperliquid commands >70% of decentralized perps open interest and >50% of all on-chain perpetuals volume (~$8B+ daily), with 229K active traders and 170+ projects building on HyperEVM as of May 2026, signaling deep ecosystem entrenchment; score is capped from higher due to TVL declining sharply from a $6B peak to ~$533M, suggesting spot/lending layer adoption remains nascent relative to perps dominance.",
+      "value_capture": "Daily revenue: $1.8M (~$660.2M/year). TVL: $5.04B. Revenue/TVL ratio: 13.10%. Daily fees: $2.0M."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 66,
+    "composite_last_week": 66,
+    "wyckoff_phase": "Distribution Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      76,
+      71,
+      72,
+      72,
+      66,
+      65,
+      66
+    ],
+    "trend_30d": [
+      75,
+      75,
+      75,
+      73,
+      66,
+      70,
+      76,
+      71,
+      72,
+      72,
+      66,
+      65,
+      66
+    ],
+    "rsi_daily": 51.0,
+    "rsi_weekly": 62.7,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 66,
+        "composite_last_week": 66,
+        "delta_7d": -4,
+        "delta_30d": -9,
+        "wyckoff_phase": "Distribution Phase B",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 14,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.18821181469913723
+    },
+    "note": "Distribution risk",
+    "note_detailed": "HYPE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (42/100, 20% weight): Limited institutional presence. HYPE has accelerating institutional signals \u2014 four ETF filings pending SEC approval (Bitwise/BHYP, Grayscale/GHYP, 21Shares/THYP, VanEck/VHYP), institutional-grade custody via Komainu and Anchorage Digital, a listed corporate treasury vehicle (Hyperliquid Strategies, ~$800M HYPE), prime brokerage integration via Ripple Prime, and FIX-connectivity infrastructure via Gold-i/MatrixNET \u2014 but no ETF has been approved yet and TradFi penetration remains nascent relative to BTC/ETH.\n\u2022 Regulatory (48/100, 15% weight): Concerning regulatory standing. HYPE has meaningful positive signals \u2014 multiple spot ETF filings (Grayscale, Bitwise, 21Shares), a $29M lobbying arm (Hyperliquid Policy Center), MiCA-aligned USDH stablecoin, and growing institutional custody support \u2014 but faces real headwinds: no CFTC-regulated futures yet (blocking SEC's generic listing standard pathway), documented KYC/AML gaps flagging 63% of institutional investors, CFTC chair explicitly targeting DEX onshoring, and no ETF approvals pending as of May 2026, leaving legal status unsettled in all major jurisdictions.\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (80/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (93/100, 30% weight): Strong holder-accruing economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 51.0 sits in neutral range.\n\u2022 Weekly RSI at 62.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 18.8% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "HYPE",
+        "value_capture",
+        93,
+        "Daily revenue: $1.8M (~$660.2M/year). TVL: $5.04B. Revenue/TVL ratio: 13.10%. Daily fees: $2.0M."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

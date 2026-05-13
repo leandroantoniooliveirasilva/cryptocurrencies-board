@@ -1,0 +1,106 @@
+{
+  "symbol": "TIA",
+  "name": "Celestia",
+  "asset": {
+    "symbol": "TIA",
+    "name": "Celestia",
+    "tier": "observation",
+    "asset_type": "infrastructure",
+    "asset_category": "data-availability-modular",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 44,
+      "value_capture": 50,
+      "regulatory": 65,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Limited institutional presence",
+      "regulatory": "Limited regulatory clarity",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Celestia holds ~50% DA market share with 100+ active rollups and 160+ GB cumulative data posted, and blob fees grew 10x since late 2024 \u2014 genuine early traction; however, actual block utilization remains very low (~2.5 GB/day against 128 MB-block capacity post-Matcha upgrade implies sub-3% utilization), and over half of all posted data originates from a single integrator (Eclipse), indicating fragile, concentrated demand rather than broad organic adoption.",
+      "value_capture": "Limited value-capture data available"
+    },
+    "weights": {
+      "adoption_activity": 0.25,
+      "value_capture": 0.2,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 52,
+    "composite_last_week": 56,
+    "wyckoff_phase": "Distribution Phase A",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      52,
+      54,
+      54,
+      56,
+      56,
+      54,
+      52
+    ],
+    "trend_30d": [
+      52,
+      52,
+      52,
+      52,
+      52,
+      52,
+      52,
+      54,
+      54,
+      56,
+      56,
+      54,
+      52
+    ],
+    "rsi_daily": 75.3,
+    "rsi_weekly": 49.0,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 52,
+        "composite_last_week": 56,
+        "delta_7d": 0,
+        "delta_30d": 0,
+        "wyckoff_phase": "Distribution Phase A",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 22,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.22109430102699174
+    },
+    "note": "Distribution risk",
+    "note_detailed": "TIA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: modular data availability \u2014 adoption and value capture with supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (44/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (50/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 75.3 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 49.0 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 22.1% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "TIA",
+        "adoption_activity",
+        44,
+        "Celestia holds ~50% DA market share with 100+ active rollups and 160+ GB cumulative data posted, and blob fees grew 10x since late 2024 \u2014 genuine early traction; however, actual block utilization remains very low (~2.5 GB/day against 128 MB-block capacity post-Matcha upgrade implies sub-3% utilization), and over half of all posted data originates from a single integrator (Eclipse), indicating fragile, concentrated demand rather than broad organic adoption."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

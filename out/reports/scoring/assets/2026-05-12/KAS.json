@@ -1,0 +1,96 @@
+{
+  "symbol": "KAS",
+  "name": "Kaspa",
+  "asset": {
+    "symbol": "KAS",
+    "name": "Kaspa",
+    "tier": "observation",
+    "asset_type": "store-of-value",
+    "asset_category": "monetary-store-of-value",
+    "scores": {
+      "institutional": 18,
+      "adoption_activity": null,
+      "value_capture": null,
+      "regulatory": 48,
+      "supply": 76
+    },
+    "score_rationales": {
+      "institutional": "Kaspa has early-stage institutional infrastructure \u2014 Zodia Custody (Standard Chartered subsidiary) supports KAS, Valour has launched a KAS ETP in Europe, and Marathon Digital mines it \u2014 but there is no US ETF, no major corporate treasury adoption, no Grayscale product, and the dedicated treasury vehicle (Krescendo Capital) is seed-stage and niche; overall footprint remains thin relative to its market cap.",
+      "regulatory": "Kaspa's PoW consensus gives it a Bitcoin-adjacent commodity profile \u2014 the strongest regulatory posture an altcoin can hold \u2014 and it has no adverse enforcement actions, Zodia Custody (Standard Chartered) institutional-grade custody, and live Valor Finance ETPs in Europe under MiCA. However, KAS has no explicit US commodity designation from the CFTC, no SEC-registered ETF filing, and insufficient market footprint to attract formal regulatory attention (positive or negative), leaving its US classification unsettled and any ETF pathway still speculative.",
+      "supply": "KAS has a hard cap of 28.70B with 95.57% already circulating (27.42B of 27.43B total supply out), leaving only ~1.27B (~4.4%) yet to be mined under a monthly halving schedule that makes future emission negligible and front-loaded dilution effectively over. The fair-launch PoW origin (no pre-mine, no VC allocation, no team unlock cliffs) eliminates structured sell-side overhangs entirely, which is the strongest single tokenomics signal. Score is capped below 85 because no concrete exchange-reserve trend data or on-chain long-term holder ratio was supplied, preventing verification of whether the near-complete supply is accumulating off-exchange or sitting in liquid sell-ready wallets.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "value_capture": "Fee model routes fees to miners/validators without holder accrual. Value capture excluded; security budget read under Supply."
+    },
+    "weights": {
+      "institutional": 0.4,
+      "supply": 0.35,
+      "regulatory": 0.25
+    },
+    "composite": 46,
+    "composite_last_week": 65,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      46
+    ],
+    "trend_30d": [
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      65,
+      46
+    ],
+    "rsi_daily": 71.3,
+    "rsi_weekly": 48.7,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 46,
+        "composite_last_week": 65,
+        "delta_7d": -19,
+        "delta_30d": -19,
+        "wyckoff_phase": "Accumulation Phase D",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 21,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.08955195282450905
+    },
+    "note": "Store of value, supply-focused",
+    "note_detailed": "KAS sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: monetary store of value \u2014 institutional + supply/security + regulatory; no separate value-capture dimension.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (18/100, 40% weight): Limited institutional presence. Kaspa has early-stage institutional infrastructure \u2014 Zodia Custody (Standard Chartered subsidiary) supports KAS, Valour has launched a KAS ETP in Europe, and Marathon Digital mines it \u2014 but there is no US ETF, no major corporate treasury adoption, no Grayscale product, and the dedicated treasury vehicle (Krescendo Capital) is seed-stage and niche; overall footprint remains thin relative to its market cap.\n\u2022 Regulatory (48/100, 25% weight): Concerning regulatory standing. Kaspa's PoW consensus gives it a Bitcoin-adjacent commodity profile \u2014 the strongest regulatory posture an altcoin can hold \u2014 and it has no adverse enforcement actions, Zodia Custody (Standard Chartered) institutional-grade custody, and live Valor Finance ETPs in Europe under MiCA. However, KAS has no explicit US commodity designation from the CFTC, no SEC-registered ETF filing, and insufficient market footprint to attract formal regulatory attention (positive or negative), leaving its US classification unsettled and any ETF pathway still speculative.\n\u2022 Supply/On-Chain (76/100, 35% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 71.3 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 48.7 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 9.0% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 46/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

@@ -1,0 +1,80 @@
+{
+  "symbol": "PENDLE",
+  "name": "Pendle",
+  "asset": {
+    "symbol": "PENDLE",
+    "name": "Pendle",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 65,
+      "adoption_activity": 60,
+      "value_capture": 31,
+      "regulatory": 60,
+      "supply": 40
+    },
+    "score_rationales": {
+      "institutional": "Institutional Citadels product",
+      "regulatory": "Yield trading, DeFi regulatory uncertainty",
+      "supply": "Data-driven score. High inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "DefiLlama shows about $1.50B TVL (current protocol TVL), and the weekly scan captured roughly $14.2M DEX volume (24h) and ~$634M (30d) with deployments across Ethereum, Arbitrum, Base, Optimism, BNB Chain, and Avalanche\u2014strong footprint for a yield-trading AMM. The score stays in the mid-range because fee throughput in that pass (~$10.1K/day, ~$87.7K over 7 days) was modest versus TVL and there was no reliable active-user metric to confirm engagement quality.",
+      "value_capture": "Daily revenue: $6K (~$2.3M/year). TVL: $1.56B. Revenue/TVL ratio: 0.15%. Daily fees: $7K."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 48,
+    "composite_last_week": 52,
+    "wyckoff_phase": "Accumulation Phase E",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      52,
+      53,
+      52,
+      48,
+      49,
+      49,
+      48
+    ],
+    "trend_30d": [
+      62,
+      48,
+      53,
+      53,
+      53,
+      53,
+      52,
+      53,
+      52,
+      48,
+      49,
+      49,
+      48
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 12,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "PENDLE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 20% weight): Moderate institutional presence. Institutional Citadels product\n\u2022 Regulatory (60/100, 15% weight): Uncertain regulatory standing. Yield trading, DeFi regulatory uncertainty\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (60/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (31/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 48/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

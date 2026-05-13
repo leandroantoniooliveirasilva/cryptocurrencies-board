@@ -1,0 +1,105 @@
+{
+  "symbol": "AVAX",
+  "name": "Avalanche",
+  "asset": {
+    "symbol": "AVAX",
+    "name": "Avalanche",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 72,
+      "adoption_activity": 55,
+      "value_capture": 31,
+      "regulatory": 72,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "RWA TVL, VanEck ETF, BlackRock fund",
+      "regulatory": "No major regulatory issues, moderate clarity",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Daily revenue: $2K (~$750K/year). TVL: $663.9M. Revenue/TVL ratio: 0.11%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 56,
+    "composite_last_week": 61,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      66,
+      66,
+      61,
+      61,
+      61,
+      61,
+      56
+    ],
+    "trend_30d": [
+      63,
+      66,
+      66,
+      66,
+      66,
+      65,
+      66,
+      66,
+      61,
+      61,
+      61,
+      61,
+      56
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 12,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Subnet architecture",
+    "note_detailed": "AVAX sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (72/100, 25% weight): Strong institutional presence. RWA TVL, VanEck ETF, BlackRock fund\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. No major regulatory issues, moderate clarity\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (31/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 56/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "AVAX",
+        "regulatory",
+        72,
+        "No major regulatory issues, moderate clarity"
+      ],
+      [
+        "AVAX",
+        "institutional",
+        72,
+        "RWA TVL, VanEck ETF, BlackRock fund"
+      ],
+      [
+        "AVAX",
+        "adoption_activity",
+        55,
+        "Moderate usage signal; verify with on-chain data."
+      ],
+      [
+        "AVAX",
+        "supply",
+        50,
+        "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned)."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

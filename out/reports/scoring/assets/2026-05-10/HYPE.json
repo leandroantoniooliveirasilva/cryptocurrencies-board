@@ -1,0 +1,105 @@
+{
+  "symbol": "HYPE",
+  "name": "Hyperliquid",
+  "asset": {
+    "symbol": "HYPE",
+    "name": "Hyperliquid",
+    "tier": "runner-up",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 75,
+      "adoption_activity": 55,
+      "value_capture": 79,
+      "regulatory": 68,
+      "supply": 40
+    },
+    "score_rationales": {
+      "institutional": "Revenue leader, growing institutional interest",
+      "regulatory": "Newer protocol, regulatory status evolving",
+      "supply": "Data-driven score from available supply metrics: fixed supply cap, low circulating ratio, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Daily revenue: $1.0M (~$377.3M/year). TVL: $5.05B. Revenue/TVL ratio: 7.46%. Daily fees: $1.2M."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 65,
+    "composite_last_week": 66,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      70,
+      76,
+      71,
+      72,
+      72,
+      66,
+      65
+    ],
+    "trend_30d": [
+      73,
+      75,
+      75,
+      75,
+      73,
+      66,
+      70,
+      76,
+      71,
+      72,
+      72,
+      66,
+      65
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 12,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Revenue-per-user sector leader",
+    "note_detailed": "HYPE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. Revenue leader, growing institutional interest\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. Newer protocol, regulatory status evolving\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (79/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "HYPE",
+        "regulatory",
+        68,
+        "Newer protocol, regulatory status evolving"
+      ],
+      [
+        "HYPE",
+        "institutional",
+        75,
+        "Revenue leader, growing institutional interest"
+      ],
+      [
+        "HYPE",
+        "adoption_activity",
+        55,
+        "Moderate usage signal; verify with on-chain data."
+      ],
+      [
+        "HYPE",
+        "supply",
+        40,
+        "Data-driven score from available supply metrics: fixed supply cap, low circulating ratio, high inflation."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

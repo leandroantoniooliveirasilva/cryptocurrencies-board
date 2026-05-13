@@ -15,6 +15,7 @@ import os
 import subprocess
 import time
 import threading
+from datetime import datetime, timezone
 from typing import Optional
 
 import requests
@@ -65,6 +66,36 @@ SCORING_SYSTEM_PREFIX = (
 ) if SCORING_SKILL_EXCERPT else ''
 
 
+def _today_utc() -> str:
+    return datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+
+DATA_FRESHNESS_PRINCIPLES = """Treat this as a real-time supply analysis. Today is {today} (UTC).
+
+Time-sensitive supply metrics — verify against live external sources covering the LAST ~30–60 DAYS before quoting any figure:
+- Exchange reserves (BTC/ETH/etc on CEX, net flow direction)
+- Staked / locked supply % and recent change
+- Long-term holder share, whale concentration, top-N wallet share
+- Active circulating supply vs dormant supply
+- Recent unlocks, emissions, or burns
+
+Durable tokenomics facts — use as context without re-verifying:
+- Max / fixed supply cap and emission curve design
+- Hard-coded burn or fee-sink mechanisms
+- Vesting schedule structure for team / VC / foundation
+- Mainnet launch and genesis distribution
+
+Rules:
+- Use any external research tools available (web search / fetch) to look up current values. Prefer Glassnode, CryptoQuant, Coin Metrics, DefiLlama, official validator dashboards, on-chain explorers, and project tokenomics pages.
+- When citing exchange reserves, staked %, or holder concentration, append a short source tag and approximate date — e.g. "(CryptoQuant, May 2026)", "(beaconcha.in, last 30d)".
+- If on-chain metrics for this asset cannot be verified within the last ~60 days, fall back to durable tokenomics (cap, emissions, burn) and score conservatively. State the data gap explicitly in the rationale rather than inventing specifics.
+- Do not anchor on figures from earlier scoring runs."""
+
+
+def _freshness_block() -> str:
+    return DATA_FRESHNESS_PRINCIPLES.format(today=_today_utc())
+
+
 def _rate_limit():
     """Enforce rate limiting between requests."""
     global _last_request_time
@@ -97,28 +128,40 @@ _supply_cache: dict = {}
 
 SUPPLY_PROMPT = """Analyze the supply dynamics and on-chain metrics for {symbol} ({name}).
 
-Consider these factors for a SUPPLY score (0-100 scale, higher = more bullish tokenomics):
+Score SUPPLY on a 0-100 scale (higher = more bullish tokenomics). Mix durable token-design facts with LIVE on-chain readings from the last ~30 days.
 
-1. **Tokenomics** (weight: 30%)
-   - Is there a max/fixed supply cap? (bullish)
-   - What's the emission/inflation schedule? (low/declining = bullish)
+1. **Tokenomics** (weight: 30%) — DURABLE, cite from documentation
+   - Max/fixed supply cap (bullish if present)
+   - Emission/inflation schedule (low/declining = bullish)
    - Circulating vs total supply ratio (high = bullish, tokens already distributed)
 
-2. **Exchange Reserves** (weight: 30%)
-   - Are exchange reserves declining? (bullish - accumulation)
-   - Are coins moving to cold storage/self-custody? (bullish)
+2. **Exchange Reserves** (weight: 30%) — TIME-SENSITIVE, verify externally
+   - Are exchange reserves declining over the last 30 days? (bullish — accumulation)
+   - Net direction of CEX flows (inflow vs outflow)
+   - Coins moving to cold storage / self-custody
 
-3. **Holder Distribution** (weight: 25%)
-   - What % is held by long-term holders? (high = bullish)
-   - Is there concerning concentration in few wallets?
-   - Whale behavior patterns
+3. **Holder Distribution** (weight: 25%) — TIME-SENSITIVE, verify externally
+   - Current long-term holder share and recent change
+   - Top-N wallet concentration and whale net position change
+   - Recent accumulation vs distribution by cohort
 
-4. **Staking/Lock-ups** (weight: 15%)
-   - What % of supply is staked or locked? (high = reduced sell pressure)
-   - Lock-up schedules for team/VC tokens
+4. **Staking / Lock-ups** (weight: 15%) — TIME-SENSITIVE for the live %, durable for design
+   - Current % of TOTAL supply staked or locked (verify recent value)
+   - 30-day trend of staking % — RISING = more supply removed from float (scarcity) AND a confidence signal that holders are committing to the project's future; FALLING during price strength often precedes distribution
+   - Upcoming unlocks / cliffs in the next 30–90 days (verify against a vesting tracker)
+   - Team/VC vesting design (durable)
+   - Skip the live % factor if the asset has no native staking mechanism; lean on lock-up / vesting structure instead
 
-Current supply data from CoinGecko:
+Consensus-conditional factors — fold into the relevant pillar above:
+
+A. **Proof-of-Work assets only** (e.g. BTC, KAS) — current network hash rate AND its 30-day trend. Hash rate is the supply-side security budget signal: rising hash rate = miner conviction and a healthier security budget; sustained drop = miner capitulation, weaker security, potential distribution as miners sell to cover costs. Verify via blockchain.com, mempool.space, hashrateindex, KasFYI, or chain-specific dashboards. Treat this as an additional input to Holder Distribution / Exchange Reserves reasoning (miners are a structural seller cohort).
+
+B. **Proof-of-Stake / native-staking assets** — emphasise the live staking-% trend in pillar 4. Note specifically whether the staked supply is growing faster, in line with, or slower than circulating supply growth (issuance-adjusted), since net-new locks are what actually tighten float.
+
+Current supply data from CoinGecko (verify it is still current; CoinGecko may lag):
 {supply_data}
+
+For each driver, prefer recent on-chain figures and cite a short source tag with approximate date when the figure materially moves the score. If on-chain data for this asset is unavailable in the last ~60 days, lean on durable tokenomics, score conservatively, and state the gap explicitly.
 
 Return ONLY a JSON object: {{"score": <int 0-100>, "rationale": "<2-3 sentences explaining key supply factors>"}}
 No other text."""
@@ -239,7 +282,7 @@ def _invoke_agent_supply(prompt: str, cache_key: str) -> Optional[dict]:
     """Run the selected agent CLI for supply scoring (non-interactive)."""
     label = agent_label()
     try:
-        full_prompt = f'{SCORING_SYSTEM_PREFIX}{prompt}'
+        full_prompt = f'{SCORING_SYSTEM_PREFIX}{_freshness_block()}\n\n{prompt}'
         result = subprocess.run(
             build_agent_command(full_prompt),
             capture_output=True,

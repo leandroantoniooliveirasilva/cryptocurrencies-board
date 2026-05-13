@@ -1,0 +1,106 @@
+{
+  "symbol": "XRP",
+  "name": "Ripple",
+  "asset": {
+    "symbol": "XRP",
+    "name": "Ripple",
+    "tier": "runner-up",
+    "asset_type": "infrastructure",
+    "asset_category": "payments-rail",
+    "scores": {
+      "institutional": 78,
+      "adoption_activity": 65,
+      "value_capture": null,
+      "regulatory": 82,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Banking partnerships, ETF inflows",
+      "regulatory": "SEC lawsuit settled favorably",
+      "supply": "Data-driven score from available supply metrics: fixed supply cap, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "XRP shows concrete payments adoption with ODL corridor volume at $14.2B quarterly (Q1 2026, +38% QoQ) across USD-MXN, USD-PHP, and Asia corridors, RLUSD stablecoin reaching ~$2.5B market cap with OKX/Bitget integrations covering 90M+ users, and tokenized commodities on XRPL surging from $111M to $1.14B; however, on-chain DeFi TVL remains thin (~$49M) and network utilization outside the payments/ODL corridor is still modest relative to L1 peers.",
+      "value_capture": "Fees minimal by design. Value capture excluded for this asset."
+    },
+    "weights": {
+      "institutional": 0.35,
+      "adoption_activity": 0.2,
+      "regulatory": 0.3,
+      "supply": 0.15
+    },
+    "composite": 72,
+    "composite_last_week": 71,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      74,
+      70,
+      70,
+      71,
+      71,
+      70,
+      72
+    ],
+    "trend_30d": [
+      74,
+      74,
+      74,
+      74,
+      74,
+      74,
+      74,
+      70,
+      70,
+      71,
+      71,
+      70,
+      72
+    ],
+    "rsi_daily": 58.3,
+    "rsi_weekly": 36.9,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 72,
+        "composite_last_week": 71,
+        "delta_7d": -2,
+        "delta_30d": -2,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 22,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": true,
+      "change_pct": -0.130089933576469
+    },
+    "note": "Cross-border payments",
+    "note_detailed": "XRP is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 35% weight): Strong institutional presence. Banking partnerships, ETF inflows\n\u2022 Regulatory (82/100, 30% weight): Favorable regulatory standing. SEC lawsuit settled favorably\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (65/100, 20% weight): Network usage and growth signals for this category.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 58.3 sits in neutral range.\n\u2022 Weekly RSI at 36.9 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 13.0% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 72/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "XRP",
+        "adoption_activity",
+        65,
+        "XRP shows concrete payments adoption with ODL corridor volume at $14.2B quarterly (Q1 2026, +38% QoQ) across USD-MXN, USD-PHP, and Asia corridors, RLUSD stablecoin reaching ~$2.5B market cap with OKX/Bitget integrations covering 90M+ users, and tokenized commodities on XRPL surging from $111M to $1.14B; however, on-chain DeFi TVL remains thin (~$49M) and network utilization outside the payments/ODL corridor is still modest relative to L1 peers."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

@@ -1,0 +1,105 @@
+{
+  "symbol": "MORPHO",
+  "name": "Morpho",
+  "asset": {
+    "symbol": "MORPHO",
+    "name": "Morpho",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 78,
+      "adoption_activity": 55,
+      "value_capture": 50,
+      "regulatory": 70,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Apollo investment, institutional curator standard",
+      "regulatory": "DeFi lending, institutional backing signals compliance",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Daily revenue: $435K (~$158.7M/year). TVL: $7.60B. Revenue/TVL ratio: 2.09%."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 59,
+    "composite_last_week": 63,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      63,
+      63,
+      60,
+      64,
+      63,
+      63,
+      59
+    ],
+    "trend_30d": [
+      67,
+      65,
+      64,
+      70,
+      64,
+      63,
+      63,
+      63,
+      60,
+      64,
+      63,
+      63,
+      59
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 16,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "MORPHO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 20% weight): Strong institutional presence. Apollo investment, institutional curator standard\n\u2022 Regulatory (70/100, 15% weight): Favorable regulatory standing. DeFi lending, institutional backing signals compliance\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (50/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 59/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "MORPHO",
+        "regulatory",
+        70,
+        "DeFi lending, institutional backing signals compliance"
+      ],
+      [
+        "MORPHO",
+        "institutional",
+        78,
+        "Apollo investment, institutional curator standard"
+      ],
+      [
+        "MORPHO",
+        "adoption_activity",
+        55,
+        "Moderate usage signal; verify with on-chain data."
+      ],
+      [
+        "MORPHO",
+        "supply",
+        50,
+        "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned)."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

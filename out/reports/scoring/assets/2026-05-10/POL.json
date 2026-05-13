@@ -1,0 +1,91 @@
+{
+  "symbol": "POL",
+  "name": "Polygon",
+  "asset": {
+    "symbol": "POL",
+    "name": "Polygon",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 55,
+      "value_capture": 57,
+      "regulatory": 65,
+      "supply": 75
+    },
+    "score_rationales": {
+      "institutional": "Limited institutional presence",
+      "regulatory": "Limited regulatory clarity",
+      "supply": "Data-driven score from available supply metrics: 90%+ circulating, minimal inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Daily revenue: $103K (~$37.6M/year). TVL: $1.20B. Revenue/TVL ratio: 3.12%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 61,
+    "composite_last_week": 71,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      70,
+      71,
+      61
+    ],
+    "trend_30d": [
+      70,
+      71,
+      61
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 9,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Smart contract platform",
+    "note_detailed": "POL sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 25% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (57/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 61/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "POL",
+        "regulatory",
+        65,
+        "Limited regulatory clarity"
+      ],
+      [
+        "POL",
+        "institutional",
+        55,
+        "Limited institutional presence"
+      ],
+      [
+        "POL",
+        "adoption_activity",
+        55,
+        "Moderate usage signal; verify with on-chain data."
+      ],
+      [
+        "POL",
+        "supply",
+        75,
+        "Data-driven score from available supply metrics: 90%+ circulating, minimal inflation."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

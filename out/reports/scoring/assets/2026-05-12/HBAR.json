@@ -1,0 +1,105 @@
+{
+  "symbol": "HBAR",
+  "name": "Hedera",
+  "asset": {
+    "symbol": "HBAR",
+    "name": "Hedera",
+    "tier": "runner-up",
+    "asset_type": "infrastructure",
+    "asset_category": "payments-rail",
+    "scores": {
+      "institutional": 68,
+      "adoption_activity": 55,
+      "value_capture": null,
+      "regulatory": 78,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Enterprise council, limited retail-focused",
+      "regulatory": "Enterprise governance structure helps compliance",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Hedera shows genuine payments traction \u2014 USDC via Circle CCTP, USDT0 live, AUDD issued natively, institutional integrations (Bitwave enterprise ERP, Shinhan/Standard Bank cross-border pilot), and $208M DeFi TVL (+141% YoY) \u2014 but stablecoin market cap remains modest (~$115M), there is no native ODL corridor product at scale, and overall payment flow volumes are still small relative to Ripple/Stellar peers.",
+      "value_capture": "Fees minimal by design. Value capture excluded for this asset."
+    },
+    "weights": {
+      "institutional": 0.35,
+      "adoption_activity": 0.2,
+      "regulatory": 0.3,
+      "supply": 0.15
+    },
+    "composite": 66,
+    "composite_last_week": 68,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      66,
+      66,
+      66,
+      68,
+      68,
+      66,
+      66
+    ],
+    "trend_30d": [
+      68,
+      68,
+      68,
+      68,
+      68,
+      68,
+      66,
+      66,
+      66,
+      68,
+      68,
+      66,
+      66
+    ],
+    "rsi_daily": 65.0,
+    "rsi_weekly": 41.6,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 66,
+        "composite_last_week": 68,
+        "delta_7d": -2,
+        "delta_30d": -2,
+        "wyckoff_phase": "Re-accumulation",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 21,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.08757261221640546
+    },
+    "note": "Infrastructure/enterprise",
+    "note_detailed": "HBAR is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (68/100, 35% weight): Moderate institutional presence. Enterprise council, limited retail-focused\n\u2022 Regulatory (78/100, 30% weight): Favorable regulatory standing. Enterprise governance structure helps compliance\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 65.0 sits in neutral range.\n\u2022 Weekly RSI at 41.6 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-8.8% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "HBAR",
+        "adoption_activity",
+        55,
+        "Hedera shows genuine payments traction \u2014 USDC via Circle CCTP, USDT0 live, AUDD issued natively, institutional integrations (Bitwave enterprise ERP, Shinhan/Standard Bank cross-border pilot), and $208M DeFi TVL (+141% YoY) \u2014 but stablecoin market cap remains modest (~$115M), there is no native ODL corridor product at scale, and overall payment flow volumes are still small relative to Ripple/Stellar peers."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

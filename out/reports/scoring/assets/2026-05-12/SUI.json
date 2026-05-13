@@ -1,0 +1,106 @@
+{
+  "symbol": "SUI",
+  "name": "Sui",
+  "asset": {
+    "symbol": "SUI",
+    "name": "Sui",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 58,
+      "adoption_activity": 67,
+      "value_capture": 34,
+      "regulatory": 72,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "SUI has achieved meaningful institutional infrastructure with three US-listed spot/staking ETFs (21Shares TSUI on Nasdaq, Grayscale GSUI on NYSE Arca, Canary Capital) launched by early 2026, CME futures, inclusion in the Bitwise 10 Crypto Index ETF, and $72M+ in recorded institutional inflows (surpassing Solana in April 2025); however, it lacks significant corporate treasury adoption, deep prime brokerage penetration, and the custody breadth of BTC/ETH, placing it solidly mid-tier among institutional-grade altcoins.",
+      "regulatory": "SUI has accumulated strong positive regulatory signals: a 21Shares spot ETF (TSUI) began trading on Nasdaq in February 2026, a 2x leveraged ETF was SEC-approved in Q4 2025, and CME futures are pending \u2014 all indicating regulators implicitly treat SUI as a non-security commodity. Offset by the absence of explicit legal-status rulings in EU/UK and the asset's own disclosure that its regulatory treatment 'continues to evolve' across jurisdictions.",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Sui shows strong adoption momentum \u2014 daily active addresses up 83% YoY, transactions up 77.5%, and developer activity growing 219% YoY \u2014 but DeFi TVL sits at ~$642M (May 2026), still well below the Oct 2025 peak of $2B and lagging top-tier L1s; CME futures launch and native stablecoin roadmap signal institutional traction but haven't yet translated to TVL recovery.",
+      "value_capture": "Daily revenue: $9K (~$3.2M/year). TVL: $644.2M. Revenue/TVL ratio: 0.49%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 56,
+    "composite_last_week": 53,
+    "wyckoff_phase": "Distribution Phase A",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      56,
+      53,
+      53,
+      53,
+      53,
+      55,
+      56
+    ],
+    "trend_30d": [
+      57,
+      57,
+      57,
+      56,
+      56,
+      56,
+      56,
+      53,
+      53,
+      53,
+      53,
+      55,
+      56
+    ],
+    "rsi_daily": 79.3,
+    "rsi_weekly": 48.3,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 56,
+        "composite_last_week": 53,
+        "delta_7d": 0,
+        "delta_30d": -1,
+        "wyckoff_phase": "Distribution Phase A",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 22,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.14259660432070811
+    },
+    "note": "Distribution risk",
+    "note_detailed": "SUI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (58/100, 25% weight): Moderate institutional presence. SUI has achieved meaningful institutional infrastructure with three US-listed spot/staking ETFs (21Shares TSUI on Nasdaq, Grayscale GSUI on NYSE Arca, Canary Capital) launched by early 2026, CME futures, inclusion in the Bitwise 10 Crypto Index ETF, and $72M+ in recorded institutional inflows (surpassing Solana in April 2025); however, it lacks significant corporate treasury adoption, deep prime brokerage penetration, and the custody breadth of BTC/ETH, placing it solidly mid-tier among institutional-grade altcoins.\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. SUI has accumulated strong positive regulatory signals: a 21Shares spot ETF (TSUI) began trading on Nasdaq in February 2026, a 2x leveraged ETF was SEC-approved in Q4 2025, and CME futures are pending \u2014 all indicating regulators implicitly treat SUI as a non-security commodity. Offset by the absence of explicit legal-status rulings in EU/UK and the asset's own disclosure that its regulatory treatment 'continues to evolve' across jurisdictions.\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (67/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 79.3 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 48.3 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 14.3% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 56/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "SUI",
+        "value_capture",
+        34,
+        "Daily revenue: $9K (~$3.2M/year). TVL: $644.2M. Revenue/TVL ratio: 0.49%."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

@@ -1,0 +1,105 @@
+{
+  "symbol": "AAVE",
+  "name": "Aave",
+  "asset": {
+    "symbol": "AAVE",
+    "name": "Aave",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 75,
+      "adoption_activity": 55,
+      "value_capture": 34,
+      "regulatory": 72,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "SOC 2 compliance, Horizon RWA platform",
+      "regulatory": "Established DeFi, some regulatory engagement",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Daily revenue: $180K (~$65.7M/year). TVL: $15.46B. Revenue/TVL ratio: 0.43%. Daily fees: $1.2M."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 54,
+    "composite_last_week": 60,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      64,
+      59,
+      55,
+      55,
+      61,
+      60,
+      54
+    ],
+    "trend_30d": [
+      63,
+      65,
+      64,
+      64,
+      64,
+      64,
+      64,
+      59,
+      55,
+      55,
+      61,
+      60,
+      54
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 18,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "AAVE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. SOC 2 compliance, Horizon RWA platform\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. Established DeFi, some regulatory engagement\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 54/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "AAVE",
+        "regulatory",
+        72,
+        "Established DeFi, some regulatory engagement"
+      ],
+      [
+        "AAVE",
+        "institutional",
+        75,
+        "SOC 2 compliance, Horizon RWA platform"
+      ],
+      [
+        "AAVE",
+        "adoption_activity",
+        55,
+        "Moderate usage signal; verify with on-chain data."
+      ],
+      [
+        "AAVE",
+        "supply",
+        50,
+        "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned)."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

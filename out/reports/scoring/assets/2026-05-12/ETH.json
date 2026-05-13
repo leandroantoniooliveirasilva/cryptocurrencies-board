@@ -1,0 +1,106 @@
+{
+  "symbol": "ETH",
+  "name": "Ethereum",
+  "asset": {
+    "symbol": "ETH",
+    "name": "Ethereum",
+    "tier": "runner-up",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 73,
+      "adoption_activity": 78,
+      "value_capture": 37,
+      "regulatory": 82,
+      "supply": 72
+    },
+    "score_rationales": {
+      "institutional": "Ethereum has deep institutional infrastructure with spot ETFs exceeding $16B AUM (BlackRock ETHA ~$6.5B, Fidelity FETH ~$4B), enterprise-grade custody from Coinbase Custody/BitGo/Fireblocks, and staking-yield ETF products launching in 2026 \u2014 but it trails BTC on corporate treasury adoption and overall ETF scale, keeping it below the top tier.",
+      "regulatory": "ETH received explicit commodity classification from SEC/CFTC (March 2026), has live spot ETFs with staking amendments clearing by mid-2026, and benefits from MiCA coverage in the EU \u2014 the clearest multi-jurisdictional regulatory standing of any smart-contract platform. The remaining discount reflects pending US market structure legislation (CLARITY Act still in Senate) and UK licensing not fully operative until late 2027.",
+      "supply": "ETH has no fixed supply cap but EIP-1559 fee burns have made net issuance effectively near-zero or deflationary during high-activity periods (~0.5% annualized issuance vs. burn offset), which is a meaningful structural tailwind. Approximately 28\u201330% of supply is staked on the Beacon Chain, materially reducing liquid float and sell pressure, and exchange reserves have trended to multi-year lows (~14\u201315M ETH on exchanges), signaling sustained self-custody preference. The 100% circulating ratio eliminates cliff unlock risk from team or VC vesting, though the absence of a hard cap and potential issuance increases (e.g., if staking participation drops) temper the tokenomics score relative to capped-supply assets.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Ethereum commands ~68% of total DeFi TVL (~$45B on L1, ~$48B secured across 73 active rollups) and hosts 7.8M+ active DeFi users with 19% YoY growth; L2 throughput exceeds 10,000 TPS collectively and daily L2 transactions have surpassed mainnet, with record smart contract deployments in Q4 2025 \u2014 strong ecosystem breadth, though L1 TPS remains constrained at 15\u201330 and activity is increasingly bifurcated across L2s rather than concentrated on the base layer.",
+      "value_capture": "Daily revenue: $979K (~$357.3M/year). TVL: $45.25B. Revenue/TVL ratio: 0.79%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 68,
+    "composite_last_week": 73,
+    "wyckoff_phase": "Distribution Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      73,
+      74,
+      74,
+      73,
+      73,
+      73,
+      68
+    ],
+    "trend_30d": [
+      75,
+      74,
+      74,
+      71,
+      73,
+      73,
+      73,
+      74,
+      74,
+      73,
+      73,
+      73,
+      68
+    ],
+    "rsi_daily": 53.5,
+    "rsi_weekly": 37.8,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 68,
+        "composite_last_week": 73,
+        "delta_7d": -5,
+        "delta_30d": -7,
+        "wyckoff_phase": "Distribution Phase B",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 20,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.013586766806009041
+    },
+    "note": "Distribution risk",
+    "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (73/100, 25% weight): Strong institutional presence. Ethereum has deep institutional infrastructure with spot ETFs exceeding $16B AUM (BlackRock ETHA ~$6.5B, Fidelity FETH ~$4B), enterprise-grade custody from Coinbase Custody/BitGo/Fireblocks, and staking-yield ETF products launching in 2026 \u2014 but it trails BTC on corporate treasury adoption and overall ETF scale, keeping it below the top tier.\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. ETH received explicit commodity classification from SEC/CFTC (March 2026), has live spot ETFs with staking amendments clearing by mid-2026, and benefits from MiCA coverage in the EU \u2014 the clearest multi-jurisdictional regulatory standing of any smart-contract platform. The remaining discount reflects pending US market structure legislation (CLARITY Act still in Senate) and UK licensing not fully operative until late 2027.\n\u2022 Supply/On-Chain (72/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (37/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 53.5 sits in neutral range.\n\u2022 Weekly RSI at 37.8 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-1.4% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 68/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "ETH",
+        "value_capture",
+        37,
+        "Daily revenue: $979K (~$357.3M/year). TVL: $45.25B. Revenue/TVL ratio: 0.79%."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

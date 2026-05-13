@@ -1,0 +1,79 @@
+{
+  "symbol": "XRP",
+  "name": "Ripple",
+  "asset": {
+    "symbol": "XRP",
+    "name": "Ripple",
+    "tier": "runner-up",
+    "asset_type": "infrastructure",
+    "asset_category": "payments-rail",
+    "scores": {
+      "institutional": 78,
+      "adoption_activity": 58,
+      "value_capture": null,
+      "regulatory": 82,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Banking partnerships, ETF inflows",
+      "regulatory": "SEC lawsuit settled favorably",
+      "supply": "Data-driven score. Fixed supply cap, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Reported RLUSD circulation reached about $1.6B at its 2026 peak with NYDFS-supervised issuance and growing institutional use, while Ripple\u2019s ODL footprint spans dozens of payout markets and the firm cites 300+ financial institutions in 55+ countries\u2014yet many partners still use RippleNet messaging without XRP as the bridge asset, so adoption is credible but not uniformly on-chain.",
+      "value_capture": "Fees minimal by design. Value capture excluded for this asset."
+    },
+    "weights": {
+      "institutional": 0.35,
+      "adoption_activity": 0.2,
+      "regulatory": 0.3,
+      "supply": 0.15
+    },
+    "composite": 71,
+    "composite_last_week": 74,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      74,
+      74,
+      74,
+      70,
+      70,
+      71,
+      71
+    ],
+    "trend_30d": [
+      66,
+      66,
+      74,
+      74,
+      74,
+      74,
+      74,
+      74,
+      74,
+      70,
+      70,
+      71,
+      71
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 13,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Cross-border payments",
+    "note_detailed": "XRP is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 35% weight): Strong institutional presence. Banking partnerships, ETF inflows\n\u2022 Regulatory (82/100, 30% weight): Favorable regulatory standing. SEC lawsuit settled favorably\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (58/100, 20% weight): Network usage and growth signals for this category.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 71/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

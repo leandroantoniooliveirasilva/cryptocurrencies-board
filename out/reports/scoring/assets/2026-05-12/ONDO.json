@@ -1,0 +1,112 @@
+{
+  "symbol": "ONDO",
+  "name": "Ondo",
+  "asset": {
+    "symbol": "ONDO",
+    "name": "Ondo",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 75,
+      "adoption_activity": 82,
+      "value_capture": 30,
+      "regulatory": 82,
+      "supply": 40
+    },
+    "score_rationales": {
+      "institutional": "Ondo Finance leads RWA tokenization with $3B+ in managed assets, deep TradFi partnerships (BlackRock BUIDL largest holder at $223M, Franklin Templeton, State Street, Wellington, PayPal, Morgan Stanley), SEC investigation closed without charges, and Oasis Pro Markets broker-dealer integration \u2014 but ONDO the token lacks dedicated ETF wrappers or broad institutional custody comparable to BTC/ETH.",
+      "regulatory": "Ondo's regulatory trajectory is strongly positive: SEC closed its two-year investigation without charges (Nov 2025), the company acquired an SEC-registered broker-dealer/ATS, filed a no-action letter for Ondo Global Markets on Ethereum (Apr 2026), and joined the DTCC consortium \u2014 making it one of the most compliance-forward tokenization protocols in the market. Score is capped below 90 because the no-action letter is pending (not yet confirmed), the Clarity Act framework remains incomplete, and EU/UK jurisdictional status for the ONDO governance token specifically is still unsettled.",
+      "supply": "Data-driven score from available supply metrics: fixed supply cap, low circulating ratio, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Ondo leads the tokenized RWA/equity category with >60% market share in tokenized stocks, $3.5B+ total TVL growing from $2.6B in Q1 2026, Ondo Global Markets crossing $1B TVL in tokenized equities, $18B+ cumulative trading volume, integrations across 12+ DeFi protocols on multiple chains, and institutional partnerships with Fidelity, PayPal, Mastercard, and JPMorgan \u2014 offset slightly by a still-nascent active user base for its core accredited-investor products and reliance on RWA narratives that remain structurally constrained by KYC/access requirements.",
+      "value_capture": "Daily revenue: $0 (~$0/year). TVL: $3.74B. Revenue/TVL ratio: 0.00%."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 57,
+    "composite_last_week": 55,
+    "wyckoff_phase": "Distribution Phase A",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      57,
+      56,
+      60,
+      52,
+      55,
+      56,
+      57
+    ],
+    "trend_30d": [
+      60,
+      60,
+      60,
+      60,
+      59,
+      59,
+      57,
+      56,
+      60,
+      52,
+      55,
+      56,
+      57
+    ],
+    "rsi_daily": 84.1,
+    "rsi_weekly": 55.5,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 57,
+        "composite_last_week": 55,
+        "delta_7d": -2,
+        "delta_30d": -3,
+        "wyckoff_phase": "Distribution Phase A",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 22,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.46631600131548967
+    },
+    "note": "Distribution risk",
+    "note_detailed": "ONDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. Ondo Finance leads RWA tokenization with $3B+ in managed assets, deep TradFi partnerships (BlackRock BUIDL largest holder at $223M, Franklin Templeton, State Street, Wellington, PayPal, Morgan Stanley), SEC investigation closed without charges, and Oasis Pro Markets broker-dealer integration \u2014 but ONDO the token lacks dedicated ETF wrappers or broad institutional custody comparable to BTC/ETH.\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. Ondo's regulatory trajectory is strongly positive: SEC closed its two-year investigation without charges (Nov 2025), the company acquired an SEC-registered broker-dealer/ATS, filed a no-action letter for Ondo Global Markets on Ethereum (Apr 2026), and joined the DTCC consortium \u2014 making it one of the most compliance-forward tokenization protocols in the market. Score is capped below 90 because the no-action letter is pending (not yet confirmed), the Clarity Act framework remains incomplete, and EU/UK jurisdictional status for the ONDO governance token specifically is still unsettled.\n\u2022 Supply/On-Chain (40/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (82/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (30/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 84.1 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 55.5 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 46.6% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 57/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "ONDO",
+        "value_capture",
+        30,
+        "Daily revenue: $0 (~$0/year). TVL: $3.74B. Revenue/TVL ratio: 0.00%."
+      ],
+      [
+        "ONDO",
+        "adoption_activity",
+        82,
+        "Ondo leads the tokenized RWA/equity category with >60% market share in tokenized stocks, $3.5B+ total TVL growing from $2.6B in Q1 2026, Ondo Global Markets crossing $1B TVL in tokenized equities, $18B+ cumulative trading volume, integrations across 12+ DeFi protocols on multiple chains, and institutional partnerships with Fidelity, PayPal, Mastercard, and JPMorgan \u2014 offset slightly by a still-nascent active user base for its core accredited-investor products and reliance on RWA narratives that remain structurally constrained by KYC/access requirements."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

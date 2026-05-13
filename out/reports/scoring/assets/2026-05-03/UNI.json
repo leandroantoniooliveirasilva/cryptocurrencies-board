@@ -1,0 +1,80 @@
+{
+  "symbol": "UNI",
+  "name": "Uniswap",
+  "asset": {
+    "symbol": "UNI",
+    "name": "Uniswap",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 64,
+      "value_capture": 33,
+      "regulatory": 65,
+      "supply": 58
+    },
+    "score_rationales": {
+      "institutional": "Limited institutional presence",
+      "regulatory": "Limited regulatory clarity",
+      "supply": "Data-driven score. Fixed supply cap, 70%+ circulating, high inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "DefiLlama parent protocol shows aggregate TVL near $3.48B across Ethereum, Base, Arbitrum, Polygon, and other deployments, up about 14% versus roughly 30 days earlier on the TVL series; DEX volume adapters put Uniswap V3/V4 at nine-figure 24h swap volume on major chains, reflecting category-leading routing and multi-chain integration despite cyclical volume competition.",
+      "value_capture": "Daily revenue: $35K (~$12.8M/year). TVL: $3.47B. Revenue/TVL ratio: 0.37%. Daily fees: $757K."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 52,
+    "composite_last_week": 54,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      54,
+      55,
+      53,
+      52,
+      54,
+      54,
+      52
+    ],
+    "trend_30d": [
+      74,
+      60,
+      58,
+      58,
+      58,
+      67,
+      54,
+      55,
+      53,
+      52,
+      54,
+      54,
+      52
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 8,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "UNI sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (58/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (64/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (33/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

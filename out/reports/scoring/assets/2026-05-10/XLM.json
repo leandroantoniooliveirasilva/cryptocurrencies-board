@@ -1,0 +1,104 @@
+{
+  "symbol": "XLM",
+  "name": "Stellar",
+  "asset": {
+    "symbol": "XLM",
+    "name": "Stellar",
+    "tier": "runner-up",
+    "asset_type": "infrastructure",
+    "asset_category": "payments-rail",
+    "scores": {
+      "institutional": 70,
+      "adoption_activity": 55,
+      "value_capture": null,
+      "regulatory": 75,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Payments infrastructure, enterprise partnerships",
+      "regulatory": "Payments focus, regulatory partnerships",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Fees minimal by design. Value capture excluded for this asset."
+    },
+    "weights": {
+      "institutional": 0.35,
+      "adoption_activity": 0.2,
+      "regulatory": 0.3,
+      "supply": 0.15
+    },
+    "composite": 66,
+    "composite_last_week": 69,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      67,
+      69,
+      66,
+      66,
+      69,
+      69,
+      66
+    ],
+    "trend_30d": [
+      59,
+      67,
+      67,
+      67,
+      67,
+      67,
+      67,
+      69,
+      66,
+      66,
+      69,
+      69,
+      66
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 19,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Infrastructure/enterprise",
+    "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 35% weight): Strong institutional presence. Payments infrastructure, enterprise partnerships\n\u2022 Regulatory (75/100, 30% weight): Favorable regulatory standing. Payments focus, regulatory partnerships\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 20% weight): Network usage and growth signals for this category.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "XLM",
+        "regulatory",
+        75,
+        "Payments focus, regulatory partnerships"
+      ],
+      [
+        "XLM",
+        "institutional",
+        70,
+        "Payments infrastructure, enterprise partnerships"
+      ],
+      [
+        "XLM",
+        "adoption_activity",
+        55,
+        "Moderate usage signal; verify with on-chain data."
+      ],
+      [
+        "XLM",
+        "supply",
+        50,
+        "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned)."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

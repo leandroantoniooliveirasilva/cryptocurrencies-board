@@ -1,0 +1,80 @@
+{
+  "symbol": "ETH",
+  "name": "Ethereum",
+  "asset": {
+    "symbol": "ETH",
+    "name": "Ethereum",
+    "tier": "runner-up",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 85,
+      "adoption_activity": 88,
+      "value_capture": 33,
+      "regulatory": 82,
+      "supply": 75
+    },
+    "score_rationales": {
+      "institutional": "ETF products, DeFi infrastructure for institutions",
+      "regulatory": "ETF approved, regulatory clarity improving",
+      "supply": "Data-driven score. 90%+ circulating, minimal inflation.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Deep DeFi ecosystem, high transaction and staking activity.",
+      "value_capture": "Daily revenue: $481K (~$175.4M/year). TVL: $45.80B. Revenue/TVL ratio: 0.38%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 73,
+    "composite_last_week": 73,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      73,
+      73,
+      73,
+      74,
+      74,
+      73,
+      73
+    ],
+    "trend_30d": [
+      71,
+      71,
+      75,
+      74,
+      74,
+      71,
+      73,
+      73,
+      73,
+      74,
+      74,
+      73,
+      73
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 11,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Strong institutional adoption",
+    "note_detailed": "ETH is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (85/100, 25% weight): Excellent institutional presence. ETF products, DeFi infrastructure for institutions\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. ETF approved, regulatory clarity improving\n\u2022 Supply/On-Chain (75/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (88/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (33/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 73/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

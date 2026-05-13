@@ -1,0 +1,106 @@
+{
+  "symbol": "AVAX",
+  "name": "Avalanche",
+  "asset": {
+    "symbol": "AVAX",
+    "name": "Avalanche",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 74,
+      "adoption_activity": 65,
+      "value_capture": 31,
+      "regulatory": 82,
+      "supply": 65
+    },
+    "score_rationales": {
+      "institutional": "AVAX has achieved strong institutional infrastructure milestones \u2014 VanEck's spot ETF (VAVX) launched Jan 2026, CME AVAX futures live May 2026, Coinbase/BNY Mellon custody, Avalanche Treasury Co. (~$675M Nasdaq vehicle), $2.1B in tokenized RWAs, and backing from Galaxy, Pantera, BlackRock BUIDL, and Franklin Templeton \u2014 but corporate treasury adoption remains thin and ETF AUM is nascent compared to BTC/ETH benchmarks.",
+      "regulatory": "AVAX received explicit digital commodity classification in the March 2026 SEC/CFTC joint final rule, eliminating its securities overhang; VanEck's spot AVAX ETF (VAVX) launched January 2026 with staking rewards, CME AVAX futures went live May 2026, and permissioned subnet architecture provides institutional-grade KYC/AML compliance rails \u2014 the main residual risk is pending ETF approvals from Bitwise/Grayscale still facing custody and market-manipulation review delays.",
+      "supply": "AVAX has a hard-capped max supply of 720M (bullish structural floor), and the 93.2% circulating/total ratio signals minimal near-term insider or team overhang. However, only ~60% of the max supply is currently in circulation, leaving ~256M tokens to be emitted as staking rewards \u2014 an ongoing inflation tail of roughly 2\u20134% annually that dampens the fixed-cap benefit. High staking participation (typically 50\u201360% of circulating supply locked as validators) meaningfully compresses liquid float and partially offsets future emission pressure, but no exchange reserve trend data was available to assess whether coins are actively moving to cold storage.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Avalanche shows credible adoption recovery with ~$2.77B DeFi TVL (+53% QoQ), ~1.7M daily active addresses, 75+ active subnets (+158% YoY), and $1.3B tokenized asset TVL\u2014anchored by institutional momentum (Progmat $2B migration, CME futures launch May 2026); penalized relative to peers for TVL still well below 2021-22 peak and meaningful L2 competition compressing its generalist-chain narrative.",
+      "value_capture": "Daily revenue: $3K (~$1.0M/year). TVL: $661.5M. Revenue/TVL ratio: 0.15%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 63,
+    "composite_last_week": 61,
+    "wyckoff_phase": "Distribution Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      66,
+      61,
+      61,
+      61,
+      61,
+      56,
+      63
+    ],
+    "trend_30d": [
+      66,
+      66,
+      66,
+      66,
+      65,
+      66,
+      66,
+      61,
+      61,
+      61,
+      61,
+      56,
+      63
+    ],
+    "rsi_daily": 65.1,
+    "rsi_weekly": 42.1,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 63,
+        "composite_last_week": 61,
+        "delta_7d": -3,
+        "delta_30d": -3,
+        "wyckoff_phase": "Distribution Phase B",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 14,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.022296829705416903
+    },
+    "note": "Distribution risk",
+    "note_detailed": "AVAX sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (74/100, 25% weight): Strong institutional presence. AVAX has achieved strong institutional infrastructure milestones \u2014 VanEck's spot ETF (VAVX) launched Jan 2026, CME AVAX futures live May 2026, Coinbase/BNY Mellon custody, Avalanche Treasury Co. (~$675M Nasdaq vehicle), $2.1B in tokenized RWAs, and backing from Galaxy, Pantera, BlackRock BUIDL, and Franklin Templeton \u2014 but corporate treasury adoption remains thin and ETF AUM is nascent compared to BTC/ETH benchmarks.\n\u2022 Regulatory (82/100, 15% weight): Favorable regulatory standing. AVAX received explicit digital commodity classification in the March 2026 SEC/CFTC joint final rule, eliminating its securities overhang; VanEck's spot AVAX ETF (VAVX) launched January 2026 with staking rewards, CME AVAX futures went live May 2026, and permissioned subnet architecture provides institutional-grade KYC/AML compliance rails \u2014 the main residual risk is pending ETF approvals from Bitwise/Grayscale still facing custody and market-manipulation review delays.\n\u2022 Supply/On-Chain (65/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (65/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (31/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 65.1 sits in neutral range.\n\u2022 Weekly RSI at 42.1 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-2.2% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 63/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "AVAX",
+        "value_capture",
+        31,
+        "Daily revenue: $3K (~$1.0M/year). TVL: $661.5M. Revenue/TVL ratio: 0.15%."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

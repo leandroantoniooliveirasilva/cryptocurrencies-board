@@ -1,0 +1,105 @@
+{
+  "symbol": "JUP",
+  "name": "Jupiter",
+  "asset": {
+    "symbol": "JUP",
+    "name": "Jupiter",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 55,
+      "value_capture": 52,
+      "regulatory": 65,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Limited institutional presence",
+      "regulatory": "Limited regulatory clarity",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Moderate usage signal; verify with on-chain data.",
+      "value_capture": "Daily revenue: $118K (~$43.1M/year). TVL: $1.87B. Revenue/TVL ratio: 2.30%. Daily fees: $393K."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 55,
+    "composite_last_week": 50,
+    "wyckoff_phase": "Distribution Phase A",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      59,
+      58,
+      54,
+      56,
+      53,
+      50,
+      55
+    ],
+    "trend_30d": [
+      56,
+      59,
+      60,
+      59,
+      57,
+      58,
+      59,
+      58,
+      54,
+      56,
+      53,
+      50,
+      55
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 20,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Distribution risk",
+    "note_detailed": "JUP sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (55/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (52/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 55/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "JUP",
+        "regulatory",
+        65,
+        "Limited regulatory clarity"
+      ],
+      [
+        "JUP",
+        "institutional",
+        55,
+        "Limited institutional presence"
+      ],
+      [
+        "JUP",
+        "adoption_activity",
+        55,
+        "Moderate usage signal; verify with on-chain data."
+      ],
+      [
+        "JUP",
+        "supply",
+        50,
+        "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned)."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

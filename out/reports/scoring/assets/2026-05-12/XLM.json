@@ -1,0 +1,105 @@
+{
+  "symbol": "XLM",
+  "name": "Stellar",
+  "asset": {
+    "symbol": "XLM",
+    "name": "Stellar",
+    "tier": "runner-up",
+    "asset_type": "infrastructure",
+    "asset_category": "payments-rail",
+    "scores": {
+      "institutional": 70,
+      "adoption_activity": 52,
+      "value_capture": null,
+      "regulatory": 75,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Payments infrastructure, enterprise partnerships",
+      "regulatory": "Payments focus, regulatory partnerships",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Stellar shows genuine payments infrastructure traction \u2014 $297M stablecoin market cap (+22% QoQ), $1.52B RWA market cap (+91% QoQ), $174M DeFi TVL, and native USDC/PYUSD with institutional partners (Franklin Templeton, MoneyGram, Zebec), but DeFi active addresses are declining QoQ across major protocols and the ODL/corridor-specific volume pipeline remains modest relative to the network's ambitions, keeping adoption solidly mid-range rather than breakout.",
+      "value_capture": "Fees minimal by design. Value capture excluded for this asset."
+    },
+    "weights": {
+      "institutional": 0.35,
+      "adoption_activity": 0.2,
+      "regulatory": 0.3,
+      "supply": 0.15
+    },
+    "composite": 65,
+    "composite_last_week": 69,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      69,
+      66,
+      66,
+      69,
+      69,
+      66,
+      65
+    ],
+    "trend_30d": [
+      67,
+      67,
+      67,
+      67,
+      67,
+      67,
+      69,
+      66,
+      66,
+      69,
+      69,
+      66,
+      65
+    ],
+    "rsi_daily": 55.2,
+    "rsi_weekly": 38.0,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 65,
+        "composite_last_week": 69,
+        "delta_7d": -2,
+        "delta_30d": -2,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 21,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.08758811989636332
+    },
+    "note": "Infrastructure/enterprise",
+    "note_detailed": "XLM is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: payments rail \u2014 institutions and regulatory; no value capture by design.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (70/100, 35% weight): Strong institutional presence. Payments infrastructure, enterprise partnerships\n\u2022 Regulatory (75/100, 30% weight): Favorable regulatory standing. Payments focus, regulatory partnerships\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (52/100, 20% weight): Network usage and growth signals for this category.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 55.2 sits in neutral range.\n\u2022 Weekly RSI at 38.0 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-8.8% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 65/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "XLM",
+        "adoption_activity",
+        52,
+        "Stellar shows genuine payments infrastructure traction \u2014 $297M stablecoin market cap (+22% QoQ), $1.52B RWA market cap (+91% QoQ), $174M DeFi TVL, and native USDC/PYUSD with institutional partners (Franklin Templeton, MoneyGram, Zebec), but DeFi active addresses are declining QoQ across major protocols and the ODL/corridor-specific volume pipeline remains modest relative to the network's ambitions, keeping adoption solidly mid-range rather than breakout."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

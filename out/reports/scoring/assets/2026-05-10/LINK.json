@@ -1,0 +1,105 @@
+{
+  "symbol": "LINK",
+  "name": "Chainlink",
+  "asset": {
+    "symbol": "LINK",
+    "name": "Chainlink",
+    "tier": "leader",
+    "asset_type": "infrastructure",
+    "asset_category": "oracle-data",
+    "scores": {
+      "institutional": 88,
+      "adoption_activity": 90,
+      "value_capture": 58,
+      "regulatory": 82,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Enterprise integrations, oracle standard",
+      "regulatory": "Enterprise partnerships signal regulatory comfort",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Broad oracle integrations and enterprise TVS.",
+      "value_capture": "Daily revenue: $14K (~$4.9M/year). No TVL (oracle/infra model, scored on absolute revenue)."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.25,
+      "regulatory": 0.2,
+      "value_capture": 0.15,
+      "supply": 0.15
+    },
+    "composite": 77,
+    "composite_last_week": 81,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      77,
+      76,
+      77,
+      76,
+      86,
+      81,
+      77
+    ],
+    "trend_30d": [
+      73,
+      76,
+      77,
+      82,
+      76,
+      77,
+      77,
+      76,
+      77,
+      76,
+      86,
+      81,
+      77
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 19,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Strong institutional adoption",
+    "note_detailed": "LINK holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: oracle/data \u2014 adoption (e.g. TVS) and institutions weighted with value capture and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (88/100, 25% weight): Excellent institutional presence. Enterprise integrations, oracle standard\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Enterprise partnerships signal regulatory comfort\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (90/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (58/100, 15% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 77/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "cache_writes": [
+      [
+        "LINK",
+        "regulatory",
+        82,
+        "Enterprise partnerships signal regulatory comfort"
+      ],
+      [
+        "LINK",
+        "institutional",
+        88,
+        "Enterprise integrations, oracle standard"
+      ],
+      [
+        "LINK",
+        "adoption_activity",
+        90,
+        "Broad oracle integrations and enterprise TVS."
+      ],
+      [
+        "LINK",
+        "supply",
+        50,
+        "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned)."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

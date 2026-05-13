@@ -1,0 +1,80 @@
+{
+  "symbol": "LDO",
+  "name": "Lido DAO",
+  "asset": {
+    "symbol": "LDO",
+    "name": "Lido DAO",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 55,
+      "adoption_activity": 63,
+      "value_capture": 32,
+      "regulatory": 65,
+      "supply": 68
+    },
+    "score_rationales": {
+      "institutional": "Limited institutional presence",
+      "regulatory": "Limited regulatory clarity",
+      "supply": "LDO is capped at 1 billion tokens with about 85% circulating (CoinGecko), and scheduled unlocks largely finished by February 2024 (Tokenomics.com), so mechanical vesting overhang is mostly behind while further supply pressure is mainly discretionary DAO treasury use rather than fixed inflation (help.lido.fi). Exchange-side liquidity is mixed: analytics outlets have reported sustained withdrawals from exchanges and committee-led removals from Binance, but large one-off whale deposits to CEXs still appear and add tactical sell-side risk. Holder metrics cited by Kaiko\u2019s LDO asset-metrics work show the retail/long-tail slice growing sharply while the Lido treasury balance fell as incentives were paid, though governance-oriented float means most supply is not economically locked like a native staking chain token.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "DefiLlama lists Lido at roughly $18.3B TVL and ~9.2M ETH staked\u2014far ahead of other Ethereum liquid staking protocols\u2014with stETH wired into major lending and DEX liquidity venues; the broader LST sector shows slight near-term TVL softness (~\u22120.2% 7d / ~\u22122.5% 30d on aggregate LST metrics), so usage is dominant but no longer in a strong growth phase.",
+      "value_capture": "Daily revenue: $152K (~$55.4M/year). TVL: $20.96B. Revenue/TVL ratio: 0.26%. Daily fees: $1.5M."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 53,
+    "composite_last_week": 53,
+    "wyckoff_phase": "Markup",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      53,
+      53,
+      53,
+      49,
+      49,
+      53,
+      53
+    ],
+    "trend_30d": [
+      48,
+      48,
+      53,
+      53,
+      53,
+      53,
+      53,
+      53,
+      53,
+      49,
+      49,
+      53,
+      53
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 13,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "LDO sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (55/100, 20% weight): Moderate institutional presence. Limited institutional presence\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. Limited regulatory clarity\n\u2022 Supply/On-Chain (68/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (63/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (32/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 53/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

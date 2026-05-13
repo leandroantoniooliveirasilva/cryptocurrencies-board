@@ -1,0 +1,80 @@
+{
+  "symbol": "HYPE",
+  "name": "Hyperliquid",
+  "asset": {
+    "symbol": "HYPE",
+    "name": "Hyperliquid",
+    "tier": "runner-up",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 75,
+      "adoption_activity": 62,
+      "value_capture": 70,
+      "regulatory": 68,
+      "supply": 52
+    },
+    "score_rationales": {
+      "institutional": "Revenue leader, growing institutional interest",
+      "regulatory": "Newer protocol, regulatory status evolving",
+      "supply": "HYPE is capped at 1B with ~238.4M circulating (~24.8% of max) and ~962.3M total on CoinGecko, so most supply is still non-circulating\u2014especially the 23.8% core-contributor tranche with multi-year vesting\u2014implying years of potential sell pressure even though allocation is community-heavy and has no VC bucket. Third-party vesting trackers report discretionary monthly claims far below the theoretical vesting ceiling and highlight large unclaimed balances in vesting wallets, while staking uses short locks and a 7-day unstaking queue and protocol revenue funds buybacks/burns, partially offsetting emissions; established exchange-reserve trend data for HYPE remains sparse, so reserve flow is treated as neutral rather than bullish.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Hyperliquid\u2019s adoption is backed by DefiLlama-scale depth (~$4.81B TVL as of the 2026-05-01 pipeline snapshot), heavy derivatives usage (e.g., tens of billions in 30d perp volume and ~$7\u20138B open interest on public dashboards), and strong monetized activity (~$1.9M daily fees, ~$1.6M daily revenue, ~$598M annualized). The score stays in the low-60s because transparent MAU/DAU and integration counts are not consistently evidenced, so usage breadth is inferred mainly from TVL, volume, and fees rather than full user-level telemetry.",
+      "value_capture": "Daily revenue: $660K (~$240.8M/year). TVL: $4.82B. Revenue/TVL ratio: 5.00%. Daily fees: $746K."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 66,
+    "composite_last_week": 66,
+    "wyckoff_phase": "Markup",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      66,
+      70,
+      76,
+      71,
+      72,
+      72,
+      66
+    ],
+    "trend_30d": [
+      72,
+      73,
+      75,
+      75,
+      75,
+      73,
+      66,
+      70,
+      76,
+      71,
+      72,
+      72,
+      66
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 5,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Revenue-per-user sector leader",
+    "note_detailed": "HYPE is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. Revenue leader, growing institutional interest\n\u2022 Regulatory (68/100, 15% weight): Uncertain regulatory standing. Newer protocol, regulatory status evolving\n\u2022 Supply/On-Chain (52/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (70/100, 30% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 66/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

@@ -1,0 +1,94 @@
+{
+  "symbol": "POL",
+  "name": "Polygon",
+  "asset": {
+    "symbol": "POL",
+    "name": "Polygon",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 50,
+      "adoption_activity": 62,
+      "value_capture": 58,
+      "regulatory": 38,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "POL has mid-tier institutional infrastructure \u2014 21Shares physically-backed ETP, Bitwise accredited-investor fund, Grayscale spot ETF filing, CME-listed futures via Kraken, custody at BitGo/Anchorage/AMINA Bank, and meaningful TradFi pilots (Franklin Templeton tokenized fund, Visa stablecoin settlement on Polygon) \u2014 but lacks a US spot ETF approval, a dedicated CME native contract, and significant corporate treasury adoption, keeping it well behind BTC/ETH in institutional depth.",
+      "regulatory": "POL (formerly MATIC) was explicitly named as an unregistered security in the SEC's 2023 Coinbase and Binance complaints, creating meaningful US jurisdictional overhang that the MATIC\u2192POL rebrand did not resolve; no ETF applications exist and institutional adoption is concentrated in Polygon's enterprise infrastructure (Disney, Reddit, Starbucks) rather than the token itself, providing indirect but not direct regulatory validation.",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Polygon PoS shows solid mid-tier adoption: ~1M daily active addresses, $1.3B on-chain TVL (with $7.3B bridged), 19,000+ dApps, and a February 2026 ATH of 204M monthly transactions, but TVL remains modest relative to competitors and TPS (~2,600 capacity) is underutilized; AggLayer/zkEVM narrative is maturing but real zkEVM usage lags promises.",
+      "value_capture": "Daily revenue: $105K (~$38.4M/year). TVL: $1.20B. Revenue/TVL ratio: 3.21%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 52,
+    "composite_last_week": 71,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      70,
+      71,
+      61,
+      52
+    ],
+    "trend_30d": [
+      70,
+      71,
+      61,
+      52
+    ],
+    "rsi_daily": 72.3,
+    "rsi_weekly": 48.8,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 52,
+        "composite_last_week": 71,
+        "delta_7d": -18,
+        "delta_30d": -18,
+        "wyckoff_phase": "Accumulation Phase D",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 11,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.04287285635067507
+    },
+    "note": "Smart contract platform",
+    "note_detailed": "POL sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (50/100, 25% weight): Moderate institutional presence. POL has mid-tier institutional infrastructure \u2014 21Shares physically-backed ETP, Bitwise accredited-investor fund, Grayscale spot ETF filing, CME-listed futures via Kraken, custody at BitGo/Anchorage/AMINA Bank, and meaningful TradFi pilots (Franklin Templeton tokenized fund, Visa stablecoin settlement on Polygon) \u2014 but lacks a US spot ETF approval, a dedicated CME native contract, and significant corporate treasury adoption, keeping it well behind BTC/ETH in institutional depth.\n\u2022 Regulatory (38/100, 15% weight): Concerning regulatory standing. POL (formerly MATIC) was explicitly named as an unregistered security in the SEC's 2023 Coinbase and Binance complaints, creating meaningful US jurisdictional overhang that the MATIC\u2192POL rebrand did not resolve; no ETF applications exist and institutional adoption is concentrated in Polygon's enterprise infrastructure (Disney, Reddit, Starbucks) rather than the token itself, providing indirect but not direct regulatory validation.\n\u2022 Supply/On-Chain (50/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (62/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (58/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 72.3 signals overbought territory\u2014momentum extended.\n\u2022 Weekly RSI at 48.8 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-4.3% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 52/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "POL",
+        "value_capture",
+        58,
+        "Daily revenue: $105K (~$38.4M/year). TVL: $1.20B. Revenue/TVL ratio: 3.21%."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

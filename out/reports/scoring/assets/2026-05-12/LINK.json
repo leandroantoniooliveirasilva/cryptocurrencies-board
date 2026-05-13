@@ -1,0 +1,106 @@
+{
+  "symbol": "LINK",
+  "name": "Chainlink",
+  "asset": {
+    "symbol": "LINK",
+    "name": "Chainlink",
+    "tier": "runner-up",
+    "asset_type": "infrastructure",
+    "asset_category": "oracle-data",
+    "scores": {
+      "institutional": 65,
+      "adoption_activity": 85,
+      "value_capture": 54,
+      "regulatory": 82,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Chainlink has achieved meaningful institutional infrastructure: two spot ETFs (Bitwise CLNK on NYSE Arca, Grayscale GLNK) with Coinbase Custody and BNY Mellon backing, deep TradFi integrations with SWIFT, DTCC, JPMorgan, and Tradeweb, and a US Dept of Commerce data partnership \u2014 but corporate treasury adoption remains nascent (only Caliber, $6.5M), ETF AUMs are modest versus BTC/ETH, and broad fund/13F-level holdings are not yet established.",
+      "regulatory": "LINK received formal commodity classification in a March 2026 SEC/CFTC joint release, has spot ETFs approved and trading (Grayscale GLNK, Bitwise CLNK), and demonstrates deep institutional compliance infrastructure including SOC 2 Type 2 certification, a U.S. Department of Commerce data partnership, and the Automated Compliance Engine \u2014 positioning it among the most regulatorily de-risked oracle/middleware assets; the remaining discount reflects lingering global jurisdictional patchwork and no settled EU MiCA-specific ruling yet.",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Chainlink leads oracle infrastructure with $100B+ TVS (67% market share, 83% of Ethereum oracle value), 2,100+ integrations across 16+ chains, and explosive CCIP growth (+1,972% transfers to $7.77B) backed by marquee institutional adoptions (Coinbase wrapped assets, Lido wstETH); Data Streams expanded to 24 chains with Polymarket driving $5B+ in volume, confirming broad, multi-product adoption momentum.",
+      "value_capture": "Daily revenue: $9K (~$3.2M/year). No TVL (oracle/infra model, scored on absolute revenue)."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.25,
+      "regulatory": 0.2,
+      "value_capture": 0.15,
+      "supply": 0.15
+    },
+    "composite": 70,
+    "composite_last_week": 81,
+    "wyckoff_phase": "Distribution Phase A",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      76,
+      77,
+      76,
+      86,
+      81,
+      77,
+      70
+    ],
+    "trend_30d": [
+      76,
+      77,
+      82,
+      76,
+      77,
+      77,
+      76,
+      77,
+      76,
+      86,
+      81,
+      77,
+      70
+    ],
+    "rsi_daily": 69.2,
+    "rsi_weekly": 43.3,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 70,
+        "composite_last_week": 81,
+        "delta_7d": -7,
+        "delta_30d": -6,
+        "wyckoff_phase": "Distribution Phase A",
+        "is_distribution": true,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 21,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.05536461262886359
+    },
+    "note": "Distribution risk",
+    "note_detailed": "LINK is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: oracle/data \u2014 adoption (e.g. TVS) and institutions weighted with value capture and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (65/100, 25% weight): Moderate institutional presence. Chainlink has achieved meaningful institutional infrastructure: two spot ETFs (Bitwise CLNK on NYSE Arca, Grayscale GLNK) with Coinbase Custody and BNY Mellon backing, deep TradFi integrations with SWIFT, DTCC, JPMorgan, and Tradeweb, and a US Dept of Commerce data partnership \u2014 but corporate treasury adoption remains nascent (only Caliber, $6.5M), ETF AUMs are modest versus BTC/ETH, and broad fund/13F-level holdings are not yet established.\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. LINK received formal commodity classification in a March 2026 SEC/CFTC joint release, has spot ETFs approved and trading (Grayscale GLNK, Bitwise CLNK), and demonstrates deep institutional compliance infrastructure including SOC 2 Type 2 certification, a U.S. Department of Commerce data partnership, and the Automated Compliance Engine \u2014 positioning it among the most regulatorily de-risked oracle/middleware assets; the remaining discount reflects lingering global jurisdictional patchwork and no settled EU MiCA-specific ruling yet.\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (85/100, 25% weight): Network usage and growth signals for this category.\n\u2022 Value capture (54/100, 15% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 69.2 sits in neutral range.\n\u2022 Weekly RSI at 43.3 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Outperforming BTC by 5.5% over 90 days\u2014relative strength is favorable.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 70/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "LINK",
+        "value_capture",
+        54,
+        "Daily revenue: $9K (~$3.2M/year). No TVL (oracle/infra model, scored on absolute revenue)."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

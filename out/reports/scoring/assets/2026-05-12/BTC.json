@@ -1,0 +1,115 @@
+{
+  "symbol": "BTC",
+  "name": "Bitcoin",
+  "asset": {
+    "symbol": "BTC",
+    "name": "Bitcoin",
+    "tier": "leader",
+    "asset_type": "store-of-value",
+    "asset_category": "monetary-store-of-value",
+    "scores": {
+      "institutional": 92,
+      "adoption_activity": null,
+      "value_capture": null,
+      "regulatory": 82,
+      "supply": 91
+    },
+    "score_rationales": {
+      "institutional": "Bitcoin leads all digital assets in institutional infrastructure depth: BlackRock IBIT alone holds ~805K BTC (~$50B AUM), 180+ public companies hold BTC in treasury (Strategy ~640K BTC), spot ETFs have attracted $56B+ in cumulative inflows, and major TradFi custodians (Citi, Morgan Stanley, BNY, Fidelity Digital Assets, Coinbase Custody) now provide qualified, regulated custody \u2014 with 68% of institutional investors holding or planning to hold BTC products. The only ceiling on a perfect score is that ETF flows showed some softness in early 2026 and cross-margin / unified-account infrastructure is still being rolled out.",
+      "regulatory": "Bitcoin holds the strongest regulatory posture of any crypto asset: US spot ETF approval (Jan 2024), CFTC commodity classification, and MiCA clarity in the EU provide multi-jurisdictional legal settlement that no other digital asset matches. Institutional ETF inflows signal sustained regulatory accommodation, though the absence of native protocol-level compliance features and residual uncertainty in a handful of major markets (e.g., India, China) cap the score below 90.",
+      "supply": "BTC has near-perfect tokenomics: 20.03M of 21M max supply already circulating (95.4% distributed, no VC unlock cliffs or team allocations), with post-halving issuance of ~3.125 BTC/block declining on a fixed schedule. Exchange reserves have fallen to a 7-year low (~2.21M BTC), with 48,500 BTC net outflows over 30 days as coins migrate to ETF custodians (~1.3M BTC) and self-custody \u2014 a strong structural demand signal. Long-term holders now control ~78% of circulating supply (\u224815.6M BTC), with whale wallets (1,000+ BTC) accumulating a record 270,000 BTC over the past month, leaving minimal liquid sell pressure on exchanges.",
+      "wyckoff": "Manual override: Phase B\u2192C",
+      "value_capture": "Fee model routes fees to miners/validators without holder accrual. Value capture excluded; security budget read under Supply."
+    },
+    "weights": {
+      "institutional": 0.4,
+      "supply": 0.35,
+      "regulatory": 0.25
+    },
+    "composite": 89,
+    "composite_last_week": 89,
+    "wyckoff_phase": "Phase B\u2192C",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89
+    ],
+    "trend_30d": [
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89,
+      89
+    ],
+    "rsi_daily": 64.1,
+    "rsi_weekly": 47.8,
+    "action": "hold",
+    "decision_trace": {
+      "path": "leader_wyckoff_accumulate",
+      "final_action": "hold",
+      "summary": "Base signal: Accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). After 1 downgrade level(s) (global liquidity is contracting): Hold.",
+      "base_action": "accumulate",
+      "downgrades": {
+        "base_action": "accumulate",
+        "levels_applied": 1,
+        "macro_levels": 1,
+        "wyckoff_levels": 0,
+        "reasons": [
+          "macro:gli_contracting"
+        ]
+      },
+      "inputs": {
+        "tier": "leader",
+        "composite": 89,
+        "composite_last_week": 89,
+        "delta_7d": 0,
+        "delta_30d": 0,
+        "wyckoff_phase": "Phase B\u2192C",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5,
+        "rsi_daily": 64.1,
+        "rsi_weekly": 47.8,
+        "rsi_weekly_4w_ago": 39.9,
+        "weekly_capitulation": false,
+        "daily_capitulation": false,
+        "wyckoff_ready": true,
+        "overbought_weekly": false,
+        "accumulate_regime": true,
+        "accumulate_threshold": 75
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 13,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": 0.0
+    },
+    "note": "Strong institutional adoption. Wyckoff spring zone",
+    "note_detailed": "BTC holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: monetary store of value \u2014 institutional + supply/security + regulatory; no separate value-capture dimension.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (92/100, 40% weight): Excellent institutional presence. Bitcoin leads all digital assets in institutional infrastructure depth: BlackRock IBIT alone holds ~805K BTC (~$50B AUM), 180+ public companies hold BTC in treasury (Strategy ~640K BTC), spot ETFs have attracted $56B+ in cumulative inflows, and major TradFi custodians (Citi, Morgan Stanley, BNY, Fidelity Digital Assets, Coinbase Custody) now provide qualified, regulated custody \u2014 with 68% of institutional investors holding or planning to hold BTC products. The only ceiling on a perfect score is that ETF flows showed some softness in early 2026 and cross-margin / unified-account infrastructure is still being rolled out.\n\u2022 Regulatory (82/100, 25% weight): Favorable regulatory standing. Bitcoin holds the strongest regulatory posture of any crypto asset: US spot ETF approval (Jan 2024), CFTC commodity classification, and MiCA clarity in the EU provide multi-jurisdictional legal settlement that no other digital asset matches. Institutional ETF inflows signal sustained regulatory accommodation, though the absence of native protocol-level compliance features and residual uncertainty in a handful of major markets (e.g., India, China) cap the score below 90.\n\u2022 Supply/On-Chain (91/100, 35% weight): Healthy on-chain metrics with favorable supply distribution and accumulation patterns.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 64.1 sits in neutral range.\n\u2022 Weekly RSI at 47.8 remains in healthy range.\n\nCURRENT ACTION:\nBase signal: Accumulate (Wyckoff accumulation regime (composite + phase + trend gates passed)). After 1 downgrade level(s) (global liquidity is contracting): Hold.\n\nDECISION TRACE:\n\u2022 path: Leader accumulate Wyckoff setup\n\u2022 base_action: Accumulate\n\u2022 final_action: Hold\n\u2022 downgrades: levels_applied=1, macro_levels=1, wyckoff_levels=0\n\u2022 downgrade_reasons: Global liquidity contracting\n\nCOMPOSITE SCORE: 89/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

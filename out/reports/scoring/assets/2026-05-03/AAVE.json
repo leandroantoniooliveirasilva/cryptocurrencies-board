@@ -1,0 +1,80 @@
+{
+  "symbol": "AAVE",
+  "name": "Aave",
+  "asset": {
+    "symbol": "AAVE",
+    "name": "Aave",
+    "tier": "observation",
+    "asset_type": "defi",
+    "asset_category": "defi-protocol",
+    "scores": {
+      "institutional": 75,
+      "adoption_activity": 78,
+      "value_capture": 34,
+      "regulatory": 72,
+      "supply": 62
+    },
+    "score_rationales": {
+      "institutional": "SOC 2 compliance, Horizon RWA platform",
+      "regulatory": "Established DeFi, some regulatory engagement",
+      "supply": "Tokenomics are tight: max supply is capped at 16,000,000 with ~15.18M circulating (~94.9%), so inflation from new mint is negligible. Centralized exchange balances tracked by CryptoQuant rose from ~2.07M to ~2.23M AAVE since early February 2026 (~14.7% of circulating), lifting sell-side inventory above its 90-day average after a prior decline. Roughly one-sixth of supply is committed to the Safety Module (DAO figures cite ~16.78% staked) while stkAAVE incentives were repeatedly reduced by governance (~220\u2013260 AAVE/day), which offsets but does not remove the recent CEX buildup.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "DefiLlama (protocol parent#aave) shows ~$11.90B supplied and ~$9.42B borrowed on Ethereum, with major nine-figure supplied liquidity on Arbitrum (~$600M), Base (~$449M), and Plasma (~$402M), indicating dominant money-market usage and multi-chain deployment rather than a single-chain niche.",
+      "value_capture": "Daily revenue: $202K (~$73.8M/year). TVL: $15.00B. Revenue/TVL ratio: 0.49%. Daily fees: $1.4M."
+    },
+    "weights": {
+      "value_capture": 0.3,
+      "adoption_activity": 0.15,
+      "institutional": 0.2,
+      "regulatory": 0.15,
+      "supply": 0.2
+    },
+    "composite": 60,
+    "composite_last_week": 64,
+    "wyckoff_phase": "Range (lower)",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      64,
+      64,
+      59,
+      55,
+      55,
+      61,
+      60
+    ],
+    "trend_30d": [
+      79,
+      63,
+      65,
+      64,
+      64,
+      64,
+      64,
+      64,
+      59,
+      55,
+      55,
+      61,
+      60
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 11,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "DeFi protocol, revenue-focused",
+    "note_detailed": "AAVE sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: DeFi protocol \u2014 value capture and adoption weighted alongside institutions and supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (75/100, 20% weight): Strong institutional presence. SOC 2 compliance, Horizon RWA platform\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. Established DeFi, some regulatory engagement\n\u2022 Supply/On-Chain (62/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (78/100, 15% weight): Network usage and growth signals for this category.\n\u2022 Value capture (34/100, 30% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 60/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}

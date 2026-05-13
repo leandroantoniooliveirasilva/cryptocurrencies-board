@@ -1,0 +1,94 @@
+{
+  "symbol": "ADA",
+  "name": "Cardano",
+  "asset": {
+    "symbol": "ADA",
+    "name": "Cardano",
+    "tier": "observation",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 44,
+      "adoption_activity": 38,
+      "value_capture": 35,
+      "regulatory": 72,
+      "supply": 72
+    },
+    "score_rationales": {
+      "institutional": "ADA has meaningful but still nascent institutional infrastructure: CME futures launched February 2026, major custodians (Coinbase Custody, BitGo, BNY Mellon) support it with ~$1.2B ADA under management, and it is included in the Hashdex Nasdaq Crypto Index ETF \u2014 but no dedicated spot ETF exists yet (earliest October 2026), corporate treasury adoption remains minimal, and institutional holdings are thin compared to BTC/ETH.",
+      "regulatory": "ADA received a definitive digital commodity classification from the SEC/CFTC in March 2026, resolving the prior securities allegation; CME futures launched February 2026 and multiple spot ETF filings (Grayscale GADA, Bitwise, Canary) are on track for a realistic late-2026 approval window. Held back from higher: spot ETF remains pending, UK regulatory clarity is limited, and MiCA enforcement is still tightening with full compliance posture still maturing despite the Cardano Foundation joining the MiCA Crypto Alliance.",
+      "supply": "ADA has a hard-capped 45B supply with 82.2% already circulating and declining inflation as remaining reserve emissions taper\u2014a structurally bullish tokenomics profile. Staking participation locks ~63% of circulating supply with no forced unlock schedule, materially compressing liquid sell-side; whale wallets (10M+ ADA) hit a 4-month high of 424 addresses in April 2026 with ~819M ADA accumulated during the 71% drawdown, signaling long-term conviction rather than distribution. Exchange-reserve data is not unambiguously declining (no strong CryptoQuant outflow signal confirmed), which caps the score\u2014current price weakness near $0.25\u20130.30 and the Cardano Foundation's own ADA reserve reduction introduce modest near-term supply uncertainty.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Cardano's base-layer utilization remains thin \u2014 real-world TPS averages ~0.4 tx/s (max observed ~11.6 TPS) and DeFi TVL has slipped to ~$132M (ranked #27 globally), down sharply from the $424M Q3-2025 peak; daily active addresses of 9K\u201316K are modest for a top-10 asset. Developer commitment is genuine (ranked #3 by GitHub commits, 1,300+ ecosystem projects), and Ouroboros Leios/Hydra promise a step-change in throughput by late 2026, but present on-chain adoption metrics don't yet justify a higher score.",
+      "value_capture": "Daily revenue: $2K (~$776K/year). TVL: $139.4M. Revenue/TVL ratio: 0.56%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 51,
+    "composite_last_week": 60,
+    "wyckoff_phase": "Re-accumulation",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      60,
+      60,
+      53,
+      51
+    ],
+    "trend_30d": [
+      60,
+      60,
+      53,
+      51
+    ],
+    "rsi_daily": 66.3,
+    "rsi_weekly": 36.6,
+    "action": "observe",
+    "decision_trace": {
+      "path": "observe_default",
+      "final_action": "observe",
+      "summary": "Observe: research/watchlist state only; no active accumulation signal.",
+      "inputs": {
+        "tier": "observation",
+        "composite": 51,
+        "composite_last_week": 60,
+        "delta_7d": -9,
+        "delta_30d": -9,
+        "wyckoff_phase": "Re-accumulation",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 11,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.09655874873633016
+    },
+    "note": "Smart contract platform",
+    "note_detailed": "ADA sits in the Observation tier, meaning it's being tracked for research purposes but doesn't yet warrant position sizing. The framework monitors for improving metrics.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (44/100, 25% weight): Limited institutional presence. ADA has meaningful but still nascent institutional infrastructure: CME futures launched February 2026, major custodians (Coinbase Custody, BitGo, BNY Mellon) support it with ~$1.2B ADA under management, and it is included in the Hashdex Nasdaq Crypto Index ETF \u2014 but no dedicated spot ETF exists yet (earliest October 2026), corporate treasury adoption remains minimal, and institutional holdings are thin compared to BTC/ETH.\n\u2022 Regulatory (72/100, 15% weight): Favorable regulatory standing. ADA received a definitive digital commodity classification from the SEC/CFTC in March 2026, resolving the prior securities allegation; CME futures launched February 2026 and multiple spot ETF filings (Grayscale GADA, Bitwise, Canary) are on track for a realistic late-2026 approval window. Held back from higher: spot ETF remains pending, UK regulatory clarity is limited, and MiCA enforcement is still tightening with full compliance posture still maturing despite the Cardano Foundation joining the MiCA Crypto Alliance.\n\u2022 Supply/On-Chain (72/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (38/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (35/100, 20% weight): Limited value capture\u2014may rely on incentives or early-stage economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 66.3 sits in neutral range.\n\u2022 Weekly RSI at 36.6 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-9.7% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nObserve: research/watchlist state only; no active accumulation signal.\n\nDECISION TRACE:\n\u2022 path: Observation default\n\u2022 final_action: Observe\n\nCOMPOSITE SCORE: 51/100\nThis score indicates the asset is being monitored but hasn't yet reached high-conviction thresholds.",
+    "cache_writes": [
+      [
+        "ADA",
+        "value_capture",
+        35,
+        "Daily revenue: $2K (~$776K/year). TVL: $139.4M. Revenue/TVL ratio: 0.56%."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

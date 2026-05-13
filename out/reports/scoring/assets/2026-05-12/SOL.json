@@ -1,0 +1,106 @@
+{
+  "symbol": "SOL",
+  "name": "Solana",
+  "asset": {
+    "symbol": "SOL",
+    "name": "Solana",
+    "tier": "runner-up",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 74,
+      "adoption_activity": 88,
+      "value_capture": 63,
+      "regulatory": 65,
+      "supply": 54
+    },
+    "score_rationales": {
+      "institutional": "Solana has achieved meaningful institutional depth: spot ETFs from Fidelity, BlackRock, VanEck, and others crossed $1.45B in cumulative inflows since October 2025 launch, Goldman Sachs disclosed $108M in SOL holdings, Visa and BlackRock BUIDL are active on-chain, and ~17.9M SOL sits in publicly-traded corporate treasuries \u2014 but overall ETF AUM and corporate treasury breadth remain well below Bitcoin's tier, keeping the score in the high-70s range.",
+      "regulatory": "SOL's regulatory trajectory has materially improved in 2025 \u2014 the SEC dropped enforcement actions that had named SOL as a security (Coinbase, Kraken cases), and multiple spot SOL ETF applications (VanEck, 21Shares, Canary Capital) are in active review under a pro-crypto SEC chair, signaling institutional legitimacy; however, no formal legal-status ruling has been issued, ETF approval remains pending, and EU/UK frameworks have not explicitly cleared SOL, leaving meaningful jurisdictional ambiguity that caps the score.",
+      "supply": "SOL has no supply cap and carries ~4.68% annual inflation (SIMD-228 failed in March 2025, preserving the fixed dilution schedule), which creates ongoing structural sell pressure; however, 92.3% of total supply is already circulating, meaning VC/team overhang is minimal. A strong offset comes from 68% of supply being staked (~393M SOL), materially compressing the tradeable float and keeping APY incentives intact at ~5.86%. The exchange-reserve picture is the primary drag: Glassnode data shows net-positive exchange inflows on every session in April 2026, signalling distribution rather than accumulation, though the concurrent $202M outflow capitulation signal introduces a contrarian element that moderates the bearish read.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Solana shows elite network adoption in May 2026: ~3.9M daily active addresses (dominant across L1s), $8B+ DeFi TVL, $3.8B+ daily DEX volume (#1 cross-chain), 3,000\u20135,000 real TPS with sub-$0.001 fees, and 17,700+ active developers \u2014 the largest cohort across blockchains; only slight discount from 100 reflects TVL pullback from its $12.2B ATH.",
+      "value_capture": "Daily revenue: $638K (~$233.0M/year). TVL: $5.86B. Revenue/TVL ratio: 3.98%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 69,
+    "composite_last_week": 74,
+    "wyckoff_phase": "Accumulation Phase D",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      76,
+      76,
+      76,
+      75,
+      74,
+      71,
+      69
+    ],
+    "trend_30d": [
+      75,
+      75,
+      74,
+      70,
+      74,
+      74,
+      76,
+      76,
+      76,
+      75,
+      74,
+      71,
+      69
+    ],
+    "rsi_daily": 69.4,
+    "rsi_weekly": 39.6,
+    "action": "await",
+    "decision_trace": {
+      "path": "runner_up_await",
+      "final_action": "await",
+      "summary": "Await: runner-up quality is improving, but promotion thresholds are not yet met.",
+      "inputs": {
+        "tier": "runner-up",
+        "composite": 69,
+        "composite_last_week": 74,
+        "delta_7d": -5,
+        "delta_30d": -6,
+        "wyckoff_phase": "Accumulation Phase D",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting"
+        ],
+        "stand_aside_delta_threshold": -5
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 15,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": -0.03811289034456109
+    },
+    "note": "High-throughput L1, DeFi ecosystem",
+    "note_detailed": "SOL is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (74/100, 25% weight): Strong institutional presence. Solana has achieved meaningful institutional depth: spot ETFs from Fidelity, BlackRock, VanEck, and others crossed $1.45B in cumulative inflows since October 2025 launch, Goldman Sachs disclosed $108M in SOL holdings, Visa and BlackRock BUIDL are active on-chain, and ~17.9M SOL sits in publicly-traded corporate treasuries \u2014 but overall ETF AUM and corporate treasury breadth remain well below Bitcoin's tier, keeping the score in the high-70s range.\n\u2022 Regulatory (65/100, 15% weight): Uncertain regulatory standing. SOL's regulatory trajectory has materially improved in 2025 \u2014 the SEC dropped enforcement actions that had named SOL as a security (Coinbase, Kraken cases), and multiple spot SOL ETF applications (VanEck, 21Shares, Canary Capital) are in active review under a pro-crypto SEC chair, signaling institutional legitimacy; however, no formal legal-status ruling has been issued, ETF approval remains pending, and EU/UK frameworks have not explicitly cleared SOL, leaving meaningful jurisdictional ambiguity that caps the score.\n\u2022 Supply/On-Chain (54/100, 20% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (88/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (63/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 69.4 sits in neutral range.\n\u2022 Weekly RSI at 39.6 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 Slight underperformance vs BTC (-3.8% over 90 days) but within tolerance.\n\nCURRENT ACTION:\nAwait: runner-up quality is improving, but promotion thresholds are not yet met.\n\nDECISION TRACE:\n\u2022 path: Runner-up await\n\u2022 final_action: Await Confirmation\n\nCOMPOSITE SCORE: 69/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": [
+      [
+        "SOL",
+        "value_capture",
+        63,
+        "Daily revenue: $638K (~$233.0M/year). TVL: $5.86B. Revenue/TVL ratio: 3.98%."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

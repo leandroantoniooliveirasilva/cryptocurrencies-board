@@ -1,0 +1,134 @@
+{
+  "symbol": "CANTON",
+  "name": "Canton Network",
+  "asset": {
+    "symbol": "CANTON",
+    "name": "Canton Network",
+    "tier": "leader",
+    "asset_type": "infrastructure",
+    "asset_category": "enterprise-settlement",
+    "scores": {
+      "institutional": 82,
+      "adoption_activity": 72,
+      "value_capture": 95,
+      "regulatory": 82,
+      "supply": 50
+    },
+    "score_rationales": {
+      "institutional": "Canton Network has exceptional institutional backing \u2014 Goldman Sachs, BNY Mellon, DTCC, HSBC, BNP Paribas, Deutsche B\u00f6rse as validators/participants, $6T in on-chain RWAs, $339B daily repo volume, Taurus custody support, and the first U.S. ETF (21shares TCAN on Nasdaq, May 2026) \u2014 making it one of the most TradFi-integrated institutional blockchain networks, though CANTON coin itself remains primarily a utility token with limited direct corporate treasury or fund holdings relative to BTC/ETH.",
+      "regulatory": "Canton Network holds a SEC no-action letter, MiCA-compliant token whitepaper, and DTCC-backed Treasury tokenization approval, giving it exceptionally strong regulatory standing across US and EU jurisdictions; 600+ institutional validators including major exchanges signal deep compliance infrastructure, though the CANTON token itself remains a newer retail-facing layer whose classification is still settling relative to the network's institutional pedigree.",
+      "supply": "Supply APIs unavailable, fallback neutral score applied from framework defaults (no reliable tokenomics data returned).",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "Canton Network shows genuine institutional adoption with 600K+ daily transactions (~7 TPS peak), 600+ validators, 28K+ institutional wallets, and $6T in tokenized RWAs hosted by late 2025; however, TPS remains modest for its scale and on-chain public activity is limited to a narrow set of permissioned participants, constraining the breadth score despite high-value throughput.",
+      "value_capture": "Daily revenue: $2.3M (~$830.1M/year). TVL: $501K. Revenue/TVL ratio: 165678.68%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "regulatory": 0.2,
+      "supply": 0.15
+    },
+    "composite": 78,
+    "composite_last_week": 77,
+    "wyckoff_phase": "Accumulation Phase B",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      64,
+      58,
+      58,
+      77,
+      77,
+      69,
+      78
+    ],
+    "trend_30d": [
+      82,
+      82,
+      82,
+      82,
+      82,
+      82,
+      64,
+      58,
+      58,
+      77,
+      77,
+      69,
+      78
+    ],
+    "rsi_daily": 57.6,
+    "rsi_weekly": 65.9,
+    "action": "hold",
+    "decision_trace": {
+      "path": "leader_hold_default",
+      "final_action": "hold",
+      "summary": "Hold: leader-tier asset remains active, but no accumulation trigger is currently confirmed (no RSI capitulation and no active Wyckoff accumulation regime).",
+      "inputs": {
+        "tier": "leader",
+        "composite": 78,
+        "composite_last_week": 77,
+        "delta_7d": -4,
+        "delta_30d": -4,
+        "wyckoff_phase": "Accumulation Phase B",
+        "is_distribution": false,
+        "macro_downgrade_active": true,
+        "macro_reasons": [
+          "macro:gli_contracting",
+          "macro:rs_underperforming_btc"
+        ],
+        "stand_aside_delta_threshold": -5,
+        "rsi_daily": 57.6,
+        "rsi_weekly": 65.9,
+        "rsi_weekly_4w_ago": 64.4,
+        "weekly_capitulation": false,
+        "daily_capitulation": false,
+        "wyckoff_ready": false,
+        "overbought_weekly": false,
+        "accumulate_regime": false,
+        "accumulate_threshold": 75
+      }
+    },
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 12,
+    "missing_dimensions": 0,
+    "dimension_errors": {},
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": true,
+      "change_pct": -0.20028618683833543
+    },
+    "note": "Infrastructure/enterprise",
+    "note_detailed": "CANTON holds Leader status in the framework, representing highest-conviction assets with established track records. Leaders receive priority for accumulation when conditions align.\nCategory: enterprise settlement \u2014 adoption and regulatory emphasis; burn/mint in supply.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (82/100, 25% weight): Strong institutional presence. Canton Network has exceptional institutional backing \u2014 Goldman Sachs, BNY Mellon, DTCC, HSBC, BNP Paribas, Deutsche B\u00f6rse as validators/participants, $6T in on-chain RWAs, $339B daily repo volume, Taurus custody support, and the first U.S. ETF (21shares TCAN on Nasdaq, May 2026) \u2014 making it one of the most TradFi-integrated institutional blockchain networks, though CANTON coin itself remains primarily a utility token with limited direct corporate treasury or fund holdings relative to BTC/ETH.\n\u2022 Regulatory (82/100, 20% weight): Favorable regulatory standing. Canton Network holds a SEC no-action letter, MiCA-compliant token whitepaper, and DTCC-backed Treasury tokenization approval, giving it exceptionally strong regulatory standing across US and EU jurisdictions; 600+ institutional validators including major exchanges signal deep compliance infrastructure, though the CANTON token itself remains a newer retail-facing layer whose classification is still settling relative to the network's institutional pedigree.\n\u2022 Supply/On-Chain (50/100, 15% weight): Supply metrics warrant caution\u2014potential concentration or unfavorable distribution.\n\u2022 Adoption / activity (72/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (95/100, 20% weight): Strong holder-accruing economics.\n\nRSI CONTEXT:\n\u2022 Daily RSI at 57.6 sits in neutral range.\n\u2022 Weekly RSI at 65.9 remains in healthy range.\n\nRELATIVE STRENGTH vs BTC:\n\u2022 \u26a0\ufe0f CAUTION: Underperforming BTC by 20.0% over 90 days. Consider whether BTC itself may be a better allocation.\n\nCURRENT ACTION:\nHold: leader-tier asset remains active, but no accumulation trigger is currently confirmed (no RSI capitulation and no active Wyckoff accumulation regime).\n\nDECISION TRACE:\n\u2022 path: Leader hold default\n\u2022 final_action: Hold\n\nCOMPOSITE SCORE: 78/100\nThis places the asset in the top tier of framework scoring, indicating strong alignment across weighted dimensions.",
+    "cache_writes": [
+      [
+        "CANTON",
+        "value_capture",
+        95,
+        "Daily revenue: $2.3M (~$830.1M/year). TVL: $501K. Revenue/TVL ratio: 165678.68%."
+      ],
+      [
+        "CANTON",
+        "institutional",
+        82,
+        "Canton Network has exceptional institutional backing \u2014 Goldman Sachs, BNY Mellon, DTCC, HSBC, BNP Paribas, Deutsche B\u00f6rse as validators/participants, $6T in on-chain RWAs, $339B daily repo volume, Taurus custody support, and the first U.S. ETF (21shares TCAN on Nasdaq, May 2026) \u2014 making it one of the most TradFi-integrated institutional blockchain networks, though CANTON coin itself remains primarily a utility token with limited direct corporate treasury or fund holdings relative to BTC/ETH."
+      ],
+      [
+        "CANTON",
+        "adoption_activity",
+        72,
+        "Canton Network shows genuine institutional adoption with 600K+ daily transactions (~7 TPS peak), 600+ validators, 28K+ institutional wallets, and $6T in tokenized RWAs hosted by late 2025; however, TPS remains modest for its scale and on-chain public activity is limited to a narrow set of permissioned participants, constraining the breadth score despite high-value throughput."
+      ],
+      [
+        "CANTON",
+        "regulatory",
+        82,
+        "Canton Network holds a SEC no-action letter, MiCA-compliant token whitepaper, and DTCC-backed Treasury tokenization approval, giving it exceptionally strong regulatory standing across US and EU jurisdictions; 600+ institutional validators including major exchanges signal deep compliance infrastructure, though the CANTON token itself remains a newer retail-facing layer whose classification is still settling relative to the network's institutional pedigree."
+      ]
+    ]
+  },
+  "error": null,
+  "dimension_errors": null
+}

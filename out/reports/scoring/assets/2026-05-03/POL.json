@@ -1,0 +1,64 @@
+{
+  "symbol": "POL",
+  "name": "Polygon",
+  "asset": {
+    "symbol": "POL",
+    "name": "Polygon",
+    "tier": "runner-up",
+    "asset_type": "smart-contract",
+    "asset_category": "smart-contract-platform",
+    "scores": {
+      "institutional": 78,
+      "adoption_activity": 79,
+      "value_capture": 66,
+      "regulatory": 63,
+      "supply": 67
+    },
+    "score_rationales": {
+      "institutional": "Regulated access includes the 21Shares Polygon ETP (POLY), physically backed POL with Coinbase Custody, BitGo, and Copper on Cboe BZX, plus FINMA-regulated AMINA Bank offering institutional POL custody, trading, and staking with the Polygon Foundation. TradFi integration is tangible: Securitize expanded BlackRock\u2019s tokenized BUIDL fund to Polygon (verified Polygon deployment; Securitize/BlackRock multi-chain expansion), placing Polygon in major institutional tokenization and payments rails alongside Stripe\u2019s USDC integration.",
+      "regulatory": "EU trajectory is measurably stronger: Polygon\u2019s POL MiCAR whitepaper was notified to the Central Bank of Ireland (8 Dec 2025) and published (16 Jan 2026) under MiCA, with POL admitted to trading on listed EU/EEA venues\u2014explicit protocol-level compliance with a major jurisdiction. The US side remains a drag: the SEC\u2019s Binance complaint (2023) expressly characterized MATIC among alleged crypto asset securities, and there is no approved US spot POL ETF comparable to the BTC/ETH register\u2014so major-market status is split and not settled Stateside.",
+      "supply": "POLTRACK (dashboard snapshot) shows ~10.52B POL circulating against a ~12.25B expected maximum that can shrink via burns, with 0 POL in scheduled unlocks (full float). ~3.62B POL (~34.45% of circulating) is staked, which materially reduces liquid supply. Fee-driven burns (~12.14M POL in 30d) compete with ongoing mints, but net issuance is still slightly positive (+5.15M POL over 30d), which caps how bullish the setup can be until burns consistently exceed emissions.",
+      "wyckoff": "Wyckoff phase carried from last snapshot until the next daily indicators refresh.",
+      "adoption_activity": "DefiLlama (Polygon chain, May 2026) shows about $1.20B DeFi TVL, roughly 812,900 active addresses and 9.81M transactions in 24h, plus about $3.57B stablecoin market cap and large bridged-asset stock\u2014indicating heavy real usage; DeFi TVL is strong but not at the very top versus the largest L2s, so adoption is high but not leader-tier.",
+      "value_capture": "Daily revenue: $151K (~$55.2M/year). TVL: $1.22B. Revenue/TVL ratio: 4.54%."
+    },
+    "weights": {
+      "institutional": 0.25,
+      "adoption_activity": 0.2,
+      "value_capture": 0.2,
+      "supply": 0.2,
+      "regulatory": 0.15
+    },
+    "composite": 71,
+    "composite_last_week": 71,
+    "wyckoff_phase": "Accumulation Phase B\u2192C",
+    "wyckoff_position_score": null,
+    "wyckoff_signal": null,
+    "trend": [
+      70,
+      71
+    ],
+    "trend_30d": [
+      70,
+      71
+    ],
+    "rsi_daily": null,
+    "rsi_weekly": null,
+    "action": null,
+    "decision_trace": null,
+    "strong_accumulate_days_active": 0,
+    "label_changed_days_ago": 0,
+    "missing_dimensions": 0,
+    "value_capture_estimated": false,
+    "revenue_estimated": false,
+    "rs_vs_btc": {
+      "underperforming": false,
+      "change_pct": null
+    },
+    "note": "Wyckoff spring zone",
+    "note_detailed": "POL is classified as Runner-up, showing strong fundamentals but requiring additional confirmation before potential promotion to Leader tier. These assets are monitored for breakout signals.\nCategory: smart-contract platform \u2014 balanced institutional, adoption, value capture, supply, regulatory.\n\nDIMENSION BREAKDOWN:\n\u2022 Institutional (78/100, 25% weight): Strong institutional presence. Regulated access includes the 21Shares Polygon ETP (POLY), physically backed POL with Coinbase Custody, BitGo, and Copper on Cboe BZX, plus FINMA-regulated AMINA Bank offering institutional POL custody, trading, and staking with the Polygon Foundation. TradFi integration is tangible: Securitize expanded BlackRock\u2019s tokenized BUIDL fund to Polygon (verified Polygon deployment; Securitize/BlackRock multi-chain expansion), placing Polygon in major institutional tokenization and payments rails alongside Stripe\u2019s USDC integration.\n\u2022 Regulatory (63/100, 15% weight): Uncertain regulatory standing. EU trajectory is measurably stronger: Polygon\u2019s POL MiCAR whitepaper was notified to the Central Bank of Ireland (8 Dec 2025) and published (16 Jan 2026) under MiCA, with POL admitted to trading on listed EU/EEA venues\u2014explicit protocol-level compliance with a major jurisdiction. The US side remains a drag: the SEC\u2019s Binance complaint (2023) expressly characterized MATIC among alleged crypto asset securities, and there is no approved US spot POL ETF comparable to the BTC/ETH register\u2014so major-market status is split and not settled Stateside.\n\u2022 Supply/On-Chain (67/100, 20% weight): Acceptable supply dynamics with some concentration or distribution concerns.\n\u2022 Adoption / activity (79/100, 20% weight): Network usage and growth signals for this category.\n\u2022 Value capture (66/100, 20% weight): Moderate value capture; typical for growth-phase protocols.\n\nCURRENT ACTION:\nPending: daily indicators job applies RSI, Wyckoff, GLI, Fear & Greed, and RS vs BTC to derive action.\n\nCOMPOSITE SCORE: 71/100\nThis score reflects solid fundamentals with room for improvement in specific dimensions.",
+    "cache_writes": []
+  },
+  "error": null,
+  "dimension_errors": null
+}
